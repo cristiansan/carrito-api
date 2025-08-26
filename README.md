@@ -75,7 +75,7 @@ La aplicación detecta automáticamente los siguientes campos de la API de Öppe
 
 ### Proxy (Vercel)
 - El proxy ya está desplegado en Vercel
-- URL: `https://carrito-api-proxy-exqagwrv0-cristiansans-projects.vercel.app`
+- URL: `https://carrito-api-proxy-jyl85q9qp-cristiansans-projects.vercel.app`
 - No requiere configuración adicional
 
 ## Notas técnicas

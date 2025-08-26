@@ -6,11 +6,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: ['https://cristiansan.github.io', 'http://localhost:5500', 'http://127.0.0.1:5500'],
-  credentials: true,
+  origin: true, // Permitir todos los orígenes
+  credentials: false,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Manejar preflight OPTIONS
+app.options('*', cors());
 app.use(express.json());
 
 const API_BASE = 'https://southtraders.oppen.io/report';
