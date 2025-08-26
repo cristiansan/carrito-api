@@ -23,9 +23,9 @@ He creado una interfaz web para consultar y visualizar el stock de productos des
 ## Configuración
 
 ### Credenciales de API
-- **Usuario**: API
-- **Contraseña MD5**: e10adc3949ba59abbe56e057f20f883e
-- **Endpoint base**: https://southtraders.oppen.io/report
+- **Usuario**:
+- **Contraseña MD5**: 
+- **Endpoint base**: 
 
 ### Proxy local (desarrollo)
 ```bash
