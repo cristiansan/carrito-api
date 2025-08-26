@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock - Öppen</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
+    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; }
+    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; }
+    h1 { margin: 0; font-size: 20px; color: #fafafa; }
+    .container { padding: 16px; }
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid #2a2a2a; margin-bottom: 12px; }
+    .tab { padding: 8px 12px; cursor: pointer; border: 1px solid #2a2a2a; border-bottom: none; border-radius: 6px 6px 0 0; background: #1b1b1f; color: #e6e6e6; }
+    .tab.active { background: #23232a; font-weight: 600; color: #ffffff; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .toolbar button { padding: 6px 10px; cursor: pointer; background: #2a2a33; color: #f0f0f0; border: 1px solid #3a3a44; border-radius: 4px; }
+    .status { font-size: 12px; color: #b5b5b5; }
+    table { width: 100%; border-collapse: collapse; color: #f0f0f0; }
+    th, td { padding: 8px; border-bottom: 1px solid #2a2a2a; text-align: left; }
+    th { background: #1e1e24; position: sticky; top: 0; color: #ffffff; }
+    .right { text-align: right; }
+    .error { color: #ff6b6b; font-size: 13px; }
+    .hidden { display: none; }
+    tr:nth-child(even) td { background: #15151a; }
+    tr:nth-child(odd) td { background: #101015; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Reporte de Stock</h1>
+  </header>
+
+  <div class="container">
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-segment="all">All</div>
+      <div class="tab" data-segment="iphone">Iphone</div>
+      <div class="tab" data-segment="macbooks">Macbooks</div>
+      <div class="tab" data-segment="samsung">Samsung</div>
+    </div>
+
+    <div class="toolbar">
+      <button id="refreshBtn">Refrescar ahora</button>
+      <button id="exportBtn">Exportar a Excel</button>
+      <label>
+        Auto-refresh 10s
+        <input type="checkbox" id="autoToggle" checked>
+      </label>
+      <span class="status" id="statusText"></span>
+    </div>
+
+    <div id="errorBox" class="error hidden"></div>
+
+    <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px;">
+      <table>
+                 <thead>
+           <tr>
+             <th style="width: 20%">Item</th>
+             <th>Descripción</th>
+             <th class="right" style="width: 12%">Stock</th>
+             <th class="right" style="width: 12%">Transit</th>
+           </tr>
+         </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+</html>
+
+
