@@ -8,12 +8,18 @@
   ],
   "routes": [
     {
-      "src": "/api/authenticate",
-      "dest": "/api/authenticate.js"
-    },
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    }
+  ],
+  "headers": [
     {
-      "src": "/api/stock",
-      "dest": "/api/stock.js"
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://cristiansan.github.io" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
     }
   ]
 }
