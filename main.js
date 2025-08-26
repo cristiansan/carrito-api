@@ -1,5 +1,5 @@
 /* Configuración de API */
-const API_BASE = '/api';
+const API_BASE = 'https://carrito-api-proxy-ax0ytc195-cristiansans-projects.vercel.app/api';
 const AUTH_URL = `${API_BASE}/authenticate`;
 const STOCK_URL = `${API_BASE}/stock`;
 
