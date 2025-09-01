@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carrito de Compras - Öppen</title>
+  <style>
+    :root { 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; 
+      color-scheme: light dark; 
+    }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      background: #0f0f10; 
+      color: #f1f1f1; 
+      min-height: 100vh;
+    }
+    header {
+      padding: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      background: #121214;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 { 
+      margin: 0; 
+      font-size: 24px;
+      color: #fafafa; 
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .cart-container { 
+      background: #1e1e24; 
+      padding: 30px; 
+      border-radius: 8px; 
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    th {
+      background: #23232a;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #2a2a33;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #45a049;
+    }
+    .btn-secondary {
+      background: #2a2a33;
+      color: #f1f1f1;
+      border: 1px solid #3a3a44;
+    }
+    .btn-secondary:hover {
+      background: #34343c;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 40px 0;
+    }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    .total-row {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Carrito de Compras</h1>
+    <a href="marketplace.html" class="btn btn-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg>
+      Volver al Catálogo
+    </a>
+  </header>
+  
+  <div class="container">
+    <div class="cart-container">
+      <div id="cartSummary">
+        <div class="empty-cart">
+          <p>Tu carrito está vacío</p>
+          <a href="marketplace.html" class="btn btn-primary" style="margin-top: 15px;">
+            Seguir Comprando
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const container = document.getElementById('cartSummary');
+      
+      if (!container) return;
+      
+      if (cart.length === 0) {
+        // Mostrar mensaje de carrito vacío
+        container.innerHTML = `
+          <div class="empty-cart">
+            <p>Tu carrito está vacío</p>
+            <a href="marketplace.html" class="btn btn-primary" style="margin-top: 15px;">
+              Seguir Comprando
+            </a>
+          </div>
+        `;
+        return;
+      }
+      
+      let total = 0;
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Descripción</th>
+              <th class="text-right">Precio Unit.</th>
+              <th class="text-right">Cantidad</th>
+              <th class="text-right">Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      cart.forEach((item, index) => {
+        const rowTotal = item.price * item.quantity;
+        total += rowTotal;
+        
+        html += `
+          <tr data-item-id="${item.item}">
+            <td>${item.item}</td>
+            <td>${item.description}</td>
+            <td class="text-right">$${item.price.toFixed(2)}</td>
+            <td class="text-right">${item.quantity}</td>
+            <td class="text-right">$${rowTotal.toFixed(2)}</td>
+            <td class="text-right">
+              <button class="btn btn-secondary remove-item" data-index="${index}" style="padding: 5px 10px; font-size: 12px;">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="4" class="text-right"><strong>Total:</strong></td>
+              <td class="text-right"><strong>$${total.toFixed(2)}</strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+        
+        <div class="actions">
+          <a href="marketplace.html" class="btn btn-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            Seguir Comprando
+          </a>
+          <button id="checkoutBtn" class="btn btn-primary">
+            Proceder al Pago
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-left: 5px;">
+              <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+            </svg>
+          </button>
+        </div>
+      `;
+      
+      container.innerHTML = html;
+      
+      // Agregar manejadores de eventos para los botones de eliminar
+      document.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          removeItemFromCart(index);
+        });
+      });
+      
+      // Manejador para el botón de pago
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+          // Redirigir a order.html
+          window.location.href = 'order.html';
+        });
+      }
+    });
+    
+    function removeItemFromCart(index) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (index >= 0 && index < cart.length) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        // Recargar la página para actualizar la vista
+        window.location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
