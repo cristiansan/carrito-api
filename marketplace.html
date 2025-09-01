@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pagina 1 - Öppen</title>
+  <title>Pagina 3 - Öppen</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; }
@@ -47,14 +47,14 @@
       top: 10px;
       right: 10px;
     }
-    #loginBtn {
-      background-color: #4CAF50; /* Green */
+    #buyNowBtn {
+      background-color: #f44336; /* Red */
       color: white;
       border-radius: 4px;
       padding: 6px 10px;
     }
-    #loginBtn:hover {
-      background-color: #45a049;
+    #buyNowBtn:hover {
+      background-color: #da190b;
     }
     #exportBtn {
       background-color: #4CAF50; /* Green */
@@ -91,6 +91,32 @@
     }
     #columnFilterDropdown input[type="checkbox"] {
       accent-color: #2a2a33;
+    }
+    .cart-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid #3a3a44;
+      background: #2a2a33;
+      color: #f1f1f1;
+      cursor: pointer;
+    }
+    .cart-btn:hover {
+      background: #34343c;
+    }
+    .cart-badge {
+      display: inline-block;
+      min-width: 18px;
+      padding: 0 6px;
+      margin-left: 8px;
+      border-radius: 10px;
+      background: #4CAF50;
+      color: white;
+      font-size: 12px;
+      text-align: center;
     }
     .modal {
       position: fixed;
@@ -175,7 +201,7 @@
 </head>
 <body>
   <header>
-    <h1>Pagina 1</h1>
+    <h1>Pagina 3</h1>
     <button id="maximizeBtn" class="icon-button">&#x2195;</button>
   </header>
 
@@ -198,7 +224,6 @@
       <span class="status" id="statusText"></span>
       <input type="text" id="searchBox" placeholder="Search model...">
       <div style="flex: 1;"></div> <!-- Spacer -->
-      <a href="login.html" style="background-color: #f44336; color: white; padding: 6px 10px; border-radius: 4px; text-decoration: none;">Login</a>
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
@@ -221,6 +246,7 @@
                <th class="sortable right" data-sort="teorico" style="width: 12%">Stock ▾</th>
                <th class="sortable right" data-sort="transito" style="width: 12%">Transit ▾</th>
                <th class="sortable right" data-sort="price">Price ▾</th>
+               <th>Quantity</th>
              </tr>
            </thead>
         <tbody id="tbody"></tbody>
@@ -228,18 +254,18 @@
     </div>
   </div>
 
-  <div id="loginModal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close-button">&times;</span>
-      <h2>Login</h2>
-      <input type="text" placeholder="Username">
-      <input type="password" placeholder="Password">
-      <button id="modalLoginBtn">Login</button>
-    </div>
+  <div id="buyModal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2>Selected Products Summary</h2>
+    <div id="modalSummaryContent"></div>
+    <div class="modal-total">Total: <span id="modalTotalPrice"></span></div>
   </div>
+</div>
 
   <script src="main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  
 </body>
 </html>
+
+

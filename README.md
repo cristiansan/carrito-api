@@ -50,12 +50,15 @@ vercel --prod
 
 ```
 carrito-api/
-├── index.html          # Interfaz principal
-├── main.js            # Lógica de frontend
-├── server.js          # Proxy local (desarrollo)
-├── package.json       # Dependencias Node.js
-├── vercel.json        # Configuración de Vercel
-└── README.md          # Este archivo
+├── index.html          # Pagina de bienvenida con login
+├── login.html          # Pagina de login, registro y recuperacion de contraseña
+├── marketplace.html    # Pagina principal con el listado de productos
+├── order.html          # Pagina de resumen de pedido
+├── main.js             # Lógica de frontend
+├── server.js           # Proxy local (desarrollo)
+├── package.json        # Dependencias Node.js
+├── vercel.json         # Configuración de Vercel
+└── README.md           # Este archivo
 ```
 
 ## Campos de stock mapeados
