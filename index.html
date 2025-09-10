@@ -24,6 +24,10 @@
     .hidden { display: none; }
     tr:nth-child(even) td { background: #15151a; }
     tr:nth-child(odd) td { background: #101015; }
+    .zero-value {
+      color: #ff6b6b !important;
+      font-weight: 500;
+    }
     th.sortable {
       cursor: pointer;
     }
@@ -46,6 +50,22 @@
       position: absolute;
       top: 10px;
       right: 10px;
+    }
+    .version-btn {
+      position: absolute;
+      top: 10px;
+      right: 50px;
+      background: #2a2a33;
+      color: #f1f1f1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #3a3a44;
+      transition: background-color 0.2s;
+    }
+    .version-btn:hover {
+      background: #3a3a44;
     }
     #loginBtn {
       background-color: #4CAF50; /* Green */
@@ -91,6 +111,35 @@
     }
     #columnFilterDropdown input[type="checkbox"] {
       accent-color: #2a2a33;
+    }
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: #1e1e24;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 12px;
+      background: #15151a;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+    }
+    .stat-number {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 0.85em;
+      color: #b5b5b5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .modal {
       position: fixed;
@@ -140,6 +189,34 @@
       white-space: pre-wrap; /* Preserve newlines */
       font-family: monospace;
     }
+    .version-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #15151a;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .version-section h3 {
+      margin: 0 0 12px 0;
+      color: #4CAF50;
+      font-size: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 8px;
+    }
+    .version-section ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #e6e6e6;
+    }
+    .version-section li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    #changelogContent {
+      max-height: 60vh;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
     .modal-total {
       margin-top: 20px;
       font-weight: bold;
@@ -176,6 +253,7 @@
 <body>
   <header>
     <h1>Pagina 1</h1>
+    <span id="versionBtn" class="version-btn">v0.6</span>
     <button id="maximizeBtn" class="icon-button">&#x2195;</button>
   </header>
 
@@ -202,25 +280,47 @@
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
-      <label><input type="checkbox" data-column="item"> Item</label>
-      <label><input type="checkbox" data-column="description"> Description</label>
-      <label><input type="checkbox" data-column="teorico"> Stock</label>
-      <label><input type="checkbox" data-column="transito"> Transit</label>
-      <label><input type="checkbox" data-column="price"> Price</label>
+      <label><input type="checkbox" data-column="item" checked> Item</label>
+      <label><input type="checkbox" data-column="description" checked> Description</label>
+      <label><input type="checkbox" data-column="teorico" checked> Stock</label>
+      <label><input type="checkbox" data-column="transito" checked> Transit</label>
       
+      
+      <hr style="border-color: #3a3a44; margin: 8px 0;">
+      <label><input type="checkbox" id="hideZeroValues"> Mostrar solo productos con stock disponible</label>
     </div>
 
     <div id="errorBox" class="error hidden"></div>
+
+    <div class="stats-container" id="statsContainer" style="display: none;">
+      <div class="stat-card">
+        <div class="stat-number" id="totalProducts">0</div>
+        <div class="stat-label">Total Productos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalDisponibleSum">0</div>
+        <div class="stat-label">Suma Stock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalTransitoSum">0</div>
+        <div class="stat-label">Suma Transit</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalSum">0</div>
+        <div class="stat-label">Suma Total (Transit + Stock)</div>
+      </div>
+    </div>
 
     <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table>
                  <thead>
              <tr>
-               <th class="sortable" data-sort="item" style="width: 20%">Item ▾</th>
+               <th class="sortable" data-sort="item" style="width: 18%">Item ▾</th>
                <th class="sortable" data-sort="description">Description ▾</th>
-               <th class="sortable right" data-sort="teorico" style="width: 12%">Stock ▾</th>
+               <th class="sortable right" data-sort="disponible" style="width: 12%">Stock ▾</th>
                <th class="sortable right" data-sort="transito" style="width: 12%">Transit ▾</th>
-               <th class="sortable right" data-sort="price">Price ▾</th>
+               
+               
              </tr>
            </thead>
         <tbody id="tbody"></tbody>
@@ -235,6 +335,73 @@
       <input type="text" placeholder="Username">
       <input type="password" placeholder="Password">
       <button id="modalLoginBtn">Login</button>
+    </div>
+  </div>
+
+  <div id="changelogModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Changelog - Historial de Versiones</h2>
+      <div id="changelogContent">
+        <div class="version-section">
+          <h3>v0.6 - Actual</h3>
+          <ul>
+            <li>🔧 Actualizado mapeo de campos de comparar.txt (disponible → teorico)</li>
+            <li>✅ Corregido filtro "Mostrar solo productos con stock disponible"</li>
+            <li>🎨 Agregados colores rojos para valores de stock en cero</li>
+            <li>🔍 Mejorada lógica de filtrado de productos</li>
+            <li>📊 Mantenida compatibilidad con KPIs existentes</li>
+            <li>🔧 Sincronizados nombres de campos entre HTML y JavaScript</li>
+          </ul>
+        </div>
+        
+        <div class="version-section">
+          <h3>v0.5</h3>
+          <ul>
+            <li>✅ Eliminada columna "Stock Teórico"</li>
+            <li>✅ Reordenadas columnas: Disponible | En Tránsito</li>
+            <li>✅ Agregado sistema de versiones con changelog</li>
+            <li>🔧 Optimización de la interfaz</li>
+          </ul>
+        </div>
+        
+        <div class="version-section">
+          <h3>v0.4</h3>
+          <ul>
+            <li>📊 Agregadas estadísticas en tiempo real</li>
+            <li>🔍 Mejorado sistema de filtros por columnas</li>
+            <li>📱 Optimización responsive</li>
+          </ul>
+        </div>
+        
+        <div class="version-section">
+          <h3>v0.3</h3>
+          <ul>
+            <li>📤 Funcionalidad de exportación a Excel</li>
+            <li>🔄 Auto-refresh cada 30 segundos</li>
+            <li>🎨 Mejorado tema oscuro</li>
+          </ul>
+        </div>
+        
+        <div class="version-section">
+          <h3>v0.2</h3>
+          <ul>
+            <li>🔐 Sistema de autenticación</li>
+            <li>📋 Tabs de categorías (All, iPhone, MacBooks, Samsung)</li>
+            <li>🔍 Búsqueda por modelo</li>
+          </ul>
+        </div>
+        
+        <div class="version-section">
+          <h3>v0.1</h3>
+          <ul>
+            <li>🎉 Versión inicial</li>
+            <li>📊 Tabla básica de inventario</li>
+            <li>🌙 Interfaz con tema oscuro</li>
+            <li>📱 Diseño responsive básico</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 

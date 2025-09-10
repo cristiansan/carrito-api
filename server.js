@@ -3,7 +3,7 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 app.use(cors({
   origin: true, // Permitir todos los orígenes
@@ -15,6 +15,9 @@ app.use(cors({
 // Manejar preflight OPTIONS
 app.options('*', cors());
 app.use(express.json());
+
+// Servir archivos estáticos
+app.use(express.static('.'));
 
 const API_BASE = 'https://southtraders.oppen.io/report';
 

@@ -1,0 +1,77 @@
+{
+  "info": {
+    "name": "Carrito API",
+    "_postman_id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
+    "description": "Colección de pruebas para la API de Carrito",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"md5password\": \"e10adc3949ba59abbe56e057f20f883e\",\n  \"username\": \"API\"\n}"
+        },
+        "url": {
+          "raw": "https://southtraders.oppen.io/report/authenticate",
+          "protocol": "http",
+          "host": [
+            "https://southtraders.oppen.io/report/authenticate"
+          ],
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Ejemplo endpoint protegido",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://southtraders.oppen.io/report/authenticate",
+          "protocol": "http",
+          "host": [
+            "https://southtraders.oppen.io/report/authenticate"
+          ],
+          "path": [
+            "protegido"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "if (pm.response.code === 200) {",
+          "   var json = pm.response.json();",
+          "   if (json.token) {",
+          "       pm.environment.set(\"token\", json.token);",
+          "   }",
+          "}"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ]
+}

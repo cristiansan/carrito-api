@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Productos - South Traders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #cccccc;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-box input::placeholder {
+            color: #aaa;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #666, #555);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 102, 102, 0.3);
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status.loading {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status.success {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+
+        .status.error {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(45deg, #333, #444);
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #4CAF50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background: linear-gradient(45deg, #444, #555);
+        }
+
+        th::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid #4CAF50;
+            opacity: 0.5;
+        }
+
+        th.sort-desc::after {
+            border-bottom: none;
+            border-top: 5px solid #4CAF50;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .item-code {
+            font-family: 'Courier New', monospace;
+            color: #FFC107;
+            font-weight: 600;
+        }
+
+        .stock-number {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .stock-positive {
+            color: #4CAF50;
+        }
+
+        .stock-zero {
+            color: #FF9800;
+        }
+
+        .stock-negative {
+            color: #f44336;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: transparent;
+            color: #ccc;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Listado de Productos</h1>
+            <p>Sistema de consulta de inventario en tiempo real</p>
+        </div>
+
+        <div class="tabs" id="tabs" style="display: none;">
+            <button class="tab active" data-filter="all">📦 Todos</button>
+            <button class="tab" data-filter="iphone">📱 iPhone</button>
+            <button class="tab" data-filter="macbook">💻 MacBook</button>
+            <button class="tab" data-filter="samsung">📲 Samsung</button>
+        </div>
+
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-number" id="totalProducts">0</div>
+                <div class="stat-label">Total Productos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="inStock">0</div>
+                <div class="stat-label">En Stock</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalStockValue">0</div>
+                <div class="stat-label">Suma Stock Teórico</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTransitValue">0</div>
+                <div class="stat-label">Suma En Tránsito</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="outOfStock">0</div>
+                <div class="stat-label">Sin Stock</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="lastUpdate">-</div>
+                <div class="stat-label">Última Actualización</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar productos por descripción..." disabled>
+            </div>
+            <button class="btn btn-primary" id="loadBtn">Cargar Productos</button>
+            <button class="btn btn-secondary" id="refreshBtn" disabled>Actualizar</button>
+        </div>
+
+        <div class="status" id="status" style="display: none;"></div>
+
+        <div class="table-container">
+            <table id="productsTable">
+                <thead>
+                    <tr>
+                        <th data-sort="item">Código</th>
+                        <th data-sort="description">Descripción</th>
+                        <th data-sort="transito">En Tránsito</th>
+                        <th data-sort="disponible">Disponible</th>
+                    </tr>
+                </thead>
+                <tbody id="productsBody">
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div>
+                                📋<br>
+                                Haz clic en "Cargar Productos" para obtener los datos
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = '/api';
+        const AUTH_URL = `${API_BASE}/authenticate`;
+        const STOCK_URL = `${API_BASE}/stock`;
+        
+        const CREDENTIALS = {
+            username: 'API',
+            md5password: 'e10adc3949ba59abbe56e057f20f883e'
+        };
+
+        // State
+        let authToken = null;
+        let tokenExpiresAt = 0;
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentFilter = 'all';
+        let currentSort = { column: 'description', direction: 'asc' };
+
+        // DOM Elements
+        const statusEl = document.getElementById('status');
+        const statsEl = document.getElementById('stats');
+        const tabsEl = document.getElementById('tabs');
+        const loadBtn = document.getElementById('loadBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const searchInput = document.getElementById('searchInput');
+        const productsBody = document.getElementById('productsBody');
+        const tableHeaders = document.querySelectorAll('th[data-sort]');
+        const tabButtons = document.querySelectorAll('.tab');
+
+        // Utility Functions
+        function showStatus(message, type = 'loading') {
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+        }
+
+        function hideStatus() {
+            statusEl.style.display = 'none';
+        }
+
+        function normalizeKey(key) {
+            return String(key)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, '');
+        }
+
+        function getFirstExisting(row, candidateKeys) {
+            const normalizedMap = new Map();
+            for (const k of Object.keys(row || {})) {
+                normalizedMap.set(normalizeKey(k), k);
+            }
+            for (const c of candidateKeys) {
+                const nk = normalizeKey(c);
+                if (normalizedMap.has(nk)) {
+                    return row[normalizedMap.get(nk)];
+                }
+            }
+            return undefined;
+        }
+
+        function parseNumber(value) {
+            if (value === null || value === undefined) return 0;
+            const str = String(value).replace(/[^\d.,-]/g, '');
+            if (!str) return 0;
+            const num = parseFloat(str.replace(',', '.'));
+            return isNaN(num) ? 0 : num;
+        }
+
+        // Authentication
+        async function authenticate() {
+            const now = Date.now();
+            if (authToken && tokenExpiresAt - now > 60000) {
+                return authToken;
+            }
+
+            const response = await fetch(AUTH_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(CREDENTIALS)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Authentication failed (${response.status})`);
+            }
+
+            const data = await response.json();
+            if (!data.ok || !data.token) {
+                throw new Error('Invalid authentication response');
+            }
+
+            authToken = data.token;
+            tokenExpiresAt = Date.now() + (data.expires ? data.expires * 1000 : 55 * 60 * 1000);
+            return authToken;
+        }
+
+        // Data Fetching
+        async function fetchProducts() {
+            const token = await authenticate();
+            const url = `${STOCK_URL}?format=JSON&ViewOption=0`;
+            
+            const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    authToken = null; // Force re-auth
+                }
+                throw new Error(`Error fetching products (${response.status})`);
+            }
+
+            const data = await response.json();
+            if (!Array.isArray(data)) {
+                throw new Error('Invalid API response format');
+            }
+
+            return data;
+        }
+
+        // Data Processing
+        function mapProduct(raw) {
+            const item = getFirstExisting(raw, ['Artículo', 'Item', 'Codigo', 'Code', 'SKU']) || '';
+            const description = getFirstExisting(raw, ['Descripción', 'Description', 'Nombre', 'Product']) || '';
+            
+
+            let transito = getFirstExisting(raw, [
+                'Stock Teorico Transito', 'En tránsito', 'En transito', 'Transito', 'TheoreticalStockTransito'
+            ]);
+            if (transito === undefined) {
+                for (const [k, v] of Object.entries(raw)) {
+                    const nk = normalizeKey(k);
+                    if ((/transit|transito/.test(nk))) {
+                        transito = v;
+                        break;
+                    }
+                }
+            }
+            transito = parseNumber(transito);
+
+            // Use 'Disponible' field directly from API if available
+            let disponible = getFirstExisting(raw, ['Disponible', 'Stock', 'Cantidad']);
+            if (disponible === undefined) {
+                for (const [k, v] of Object.entries(raw)) {
+                    const nk = normalizeKey(k);
+                    if ((/stock|cantidad/.test(nk) && !(/transit|transito/.test(nk)))) {
+                        disponible = v;
+                        break;
+                    }
+                }
+            }
+            disponible = parseNumber(disponible);
+
+            return {
+                item: String(item).trim(),
+                description: String(description).trim(),
+                transito,
+                disponible,
+                raw
+            };
+        }
+
+        // Table Management
+        function renderProducts(products = filteredProducts) {
+            if (products.length === 0) {
+                productsBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div>
+                                🔍<br>
+                                No se encontraron productos
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const rows = products.map(product => {
+                const stockClass = product.disponible > 0 ? 'stock-positive' : 'stock-zero';
+                const transitClass = product.transito > 0 ? 'stock-zero' : 'stock-positive';
+                const disponibleClass = product.disponible > 0 ? 'stock-positive' : 
+                                      product.disponible === 0 ? 'stock-zero' : 'stock-negative';
+                
+                return `
+                    <tr>
+                        <td class="item-code">${product.item}</td>
+                        <td>${product.description}</td>
+                        <td class="stock-number ${transitClass}">${product.transito.toLocaleString()}</td>
+                        <td class="stock-number ${disponibleClass}">${product.disponible.toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            productsBody.innerHTML = rows;
+        }
+
+        function updateStats() {
+            // Use filteredProducts for stats to show current view
+            const visibleProducts = filteredProducts;
+            const total = visibleProducts.length;
+            const inStock = visibleProducts.filter(p => p.disponible > 0).length;
+            const outOfStock = total - inStock;
+            const totalTransitSum = visibleProducts.reduce((sum, p) => sum + p.transito, 0);
+            const totalDisponibleSum = visibleProducts.reduce((sum, p) => sum + p.disponible, 0);
+            const lastUpdate = new Date().toLocaleTimeString();
+
+            document.getElementById('totalProducts').textContent = total.toLocaleString();
+            document.getElementById('inStock').textContent = inStock.toLocaleString();
+            document.getElementById('totalStockValue').textContent = totalDisponibleSum.toLocaleString();
+            document.getElementById('totalTransitValue').textContent = totalTransitSum.toLocaleString();
+            document.getElementById('outOfStock').textContent = outOfStock.toLocaleString();
+            document.getElementById('lastUpdate').textContent = lastUpdate;
+
+            statsEl.style.display = total > 0 ? 'grid' : 'none';
+            tabsEl.style.display = allProducts.length > 0 ? 'flex' : 'none';
+        }
+
+        function sortProducts(column, direction) {
+            filteredProducts.sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Update header indicators
+            tableHeaders.forEach(th => {
+                th.classList.remove('sort-desc');
+                if (th.dataset.sort === column && direction === 'desc') {
+                    th.classList.add('sort-desc');
+                }
+            });
+
+            renderProducts();
+        }
+
+        function filterByCategory(category) {
+            let categoryFiltered = [...allProducts];
+
+            if (category !== 'all') {
+                categoryFiltered = allProducts.filter(product => {
+                    const desc = product.description.toLowerCase();
+                    const item = product.item.toLowerCase();
+                    
+                    switch (category) {
+                        case 'iphone':
+                            return desc.includes('iphone') || item.includes('iph');
+                        case 'macbook':
+                            return desc.includes('macbook') || item.includes('macbook');
+                        case 'samsung':
+                            return desc.includes('samsung') || desc.includes('galaxy') || item.includes('sm-');
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            return categoryFiltered;
+        }
+
+        function filterProducts(query) {
+            // First filter by category
+            let categoryFiltered = filterByCategory(currentFilter);
+            
+            // Then filter by search query
+            if (!query.trim()) {
+                filteredProducts = categoryFiltered;
+            } else {
+                const searchTerm = query.toLowerCase();
+                filteredProducts = categoryFiltered.filter(product => 
+                    product.description.toLowerCase().includes(searchTerm) ||
+                    product.item.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            updateStats();
+            sortProducts(currentSort.column, currentSort.direction);
+        }
+
+        // Event Listeners
+        loadBtn.addEventListener('click', async () => {
+            try {
+                loadBtn.disabled = true;
+                showStatus('🔐 Autenticando...');
+
+                await authenticate();
+                showStatus('📦 Cargando productos...');
+
+                const rawData = await fetchProducts();
+                allProducts = rawData.map(mapProduct);
+                filteredProducts = [...allProducts];
+
+                showStatus('✅ Productos cargados exitosamente', 'success');
+                setTimeout(hideStatus, 2000);
+
+                updateStats();
+                sortProducts(currentSort.column, currentSort.direction);
+                
+                // Enable controls
+                searchInput.disabled = false;
+                refreshBtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+                setTimeout(hideStatus, 5000);
+            } finally {
+                loadBtn.disabled = false;
+            }
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            loadBtn.click();
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            filterProducts(e.target.value);
+        });
+
+        // Tab filtering
+        tabButtons.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                tabButtons.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update filter and refresh view
+                currentFilter = tab.dataset.filter;
+                filterProducts(searchInput.value);
+            });
+        });
+
+        // Table sorting
+        tableHeaders.forEach(th => {
+            th.addEventListener('click', () => {
+                const column = th.dataset.sort;
+                let direction = 'asc';
+
+                if (currentSort.column === column && currentSort.direction === 'asc') {
+                    direction = 'desc';
+                }
+
+                currentSort = { column, direction };
+                sortProducts(column, direction);
+            });
+        });
+
+        // Auto-load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-load products after a short delay
+            setTimeout(() => {
+                loadBtn.click();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

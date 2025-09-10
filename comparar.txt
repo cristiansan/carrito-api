@@ -211,35 +211,8 @@ function renderRows() {
   // Store the mapped data for cart lookups
   mappedStockData = allStockData.map(mapRow);
   
-  // Apply zero values filter first
-  let mapped = mappedStockData;
-  const hideZeroValues = document.getElementById('hideZeroValues');
-  
-  console.log('Total productos antes del filtro:', mapped.length);
-  console.log('Checkbox encontrado:', !!hideZeroValues);
-  console.log('Checkbox marcado:', hideZeroValues ? hideZeroValues.checked : 'N/A');
-  
-  // Mostrar algunos ejemplos de productos
-  console.log('Primeros 3 productos:', mapped.slice(0, 3).map(p => ({
-    item: p.item,
-    teorico: p.teorico,
-    transito: p.transito
-  })));
-  
-  // Contar productos con stock 0
-  const conStock = mapped.filter(p => p.teorico > 0).length;
-  const sinStock = mapped.filter(p => p.teorico === 0).length;
-  console.log('Productos CON stock teórico (>0):', conStock);
-  console.log('Productos SIN stock teórico (=0):', sinStock);
-  
-  if (hideZeroValues && hideZeroValues.checked) {
-    // Mostrar solo productos con stock teórico disponible
-    mapped = mapped.filter(p => p.teorico > 0);
-    console.log('Productos después del filtro (teorico > 0):', mapped.length);
-  } else {
-    // Filter: only show products where stock > 0 OR transit > 0 (default behavior)
-    mapped = mapped.filter(p => p.teorico > 0 || p.transito > 0);
-  }
+  // Filter: only show products where stock > 0 OR transit > 0
+  let mapped = mappedStockData.filter(p => p.teorico > 0 || p.transito > 0);
 
   // Add search filter
   if (searchQuery) {
@@ -371,12 +344,7 @@ function renderRows() {
           </div>
         `;
       } else {
-        const value = r[col.id];
-        td.textContent = value;
-        // Add red color class for zero values in numeric columns
-        if ((col.id === 'teorico' || col.id === 'transito') && Number(value) === 0) {
-          td.classList.add('zero-value');
-        }
+        td.textContent = r[col.id];
       }
       tr.appendChild(td);
     });
@@ -392,9 +360,6 @@ function renderRows() {
     <td class="right"><strong>${formatNumber(totalTransito)}</strong></td>
   `;
   tbody.appendChild(trTotal);
-  
-  // Actualizar estadísticas KPI - using the new field names but mapping to the old ones for compatibility
-  updateStats(filtered, totalTransito, totalTeorico);
 }
 
 async function refresh() {
@@ -633,13 +598,7 @@ function setupUI() {
     setupAutoRefresh();
   }
 
-  const hideZeroValues = document.getElementById('hideZeroValues');
   
-  if (hideZeroValues) {
-    hideZeroValues.addEventListener('change', () => {
-      renderRows();
-    });
-  }
 
   const searchBox = document.getElementById('searchBox');
   if (searchBox) {
@@ -794,50 +753,6 @@ function setupUI() {
       });
     }
   }
-
-  const versionBtn = document.getElementById('versionBtn');
-  if (versionBtn) {
-    versionBtn.addEventListener('click', () => {
-      const changelogModal = document.getElementById('changelogModal');
-      if (changelogModal) {
-        changelogModal.classList.remove('hidden');
-      }
-    });
-  }
-
-  const changelogModal = document.getElementById('changelogModal');
-  if (changelogModal) {
-    const closeButton = changelogModal.querySelector('.close-button');
-    if (closeButton) {
-      closeButton.addEventListener('click', () => {
-        changelogModal.classList.add('hidden');
-      });
-    }
-  }
-}
-
-// Función para actualizar estadísticas KPI - mantiene compatibilidad con el HTML existente
-function updateStats(filteredData, totalTransito, totalTeorico) {
-  const statsContainer = document.getElementById('statsContainer');
-  if (!statsContainer) return;
-
-  const totalProducts = filteredData.length;
-  const totalSum = totalTransito + totalTeorico;
-
-  // Actualizar elementos de estadísticas - usando los nombres originales del HTML
-  const totalProductsEl = document.getElementById('totalProducts');
-  const totalTransitoSumEl = document.getElementById('totalTransitoSum');
-  const totalDisponibleSumEl = document.getElementById('totalDisponibleSum');
-  const totalSumEl = document.getElementById('totalSum');
-
-  if (totalProductsEl) totalProductsEl.textContent = totalProducts.toLocaleString();
-  if (totalTransitoSumEl) totalTransitoSumEl.textContent = totalTransito.toLocaleString();
-  // Mapear teorico a disponible para mantener compatibilidad con el HTML
-  if (totalDisponibleSumEl) totalDisponibleSumEl.textContent = totalTeorico.toLocaleString();
-  if (totalSumEl) totalSumEl.textContent = totalSum.toLocaleString();
-
-  // Mostrar el contenedor de estadísticas si hay productos
-  statsContainer.style.display = totalProducts > 0 ? 'grid' : 'none';
 }
 
 window.addEventListener('DOMContentLoaded', () => {
