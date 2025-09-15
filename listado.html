@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Productos - South Traders</title>
+    <title>South Traders</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,9 @@
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: #ffffff;
             min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .container {
@@ -32,6 +35,15 @@
             border-radius: 10px;
             backdrop-filter: blur(10px);
         }
+
+        .header-logo {
+            height: auto;
+            margin-bottom: 15px;
+            max-width: 200px;
+            width: 100%;
+            object-fit: contain;
+        }
+
 
         .header h1 {
             color: #4CAF50;
@@ -321,6 +333,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <img src="logo.png" alt="Logo" class="header-logo">
             <h1>📦 Listado de Productos</h1>
             <p>Sistema de consulta de inventario en tiempo real</p>
         </div>

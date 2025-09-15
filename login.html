@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pagina 2 - Öppen</title>
+  <title>South Traders</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
-    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .login-container { background: #1e1e24; padding: 40px; border-radius: 8px; text-align: center; }
+    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; display: flex; justify-content: center; align-items: center; height: 100vh; width: 100%; max-width: 100%; overflow-x: hidden; box-sizing: border-box; }
+    .login-container { background: #1e1e24; padding: 40px; border-radius: 8px; text-align: center; width: 100%; max-width: 400px; box-sizing: border-box; margin: 0 20px; }
+    .logo { height: auto; margin-bottom: 20px; max-width: 200px; width: 100%; object-fit: contain; }
     h1 { margin-bottom: 20px; }
     input { display: block; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #3a3a44; background: #1b1b1f; color: #f0f0f0; }
     button { width: 100%; padding: 10px; border-radius: 4px; border: none; background: #4CAF50; color: white; cursor: pointer; }
@@ -24,11 +25,76 @@
     .close { position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; color: #aaa; cursor: pointer; }
     .close:hover { color: #f1f1f1; }
     #errorMessage { color: #ff6b6b; margin-top: 10px; font-size: 14px; }
+    
+    /* Disclaimer styles */
+    .disclaimer-section {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #3a3a44;
+    }
+    
+    .disclaimer-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    
+    .disclaimer-checkbox input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      margin-top: 2px;
+    }
+    
+    .disclaimer-text {
+      font-size: 14px;
+      line-height: 1.4;
+      color: #b5b5b5;
+    }
+    
+    .disclaimer-link {
+      color: #4CAF50;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    
+    .disclaimer-link:hover {
+      color: #45a049;
+    }
+    
+    .disclaimer-error {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .terms-modal .modal-content {
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .terms-content {
+      text-align: left;
+      line-height: 1.6;
+      color: #e6e6e6;
+    }
+    
+    .terms-content h3 {
+      color: #4CAF50;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    
+    .terms-content p {
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h1>Pagina 2</h1>
+    <img src="logo.png" alt="Logo" class="logo">
     <input type="email" placeholder="Email">
     <input type="password" placeholder="Password">
     <button id="loginBtn">Login</button>
@@ -42,6 +108,20 @@
       </svg>
       Continuar con Google
     </button>
+    
+    <!-- Disclaimer Section -->
+    <div class="disclaimer-section">
+      <div class="disclaimer-checkbox">
+        <input type="checkbox" id="termsCheckbox" checked>
+        <div class="disclaimer-text">
+          Acepto los <span class="disclaimer-link" id="termsLink">términos y condiciones</span> de uso del servicio.
+        </div>
+      </div>
+      <div class="disclaimer-error" id="termsError">
+        Debes aceptar los términos y condiciones para continuar.
+      </div>
+    </div>
+    
     <div class="links">
       <a href="#" id="registerLink">Register</a> | <a href="#">Forgot Password?</a>
     </div>
@@ -57,6 +137,36 @@
       <input type="password" id="confirmPassword" placeholder="Confirmar Contraseña">
       <button id="registerBtn">Crear Cuenta</button>
       <div id="registerError"></div>
+    </div>
+  </div>
+  
+  <!-- Modal de Términos y Condiciones -->
+  <div id="termsModal" class="modal terms-modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Términos y Condiciones</h2>
+      <div class="terms-content">
+        <h3>1. Aceptación de los Términos</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        
+        <h3>2. Uso del Servicio</h3>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        
+        <h3>3. Privacidad y Datos</h3>
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+        
+        <h3>4. Responsabilidades del Usuario</h3>
+        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+        
+        <h3>5. Limitación de Responsabilidad</h3>
+        <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+        
+        <h3>6. Modificaciones</h3>
+        <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.</p>
+        
+        <h3>7. Contacto</h3>
+        <p>Si tienes preguntas sobre estos términos y condiciones, puedes contactarnos a través de nuestros canales oficiales de comunicación.</p>
+      </div>
     </div>
   </div>
   
@@ -80,6 +190,47 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    // Función para crear o actualizar documento del usuario en Firestore
+    async function createOrUpdateUserDocument(user) {
+      try {
+        const { doc, getDoc, setDoc, updateDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        
+        const userRef = doc(db, 'usuarios', user.uid);
+        const userDoc = await getDoc(userRef);
+        
+        const userData = {
+          email: user.email,
+          displayName: user.displayName || user.email.split('@')[0],
+          photoURL: user.photoURL || null,
+          lastLogin: serverTimestamp(),
+          provider: user.providerData.length > 0 ? user.providerData[0].providerId : 'email'
+        };
+        
+        if (!userDoc.exists()) {
+          // Usuario nuevo - crear documento con admin: false por defecto
+          userData.admin = false;
+          userData.createdAt = serverTimestamp();
+          await setDoc(userRef, userData);
+          console.log('New user document created:', user.uid, user.email);
+        } else {
+          // Usuario existente - solo actualizar datos básicos, preservar admin
+          await updateDoc(userRef, {
+            email: userData.email,
+            displayName: userData.displayName,
+            photoURL: userData.photoURL,
+            lastLogin: userData.lastLogin,
+            provider: userData.provider
+          });
+          console.log('User document updated:', user.uid, user.email);
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Error creating/updating user document:', error);
+        return false;
+      }
+    }
     const googleProvider = new GoogleAuthProvider();
 
     // Elementos del DOM - Login
@@ -120,6 +271,9 @@
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log('Usuario autenticado:', userCredential.user);
+        
+        // Crear o actualizar documento en Firestore
+        await createOrUpdateUserDocument(userCredential.user);
         
         // Guardar estado de autenticación
         localStorage.setItem('userAuthenticated', 'true');
@@ -239,6 +393,9 @@
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         console.log('Usuario registrado:', userCredential.user);
         
+        // Crear documento en Firestore para el nuevo usuario
+        await createOrUpdateUserDocument(userCredential.user);
+        
         // Guardar estado de autenticación
         localStorage.setItem('userAuthenticated', 'true');
         localStorage.setItem('userEmail', email);
@@ -273,8 +430,134 @@
       }
     });
 
-    // Función de login con Google
-    googleBtn.addEventListener('click', async () => {
+
+    // === DISCLAIMER FUNCTIONALITY ===
+    const termsLink = document.getElementById('termsLink');
+    const termsModal = document.getElementById('termsModal');
+    const termsCheckbox = document.getElementById('termsCheckbox');
+    const termsError = document.getElementById('termsError');
+    
+    // Abrir modal de términos y condiciones
+    termsLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      termsModal.classList.add('show');
+    });
+    
+    // Cerrar modal de términos
+    termsModal.querySelector('.close').addEventListener('click', () => {
+      termsModal.classList.remove('show');
+    });
+    
+    // Cerrar modal haciendo click fuera del contenido
+    termsModal.addEventListener('click', (e) => {
+      if (e.target === termsModal) {
+        termsModal.classList.remove('show');
+      }
+    });
+    
+    // Función para validar términos y condiciones
+    function validateTerms() {
+      if (!termsCheckbox.checked) {
+        termsError.style.display = 'block';
+        termsCheckbox.focus();
+        return false;
+      } else {
+        termsError.style.display = 'none';
+        return true;
+      }
+    }
+    
+    // Ocultar error cuando se marca el checkbox
+    termsCheckbox.addEventListener('change', () => {
+      if (termsCheckbox.checked) {
+        termsError.style.display = 'none';
+      }
+    });
+    
+    // Modificar las funciones de login para validar términos
+    const originalLoginHandler = loginBtn.onclick;
+    
+    // Sobrescribir el evento de login normal
+    loginBtn.removeEventListener('click', originalLoginHandler);
+    loginBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!validateTerms()) {
+        return;
+      }
+      // Ejecutar login original si los términos están aceptados
+      await handleLogin();
+    });
+    
+    // Sobrescribir el evento de Google login
+    googleBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!validateTerms()) {
+        return;
+      }
+      // Ejecutar Google login original si los términos están aceptados
+      await handleGoogleLogin();
+    });
+    
+    // Función de login normal extraída
+    async function handleLogin() {
+      const email = document.querySelector('input[type="email"]').value;
+      const password = document.querySelector('input[type="password"]').value;
+      
+      if (!email || !password) {
+        showError('Por favor completa todos los campos');
+        return;
+      }
+      
+      if (!email.includes('@')) {
+        showError('Por favor ingresa un email válido');
+        return;
+      }
+      
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Iniciando sesión...';
+      
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('Usuario autenticado:', user);
+        
+        await createOrUpdateUserDocument(user);
+        
+        localStorage.setItem('userAuthenticated', 'true');
+        localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userDisplayName', user.displayName || user.email.split('@')[0]);
+        localStorage.setItem('userPhotoURL', user.photoURL || '');
+        
+        window.location.href = 'marketplace.html';
+        
+      } catch (error) {
+        console.error('Error en login:', error);
+        let errorMessage = 'Error al iniciar sesión';
+        
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMessage = 'Usuario no encontrado';
+            break;
+          case 'auth/wrong-password':
+            errorMessage = 'Contraseña incorrecta';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Email inválido';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = 'Demasiados intentos fallidos. Intenta más tarde.';
+            break;
+        }
+        
+        showError(errorMessage);
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+      }
+    }
+    
+    // Función de Google login extraída
+    async function handleGoogleLogin() {
       googleBtn.disabled = true;
       googleBtn.textContent = 'Iniciando con Google...';
       
@@ -283,13 +566,13 @@
         const user = result.user;
         console.log('Usuario autenticado con Google:', user);
         
-        // Guardar estado de autenticación
+        await createOrUpdateUserDocument(user);
+        
         localStorage.setItem('userAuthenticated', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userDisplayName', user.displayName);
         localStorage.setItem('userPhotoURL', user.photoURL);
         
-        // Redirigir al marketplace
         window.location.href = 'marketplace.html';
         
       } catch (error) {
@@ -298,13 +581,13 @@
         
         switch (error.code) {
           case 'auth/popup-closed-by-user':
-            errorMessage = 'Popup cerrado por el usuario';
+            errorMessage = 'Ventana cerrada por el usuario';
             break;
           case 'auth/popup-blocked':
             errorMessage = 'Popup bloqueado por el navegador';
             break;
           case 'auth/cancelled-popup-request':
-            errorMessage = 'Solicitud de popup cancelada';
+            errorMessage = 'Solicitud cancelada';
             break;
           case 'auth/operation-not-allowed':
             errorMessage = 'Login con Google deshabilitado';
@@ -324,7 +607,7 @@
           Continuar con Google
         `;
       }
-    });
+    }
   </script>
 </body>
 </html>

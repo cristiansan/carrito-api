@@ -23,14 +23,64 @@ let currentSort = {
 };
 let searchQuery = '';
 let selectedItems = new Map();
-let columnVisibility = {
-  item: true,
-  description: true,
-  teorico: true,
-  transito: true,
+// Default column visibility
+const defaultColumnVisibility = {
+  articulo: true, // Artículo - enabled by default
+  description: true, // Descripción - enabled by default
+  grupo: false,
+  stock: false,
+  disponible: false,
+  fechaActualizacion: false,
+  ordenVenta: true, // En Orden de Venta - enabled by default
+  ordenCompra: false,
+  stockTeorico: true, // Stock Teórico - enabled by default
+  teorico: false, // Stock Teorico de Stock - disabled by default
+  transito: false, // Stock Teorico Transito - disabled by default
+  costoContable: false,
+  totalCostoContable: false,
+  monedaCostoContable: false,
+  costoContableUnidadAlternativa: false,
   add: true,
   addToCart: true
 };
+
+// Load column visibility from localStorage or use defaults
+let columnVisibility = loadColumnVisibility();
+
+// Functions to persist column visibility
+function saveColumnVisibility() {
+  localStorage.setItem('columnVisibility', JSON.stringify(columnVisibility));
+}
+
+function loadColumnVisibility() {
+  try {
+    const saved = localStorage.getItem('columnVisibility');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Merge with defaults to ensure all columns are defined
+      return { ...defaultColumnVisibility, ...parsed };
+    }
+  } catch (e) {
+    console.error('Error loading column visibility:', e);
+  }
+  return { ...defaultColumnVisibility };
+}
+
+/* Función para actualizar estilos del botón add to cart */
+function updateCartButtonStyles(itemId, quantity) {
+  const cartBtn = document.querySelector(`.cart-btn[data-item="${itemId}"]`);
+  if (cartBtn) {
+    const isActive = quantity > 0;
+    cartBtn.style.background = isActive ? '#d32f2f' : '#fff';
+    cartBtn.style.color = isActive ? '#fff' : '#333';
+    cartBtn.style.border = `1px solid ${isActive ? '#d32f2f' : '#ddd'}`;
+    
+    const svg = cartBtn.querySelector('svg');
+    if (svg) {
+      svg.setAttribute('fill', isActive ? 'white' : '#333');
+    }
+  }
+}
 
 /* Utilidades */
 function normalizeKey(key) {
@@ -88,9 +138,9 @@ async function authenticateIfNeeded() {
 
 function segmentFilterPredicate(segment) {
   if (segment === 'all') return () => true;
-  if (segment === 'iphone') return r => /iphone/i.test(r.description || r.item || '');
-  if (segment === 'macbooks') return r => /macbook/i.test(r.description || r.item || '');
-  if (segment === 'samsung') return r => /samsung/i.test(r.description || r.item || '');
+  if (segment === 'iphone') return r => /iphone/i.test(r.description || r.articulo || '');
+  if (segment === 'macbooks') return r => /macbook/i.test(r.description || r.articulo || '');
+  if (segment === 'samsung') return r => /samsung/i.test(r.description || r.articulo || '');
   return () => true;
 }
 
@@ -143,71 +193,131 @@ async function fetchStock() {
 }
 
 function mapRow(raw) {
-  // item
-  const item = getFirstExisting(raw, ['item', 'Item', 'Artículo', 'Articulo', 'Codigo', 'Código']) ?? '';
-  // description
+  // articulo/item
+  const articulo = getFirstExisting(raw, ['Artículo', 'Articulo', 'item', 'Item', 'Codigo', 'Código']) ?? '';
+  
+  // descripción
   const description = getFirstExisting(raw, ['Descripción', 'Descripcion', 'description', 'Description', 'Detalle']) ?? '';
-  // theoretical stock (en depósito)
+  
+  // grupo
+  const grupo = getFirstExisting(raw, ['Grupo', 'Group', 'Categoria', 'Categoría']) ?? '';
+  
+  // stock
+  const stock = getFirstExisting(raw, ['Stock']) ?? '';
+  
+  // disponible
+  let disponible = getFirstExisting(raw, ['Disponible']);
+  disponible = Number.isFinite(Number(disponible)) ? Number(disponible) : parseLocaleNumber(String(disponible ?? ''));
+  if (!Number.isFinite(disponible)) disponible = 0;
+  
+  // fecha última actualización
+  const fechaActualizacion = getFirstExisting(raw, ['Fecha Ult. Actualización', 'FechaUltActualizacion', 'LastUpdate']) ?? '';
+  
+  // en orden de venta
+  let ordenVenta = getFirstExisting(raw, ['En Orden de Venta', 'EnOrdenDeVenta']);
+  ordenVenta = Number.isFinite(Number(ordenVenta)) ? Number(ordenVenta) : parseLocaleNumber(String(ordenVenta ?? ''));
+  if (!Number.isFinite(ordenVenta)) ordenVenta = 0;
+  
+  // en orden de compra
+  let ordenCompra = getFirstExisting(raw, ['En Orden de Compra', 'EnOrdenDeCompra']);
+  ordenCompra = Number.isFinite(Number(ordenCompra)) ? Number(ordenCompra) : parseLocaleNumber(String(ordenCompra ?? ''));
+  if (!Number.isFinite(ordenCompra)) ordenCompra = 0;
+  
+  // stock teórico
+  let stockTeorico = getFirstExisting(raw, ['Stock Teórico', 'Stock Teorico', 'StockTeorico']);
+  stockTeorico = Number.isFinite(Number(stockTeorico)) ? Number(stockTeorico) : parseLocaleNumber(String(stockTeorico ?? ''));
+  if (!Number.isFinite(stockTeorico)) stockTeorico = 0;
+  
+  // stock teorico de stock (teorico - for backward compatibility)
   let teorico = getFirstExisting(raw, [
-    // claves vistas en respuesta
     'Stock Teorico de Stock',
     'Stock Teórico',
-    'Stock',
-    'Disponible',
-    // variantes previas
     'TheoreticalStockStock',
-    'Stock teórico',
-    'Stock Teorico',
-    'StockTeorico',
-    'Cantidad'
+    'Stock teórico'
   ]);
-  // fallback heurístico: buscar primera clave que incluya 'stock' o 'cantidad'
+  // fallback heurístico: buscar primera clave que incluya 'stock teorico de stock'
   if (teorico === undefined) {
     for (const [k, v] of Object.entries(raw)) {
       const nk = normalizeKey(k);
-      if ((/stock|cantidad|disponible/.test(nk))) { teorico = v; break; }
+      if ((/stockteoricostock/.test(nk))) { teorico = v; break; }
     }
   }
   teorico = Number.isFinite(Number(teorico)) ? Number(teorico) : parseLocaleNumber(String(teorico ?? ''));
   if (!Number.isFinite(teorico)) teorico = 0;
-  // en transito
+  
+  // stock teorico transito (transito - for backward compatibility)
   let transito = getFirstExisting(raw, [
     'Stock Teorico Transito',
-    'En tránsito',
-    'En transito',
-    'Transito',
     'TheoreticalStockTransito'
   ]);
   if (transito === undefined) {
     for (const [k, v] of Object.entries(raw)) {
       const nk = normalizeKey(k);
-      if ((/transit|transito/.test(nk))) { transito = v; break; }
+      if ((/stockteoreicotransito/.test(nk))) { transito = v; break; }
     }
   }
   transito = Number.isFinite(Number(transito)) ? Number(transito) : parseLocaleNumber(String(transito ?? ''));
   if (!Number.isFinite(transito)) transito = 0;
+  
+  // costo contable
+  let costoContable = getFirstExisting(raw, ['Costo Contable', 'CostoContable']);
+  costoContable = Number.isFinite(Number(costoContable)) ? Number(costoContable) : parseLocaleNumber(String(costoContable ?? ''));
+  if (!Number.isFinite(costoContable)) costoContable = 0;
+  
+  // total costo contable
+  let totalCostoContable = getFirstExisting(raw, ['Total Costo Contable', 'TotalCostoContable']);
+  totalCostoContable = Number.isFinite(Number(totalCostoContable)) ? Number(totalCostoContable) : parseLocaleNumber(String(totalCostoContable ?? ''));
+  if (!Number.isFinite(totalCostoContable)) totalCostoContable = 0;
+  
+  // moneda de costo contable
+  const monedaCostoContable = getFirstExisting(raw, ['Moneda de Costo Contable', 'MonedaDeCostoContable']) ?? '';
+  
+  // costo contable unidad alternativa
+  let costoContableUnidadAlternativa = getFirstExisting(raw, ['Costo Contable Unidad Alternativa', 'CostoContableUnidadAlternativa']);
+  costoContableUnidadAlternativa = Number.isFinite(Number(costoContableUnidadAlternativa)) ? Number(costoContableUnidadAlternativa) : parseLocaleNumber(String(costoContableUnidadAlternativa ?? ''));
+  if (!Number.isFinite(costoContableUnidadAlternativa)) costoContableUnidadAlternativa = 0;
+  
   let price = 1000; // Default price
 
-  if (/iphone/i.test(description || item || '')) {
+  if (/iphone/i.test(description || articulo || '')) {
     price = 800;
-  } else if (/macbook/i.test(description || item || '')) {
+  } else if (/macbook/i.test(description || articulo || '')) {
     price = 1200;
-  } else if (/samsung/i.test(description || item || '')) {
+  } else if (/samsung/i.test(description || articulo || '')) {
     price = 500;
   }
 
   // Don't include price in index.html
   const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
   
+  const baseData = {
+    articulo: String(articulo),
+    description: String(description),
+    grupo: String(grupo),
+    stock: String(stock),
+    disponible,
+    fechaActualizacion: String(fechaActualizacion),
+    ordenVenta,
+    ordenCompra,
+    stockTeorico,
+    teorico, // Stock Teorico de Stock
+    transito, // Stock Teorico Transito
+    costoContable,
+    totalCostoContable,
+    monedaCostoContable: String(monedaCostoContable),
+    costoContableUnidadAlternativa
+  };
+  
   if (isIndex) {
-    return { item: String(item), description: String(description), teorico, transito };
+    return baseData;
   } else {
-    return { item: String(item), description: String(description), teorico, transito, price };
+    return { ...baseData, price };
   }
 }
 
 function renderRows() {
   const isMarketplace = window.location.pathname.includes('marketplace.html');
+  
   // Store the mapped data for cart lookups
   mappedStockData = allStockData.map(mapRow);
   
@@ -221,7 +331,7 @@ function renderRows() {
   
   // Mostrar algunos ejemplos de productos
   console.log('Primeros 3 productos:', mapped.slice(0, 3).map(p => ({
-    item: p.item,
+    articulo: p.articulo,
     teorico: p.teorico,
     transito: p.transito
   })));
@@ -244,7 +354,7 @@ function renderRows() {
   // Add search filter
   if (searchQuery) {
     const query = normalizeKey(searchQuery);
-    mapped = mapped.filter(p => normalizeKey(p.description).includes(query) || normalizeKey(p.item).includes(query));
+    mapped = mapped.filter(p => normalizeKey(p.description).includes(query) || normalizeKey(p.articulo).includes(query));
   }
 
   // Update tab counts
@@ -268,16 +378,36 @@ function renderRows() {
 
   // Build table headers dynamically
   const trHead = document.createElement('tr');
-  const columns = [
-    { id: 'item', label: 'Item', sortable: true, class: '' },
-    { id: 'description', label: 'Description', sortable: true, class: '' },
-    { id: 'teorico', label: 'Stock', sortable: true, class: 'right' },
-    { id: 'transito', label: 'Transit', sortable: true, class: 'right' }
+  
+  // Define all columns
+  let columns = [
+    { id: 'articulo', label: 'Artículo', sortable: true, class: '', width: '15%' },
+    { id: 'description', label: 'Descripción', sortable: true, class: '', width: '30%' },
+    { id: 'grupo', label: 'Grupo', sortable: true, class: '', width: '12%' },
+    { id: 'stock', label: 'Stock', sortable: true, class: '', width: '10%' },
+    { id: 'disponible', label: 'Disponible', sortable: true, class: 'right', width: '10%' },
+    { id: 'fechaActualizacion', label: 'Fecha Ult. Actualización', sortable: true, class: '', width: '12%' },
+    { id: 'ordenVenta', label: 'En Orden de Venta', sortable: true, class: 'right', width: '10%' },
+    { id: 'ordenCompra', label: 'En Orden de Compra', sortable: true, class: 'right', width: '10%' },
+    { id: 'stockTeorico', label: 'Stock Teórico', sortable: true, class: 'right', width: '10%' },
+    { id: 'teorico', label: 'Stock Teorico de Stock', sortable: true, class: 'right', width: '12%' },
+    { id: 'transito', label: 'Stock Teorico Transito', sortable: true, class: 'right', width: '12%' },
+    { id: 'costoContable', label: 'Costo Contable', sortable: true, class: 'right', width: '10%' },
+    { id: 'totalCostoContable', label: 'Total Costo Contable', sortable: true, class: 'right', width: '12%' },
+    { id: 'monedaCostoContable', label: 'Moneda de Costo Contable', sortable: true, class: '', width: '10%' },
+    { id: 'costoContableUnidadAlternativa', label: 'Costo Contable Unidad Alternativa', sortable: true, class: 'right', width: '15%' }
   ];
+
+  // Filter columns based on page - remove certain columns from index.html
+  const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
+  if (isIndex) {
+    const excludedColumnsForIndex = ['grupo', 'fechaActualizacion', 'costoContable', 'totalCostoContable', 'monedaCostoContable', 'costoContableUnidadAlternativa'];
+    columns = columns.filter(col => !excludedColumnsForIndex.includes(col.id));
+  }
 
   // Solo en marketplace agregamos la columna Quantity
   if (isMarketplace) {
-    columns.push({ id: 'quantity', label: 'Quantity', sortable: false, class: '' });
+    columns.push({ id: 'quantity', label: 'Quantity', sortable: false, class: '', width: '20%' });
   }
 
   let columnsToRender = columns.filter(col => columnVisibility[col.id] !== false);
@@ -323,17 +453,20 @@ function renderRows() {
     return (aVal - bVal) * dir;
   });
 
-  let totalTeorico = 0;
-  let totalTransito = 0;
+  // Initialize totals object for dynamic calculation
+  const totals = {};
+  const numericColumns = ['disponible', 'ordenVenta', 'ordenCompra', 'stockTeorico', 'teorico', 'transito', 'costoContable', 'totalCostoContable', 'costoContableUnidadAlternativa'];
+  
+  numericColumns.forEach(col => {
+    totals[col] = 0;
+  });
 
   for (const r of filtered) {
-    const item = r.item ?? '';
-    const desc = r.description ?? '';
-    const teorico = Number(r.teorico ?? 0);
-    const transito = Number(r.transito ?? 0);
-    const total = teorico + transito;
-    totalTeorico += teorico;
-    totalTransito += transito;
+    // Calculate totals for numeric columns
+    numericColumns.forEach(col => {
+      const value = Number(r[col] ?? 0);
+      totals[col] += value;
+    });
 
     const tr = document.createElement('tr');
     columnsToRender.forEach(col => {
@@ -342,17 +475,18 @@ function renderRows() {
         td.classList.add(col.class);
       }
       if (col.id === 'quantity' && isMarketplace) {
-        const quantity = selectedItems.get(item)?.quantity || 1;
+        const itemId = r.articulo;
+        const quantity = selectedItems.get(itemId)?.quantity || 0;
         td.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="qty-btn" data-action="decrease" data-item="${item}">-</button>
-            <span class="qty-value" data-item="${item}">${quantity}</span>
-            <button class="qty-btn" data-action="increase" data-item="${item}">+</button>
-            <button class="cart-btn" data-item="${item}" title="Add to cart"
+            <button class="qty-btn" data-action="decrease" data-item="${itemId}">-</button>
+            <input type="number" class="qty-input" data-item="${itemId}" value="${quantity}" min="0" max="999" style="width: 60px; text-align: center; padding: 4px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+            <button class="qty-btn" data-action="increase" data-item="${itemId}">+</button>
+            <button class="cart-btn" data-item="${itemId}" title="Add to cart"
               style="
-                background:#d32f2f;
-                color:#fff;
-                border:none;
+                background:${quantity > 0 ? '#d32f2f' : '#fff'};
+                color:${quantity > 0 ? '#fff' : '#333'};
+                border:1px solid ${quantity > 0 ? '#d32f2f' : '#ddd'};
                 border-radius:4px;
                 padding:8px 20px;
                 min-width:140px;
@@ -363,7 +497,7 @@ function renderRows() {
                 font-weight:500;
                 cursor:pointer;
               ">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 24 24">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="${quantity > 0 ? 'white' : '#333'}" viewBox="0 0 24 24">
                 <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-12.016-2l1.72-8h13.296l1.72 8h-16.736zm15.016-10v2h-16v-2h2.016l1.72-8h8.528l1.72 8h2.016z"/>
               </svg>
               <span style="white-space:nowrap;">Add to Cart</span>
@@ -374,7 +508,8 @@ function renderRows() {
         const value = r[col.id];
         td.textContent = value;
         // Add red color class for zero values in numeric columns
-        if ((col.id === 'teorico' || col.id === 'transito') && Number(value) === 0) {
+        const numericColumns = ['disponible', 'ordenVenta', 'ordenCompra', 'stockTeorico', 'teorico', 'transito', 'costoContable', 'totalCostoContable', 'costoContableUnidadAlternativa'];
+        if (numericColumns.includes(col.id) && Number(value) === 0) {
           td.classList.add('zero-value');
         }
       }
@@ -383,18 +518,34 @@ function renderRows() {
     tbody.appendChild(tr);
   }
 
-  // Fila de totales
+  // Fila de totales dinámica
   const trTotal = document.createElement('tr');
-  trTotal.innerHTML = `
-    <td></td>
-    <td><strong>Totals</strong></td>
-    <td class="right"><strong>${formatNumber(totalTeorico)}</strong></td>
-    <td class="right"><strong>${formatNumber(totalTransito)}</strong></td>
-  `;
+  columnsToRender.forEach((col, index) => {
+    const td = document.createElement('td');
+    if (col.class) {
+      td.classList.add(col.class);
+    }
+    
+    if (index === 0) {
+      // Primera columna - vacía
+      td.innerHTML = '';
+    } else if (index === 1) {
+      // Segunda columna - etiqueta "Totals"
+      td.innerHTML = '<strong>Totals</strong>';
+    } else if (numericColumns.includes(col.id)) {
+      // Columnas numéricas - mostrar total
+      td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
+    } else {
+      // Columnas no numéricas - vacías
+      td.innerHTML = '';
+    }
+    
+    trTotal.appendChild(td);
+  });
   tbody.appendChild(trTotal);
   
-  // Actualizar estadísticas KPI - using the new field names but mapping to the old ones for compatibility
-  updateStats(filtered, totalTransito, totalTeorico);
+  // Actualizar estadísticas KPI - using fixed function
+  updateStatsFixed(filtered, totals);
 }
 
 async function refresh() {
@@ -476,7 +627,9 @@ function exportToExcel() {
 
          // Obtener datos de la tabla actual (sin la fila de totales)
      const dataRows = rows.slice(0, -1);
-     const headers = ['Item', 'Descripción', 'Stock', 'Transit'];
+     // Get headers dynamically from visible columns
+     const headerElements = document.querySelectorAll('thead th');
+     const headers = Array.from(headerElements).map(th => th.textContent.replace(' ▾', ''));
     
     const excelData = [headers];
     
@@ -528,7 +681,7 @@ function handleBuyButtonClick(e) {
   if (input) input.value = value;
   // Update selectedItems map
   if (value > 0) {
-    const product = allStockData.find(p => p.item === itemId);
+    const product = allStockData.find(p => p.articulo === itemId || p.item === itemId);
     if (product) {
       selectedItems.set(itemId, { product, quantity: value });
     }
@@ -540,7 +693,7 @@ function handleBuyButtonClick(e) {
     const badge = document.querySelector(`[data-item-badge="${itemId}"]`);
     const existing = selectedItems.get(itemId);
     const nextQty = existing ? existing.quantity + 1 : 1;
-    const product = allStockData.find(p => p.item === itemId);
+    const product = allStockData.find(p => p.articulo === itemId || p.item === itemId);
     if (product) {
       selectedItems.set(itemId, { product, quantity: nextQty });
       if (badge) badge.textContent = String(nextQty);
@@ -558,7 +711,7 @@ function handleBuyInputChange(e) {
   e.target.value = value;
   // Update selectedItems map
   if (value > 0) {
-    const product = allStockData.find(p => p.item === itemId); // Find the full product object
+    const product = allStockData.find(p => p.articulo === itemId || p.item === itemId); // Find the full product object
     if (product) {
       selectedItems.set(itemId, { product: product, quantity: value }); // Store product object and quantity
     }
@@ -680,16 +833,16 @@ function setupUI() {
         e.stopPropagation();
         
         const itemId = cartBtn.getAttribute('data-item');
-        const qtyElement = document.querySelector(`.qty-value[data-item="${itemId}"]`);
-        
+        const qtyElement = document.querySelector(`.qty-input[data-item="${itemId}"]`);
+
         if (!itemId || !qtyElement) {
           console.error('Could not find item ID or quantity element');
           return;
         }
-        
-        const qty = parseInt(qtyElement.textContent, 10) || 1;
+
+        const qty = parseInt(qtyElement.value, 10) || 1;
         // Find the product in the mapped data
-        const product = mappedStockData.find(p => p.item === itemId);
+        const product = mappedStockData.find(p => p.articulo === itemId);
         
         if (product) {
           // Update selected items
@@ -697,7 +850,7 @@ function setupUI() {
           
           // Save cart to localStorage
           const cartData = Array.from(selectedItems.entries()).map(([id, { product, quantity }]) => ({
-            item: product.item,
+            item: product.articulo,
             description: product.description,
             price: product.price,
             quantity
@@ -719,18 +872,21 @@ function setupUI() {
         
         const btn = e.target.closest('.qty-btn');
         const itemId = btn.getAttribute('data-item');
-        const qtyElement = document.querySelector(`.qty-value[data-item="${itemId}"]`);
-        
+        const qtyElement = document.querySelector(`.qty-input[data-item="${itemId}"]`);
+
         if (qtyElement) {
-          let qty = parseInt(qtyElement.textContent, 10) || 1;
-          qty = Math.min(99, qty + 1); // Don't go over 99
-          qtyElement.textContent = qty;
+          let qty = parseInt(qtyElement.value, 10) || 0;
+          qty = Math.min(999, qty + 1); // Don't go over 999
+          qtyElement.value = qty;
           
           // Update selected items
-          const product = mappedStockData.find(p => p.item === itemId);
+          const product = mappedStockData.find(p => p.articulo === itemId);
           if (product) {
             selectedItems.set(itemId, { product, quantity: qty });
           }
+          
+          // Update cart button styles
+          updateCartButtonStyles(itemId, qty);
         }
       }
       // Handle quantity decrease button
@@ -740,18 +896,21 @@ function setupUI() {
         
         const btn = e.target.closest('.qty-btn');
         const itemId = btn.getAttribute('data-item');
-        const qtyElement = document.querySelector(`.qty-value[data-item="${itemId}"]`);
-        
+        const qtyElement = document.querySelector(`.qty-input[data-item="${itemId}"]`);
+
         if (qtyElement) {
-          let qty = parseInt(qtyElement.textContent, 10) || 1;
-          qty = Math.max(1, qty - 1); // Don't go below 1
-          qtyElement.textContent = qty;
+          let qty = parseInt(qtyElement.value, 10) || 0;
+          qty = Math.max(0, qty - 1); // Don't go below 0
+          qtyElement.value = qty;
           
           // Update selected items
-          const product = mappedStockData.find(p => p.item === itemId);
+          const product = mappedStockData.find(p => p.articulo === itemId);
           if (product) {
             selectedItems.set(itemId, { product, quantity: qty });
           }
+          
+          // Update cart button styles
+          updateCartButtonStyles(itemId, qty);
         }
       }
       // Handle buy button click
@@ -765,6 +924,29 @@ function setupUI() {
         handleBuyInputChange(e);
       }
     });
+
+    // Add input event listener for quantity inputs
+    tbody.addEventListener('input', (e) => {
+      if (e.target.classList.contains('qty-input')) {
+        const itemId = e.target.getAttribute('data-item');
+        let qty = parseInt(e.target.value, 10) || 0;
+
+        // Ensure quantity stays within bounds
+        qty = Math.max(0, Math.min(999, qty));
+        e.target.value = qty;
+
+        // Update selected items
+        const product = mappedStockData.find(p => p.articulo === itemId);
+        if (product && qty > 0) {
+          selectedItems.set(itemId, { product, quantity: qty });
+        } else if (qty === 0) {
+          selectedItems.delete(itemId);
+        }
+
+        // Update cart button styles
+        updateCartButtonStyles(itemId, qty);
+      }
+    });
   }
 
   const filterBtn = document.getElementById('filterBtn');
@@ -776,10 +958,14 @@ function setupUI() {
 
     columnFilterDropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
       const columnId = checkbox.getAttribute('data-column');
-      checkbox.checked = columnVisibility[columnId]; // Set initial state
+      // Skip non-column checkboxes (like hideZeroValues)
+      if (!columnId) return;
+      
+      checkbox.checked = columnVisibility[columnId]; // Set initial state from saved preferences
 
       checkbox.addEventListener('change', (e) => {
         columnVisibility[columnId] = e.target.checked;
+        saveColumnVisibility(); // Save to localStorage
         renderRows();
       });
     });
@@ -816,33 +1002,237 @@ function setupUI() {
   }
 }
 
-// Función para actualizar estadísticas KPI - mantiene compatibilidad con el HTML existente
-function updateStats(filteredData, totalTransito, totalTeorico) {
+// Función para actualizar estadísticas KPI - totalmente dinámica basada en columnas visibles
+function updateStats(filteredData, totals) {
   const statsContainer = document.getElementById('statsContainer');
-  if (!statsContainer) return;
+  const isMarketplace = window.location.pathname.includes('marketplace.html');
+  
+  console.log('updateStats called:', {
+    isMarketplace,
+    statsContainer: !!statsContainer,
+    filteredDataLength: filteredData.length,
+    totals: totals,
+    pathname: window.location.pathname
+  });
+  
+  if (!statsContainer) {
+    console.error('statsContainer not found');
+    return;
+  }
 
   const totalProducts = filteredData.length;
-  const totalSum = totalTransito + totalTeorico;
+  
+  // Clear existing stats
+  statsContainer.innerHTML = '';
+  
+  // Always show total products
+  const productCard = document.createElement('div');
+  productCard.className = 'stat-card';
+  productCard.innerHTML = `
+    <div class="stat-number">${totalProducts.toLocaleString()}</div>
+    <div class="stat-label">Total Productos</div>
+  `;
+  statsContainer.appendChild(productCard);
+  
+  // Show stats for visible numeric columns only
+  let availableNumericColumns = [
+    { id: 'disponible', label: 'Suma Disponible' },
+    { id: 'ordenVenta', label: 'Suma En Orden de Venta' },
+    { id: 'ordenCompra', label: 'Suma En Orden de Compra' },
+    { id: 'stockTeorico', label: 'Suma Stock Teórico' },
+    { id: 'teorico', label: 'Suma Stock Teorico de Stock' },
+    { id: 'transito', label: 'Suma Stock Teorico Transito' },
+    { id: 'costoContable', label: 'Suma Costo Contable' },
+    { id: 'totalCostoContable', label: 'Suma Total Costo Contable' },
+    { id: 'costoContableUnidadAlternativa', label: 'Suma Costo Contable Unidad Alt.' }
+  ];
+  
+  // Filter out certain KPIs from index.html
+  const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
+  if (isIndex) {
+    const excludedKPIsForIndex = ['costoContable', 'totalCostoContable', 'costoContableUnidadAlternativa'];
+    availableNumericColumns = availableNumericColumns.filter(col => !excludedKPIsForIndex.includes(col.id));
+  }
+  
+  const visibleNumericColumns = availableNumericColumns.filter(col => columnVisibility[col.id]);
 
-  // Actualizar elementos de estadísticas - usando los nombres originales del HTML
-  const totalProductsEl = document.getElementById('totalProducts');
-  const totalTransitoSumEl = document.getElementById('totalTransitoSum');
-  const totalDisponibleSumEl = document.getElementById('totalDisponibleSum');
-  const totalSumEl = document.getElementById('totalSum');
+  visibleNumericColumns.forEach(col => {
+    const value = totals[col.id] || 0;
+    const statCard = document.createElement('div');
+    statCard.className = 'stat-card';
+    statCard.innerHTML = `
+      <div class="stat-number">${value.toLocaleString()}</div>
+      <div class="stat-label">${col.label}</div>
+    `;
+    statsContainer.appendChild(statCard);
+  });
 
-  if (totalProductsEl) totalProductsEl.textContent = totalProducts.toLocaleString();
-  if (totalTransitoSumEl) totalTransitoSumEl.textContent = totalTransito.toLocaleString();
-  // Mapear teorico a disponible para mantener compatibilidad con el HTML
-  if (totalDisponibleSumEl) totalDisponibleSumEl.textContent = totalTeorico.toLocaleString();
-  if (totalSumEl) totalSumEl.textContent = totalSum.toLocaleString();
-
-  // Mostrar el contenedor de estadísticas si hay productos
+  // Always show container if there are products
   statsContainer.style.display = totalProducts > 0 ? 'grid' : 'none';
+  
+  console.log('updateStats final state:', {
+    totalProducts,
+    statsContainerDisplay: statsContainer.style.display,
+    statsContainerHTML: statsContainer.innerHTML.length
+  });
 }
 
+
+// Fixed updateStats function using compatible syntax
+function updateStatsFixed(filteredData, totals) {
+  var statsContainer = document.getElementById('statsContainer');
+  
+  if (!statsContainer) {
+    console.error('statsContainer not found');
+    return;
+  }
+
+  var totalProducts = filteredData.length;
+  
+  if (totalProducts === 0) {
+    statsContainer.style.display = 'none';
+    return;
+  }
+  
+  // Clear existing stats
+  statsContainer.innerHTML = '';
+  statsContainer.style.display = 'grid';
+  
+  // Always show total products
+  var productCard = document.createElement('div');
+  productCard.className = 'stat-card';
+  productCard.innerHTML = '' +
+    '<div class="stat-number">' + totalProducts.toLocaleString() + '</div>' +
+    '<div class="stat-label">Total Productos</div>';
+  statsContainer.appendChild(productCard);
+  
+  // Show stats for visible numeric columns only
+  var visibleColumns = [];
+  if (columnVisibility.disponible) {
+    visibleColumns.push({ id: 'disponible', label: 'Disponible' });
+  }
+  if (columnVisibility.ordenVenta) {
+    visibleColumns.push({ id: 'ordenVenta', label: 'Orden de Venta' });
+  }
+  if (columnVisibility.ordenCompra) {
+    visibleColumns.push({ id: 'ordenCompra', label: 'Orden de Compra' });
+  }
+  if (columnVisibility.stockTeorico) {
+    visibleColumns.push({ id: 'stockTeorico', label: 'Stock Teórico' });
+  }
+  if (columnVisibility.teorico) {
+    visibleColumns.push({ id: 'teorico', label: 'Stock Teorico de Stock' });
+  }
+  if (columnVisibility.transito) {
+    visibleColumns.push({ id: 'transito', label: 'Stock Teorico Transito' });
+  }
+  if (columnVisibility.costoContable) {
+    visibleColumns.push({ id: 'costoContable', label: 'Costo Contable' });
+  }
+  if (columnVisibility.totalCostoContable) {
+    visibleColumns.push({ id: 'totalCostoContable', label: 'Total Costo Contable' });
+  }
+  if (columnVisibility.costoContableUnidadAlternativa) {
+    visibleColumns.push({ id: 'costoContableUnidadAlternativa', label: 'Costo Contable Unidad Alternativa' });
+  }
+
+  for (var i = 0; i < visibleColumns.length; i++) {
+    var col = visibleColumns[i];
+    var value = totals[col.id] || 0;
+    var statCard = document.createElement('div');
+    statCard.className = 'stat-card';
+    statCard.innerHTML = '' +
+      '<div class="stat-number">' + value.toLocaleString() + '</div>' +
+      '<div class="stat-label">' + col.label + '</div>';
+    statsContainer.appendChild(statCard);
+  }
+}
+
+
 window.addEventListener('DOMContentLoaded', () => {
-  setupUI();  if (document.getElementById('tbody')) {
+  setupUI();
+  
+  if (document.getElementById('tbody')) {
     refresh();
   }
 });
+
+// === UTILIDADES AGREGADAS DE PNG_UTILS.JS ===
+
+function $form_get_args(f) {
+  var c = "";
+  var b = ["input", "select", "textarea"];
+  for (var g = 0; g < 3; g++) {
+    var a = f.getElementsByTagName(b[g]);
+    for (var d = 0; d < a.length; d++) {
+      var h = a[d];
+      if ((!h.name) || h.disabled || ((h.type === "checkbox" || h.type === "radio") && !h.checked)) {
+        continue;
+      }
+      c += (c ? "&" : "") + h.name + "=" + encodeURIComponent(h.value);
+    }
+  }
+  return c;
+}
+
+function copy_element_to_clipboard(d, f) {
+  if (!d) { return; }
+  var j = document.body, i, c;
+  if (document.createRange && window.getSelection) {
+    i = document.createRange();
+    c = window.getSelection();
+    c.removeAllRanges();
+    try {
+      i.selectNodeContents(d);
+      c.addRange(i);
+    } catch (k) {
+      i.selectNode(d);
+      c.addRange(i);
+    }
+  } else {
+    if (j.createTextRange) {
+      i = j.createTextRange();
+      i.moveToElementText(d);
+      i.select();
+    }
+  }
+  document.execCommand("Copy");
+  c.removeAllRanges();
+  if (f) {
+    var a = f.disabled;
+    f.disabled = true;
+    var b = f.querySelector("span") || f;
+    var g = b.innerHTML;
+    b.innerHTML = "¡Copiado!";
+    setTimeout(function() {
+      b.innerHTML = g;
+      f.disabled = a;
+    }, 2000);
+  }
+}
+
+function $http_get(url, onready) {
+  var http = new XMLHttpRequest();
+  http.open("GET", url);
+  http.onreadystatechange = function() {
+    if (onready && http.readyState === 4) onready(http.response);
+  };
+  http.send();
+}
+
+function curr_to_html(d) {
+  return d.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(".", "<span class=\"dp\">.</span><sup>").replace(",", ".") + "</sup>";
+}
+
+function curr_to_html2(d) {
+  return Math.abs(d) < 0.0001 ? "" : curr_to_html(d);
+}
+
+function qty_to_html(c) {
+  return "" + c;
+}
+
+function qty_to_html2(c) {
+  return c === 0 ? "" : ("" + c);
+}
 

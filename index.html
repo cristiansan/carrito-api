@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pagina 1 - Öppen</title>
+  <title>South Traders</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
-    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; }
-    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; }
+    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
+    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; gap: 12px; }
+    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
-    .container { padding: 16px; }
+    .container { padding: 16px; width: 100%; box-sizing: border-box; }
     .tabs { display: flex; gap: 8px; border-bottom: 1px solid #2a2a2a; margin-bottom: 12px; }
     .tab { padding: 8px 12px; cursor: pointer; border: 1px solid #2a2a2a; border-bottom: none; border-radius: 6px 6px 0 0; background: #1b1b1f; color: #e6e6e6; }
     .tab.active { background: #23232a; font-weight: 600; color: #ffffff; }
-    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; position: relative; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; position: relative; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
     .toolbar button { padding: 6px 10px; cursor: pointer; background: #2a2a33; color: #f0f0f0; border: 1px solid #3a3a44; border-radius: 4px; }
     .status { font-size: 12px; color: #b5b5b5; }
     table { width: 100%; border-collapse: collapse; color: #f0f0f0; table-layout: fixed; }
@@ -252,8 +253,8 @@
 </head>
 <body>
   <header>
-    <h1>Pagina 1</h1>
-    <span id="versionBtn" class="version-btn">v0.6</span>
+    <img src="logo.png" alt="Logo" class="header-logo">
+    <span id="versionBtn" class="version-btn">v0.11</span>
     <button id="maximizeBtn" class="icon-button">&#x2195;</button>
   </header>
 
@@ -280,11 +281,15 @@
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
-      <label><input type="checkbox" data-column="item" checked> Item</label>
-      <label><input type="checkbox" data-column="description" checked> Description</label>
-      <label><input type="checkbox" data-column="teorico" checked> Stock</label>
-      <label><input type="checkbox" data-column="transito" checked> Transit</label>
-      
+      <label><input type="checkbox" data-column="articulo" checked> Artículo</label>
+      <label><input type="checkbox" data-column="description" checked> Descripción</label>
+      <label><input type="checkbox" data-column="stock"> Stock</label>
+      <label><input type="checkbox" data-column="disponible"> Disponible</label>
+      <label><input type="checkbox" data-column="ordenVenta" checked> En Orden de Venta</label>
+      <label><input type="checkbox" data-column="ordenCompra"> En Orden de Compra</label>
+      <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
+      <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
+      <label><input type="checkbox" data-column="transito"> Stock Teorico Transito</label>
       
       <hr style="border-color: #3a3a44; margin: 8px 0;">
       <label><input type="checkbox" id="hideZeroValues"> Mostrar solo productos con stock disponible</label>
@@ -292,37 +297,11 @@
 
     <div id="errorBox" class="error hidden"></div>
 
-    <div class="stats-container" id="statsContainer" style="display: none;">
-      <div class="stat-card">
-        <div class="stat-number" id="totalProducts">0</div>
-        <div class="stat-label">Total Productos</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalDisponibleSum">0</div>
-        <div class="stat-label">Suma Stock</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalTransitoSum">0</div>
-        <div class="stat-label">Suma Transit</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalSum">0</div>
-        <div class="stat-label">Suma Total (Transit + Stock)</div>
-      </div>
-    </div>
+    <div class="stats-container" id="statsContainer" style="display: none;"></div>
 
     <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table>
-                 <thead>
-             <tr>
-               <th class="sortable" data-sort="item" style="width: 18%">Item ▾</th>
-               <th class="sortable" data-sort="description">Description ▾</th>
-               <th class="sortable right" data-sort="disponible" style="width: 12%">Stock ▾</th>
-               <th class="sortable right" data-sort="transito" style="width: 12%">Transit ▾</th>
-               
-               
-             </tr>
-           </thead>
+        <thead></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
@@ -344,14 +323,97 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.6 - Actual</h3>
+          <h3>v0.11 - Actual</h3>
           <ul>
-            <li>🔧 Actualizado mapeo de campos de comparar.txt (disponible → teorico)</li>
-            <li>✅ Corregido filtro "Mostrar solo productos con stock disponible"</li>
-            <li>🎨 Agregados colores rojos para valores de stock en cero</li>
-            <li>🔍 Mejorada lógica de filtrado de productos</li>
-            <li>📊 Mantenida compatibilidad con KPIs existentes</li>
-            <li>🔧 Sincronizados nombres de campos entre HTML y JavaScript</li>
+            <li>🛒 <strong>Sistema de confirmación de órdenes implementado</strong></li>
+            <li>📧 Eliminados botones de envío por WhatsApp y Email</li>
+            <li>✅ Nuevo botón único "Confirmar Orden" con numeración automática</li>
+            <li>🔢 Numeración de órdenes comenzando desde #10000, #10001, etc.</li>
+            <li>📋 Historial mejorado con números de orden y información del usuario</li>
+            <li>👤 Visualización de quién realizó cada orden en el historial</li>
+            <li>🔧 Campo de cantidad editable manualmente en marketplace</li>
+            <li>⌨️ Input numérico para ingresar cantidades altas (50, 100, etc.)</li>
+            <li>🔄 Compatibilidad mejorada entre Firebase v10 modular y compat SDK</li>
+            <li>🗑️ Funciones de limpiar y exportar historial completamente implementadas</li>
+            <li>📊 Exportación a CSV con datos completos de órdenes</li>
+            <li>🛡️ Manejo de errores robusto para evitar bloqueos de interfaz</li>
+            <li>🎯 Flujo simplificado: confirmar → número único → historial → redirect</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.10 - Sistema de Permisos</h3>
+          <ul>
+            <li>🔐 <strong>Sistema de permisos de usuario implementado</strong></li>
+            <li>👤 Verificación automática de permisos admin basada en Firebase</li>
+            <li>🚫 Usuarios no-admin: acceso restringido a filtros de columnas</li>
+            <li>✅ Usuarios no-admin: acceso permitido a HISTORIAL y LOGISTICS</li>
+            <li>🎯 Sistema consistente entre index.html, marketplace.html y order.html</li>
+            <li>🔧 Botón LOGISTICS agregado al menú de order.html</li>
+            <li>🚚 Modal de logistics completo con 3 secciones funcionales</li>
+            <li>🛡️ Manejo de errores con permisos restrictivos por seguridad</li>
+            <li>📋 Logging detallado para debugging de permisos</li>
+            <li>⚙️ Integración automática con onAuthStateChanged de Firebase</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.9 - Sistema Dinámico de Columnas</h3>
+          <ul>
+            <li>📊 <strong>Sistema completo de columnas dinámicas implementado</strong></li>
+            <li>🔧 Agregadas todas las columnas de la API (15 total) con filtrado</li>
+            <li>💾 Persistencia de filtros seleccionados en localStorage</li>
+            <li>📈 KPIs dinámicos que se actualizan según columnas visibles</li>
+            <li>🎯 Configuración específica de columnas por página (index vs marketplace)</li>
+            <li>📐 Columna descripción con ancho doble (30%)</li>
+            <li>🏷️ Limpieza de etiquetas KPI (removido "SUMA" y "SUMA EN")</li>
+            <li>🚀 Botón Logistics agregado en marketplace (sin iconos)</li>
+            <li>⚡ Optimización de compatibilidad JavaScript navegadores antiguos</li>
+            <li>🔄 Sistema de mapeo robusto con fallbacks para datos API</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.8 - Menu Administrativo</h3>
+          <ul>
+            <li>🍔 <strong>Hamburger menu administrativo implementado</strong></li>
+            <li>🔐 Sistema de permisos admin basado en Firestore</li>
+            <li>⚙️ Panel de configuración con WhatsApp y Email</li>
+            <li>💾 Almacenamiento automático en Firebase de configuraciones</li>
+            <li>🔔 Sistema de notificaciones toast con animaciones</li>
+            <li>📱 Integración automática con formulario de pedidos</li>
+            <li>📞 Configuración de contacto persistente entre sesiones</li>
+            <li>🚪 Función Logout mejorada y funcional</li>
+            <li>📋 Auto-relleno de datos de contacto en order.html</li>
+            <li>✨ Interfaz de configuración intuitiva y responsive</li>
+            <li>🛠️ Debug mejorado y manejo de errores Firebase</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.7 - Sistema de Pagos Crypto</h3>
+          <ul>
+            <li>💰 <strong>Sistema de pago crypto implementado</strong></li>
+            <li>🔗 Agregado QR code con address USDT (BSC) para pagos</li>
+            <li>📝 Campo para hash de transacción con validación</li>
+            <li>📋 Función de copia de address al clipboard</li>
+            <li>🎯 Validación automática de formato de hash (0x + 66 chars)</li>
+            <li>✅ Confirmación y almacenamiento local de transacciones</li>
+            <li>🛒 Botón "Seguir Comprando" para volver al marketplace</li>
+            <li>🔄 Estados visuales dinámicos en botones de pago</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.6 - Marketplace Mejorado</h3>
+          <ul>
+            <li>🚪 Botón Logout funcional en marketplace</li>
+            <li>🔴 Valores en 0 mostrados en color rojo</li>
+            <li>📊 KPIs integrados en marketplace (Total Productos, Stock, Transit)</li>
+            <li>🎨 Botones Add to Cart dinámicos (blanco→rojo con cantidad)</li>
+            <li>0️⃣ Quantity por defecto en 0 en lugar de 1</li>
+            <li>🔧 Lógica mejorada para actualización visual de botones</li>
+            <li>🎯 Estilos consistentes entre páginas</li>
           </ul>
         </div>
         
@@ -405,6 +467,134 @@
     </div>
   </div>
 
+  <script type="module">
+    // === FIREBASE CONFIGURATION ===
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, collection } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCqtKOA_gMEi5CfvZF6Q3o_cJ0h-dZj4Ns",
+      authDomain: "carrito-138c3.firebaseapp.com",
+      projectId: "carrito-138c3",
+      storageBucket: "carrito-138c3.appspot.com",
+      messagingSenderId: "636994473430",
+      appId: "1:636994473430:web:a7b4e5adaae6d1b0f2a5bd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // === EXPOSAR FIREBASE EN WINDOW PARA COMPATIBILIDAD ===
+    window.firebase = {
+      app: () => app,
+      auth: () => auth,
+      firestore: () => db,
+      firestoreHelpers: {
+        doc, getDoc, setDoc, collection
+      },
+      authHelpers: {
+        onAuthStateChanged, signOut
+      }
+    };
+
+    // === USER PERMISSIONS CHECK ===
+    async function checkUserPermissions(user) {
+      try {
+        console.log('🔐 Verificando permisos para usuario:', user.email);
+        
+        const userRef = doc(db, 'usuarios', user.uid);
+        const userDoc = await getDoc(userRef);
+        
+        let isAdmin = false;
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          isAdmin = userData.admin === true;
+          console.log('👤 Usuario encontrado:', userData);
+          console.log('🔐 Es admin:', isAdmin);
+        } else {
+          console.log('⚠️ Usuario no encontrado en Firestore, asumiendo no-admin');
+        }
+        
+        // Función para aplicar visibilidad de controles
+        const applyControlsVisibility = () => {
+          const filterBtn = document.getElementById('filterBtn');
+          const columnFilterDropdown = document.getElementById('columnFilterDropdown');
+          
+          console.log('🔍 Elementos encontrados:');
+          console.log('- filterBtn:', !!filterBtn);
+          console.log('- columnFilterDropdown:', !!columnFilterDropdown);
+          
+          if (!isAdmin) {
+            console.log('🚫 Usuario NO-ADMIN: ocultando filtros');
+            if (filterBtn) {
+              filterBtn.style.display = 'none';
+              console.log('✅ Botón de filtro ocultado');
+            }
+            if (columnFilterDropdown) {
+              columnFilterDropdown.style.display = 'none';
+              console.log('✅ Dropdown de filtros ocultado');
+            }
+          } else {
+            console.log('✅ Usuario ADMIN: mostrando todos los controles');
+            if (filterBtn) {
+              filterBtn.style.display = 'block';
+              console.log('✅ Botón de filtro visible');
+            }
+            if (columnFilterDropdown) {
+              columnFilterDropdown.style.display = 'flex';
+              console.log('✅ Dropdown de filtros disponible');
+            }
+          }
+        };
+        
+        // Aplicar inmediatamente
+        applyControlsVisibility();
+        
+        // También aplicar después de un pequeño delay para asegurar que el DOM esté listo
+        setTimeout(applyControlsVisibility, 500);
+      } catch (error) {
+        console.error('❌ Error verificando permisos de usuario:', error);
+        // Por seguridad, ocultar controles si hay error
+        const filterBtn = document.getElementById('filterBtn');
+        const columnFilterDropdown = document.getElementById('columnFilterDropdown');
+        
+        if (filterBtn) filterBtn.style.display = 'none';
+        if (columnFilterDropdown) columnFilterDropdown.style.display = 'none';
+        
+        console.log('🚫 Error en verificación: ocultando controles por seguridad');
+      }
+    }
+
+    // === AUTH STATE LISTENER ===
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log('👤 Usuario autenticado en index.html, verificando permisos...');
+        await checkUserPermissions(user);
+      } else {
+        console.log('👤 Usuario no autenticado - página accesible sin login');
+        // No redirigir automáticamente - permitir acceso sin autenticación
+        // Los usuarios pueden usar el botón Login si desean autenticarse
+        
+        // Ocultar controles administrativos para usuarios no autenticados
+        const filterBtn = document.getElementById('filterBtn');
+        const columnFilterDropdown = document.getElementById('columnFilterDropdown');
+        
+        if (filterBtn) {
+          filterBtn.style.display = 'none';
+          console.log('✅ Filtros ocultados para usuario no autenticado');
+        }
+        if (columnFilterDropdown) {
+          columnFilterDropdown.style.display = 'none';
+          columnFilterDropdown.classList.add('hidden');
+        }
+      }
+    });
+
+    console.log('✅ Firebase inicializado en index.html');
+  </script>
+  
   <script src="main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   

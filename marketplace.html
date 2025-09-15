@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pagina 3 - Öppen</title>
+  <title>South Traders</title>
   <style>
     :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
-    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; }
-    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; }
+    body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
+    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; gap: 12px; }
+    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
-    .container { padding: 16px; }
+    .container { padding: 16px; width: 100%; box-sizing: border-box; }
     .tabs { display: flex; gap: 8px; border-bottom: 1px solid #2a2a2a; margin-bottom: 12px; }
     .tab { padding: 8px 12px; cursor: pointer; border: 1px solid #2a2a2a; border-bottom: none; border-radius: 6px 6px 0 0; background: #1b1b1f; color: #e6e6e6; }
     .tab.active { background: #23232a; font-weight: 600; color: #ffffff; }
-    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; position: relative; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; position: relative; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
     .toolbar button { padding: 6px 10px; cursor: pointer; background: #2a2a33; color: #f0f0f0; border: 1px solid #3a3a44; border-radius: 4px; }
     .status { font-size: 12px; color: #b5b5b5; }
     table { width: 100%; border-collapse: collapse; color: #f0f0f0; table-layout: fixed; }
@@ -24,6 +25,39 @@
     .hidden { display: none; }
     tr:nth-child(even) td { background: #15151a; }
     tr:nth-child(odd) td { background: #101015; }
+    .zero-value {
+      color: #ff6b6b !important;
+      font-weight: 500;
+    }
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: #1e1e24;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 12px;
+      background: #15151a;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+    }
+    .stat-number {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 0.85em;
+      color: #b5b5b5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
     th.sortable {
       cursor: pointer;
     }
@@ -36,16 +70,6 @@
       border-radius: 4px;
       background: #1b1b1f;
       color: #f0f0f0;
-    }
-    .icon-button {
-      background: none;
-      border: none;
-      color: #f1f1f1;
-      font-size: 24px;
-      cursor: pointer;
-      position: absolute;
-      top: 10px;
-      right: 10px;
     }
     #buyNowBtn {
       background-color: #f44336; /* Red */
@@ -197,12 +221,510 @@
         font-size: 12px;
       }
     }
+
+    /* === HAMBURGER MENU === */
+    .hamburger-btn {
+      position: fixed !important;
+      top: 20px !important;
+      right: 20px !important;
+      z-index: 1001 !important;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    
+    .hamburger-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+    
+    .hamburger-line {
+      width: 20px;
+      height: 2px;
+      background: white !important;
+      border-radius: 1px;
+      transition: all 0.3s ease;
+      display: block !important;
+    }
+    
+    .hamburger-btn.active .hamburger-line:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .hamburger-btn.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger-btn.active .hamburger-line:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+    
+    /* === SLIDE MENU === */
+    .slide-menu {
+      position: fixed !important;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000 !important;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    
+    .slide-menu.active {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .slide-menu-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+    }
+    
+    .slide-menu-content {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 400px;
+      height: 100%;
+      background: #1e1e24;
+      border-left: 1px solid #3a3a3f;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    .slide-menu.active .slide-menu-content {
+      transform: translateX(0);
+    }
+    
+    .slide-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #3a3a3f;
+    }
+    
+    .slide-menu-header h3 {
+      margin: 0;
+      color: #4CAF50;
+      font-size: 20px;
+    }
+    
+    .close-menu-btn {
+      background: none;
+      border: none;
+      color: #b5b5b5;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+      transition: color 0.3s ease;
+    }
+    
+    .close-menu-btn:hover {
+      color: #f1f1f1;
+    }
+    
+    /* === MENU TABS === */
+    .menu-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+    }
+    
+    .menu-btn {
+      width: 100%;
+      padding: 16px 20px;
+      border: none;
+      background: #2a2a33;
+      color: #f0f0f0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+      border-radius: 6px;
+    }
+    
+    .menu-btn:hover {
+      background: #4CAF50;
+      color: white;
+      transform: translateX(4px);
+    }
+    
+    
+    /* === CONFIG SECTION === */
+    .menu-content h4 {
+      color: #4CAF50;
+      margin: 20px 0 15px 0;
+      font-size: 16px;
+      border-bottom: 1px solid #3a3a3f;
+      padding-bottom: 8px;
+    }
+    
+    .config-group {
+      margin-bottom: 20px;
+    }
+    
+    .config-group label {
+      display: block;
+      color: #f1f1f1;
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .config-group input,
+    .config-group select {
+      width: 100%;
+      padding: 12px;
+      background: #2a2a2f;
+      border: 1px solid #3a3a3f;
+      border-radius: 6px;
+      color: #f1f1f1;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    .config-group input:focus,
+    .config-group select:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+    
+    .config-group small {
+      color: #b5b5b5;
+      font-size: 12px;
+      margin-top: 4px;
+      display: block;
+    }
+    
+    .refresh-input-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .refresh-input-group input {
+      flex: 1;
+    }
+    
+    .refresh-input-group select {
+      flex: 1;
+    }
+    
+    .config-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    
+    .save-config-btn,
+    .reset-config-btn,
+    .refresh-stats-btn,
+    .clear-stats-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .save-config-btn {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+    }
+    
+    .save-config-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    .reset-config-btn {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .reset-config-btn:hover {
+      background: #5a6268;
+    }
+    
+    /* === STATS SECTION === */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .stat-item {
+      background: #2a2a2f;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 3px solid #4CAF50;
+    }
+    
+    .stat-label {
+      color: #b5b5b5;
+      font-size: 12px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .stat-value {
+      color: #f1f1f1;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .stats-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .refresh-stats-btn {
+      background: linear-gradient(135deg, #2196F3, #1976D2);
+      color: white;
+    }
+    
+    .refresh-stats-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+    
+    .clear-stats-btn {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .clear-stats-btn:hover {
+      background: #c82333;
+    }
+
+    /* Historial Modal Styles */
+    .historial-content {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .historial-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: flex-end;
+    }
+
+    .clear-historial-btn,
+    .export-historial-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .clear-historial-btn {
+      background: #f44336;
+      color: white;
+    }
+
+    .clear-historial-btn:hover {
+      background: #d32f2f;
+    }
+
+    .export-historial-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .export-historial-btn:hover {
+      background: #45a049;
+    }
+
+    .historial-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .no-historial {
+      text-align: center;
+      padding: 40px 20px;
+      color: #b5b5b5;
+    }
+
+    .no-historial p {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .no-historial small {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .historial-item {
+      background: #2a2a33;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #4CAF50;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .historial-item:hover {
+      background: #3a3a44;
+      transform: translateX(4px);
+    }
+
+    .historial-items-preview {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #3a3a44;
+      color: #b5b5b5;
+    }
+
+    .historial-items-preview small {
+      margin-right: 8px;
+    }
+
+    .historial-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .historial-date {
+      font-size: 12px;
+      color: #b5b5b5;
+    }
+
+    .historial-method {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: #4CAF50;
+      color: white;
+    }
+
+    .historial-summary {
+      font-size: 14px;
+      color: #f0f0f0;
+    }
+
+    .historial-user {
+      font-size: 12px;
+      color: #4CAF50;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .slide-menu-content {
+        width: 100%;
+        max-width: 350px;
+      }
+    }
+
+    /* === TOAST NOTIFICATION === */
+    .toast-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      border-radius: 8px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(76, 175, 80, 0.3);
+      transform: translateX(400px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      max-width: 300px;
+    }
+
+    .toast-notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-notification.error {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+      box-shadow: 0 8px 32px rgba(244, 67, 54, 0.3);
+    }
+
+    /* Quantity input styling */
+    .qty-input {
+      width: 60px !important;
+      text-align: center !important;
+      padding: 4px 8px !important;
+      border: 1px solid #3a3a44 !important;
+      border-radius: 4px !important;
+      background: #1b1b1f !important;
+      color: #f0f0f0 !important;
+      font-size: 14px !important;
+      font-family: inherit !important;
+      transition: border-color 0.2s ease !important;
+    }
+
+    .qty-input:focus {
+      outline: none !important;
+      border-color: #4CAF50 !important;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2) !important;
+    }
+
+    .qty-input:hover {
+      border-color: #4a4a54 !important;
+    }
+
+    /* Remove number input spinners */
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0 !important;
+    }
+
+    .qty-input[type=number] {
+      -moz-appearance: textfield !important;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Pagina 3</h1>
-    <button id="maximizeBtn" class="icon-button">&#x2195;</button>
+    <img src="logo.png" alt="Logo" class="header-logo">
   </header>
 
   <div class="container">
@@ -224,31 +746,36 @@
       <span class="status" id="statusText"></span>
       <input type="text" id="searchBox" placeholder="Search model...">
       <div style="flex: 1;"></div> <!-- Spacer -->
+      <a href="#" id="logoutBtn" style="background-color: #f44336; color: white; padding: 6px 10px; border-radius: 4px; text-decoration: none;">Logout</a>
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
-      <label><input type="checkbox" data-column="item"> Item</label>
-      <label><input type="checkbox" data-column="description"> Description</label>
-      <label><input type="checkbox" data-column="disponible"> Stock</label>
-      <label><input type="checkbox" data-column="transito"> Transit</label>
+      <label><input type="checkbox" data-column="articulo" checked> Artículo</label>
+      <label><input type="checkbox" data-column="description" checked> Descripción</label>
+      <label><input type="checkbox" data-column="grupo"> Grupo</label>
+      <label><input type="checkbox" data-column="stock"> Stock</label>
+      <label><input type="checkbox" data-column="disponible"> Disponible</label>
+      <label><input type="checkbox" data-column="fechaActualizacion"> Fecha Ult. Actualización</label>
+      <label><input type="checkbox" data-column="ordenVenta" checked> En Orden de Venta</label>
+      <label><input type="checkbox" data-column="ordenCompra"> En Orden de Compra</label>
+      <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
+      <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
+      <label><input type="checkbox" data-column="transito"> Stock Teorico Transito</label>
+      <label><input type="checkbox" data-column="costoContable"> Costo Contable</label>
+      <label><input type="checkbox" data-column="totalCostoContable"> Total Costo Contable</label>
+      <label><input type="checkbox" data-column="monedaCostoContable"> Moneda de Costo Contable</label>
+      <label><input type="checkbox" data-column="costoContableUnidadAlternativa"> Costo Contable Unidad Alternativa</label>
       <label><input type="checkbox" data-column="price"> Price</label>
       
     </div>
 
     <div id="errorBox" class="error hidden"></div>
 
+    <div class="stats-container" id="statsContainer" style="display: none;"></div>
+
     <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table>
-                 <thead>
-             <tr>
-               <th class="sortable" data-sort="item" style="width: 20%">Item ▾</th>
-               <th class="sortable" data-sort="description">Description ▾</th>
-               <th class="sortable right" data-sort="disponible" style="width: 12%">Stock ▾</th>
-               <th class="sortable right" data-sort="transito" style="width: 12%">Transit ▾</th>
-               <th class="sortable right" data-sort="price">Price ▾</th>
-               <th>Quantity</th>
-             </tr>
-           </thead>
+        <thead></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
@@ -264,8 +791,1267 @@
 </div>
 
   <script src="main.js"></script>
+  <!-- Hamburger Menu Button -->
+  <button class="hamburger-btn" id="hamburgerBtn">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
+  <!-- Slide-in Menu -->
+  <div class="slide-menu" id="slideMenu">
+    <div class="slide-menu-overlay" id="slideMenuOverlay"></div>
+    <div class="slide-menu-content">
+      <div class="slide-menu-header">
+        <h3>Menu</h3>
+        <button class="close-menu-btn" id="closeMenuBtn">&times;</button>
+      </div>
+      
+      <div class="menu-sections">
+        <button class="menu-btn" id="configModalBtn">
+          CONFIG
+        </button>
+        <button class="menu-btn" id="statsModalBtn">
+          STATS
+        </button>
+        <button class="menu-btn" id="historialModalBtn">
+          HISTORIAL
+        </button>
+        <button class="menu-btn" id="logisticsModalBtn">
+          LOGISTICS
+        </button>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- CONFIG Modal -->
+  <div id="configModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>🔧 Configuración</h2>
+      
+      <h4>📞 Configuración de Contactos</h4>
+      <div class="menu-content" id="configContent">
+        <h4>📞 Configuración de Contactos</h4>
+        
+        <div class="config-group">
+          <label for="whatsappInput">WhatsApp (con código de país)</label>
+          <input type="tel" id="whatsappInput" placeholder="Ej: 5491123456789" maxlength="15">
+          <small>Sin +, espacios o guiones</small>
+        </div>
+        
+        <div class="config-group">
+          <label for="emailInput">Email para Pedidos</label>
+          <input type="email" id="emailInput" placeholder="ventas@empresa.com">
+        </div>
+        
+        <div class="config-group">
+          <label for="companyInput">Nombre de Empresa</label>
+          <input type="text" id="companyInput" placeholder="Mi Empresa">
+        </div>
+        
+        <h4>🔄 Configuración de Refresco</h4>
+        
+        <div class="config-group">
+          <label for="refreshTime">Tiempo de Auto-refresco</label>
+          <div class="refresh-input-group">
+            <input type="number" id="refreshValue" min="1" max="999" value="30">
+            <select id="refreshUnit">
+              <option value="seconds">Segundos</option>
+              <option value="minutes">Minutos</option>
+              <option value="hours">Horas</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="config-actions">
+          <button class="save-config-btn" id="saveConfigBtn">💾 Guardar Configuración</button>
+          <button class="reset-config-btn" id="resetConfigBtn">🔄 Restaurar</button>
+        </div>
+      </div>
+      
+      <!-- STATS Section -->
+      <div class="menu-content" id="statsContent" style="display: none;">
+        <h4>📈 Estadísticas del Sistema</h4>
+        
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Último refresco</div>
+            <div class="stat-value" id="lastRefreshStat">-</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-label">Total productos cargados</div>
+            <div class="stat-value" id="totalProductsStat">0</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-label">Items en carrito</div>
+            <div class="stat-value" id="cartItemsStat">0</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-label">Valor total carrito</div>
+            <div class="stat-value" id="cartValueStat">$0</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-label">Tiempo de refresco</div>
+            <div class="stat-value" id="refreshTimeStat">30s</div>
+          </div>
+          
+          <div class="stat-item">
+            <div class="stat-label">Configuración guardada</div>
+            <div class="stat-value" id="configSavedStat">❌</div>
+          </div>
+        </div>
+        
+        <div class="stats-actions">
+          <button class="refresh-stats-btn" id="refreshStatsBtn">🔄 Actualizar Stats</button>
+          <button class="clear-stats-btn" id="clearStatsBtn">🗑️ Limpiar Datos</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS Modal -->
+  <div id="statsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>📊 Estadísticas</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">Último refresco</div>
+          <div class="stat-value" id="lastRefreshStat">-</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-label">Total productos cargados</div>
+          <div class="stat-value" id="totalProductsStat">0</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-label">Items en carrito</div>
+          <div class="stat-value" id="cartItemsStat">0</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-label">Valor total carrito</div>
+          <div class="stat-value" id="cartValueStat">$0</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-label">Tiempo de refresco</div>
+          <div class="stat-value" id="refreshTimeStat">30s</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-label">Configuración guardada</div>
+          <div class="stat-value" id="configSavedStat">❌</div>
+        </div>
+      </div>
+      
+      <div class="stats-actions">
+        <button class="refresh-stats-btn" id="refreshStatsBtn">🔄 Actualizar Stats</button>
+        <button class="clear-stats-btn" id="clearStatsBtn">🗑️ Limpiar Datos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORIAL Modal -->
+  <div id="historialModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>📋 Historial de Pedidos</h2>
+      
+      <div class="historial-content">
+        <div class="historial-header">
+          <button class="clear-historial-btn" id="clearHistorialBtn">🗑️ Limpiar Historial</button>
+          <button class="export-historial-btn" id="exportHistorialBtn">📤 Exportar</button>
+        </div>
+        
+        <div class="historial-list" id="historialList">
+          <div class="no-historial">
+            <p>📝 No hay pedidos en el historial</p>
+            <small>Los pedidos enviados por WhatsApp/Email aparecerán aquí</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGISTICS Modal -->
+  <div id="logisticsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Logistics</h2>
+      
+      <div class="logistics-content">
+        <div class="logistics-section">
+          <h4>Shipping Status</h4>
+          <div class="logistics-info">
+            <p>Track and manage shipping information for orders.</p>
+            <button class="logistics-btn" id="trackOrdersBtn">Track Orders</button>
+          </div>
+        </div>
+        
+        <div class="logistics-section">
+          <h4>Inventory Management</h4>
+          <div class="logistics-info">
+            <p>Manage stock levels and inventory updates.</p>
+            <button class="logistics-btn" id="inventoryBtn">Manage Inventory</button>
+          </div>
+        </div>
+        
+        <div class="logistics-section">
+          <h4>Delivery Routes</h4>
+          <div class="logistics-info">
+            <p>Optimize delivery routes and schedules.</p>
+            <button class="logistics-btn" id="routesBtn">View Routes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log('🚀 Simple hamburger menu starting');
+    
+    // === FIREBASE STATUS CHECK ===
+    function checkFirebaseStatus() {
+      console.log('🔥 Verificando estado de Firebase...');
+      console.log('🔍 Firebase disponible:', typeof firebase !== 'undefined');
+      
+      if (typeof firebase !== 'undefined') {
+        console.log('🔍 Firebase.app():', !!firebase.app);
+        console.log('🔍 Firebase.auth():', !!firebase.auth);
+        console.log('🔍 Firebase.firestore():', !!firebase.firestore);
+        
+        try {
+          const currentUser = firebase.auth().currentUser;
+          console.log('👤 Usuario actual:', currentUser ? `${currentUser.email} (${currentUser.uid})` : 'No autenticado');
+        } catch (error) {
+          console.error('❌ Error accediendo a Firebase auth:', error);
+        }
+      } else {
+        console.error('❌ Firebase no está cargado');
+      }
+    }
+
+    // === HISTORIAL FUNCTIONS ===
+    // Cargar historial de pedidos desde Firebase
+    async function loadHistorial() {
+      const historialList = document.getElementById('historialList');
+
+      if (!historialList) {
+        console.warn('⚠️ Elemento historialList no encontrado en marketplace.html');
+        return;
+      }
+
+      if (!firebase || !firebase.auth().currentUser) {
+        historialList.innerHTML = `
+          <div class="no-historial">
+            <p>🔐 Necesitas estar autenticado</p>
+            <small>Inicia sesión para ver el historial de pedidos</small>
+          </div>
+        `;
+        return;
+      }
+
+      const currentUser = firebase.auth().currentUser;
+
+      try {
+        console.log('📋 Cargando historial desde Firebase en marketplace.html...');
+
+        // Usar la API modular v10 correctamente
+        const { collection, query, where, limit, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const q = query(
+          pedidosCollection,
+          where('userId', '==', currentUser.uid),
+          limit(50)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          historialList.innerHTML = `
+            <div class="no-historial">
+              <p>📝 No hay pedidos en el historial</p>
+              <small>Los pedidos confirmados aparecerán aquí</small>
+            </div>
+          `;
+          return;
+        }
+
+        const pedidos = [];
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          pedidos.push({
+            id: doc.id,
+            ...data
+          });
+        });
+
+        // Ordenar por fecha en JavaScript (más recientes primero)
+        pedidos.sort((a, b) => {
+          if (a.timestamp && b.timestamp) {
+            return b.timestamp - a.timestamp;
+          } else if (a.fecha && b.fecha) {
+            return b.fecha.toMillis() - a.fecha.toMillis();
+          }
+          return 0;
+        });
+
+        console.log(`✅ Cargados ${pedidos.length} pedidos desde Firebase en marketplace`);
+
+        historialList.innerHTML = pedidos.map(pedido => `
+          <div class="historial-item" onclick="showOrderDetails('${pedido.id}')">
+            <div class="historial-item-header">
+              <div class="historial-date">${pedido.fechaLocal}</div>
+              <div class="historial-method">${pedido.numeroOrden ? `#${pedido.numeroOrden}` : (pedido.estado || 'Confirmada')}</div>
+            </div>
+            <div class="historial-summary">${pedido.resumen}</div>
+            ${pedido.userDisplayName || pedido.userEmail ? `<div class="historial-user">👤 ${pedido.userDisplayName || pedido.userEmail}</div>` : ''}
+            <div class="historial-items-preview">
+              ${pedido.items.slice(0, 2).map(item => `<small>${item.description}</small>`).join(' • ')}
+              ${pedido.items.length > 2 ? `<small>... +${pedido.items.length - 2} más</small>` : ''}
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('❌ Error cargando historial en marketplace:', error);
+
+        if (historialList) {
+          historialList.innerHTML = `
+            <div class="no-historial">
+              <p>❌ Error cargando historial</p>
+              <small>Intenta recargar la página</small>
+            </div>
+          `;
+        }
+
+        // No relanzar el error para evitar romper el flujo
+        return;
+      }
+    }
+
+    // Mostrar detalles de un pedido
+    async function showOrderDetails(orderId) {
+      if (!firebase || !firebase.firestore) {
+        console.error('❌ Firebase no está disponible para mostrar detalles');
+        alert('❌ Error: Firebase no está disponible');
+        return;
+      }
+
+      try {
+        const { doc: docRef, getDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderDoc = docRef(db, 'pedidos', orderId);
+        const doc = await getDoc(orderDoc);
+
+        if (!doc.exists()) {
+          alert('❌ Pedido no encontrado');
+          return;
+        }
+
+        const orderData = doc.data();
+
+        const detailsHtml = `
+          <h3>📋 Detalles de la Orden ${orderData.numeroOrden ? `#${orderData.numeroOrden}` : ''}</h3>
+          <p><strong>Fecha:</strong> ${orderData.fechaLocal}</p>
+          <p><strong>Estado:</strong> ${orderData.estado || 'Confirmada'}</p>
+          ${orderData.userDisplayName || orderData.userEmail ? `<p><strong>Usuario:</strong> ${orderData.userDisplayName || orderData.userEmail}</p>` : ''}
+          <p><strong>Total:</strong> $${formatNumber(orderData.total)}</p>
+
+          <h4>🛒 Productos (${orderData.items.length}):</h4>
+          <div style="max-height: 200px; overflow-y: auto;">
+            ${orderData.items.map(item => `
+              <div style="padding: 8px; border-bottom: 1px solid #3a3a44;">
+                <strong>${item.description}</strong><br>
+                <small>Cantidad: ${item.quantity} | Precio: $${formatNumber(item.price)}</small>
+              </div>
+            `).join('')}
+          </div>
+
+          ${orderData.empresa ? `<h4>🏢 Empresa:</h4><p><small>${orderData.empresa}</small></p>` : ''}
+        `;
+
+        // Crear modal temporal para mostrar detalles
+        const detailModal = document.createElement('div');
+        detailModal.className = 'modal';
+        detailModal.innerHTML = `
+          <div class="modal-content">
+            <span class="close-button">&times;</span>
+            ${detailsHtml}
+          </div>
+        `;
+
+        document.body.appendChild(detailModal);
+        detailModal.classList.remove('hidden');
+
+        // Event listener para cerrar
+        detailModal.querySelector('.close-button').addEventListener('click', () => {
+          document.body.removeChild(detailModal);
+        });
+
+        detailModal.addEventListener('click', (e) => {
+          if (e.target === detailModal) {
+            document.body.removeChild(detailModal);
+          }
+        });
+
+      } catch (error) {
+        console.error('❌ Error cargando detalles:', error);
+        alert('❌ Error cargando detalles del pedido');
+        // No relanzar el error para evitar romper el flujo
+        return;
+      }
+    }
+
+    // Limpiar historial (Firebase + localStorage)
+    async function clearHistorial() {
+      if (!confirm('¿Estás seguro de que quieres eliminar todo el historial de pedidos?')) {
+        return;
+      }
+
+      try {
+        const currentUser = firebase.auth().currentUser;
+
+        // Limpiar Firebase si el usuario está autenticado
+        if (currentUser && firebase.firestore) {
+          console.log('🗑️ Eliminando pedidos de Firebase...');
+
+          const { collection, query, where, getDocs, deleteDoc, doc: docRef } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+
+          const pedidosCollection = collection(db, 'pedidos');
+          const q = query(pedidosCollection, where('userId', '==', currentUser.uid));
+          const querySnapshot = await getDocs(q);
+
+          // Eliminar todos los documentos
+          const deletePromises = [];
+          querySnapshot.forEach(doc => {
+            deletePromises.push(deleteDoc(doc.ref));
+          });
+
+          await Promise.all(deletePromises);
+          console.log(`✅ Eliminados ${querySnapshot.size} pedidos de Firebase`);
+        }
+
+        // Limpiar localStorage como fallback
+        localStorage.removeItem('pedidosHistorial');
+
+        // Recargar historial
+        loadHistorial();
+        alert('🗑️ Historial eliminado completamente');
+
+      } catch (error) {
+        console.error('❌ Error eliminando historial:', error);
+        alert('❌ Error eliminando historial. Intenta de nuevo.');
+      }
+    }
+
+    // Exportar historial (desde Firebase)
+    async function exportHistorial() {
+      try {
+        let pedidos = [];
+        const currentUser = firebase.auth().currentUser;
+
+        // Intentar cargar desde Firebase primero
+        if (currentUser && firebase.firestore) {
+          console.log('📊 Exportando desde Firebase...');
+
+          const { collection, query, where, getDocs } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+
+          const pedidosCollection = collection(db, 'pedidos');
+          const q = query(pedidosCollection, where('userId', '==', currentUser.uid));
+          const querySnapshot = await getDocs(q);
+
+          querySnapshot.forEach(doc => {
+            const data = doc.data();
+            pedidos.push({
+              fecha: data.fechaLocal,
+              numeroOrden: data.numeroOrden || '',
+              estado: data.estado || 'Confirmada',
+              resumen: data.resumen,
+              total: data.total,
+              items: data.cantidadItems,
+              usuario: data.userDisplayName || data.userEmail || '',
+              empresa: data.empresa || '',
+              timestamp: data.timestamp,
+              fechaFirestore: data.fecha
+            });
+          });
+
+          // Ordenar por fecha (más recientes primero)
+          pedidos.sort((a, b) => {
+            if (a.timestamp && b.timestamp) {
+              return b.timestamp - a.timestamp;
+            } else if (a.fechaFirestore && b.fechaFirestore) {
+              return b.fechaFirestore.toMillis() - a.fechaFirestore.toMillis();
+            }
+            return 0;
+          });
+        } else {
+          // Fallback a localStorage
+          console.log('📊 Exportando desde localStorage...');
+          const historialLocal = JSON.parse(localStorage.getItem('pedidosHistorial') || '[]');
+          pedidos = historialLocal.map(pedido => ({
+            fecha: pedido.fecha,
+            numeroOrden: '',
+            estado: pedido.metodo || 'Confirmada',
+            resumen: pedido.resumen,
+            total: '',
+            items: '',
+            usuario: '',
+            empresa: ''
+          }));
+        }
+
+        if (pedidos.length === 0) {
+          alert('📋 No hay pedidos para exportar');
+          return;
+        }
+
+        // Crear CSV
+        const csvContent = 'Fecha,Numero Orden,Estado,Resumen,Total,Items,Usuario,Empresa\\n' +
+          pedidos.map(pedido =>
+            `"${pedido.fecha}","${pedido.numeroOrden}","${pedido.estado}","${pedido.resumen.replace(/"/g, '""')}","${pedido.total}","${pedido.items}","${pedido.usuario}","${pedido.empresa}"`
+          ).join('\\n');
+
+        // Descargar archivo
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+          const url = URL.createObjectURL(blob);
+          link.setAttribute('href', url);
+          link.setAttribute('download', `historial_pedidos_${new Date().toISOString().split('T')[0]}.csv`);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        console.log(`✅ Exportados ${pedidos.length} pedidos`);
+
+      } catch (error) {
+        console.error('❌ Error exportando historial:', error);
+        alert('❌ Error exportando historial. Intenta de nuevo.');
+      }
+    }
+
+    // === TOAST NOTIFICATIONS ===
+    function showToast(message, type = 'success') {
+      // Crear elemento toast
+      const toast = document.createElement('div');
+      toast.className = `toast-notification ${type === 'error' ? 'error' : ''}`;
+      toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 18px;">${type === 'error' ? '❌' : '✅'}</span>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      // Agregar al body
+      document.body.appendChild(toast);
+      
+      // Mostrar con animación
+      setTimeout(() => {
+        toast.classList.add('show');
+      }, 100);
+      
+      // Ocultar y remover después de 3 segundos
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
+          }
+        }, 300);
+      }, 3000);
+    }
+    
+    // === CONFIGURACIÓN ===
+    let APP_CONFIG = {
+      whatsappNumber: '',
+      email: '',
+      companyName: 'Öppen Store',
+      refreshTime: 30,
+      refreshUnit: 'seconds'
+    };
+
+    // Cargar configuración desde Firebase
+    async function loadConfig() {
+      try {
+        if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
+          const user = firebase.auth().currentUser;
+          
+          // Usar las funciones de Firebase importadas
+          const { doc, getDoc } = firebase.firestoreHelpers;
+          const configRef = doc(firebase.firestore(), 'configuracion', user.uid);
+          const configDoc = await getDoc(configRef);
+          
+          if (configDoc.exists()) {
+            APP_CONFIG = { ...APP_CONFIG, ...configDoc.data() };
+            console.log('✅ Configuración cargada desde Firebase:', APP_CONFIG);
+            updateConfigInputs();
+            
+            // Mostrar toast informativo
+            showToast('Configuración cargada desde la nube', 'success');
+          }
+        }
+      } catch (error) {
+        console.error('Error cargando configuración:', error);
+      }
+    }
+
+    // Guardar configuración en Firebase
+    async function saveConfig() {
+      try {
+        console.log('🔄 Iniciando guardado de configuración...');
+        console.log('🔍 Firebase disponible:', typeof firebase !== 'undefined');
+        
+        if (typeof firebase === 'undefined') {
+          console.error('❌ Firebase no está definido');
+          return false;
+        }
+        
+        console.log('🔍 Firebase auth disponible:', !!firebase.auth);
+        const currentUser = firebase.auth().currentUser;
+        console.log('🔍 Usuario actual:', currentUser ? currentUser.email : 'No autenticado');
+        
+        if (currentUser) {
+          console.log('💾 Guardando en Firestore para usuario:', currentUser.uid);
+          console.log('📋 Datos a guardar:', APP_CONFIG);
+          
+          // Usar las funciones de Firebase importadas
+          const { doc, setDoc } = firebase.firestoreHelpers;
+          const configRef = doc(firebase.firestore(), 'configuracion', currentUser.uid);
+          await setDoc(configRef, APP_CONFIG);
+          
+          console.log('✅ Configuración guardada exitosamente en Firebase');
+          return true;
+        } else {
+          console.error('❌ Usuario no autenticado');
+          return false;
+        }
+      } catch (error) {
+        console.error('❌ Error guardando configuración:', error);
+        console.error('❌ Error details:', error.message);
+        console.error('❌ Error code:', error.code);
+        return false;
+      }
+    }
+
+    // Actualizar inputs con configuración actual
+    function updateConfigInputs() {
+      const whatsappInput = document.getElementById('whatsappInput');
+      const emailInput = document.getElementById('emailInput');
+      const companyInput = document.getElementById('companyInput');
+      
+      if (whatsappInput) whatsappInput.value = APP_CONFIG.whatsappNumber || '';
+      if (emailInput) emailInput.value = APP_CONFIG.email || '';
+      if (companyInput) companyInput.value = APP_CONFIG.companyName || 'Öppen Store';
+    }
+
+    // Guardar configuración desde inputs
+    async function saveConfigFromInputs() {
+      const whatsappInput = document.getElementById('whatsappInput');
+      const emailInput = document.getElementById('emailInput');
+      const companyInput = document.getElementById('companyInput');
+      
+      if (!whatsappInput || !emailInput || !companyInput) {
+        console.error('❌ Inputs de configuración no encontrados');
+        return;
+      }
+
+      const whatsapp = whatsappInput.value.trim();
+      const email = emailInput.value.trim();
+      const company = companyInput.value.trim();
+      
+      // Validaciones
+      if (whatsapp && !/^\d{10,15}$/.test(whatsapp)) {
+        showToast('El número de WhatsApp debe tener entre 10-15 dígitos (solo números)', 'error');
+        return;
+      }
+      
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Por favor ingresa un email válido', 'error');
+        return;
+      }
+      
+      // Actualizar configuración
+      APP_CONFIG.whatsappNumber = whatsapp;
+      APP_CONFIG.email = email;
+      APP_CONFIG.companyName = company || 'Öppen Store';
+      
+      // Guardar en Firebase
+      console.log('🚀 Intentando guardar configuración...');
+      const success = await saveConfig();
+      
+      if (success) {
+        // Mostrar toast de éxito
+        showToast('¡Configuración guardada correctamente!', 'success');
+        
+        // Feedback visual adicional en el botón
+        const saveBtn = document.getElementById('saveConfigBtn');
+        if (saveBtn) {
+          const originalText = saveBtn.textContent;
+          saveBtn.textContent = '✅ ¡Guardado!';
+          saveBtn.style.background = '#28a745';
+          
+          setTimeout(() => {
+            saveBtn.textContent = originalText;
+            saveBtn.style.background = '';
+          }, 2000);
+        }
+        
+        console.log('✅ Configuración actualizada:', APP_CONFIG);
+      } else {
+        // Mostrar mensaje de error más específico
+        if (typeof firebase === 'undefined') {
+          showToast('Firebase no está configurado correctamente', 'error');
+        } else if (!firebase.auth().currentUser) {
+          showToast('Debe iniciar sesión para guardar la configuración', 'error');
+        } else {
+          showToast('Error guardando la configuración. Verifique la consola', 'error');
+        }
+      }
+    }
+    
+    // === USER PERMISSIONS CHECK ===
+    async function checkUserPermissions(user) {
+      try {
+        console.log('🔐 Verificando permisos para usuario:', user.email);
+        
+        if (typeof firebase !== 'undefined' && firebase.firestoreHelpers) {
+          const { doc, getDoc } = firebase.firestoreHelpers;
+          const userRef = doc(firebase.firestore(), 'usuarios', user.uid);
+          const userDoc = await getDoc(userRef);
+          
+          let isAdmin = false;
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            isAdmin = userData.admin === true;
+            console.log('👤 Usuario encontrado:', userData);
+            console.log('🔐 Es admin:', isAdmin);
+          } else {
+            console.log('⚠️ Usuario no encontrado en Firestore, asumiendo no-admin');
+          }
+          
+          // Función para aplicar visibilidad de controles
+          const applyControlsVisibility = () => {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const filterBtn = document.getElementById('filterBtn');
+            const columnFilterDropdown = document.getElementById('columnFilterDropdown');
+            
+            // Elementos del menú
+            const configModalBtn = document.getElementById('configModalBtn');
+            const statsModalBtn = document.getElementById('statsModalBtn');
+            const historialModalBtn = document.getElementById('historialModalBtn');
+            const logisticsModalBtn = document.getElementById('logisticsModalBtn');
+            
+            console.log('🔍 Elementos encontrados:');
+            console.log('- hamburgerBtn:', !!hamburgerBtn);
+            console.log('- filterBtn:', !!filterBtn);
+            console.log('- columnFilterDropdown:', !!columnFilterDropdown);
+            console.log('- configModalBtn:', !!configModalBtn);
+            console.log('- statsModalBtn:', !!statsModalBtn);
+            console.log('- historialModalBtn:', !!historialModalBtn);
+            console.log('- logisticsModalBtn:', !!logisticsModalBtn);
+            
+            if (!isAdmin) {
+              console.log('🚫 Usuario NO-ADMIN: mostrando solo menú con historial');
+              
+              // Mostrar menú hamburguesa (pero con opciones limitadas)
+              if (hamburgerBtn) {
+                hamburgerBtn.style.display = 'block';
+                hamburgerBtn.style.visibility = 'visible';
+                console.log('✅ Menú hamburguesa visible');
+              }
+              
+              // Ocultar filtros completamente para no-admin
+              if (filterBtn) {
+                filterBtn.style.display = 'none !important';
+                filterBtn.style.visibility = 'hidden';
+                filterBtn.style.pointerEvents = 'none';
+                console.log('✅ Botón de filtro ocultado completamente');
+              }
+              if (columnFilterDropdown) {
+                columnFilterDropdown.style.display = 'none !important';
+                columnFilterDropdown.style.visibility = 'hidden';
+                columnFilterDropdown.style.pointerEvents = 'none';
+                columnFilterDropdown.classList.add('hidden');
+                console.log('✅ Dropdown de filtros ocultado completamente');
+              }
+              
+              // Ocultar opciones administrativas del menú (mostrar HISTORIAL y LOGISTICS)
+              if (configModalBtn) {
+                configModalBtn.style.display = 'none';
+                console.log('✅ CONFIG ocultado');
+              }
+              if (statsModalBtn) {
+                statsModalBtn.style.display = 'none';
+                console.log('✅ STATS ocultado');
+              }
+              if (logisticsModalBtn) {
+                logisticsModalBtn.style.display = 'block';
+                console.log('✅ LOGISTICS visible para usuario no-admin');
+              }
+              if (historialModalBtn) {
+                historialModalBtn.style.display = 'block';
+                console.log('✅ HISTORIAL visible para usuario no-admin');
+              }
+              
+            } else {
+              console.log('✅ Usuario ADMIN: mostrando todos los controles');
+              
+              // Mostrar todos los controles
+              if (hamburgerBtn) {
+                hamburgerBtn.style.display = 'block';
+                hamburgerBtn.style.visibility = 'visible';
+                console.log('✅ Menú hamburguesa visible');
+              }
+              if (filterBtn) {
+                // Restaurar completamente el estado normal para admin
+                filterBtn.style.display = '';
+                filterBtn.style.visibility = '';
+                filterBtn.style.pointerEvents = '';
+                console.log('✅ Botón de filtro completamente restaurado y funcional');
+              }
+              if (columnFilterDropdown) {
+                // Para admin, restaurar completamente el estado normal
+                columnFilterDropdown.style.display = '';
+                columnFilterDropdown.style.visibility = '';
+                columnFilterDropdown.style.pointerEvents = '';
+                // Asegurar que esté cerrado por defecto pero funcional
+                if (!columnFilterDropdown.classList.contains('hidden')) {
+                  columnFilterDropdown.classList.add('hidden');
+                }
+                console.log('✅ Dropdown de filtros completamente restaurado y funcional');
+              }
+              
+              // Mostrar todas las opciones del menú
+              if (configModalBtn) {
+                configModalBtn.style.display = 'block';
+                console.log('✅ CONFIG visible');
+              }
+              if (statsModalBtn) {
+                statsModalBtn.style.display = 'block';
+                console.log('✅ STATS visible');
+              }
+              if (logisticsModalBtn) {
+                logisticsModalBtn.style.display = 'block';
+                console.log('✅ LOGISTICS visible');
+              }
+              if (historialModalBtn) {
+                historialModalBtn.style.display = 'block';
+                console.log('✅ HISTORIAL visible');
+              }
+            }
+          };
+          
+          // Aplicar inmediatamente
+          applyControlsVisibility();
+          
+          // También aplicar después de un pequeño delay para asegurar que el DOM esté listo
+          setTimeout(applyControlsVisibility, 500);
+          
+          // Para usuarios no-admin, asegurar que los KPIs se muestren con columnas básicas
+          if (!isAdmin) {
+            setTimeout(() => {
+              console.log('🔄 Configurando columnas básicas para usuario no-admin...');
+              // Asegurar que al menos algunas columnas estén visibles para generar KPIs
+              const basicColumns = ['articulo', 'description', 'ordenVenta', 'stockTeorico'];
+              basicColumns.forEach(col => {
+                const checkbox = document.querySelector(`input[data-column="${col}"]`);
+                if (checkbox && !checkbox.checked) {
+                  checkbox.checked = true;
+                  console.log(`✅ Activando columna ${col} para usuario no-admin`);
+                }
+              });
+              
+              // Forzar actualización de la tabla y KPIs
+              if (typeof window.refresh === 'function') {
+                console.log('📊 Ejecutando refresh para mostrar KPIs');
+                window.refresh();
+              }
+            }, 1200);
+          } else {
+            // Para admins, solo hacer refresh
+            setTimeout(() => {
+              console.log('🔄 Forzando actualización de KPIs para admin...');
+              if (typeof window.refresh === 'function') {
+                console.log('📊 Ejecutando refresh para mostrar KPIs');
+                window.refresh();
+              }
+            }, 1000);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error verificando permisos de usuario:', error);
+        // Por seguridad, mostrar solo historial si hay error
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const filterBtn = document.getElementById('filterBtn');
+        const columnFilterDropdown = document.getElementById('columnFilterDropdown');
+        const configModalBtn = document.getElementById('configModalBtn');
+        const statsModalBtn = document.getElementById('statsModalBtn');
+        const logisticsModalBtn = document.getElementById('logisticsModalBtn');
+        const historialModalBtn = document.getElementById('historialModalBtn');
+        
+        // Mostrar menú pero solo con historial
+        if (hamburgerBtn) {
+          hamburgerBtn.style.display = 'block';
+          hamburgerBtn.style.visibility = 'visible';
+        }
+        
+        // Ocultar opciones administrativas (comportamiento no-admin por seguridad)
+        if (filterBtn) {
+          filterBtn.style.display = 'none !important';
+          filterBtn.style.visibility = 'hidden';
+          filterBtn.style.pointerEvents = 'none';
+        }
+        if (columnFilterDropdown) {
+          columnFilterDropdown.style.display = 'none !important';
+          columnFilterDropdown.style.visibility = 'hidden';
+          columnFilterDropdown.style.pointerEvents = 'none';
+          columnFilterDropdown.classList.add('hidden');
+        }
+        if (configModalBtn) configModalBtn.style.display = 'none';
+        if (statsModalBtn) statsModalBtn.style.display = 'none';
+        
+        // Mostrar historial y logistics (opciones básicas)
+        if (logisticsModalBtn) logisticsModalBtn.style.display = 'block';
+        if (historialModalBtn) historialModalBtn.style.display = 'block';
+        
+        console.log('🚫 Error en verificación: mostrando historial y logistics por seguridad');
+      }
+    }
+    
+    // === HAMBURGER MENU FUNCTIONALITY (Simplified) ===
+    let menuOpen = false;
+
+    function toggleMenu() {
+      console.log('🍔 toggleMenu called, current state:', menuOpen);
+      const slideMenu = document.getElementById('slideMenu');
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      
+      if (!slideMenu || !hamburgerBtn) {
+        console.log('❌ Menu elements not found');
+        return;
+      }
+      
+      menuOpen = !menuOpen;
+      console.log('🍔 New menu state:', menuOpen);
+      
+      if (menuOpen) {
+        slideMenu.classList.add('active');
+        hamburgerBtn.classList.add('active');
+        console.log('✅ Menu opened');
+      } else {
+        slideMenu.classList.remove('active');
+        hamburgerBtn.classList.remove('active');
+        console.log('❌ Menu closed');
+      }
+    }
+
+    function closeMenu() {
+      if (menuOpen) {
+        toggleMenu();
+      }
+    }
+
+    // Funciones para abrir modales
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.remove('hidden');
+      if (modalId === 'statsModal') {
+        updateStats();
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.add('hidden');
+      });
+    }
+
+    // Función para actualizar estadísticas en el modal
+    function updateStats() {
+      // Último refresco
+      const lastRefresh = localStorage.getItem('lastRefreshTime');
+      const lastRefreshStat = document.getElementById('lastRefreshStat');
+      if (lastRefreshStat) {
+        lastRefreshStat.textContent = lastRefresh ? 
+          new Date(lastRefresh).toLocaleTimeString() : 'Nunca';
+      }
+      
+      // Items en carrito
+      const cartData = localStorage.getItem('cart');
+      const cartItemsStat = document.getElementById('cartItemsStat');
+      if (cartItemsStat) {
+        const cart = cartData ? JSON.parse(cartData) : [];
+        cartItemsStat.textContent = cart.length;
+      }
+
+      // Total productos (desde la tabla actual si está disponible)
+      const totalProductsStat = document.getElementById('totalProductsStat');
+      if (totalProductsStat) {
+        const tbody = document.getElementById('tbody');
+        if (tbody) {
+          const visibleRows = tbody.querySelectorAll('tr:not([style*="display: none"])');
+          totalProductsStat.textContent = visibleRows.length;
+        } else {
+          totalProductsStat.textContent = '0';
+        }
+      }
+    }
+
+    // Setup cuando cargue la página
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('📱 Setting up simple menu');
+      
+      // Verificar estado de Firebase
+      checkFirebaseStatus();
+      
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', toggleMenu);
+        console.log('✅ Click handler added');
+      }
+      
+      // Cerrar menú con overlay
+      const slideMenuOverlay = document.getElementById('slideMenuOverlay');
+      if (slideMenuOverlay) {
+        slideMenuOverlay.addEventListener('click', closeMenu);
+      }
+      
+      // Cerrar con botón X
+      const closeMenuBtn = document.getElementById('closeMenuBtn');
+      if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', closeMenu);
+      }
+      
+      // Botón guardar configuración
+      const saveConfigBtn = document.getElementById('saveConfigBtn');
+      if (saveConfigBtn) {
+        saveConfigBtn.addEventListener('click', saveConfigFromInputs);
+        console.log('✅ Save config handler added');
+      }
+
+      // Botones del menú para abrir modales
+      const configModalBtn = document.getElementById('configModalBtn');
+      if (configModalBtn) {
+        configModalBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('configModal');
+        });
+        console.log('✅ Config modal button handler added');
+      }
+
+      const statsModalBtn = document.getElementById('statsModalBtn');
+      if (statsModalBtn) {
+        statsModalBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('statsModal');
+        });
+        console.log('✅ Stats modal button handler added');
+      }
+
+      const historialModalBtn = document.getElementById('historialModalBtn');
+      if (historialModalBtn) {
+        historialModalBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('historialModal');
+          loadHistorial();
+        });
+        console.log('✅ Historial modal button handler added');
+      }
+
+      const logisticsModalBtn = document.getElementById('logisticsModalBtn');
+      if (logisticsModalBtn) {
+        logisticsModalBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('logisticsModal');
+        });
+        console.log('✅ Logistics modal button handler added');
+      }
+
+      // Event listeners para botones del historial
+      const clearHistorialBtn = document.getElementById('clearHistorialBtn');
+      if (clearHistorialBtn) {
+        clearHistorialBtn.addEventListener('click', clearHistorial);
+        console.log('✅ Clear historial button handler added');
+      }
+
+      const exportHistorialBtn = document.getElementById('exportHistorialBtn');
+      if (exportHistorialBtn) {
+        exportHistorialBtn.addEventListener('click', exportHistorial);
+        console.log('✅ Export historial button handler added');
+      }
+
+      // Cerrar modales con botón X
+      document.querySelectorAll('.close-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const modal = this.closest('.modal');
+          if (modal) {
+            modal.classList.add('hidden');
+          }
+        });
+      });
+
+      // Cerrar modales al hacer click fuera
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+          if (e.target === this) {
+            this.classList.add('hidden');
+          }
+        });
+      });
+
+      // Cerrar modales con tecla Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeAllModals();
+        }
+      });
+      
+      // Cerrar con Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && menuOpen) {
+          closeMenu();
+        }
+      });
+      
+      // Cargar configuración cuando el usuario se autentique
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        // Importar onAuthStateChanged dentro del callback
+        setTimeout(() => {
+          if (window.firebase && window.firebase.firestoreHelpers) {
+            firebase.auth().onAuthStateChanged(async function(user) {
+              if (user) {
+                console.log('👤 Usuario autenticado, verificando permisos...');
+                await checkUserPermissions(user);
+                console.log('👤 Usuario autenticado, cargando configuración...');
+                loadConfig();
+              }
+            });
+          }
+        }, 1000); // Esperar a que Firebase se cargue completamente
+      }
+      
+      // Funcionalidad del botón logout
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          console.log('🚪 Cerrando sesión...');
+          
+          if (typeof firebase !== 'undefined' && firebase.auth()) {
+            // Cerrar sesión en Firebase
+            firebase.authHelpers.signOut(firebase.auth()).then(() => {
+              console.log('✅ Sesión cerrada en Firebase');
+              
+              // Limpiar datos de localStorage
+              localStorage.removeItem('userAuthenticated');
+              localStorage.removeItem('userEmail');
+              localStorage.removeItem('userDisplayName');
+              localStorage.removeItem('userPhotoURL');
+              localStorage.removeItem('cart');
+              
+              console.log('🧹 localStorage limpiado');
+              
+              // Redirigir al login
+              window.location.href = 'login.html';
+            }).catch((error) => {
+              console.error('❌ Error cerrando sesión:', error);
+              // Redirigir de todas formas
+              window.location.href = 'login.html';
+            });
+          } else {
+            console.log('⚠️ Firebase no disponible, cerrando sesión localmente');
+            
+            // Limpiar datos de localStorage
+            localStorage.removeItem('userAuthenticated');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userDisplayName');
+            localStorage.removeItem('userPhotoURL');
+            localStorage.removeItem('cart');
+            
+            // Redirigir al login
+            window.location.href = 'login.html';
+          }
+        });
+        
+        console.log('✅ Logout button handler added');
+      } else {
+        console.warn('⚠️ Logout button not found');
+      }
+      
+      console.log('✅ Menu setup complete');
+    });
+  </script>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, collection, query, where, limit, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
+      authDomain: "carrito-138c3.firebaseapp.com",
+      projectId: "carrito-138c3",
+      storageBucket: "carrito-138c3.appspot.com",
+      messagingSenderId: "579670725719",
+      appId: "1:579670725719:web:carrito138c3"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    console.log('🔥 Firebase inicializado en marketplace.html');
+    
+    // Hacer Firebase disponible globalmente
+    window.firebase = {
+      app: () => app,
+      auth: () => auth,
+      firestore: () => db,
+      // Funciones de Firestore que necesitamos
+      firestoreHelpers: {
+        doc,
+        getDoc,
+        setDoc,
+        collection,
+        query,
+        where,
+        limit,
+        getDocs,
+        deleteDoc
+      },
+      // Funciones de Auth que necesitamos
+      authHelpers: {
+        signOut
+      }
+    };
+    
+    console.log('✅ Firebase disponible globalmente');
+  </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
-
-

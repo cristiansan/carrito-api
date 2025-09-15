@@ -49,7 +49,10 @@
       "Read(/E:\\git\\carrito-api/**)",
       "Read(/E:\\git\\carrito-api/**)",
       "Read(/E:\\git\\carrito-api/**)",
-      "Bash(dir)"
+      "Bash(dir)",
+      "Bash(dir:*)",
+      "Bash(python:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
