@@ -4,11 +4,161 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>South Traders</title>
+  
+  <!-- Material Design CSS -->
+  <link href="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root { 
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; 
-      color-scheme: light dark; 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; 
+      color-scheme: dark;
+      --mdc-theme-primary: #4CAF50;
+      --mdc-theme-secondary: #2a2a33;
+      --mdc-theme-surface: #1e1e24;
+      --mdc-theme-background: #0f0f10;
+      --mdc-theme-on-primary: #ffffff;
+      --mdc-theme-on-secondary: #ffffff;
+      --mdc-theme-on-surface: #f1f1f1;
+      --mdc-theme-on-background: #f1f1f1;
     }
+    
+    /* Material Design custom overrides for better visibility */
+    .mdc-tab {
+      color: #d0d0d0 !important; /* Color más claro para tabs no seleccionados */
+      background-color: #1b1b1f !important;
+      border-radius: 6px 6px 0 0 !important;
+      border: 1px solid #2a2a2a !important;
+      border-bottom: none !important;
+      margin-right: 4px !important;
+    }
+    
+    .mdc-tab--active {
+      color: #ffffff !important; /* Color para tab seleccionado */
+      background-color: #23232a !important;
+      font-weight: 600 !important;
+    }
+    
+    .mdc-tab:hover:not(.mdc-tab--active) {
+      color: #e8e8e8 !important; /* Color en hover para mejor visibilidad */
+      background-color: #2a2a2f !important;
+    }
+    
+    .mdc-tab-indicator__content--underline {
+      border-color: #4CAF50 !important;
+      border-width: 3px !important;
+    }
+    
+    /* Fix for all text elements that might appear black */
+    .mdc-tab__text-label,
+    .mdc-button__label,
+    .mdc-floating-label,
+    .mdc-text-field__input,
+    .mdc-form-field > label,
+    .mdc-checkbox ~ label,
+    span, p, div, h1, h2, h3, h4, h5, h6 {
+      color: inherit !important;
+    }
+    
+    /* Specific overrides for Material components */
+    .mdc-tab__text-label {
+      color: inherit !important;
+    }
+    
+    .mdc-button__label {
+      color: inherit !important;
+    }
+    
+    /* Text field improvements */
+    .mdc-text-field--outlined {
+      background-color: #1b1b1f !important;
+      box-shadow: none !important; /* Eliminar cualquier sombra por defecto */
+    }
+    
+    .mdc-text-field--outlined .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline__notch,
+    .mdc-text-field--outlined .mdc-notched-outline__trailing {
+      border-color: #3a3a44 !important;
+    }
+    
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+      border-color: #4CAF50 !important;
+    }
+    
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+      border-color: #4CAF50 !important;
+      border-width: 2px !important;
+    }
+    
+    .mdc-text-field__input {
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-floating-label {
+      color: #d0d0d0 !important; /* Gris más claro */
+    }
+    
+    .mdc-text-field--focused .mdc-floating-label {
+      color: #4CAF50 !important;
+    }
+    
+    /* Button improvements */
+    .mdc-button {
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-button--raised {
+      background-color: #4CAF50 !important;
+      color: #ffffff !important;
+    }
+    
+    .mdc-button--outlined {
+      border-color: #3a3a44 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-button--outlined:hover {
+      background-color: #2a2a33 !important;
+      border-color: #4CAF50 !important;
+    }
+    
+    /* Checkbox improvements */
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+      background-color: #4CAF50 !important;
+      border-color: #4CAF50 !important;
+    }
+    
+    .mdc-checkbox__background {
+      border-color: #3a3a44 !important;
+    }
+    
+    .mdc-form-field > label {
+      color: #f1f1f1 !important;
+    }
+    
+    /* General text color fixes */
+    .status {
+      color: #d0d0d0 !important;
+    }
+    
+    /* Prevent any black text */
+    * {
+      color: inherit;
+    }
+    
+    /* Ensure all Material Design components inherit proper colors */
+    .mdc-tab *, 
+    .mdc-button *, 
+    .mdc-text-field *, 
+    .mdc-checkbox *,
+    .mdc-form-field * {
+      color: inherit !important;
+    }
+    
     body { 
       margin: 0; 
       padding: 0; 
@@ -114,11 +264,10 @@
       <img src="logo.png" alt="Logo" class="header-logo">
       <h1>Carrito de Compras</h1>
     </div>
-    <a href="marketplace.html" class="btn btn-secondary">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-      </svg>
-      Volver al Catálogo
+    <a href="marketplace.html" class="mdc-button mdc-button--outlined" style="text-decoration: none;">
+      <span class="mdc-button__ripple"></span>
+      <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_back</i>
+      <span class="mdc-button__label">Volver al Catálogo</span>
     </a>
   </header>
   
@@ -147,8 +296,10 @@
         container.innerHTML = `
           <div class="empty-cart">
             <p>Tu carrito está vacío</p>
-            <a href="marketplace.html" class="btn btn-primary" style="margin-top: 15px;">
-              Seguir Comprando
+            <a href="marketplace.html" class="mdc-button mdc-button--raised" style="margin-top: 15px; text-decoration: none;">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">shopping_cart</i>
+              <span class="mdc-button__label">Seguir Comprando</span>
             </a>
           </div>
         `;
@@ -183,8 +334,10 @@
             <td class="text-right">${item.quantity}</td>
             <td class="text-right">$${rowTotal.toFixed(2)}</td>
             <td class="text-right">
-              <button class="btn btn-secondary remove-item" data-index="${index}" style="padding: 5px 10px; font-size: 12px;">
-                Eliminar
+              <button class="mdc-button mdc-button--outlined remove-item" data-index="${index}" style="padding: 5px 10px; font-size: 12px;">
+                <span class="mdc-button__ripple"></span>
+                <i class="material-icons mdc-button__icon" aria-hidden="true">delete</i>
+                <span class="mdc-button__label">Eliminar</span>
               </button>
             </td>
           </tr>
@@ -203,17 +356,15 @@
         </table>
         
         <div class="actions">
-          <a href="marketplace.html" class="btn btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
-              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-            </svg>
-            Seguir Comprando
+          <a href="marketplace.html" class="mdc-button mdc-button--outlined" style="text-decoration: none;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_back</i>
+            <span class="mdc-button__label">Seguir Comprando</span>
           </a>
-          <button id="checkoutBtn" class="btn btn-primary">
-            Proceder al Pago
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-left: 5px;">
-              <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
-            </svg>
+          <button id="checkoutBtn" class="mdc-button mdc-button--raised">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label">Proceder al Pago</span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
           </button>
         </div>
       `;
@@ -247,6 +398,16 @@
         window.location.reload();
       }
     }
+  </script>
+  
+  <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
+  <script>
+    // Initialize Material Design Components
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize all buttons
+      const buttons = document.querySelectorAll('.mdc-button');
+      buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+    });
   </script>
 </body>
 </html>

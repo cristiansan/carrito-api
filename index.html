@@ -4,8 +4,223 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>South Traders</title>
+  
+  <!-- Material Design CSS -->
+  <link href="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
+    :root { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; 
+      color-scheme: dark; 
+      --mdc-theme-primary: #4CAF50;
+      --mdc-theme-secondary: #2a2a33;
+      --mdc-theme-surface: #1e1e24;
+      --mdc-theme-background: #0f0f10;
+      --mdc-theme-on-primary: #ffffff;
+      --mdc-theme-on-secondary: #ffffff;
+      --mdc-theme-on-surface: #f1f1f1;
+      --mdc-theme-on-background: #f1f1f1;
+    }
+    
+    /* Material Design custom overrides for better visibility */
+    .mdc-tab {
+      color: #d0d0d0 !important; /* Color más claro para tabs no seleccionados */
+      background-color: #1b1b1f !important;
+      border-radius: 6px 6px 0 0 !important;
+      border: 1px solid #2a2a2a !important;
+      border-bottom: none !important;
+      margin-right: 4px !important;
+    }
+    
+    .mdc-tab--active {
+      color: #ffffff !important; /* Color para tab seleccionado */
+      background-color: #23232a !important;
+      font-weight: 600 !important;
+    }
+    
+    .mdc-tab:hover:not(.mdc-tab--active) {
+      color: #e8e8e8 !important; /* Color en hover para mejor visibilidad */
+      background-color: #2a2a2f !important;
+    }
+    
+    .mdc-tab-indicator__content--underline {
+      border-color: #4CAF50 !important;
+      border-width: 3px !important;
+    }
+    
+    /* Fix for all text elements that might appear black */
+    .mdc-tab__text-label,
+    .mdc-button__label,
+    .mdc-floating-label,
+    .mdc-text-field__input,
+    .mdc-form-field > label,
+    .mdc-checkbox ~ label,
+    span, p, div, h1, h2, h3, h4, h5, h6 {
+      color: inherit !important;
+    }
+    
+    /* Specific overrides for Material components */
+    .mdc-tab__text-label {
+      color: inherit !important;
+    }
+    
+    .mdc-button__label {
+      color: inherit !important;
+    }
+    
+    /* Text field improvements */
+    .mdc-text-field--outlined {
+      background-color: #1b1b1f !important;
+      box-shadow: none !important; /* Eliminar cualquier sombra por defecto */
+    }
+    
+    .mdc-text-field--outlined .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline__notch,
+    .mdc-text-field--outlined .mdc-notched-outline__trailing {
+      border-color: #3a3a44 !important;
+    }
+    
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+      border-color: #4CAF50 !important;
+    }
+    
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+      border-color: #4CAF50 !important;
+      border-width: 2px !important;
+    }
+    
+    .mdc-text-field__input {
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-floating-label {
+      color: #d0d0d0 !important; /* Gris más claro */
+    }
+    
+    .mdc-text-field--focused .mdc-floating-label {
+      color: #4CAF50 !important;
+    }
+    
+    /* Button improvements */
+    .mdc-button {
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-button--raised {
+      background-color: #4CAF50 !important;
+      color: #ffffff !important;
+    }
+    
+    .mdc-button--outlined {
+      border-color: #3a3a44 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-button--outlined:hover {
+      background-color: #2a2a33 !important;
+      border-color: #4CAF50 !important;
+    }
+    
+    /* Checkbox improvements */
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+      background-color: #4CAF50 !important;
+      border-color: #4CAF50 !important;
+    }
+    
+    .mdc-checkbox__background {
+      border-color: #3a3a44 !important;
+    }
+    
+    .mdc-form-field > label {
+      color: #f1f1f1 !important;
+    }
+    
+    /* General text color fixes */
+    .status {
+      color: #d0d0d0 !important;
+    }
+    
+    /* Toolbar spacing fix */
+    .toolbar {
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    
+    /* Search field specific styling - match button size */
+    .toolbar .search-field {
+      width: 160px !important; /* Ancho similar a botones */
+      height: 36px !important; /* Misma altura que botones MDC */
+      box-shadow: none !important; /* Eliminar sombra */
+      background: transparent !important; /* Fondo transparente */
+      margin: 0 !important; /* Eliminar márgenes extra */
+      align-self: center !important; /* Centrar verticalmente */
+    }
+
+    .toolbar .search-field .mdc-text-field__input {
+      height: 34px !important; /* Ajustar altura del input para coincidir */
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+      box-shadow: none !important; /* Eliminar sombra del input */
+      background: transparent !important; /* Fondo transparente */
+      line-height: 18px !important; /* Centrar texto verticalmente */
+    }
+
+    .toolbar .search-field .mdc-notched-outline__leading,
+    .toolbar .search-field .mdc-notched-outline__notch,
+    .toolbar .search-field .mdc-notched-outline__trailing {
+      height: 36px !important; /* Misma altura que el contenedor */
+      box-shadow: none !important; /* Eliminar sombra del borde */
+    }
+    
+    .toolbar .search-field .mdc-floating-label {
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+    }
+    
+    .toolbar .search-field .mdc-floating-label--float-above {
+      transform: translateY(-106%) scale(0.75) !important;
+    }
+    
+    /* Remove any elevation/shadow from text field */
+    .toolbar .search-field::before,
+    .toolbar .search-field::after {
+      display: none !important;
+    }
+    
+    .toolbar .search-field .mdc-text-field__ripple {
+      display: none !important;
+    }
+    
+    /* Additional shadow removal for all Material Design states */
+    .toolbar .search-field,
+    .toolbar .search-field.mdc-text-field--focused,
+    .toolbar .search-field.mdc-text-field--outlined,
+    .toolbar .search-field.mdc-text-field--outlined.mdc-text-field--focused {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      -moz-box-shadow: none !important;
+      background: #1b1b1f !important; /* Fondo sólido en lugar de transparente */
+    }
+    
+    /* Prevent any black text */
+    * {
+      color: inherit;
+    }
+    
+    /* Ensure all Material Design components inherit proper colors */
+    .mdc-tab *, 
+    .mdc-button *, 
+    .mdc-text-field *, 
+    .mdc-checkbox *,
+    .mdc-form-field * {
+      color: inherit !important;
+    }
+    
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
     header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; gap: 12px; }
     .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; }
@@ -225,6 +440,94 @@
       text-align: right;
     }
 
+    /* Logistics Modal Styles */
+    .logistics-content {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .logistics-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #15151a;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .logistics-section h4 {
+      margin: 0 0 12px 0;
+      color: #4CAF50;
+      font-size: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 8px;
+    }
+
+    .logistics-orders {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .no-orders {
+      color: #b5b5b5;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a33;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .order-info {
+      flex: 1;
+    }
+
+    .order-number {
+      font-weight: 600;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+
+    .order-details {
+      font-size: 12px;
+      color: #b5b5b5;
+    }
+
+    .move-order-btn {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      margin-left: 12px;
+    }
+
+    .move-order-btn:hover {
+      background: #45a049;
+      transform: translateY(2px);
+    }
+
+    .move-order-btn:disabled {
+      background: #3a3a44;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     @media (max-width: 768px) {
       body {
         font-size: 14px;
@@ -259,33 +562,105 @@
   </header>
 
   <div class="container">
-    <div class="tabs" id="tabs">
-      <div class="tab active" data-segment="all">All</div>
-      <div class="tab" data-segment="iphone">Iphone</div>
-      <div class="tab" data-segment="macbooks">Macbooks</div>
-      <div class="tab" data-segment="samsung">Samsung</div>
+    <div class="mdc-tab-bar" role="tablist" id="tabs">
+      <div class="mdc-tab-scroller">
+        <div class="mdc-tab-scroller__scroll-area">
+          <div class="mdc-tab-scroller__scroll-content">
+            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-segment="all">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">All</span>
+              </span>
+              <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="iphone">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">iPhone</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="macbooks">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">MacBooks</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="samsung">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Samsung</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="toolbar">
-      <button id="exportBtn">Export to Excel</button>
-      <button id="filterBtn">Filter</button>
-      <button id="refreshBtn">Refresh</button>
-      <label>
-        Auto-refresh 30s
-        <input type="checkbox" id="autoToggle" checked>
-      </label>
+      <button class="mdc-button mdc-button--raised" id="exportBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+        <span class="mdc-button__label">Export to Excel</span>
+      </button>
+      <button class="mdc-button mdc-button--outlined" id="filterBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">filter_list</i>
+        <span class="mdc-button__label">Filter</span>
+      </button>
+      <div class="mdc-text-field mdc-text-field--outlined search-field">
+        <input class="mdc-text-field__input" type="text" id="searchBox" aria-describedby="search-helper-text">
+        <div class="mdc-notched-outline">
+          <div class="mdc-notched-outline__leading"></div>
+          <div class="mdc-notched-outline__notch">
+            <label for="searchBox" class="mdc-floating-label">Search model...</label>
+          </div>
+          <div class="mdc-notched-outline__trailing"></div>
+        </div>
+      </div>
+      <button class="mdc-button mdc-button--outlined" id="refreshBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+        <span class="mdc-button__label">Refresh</span>
+      </button>
+      <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+          <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+          <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="autoToggle">Auto-refresh 30s</label>
+      </div>
       <span class="status" id="statusText"></span>
-      <input type="text" id="searchBox" placeholder="Search model...">
       <div style="flex: 1;"></div> <!-- Spacer -->
-      <a href="login.html" style="background-color: #f44336; color: white; padding: 6px 10px; border-radius: 4px; text-decoration: none;">Login</a>
+      <a href="login.html" class="mdc-button mdc-button--raised" style="text-decoration: none; background-color: #f44336;">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">login</i>
+        <span class="mdc-button__label">Login</span>
+      </a>
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
       <label><input type="checkbox" data-column="articulo" checked> Artículo</label>
       <label><input type="checkbox" data-column="description" checked> Descripción</label>
       <label><input type="checkbox" data-column="stock"> Stock</label>
-      <label><input type="checkbox" data-column="disponible"> Disponible</label>
-      <label><input type="checkbox" data-column="ordenVenta" checked> En Orden de Venta</label>
+      <label><input type="checkbox" data-column="disponible" checked> Disponible</label>
+      <label><input type="checkbox" data-column="ordenVenta"> En Orden de Venta</label>
       <label><input type="checkbox" data-column="ordenCompra"> En Orden de Compra</label>
       <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
       <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
@@ -314,6 +689,37 @@
       <input type="text" placeholder="Username">
       <input type="password" placeholder="Password">
       <button id="modalLoginBtn">Login</button>
+    </div>
+  </div>
+
+  <!-- LOGISTICS Modal -->
+  <div id="logisticsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>🚚 Logistics</h2>
+
+      <div class="logistics-content">
+        <div class="logistics-section">
+          <h4>📦 Preparing Order</h4>
+          <div class="logistics-orders" id="preparingOrders">
+            <p class="no-orders">No orders in preparation</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>📋 Inventory Management</h4>
+          <div class="logistics-orders" id="inventoryOrders">
+            <p class="no-orders">No orders in inventory</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚛 Delivery Routes</h4>
+          <div class="logistics-orders" id="deliveryOrders">
+            <p class="no-orders">No orders for delivery</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -471,7 +877,7 @@
     // === FIREBASE CONFIGURATION ===
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, collection } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCqtKOA_gMEi5CfvZF6Q3o_cJ0h-dZj4Ns",
@@ -492,7 +898,7 @@
       auth: () => auth,
       firestore: () => db,
       firestoreHelpers: {
-        doc, getDoc, setDoc, collection
+        doc, getDoc, setDoc, updateDoc, collection, query, orderBy, getDocs
       },
       authHelpers: {
         onAuthStateChanged, signOut
@@ -593,8 +999,211 @@
     });
 
     console.log('✅ Firebase inicializado en index.html');
+
+    // === LOGISTICS FUNCTIONALITY ===
+
+    // Load logistics orders from Firebase
+    async function loadLogisticsOrders() {
+      if (!firebase || !firebase.auth().currentUser) {
+        console.log('⚠️ No user authenticated for logistics');
+        return;
+      }
+
+      try {
+        const { collection, query, orderBy, getDocs, updateDoc, doc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const q = query(pedidosCollection, orderBy('timestamp', 'desc'));
+        const querySnapshot = await getDocs(q);
+
+        const orders = [];
+        const updatePromises = [];
+
+        querySnapshot.forEach(docSnapshot => {
+          const data = docSnapshot.data();
+
+          // Check if logisticsState exists, if not, set it to 'preparing'
+          if (!data.logisticsState) {
+            console.log(`🔄 Setting logisticsState to 'preparing' for order ${docSnapshot.id}`);
+            const orderRef = doc(db, 'pedidos', docSnapshot.id);
+            updatePromises.push(updateDoc(orderRef, { logisticsState: 'preparing' }));
+          }
+
+          orders.push({
+            id: docSnapshot.id,
+            ...data,
+            logisticsState: data.logisticsState || 'preparing' // Default state
+          });
+        });
+
+        // Update orders that don't have logisticsState
+        if (updatePromises.length > 0) {
+          await Promise.all(updatePromises);
+          console.log(`✅ Updated ${updatePromises.length} orders with logisticsState`);
+        }
+
+        console.log('📦 Loaded', orders.length, 'logistics orders');
+        displayLogisticsOrders(orders);
+
+      } catch (error) {
+        console.error('❌ Error loading logistics orders:', error);
+      }
+    }
+
+    // Display orders in their respective sections
+    function displayLogisticsOrders(orders) {
+      const preparingContainer = document.getElementById('preparingOrders');
+      const inventoryContainer = document.getElementById('inventoryOrders');
+      const deliveryContainer = document.getElementById('deliveryOrders');
+
+      if (!preparingContainer || !inventoryContainer || !deliveryContainer) {
+        console.warn('⚠️ Logistics containers not found');
+        return;
+      }
+
+      // Separate orders by state
+      const preparingOrders = orders.filter(order => order.logisticsState === 'preparing');
+      const inventoryOrders = orders.filter(order => order.logisticsState === 'inventory');
+      const deliveryOrders = orders.filter(order => order.logisticsState === 'delivery');
+
+      // Display preparing orders
+      if (preparingOrders.length > 0) {
+        preparingContainer.innerHTML = preparingOrders.map(order => createOrderHTML(order, 'inventory')).join('');
+      } else {
+        preparingContainer.innerHTML = '<p class="no-orders">No orders in preparation</p>';
+      }
+
+      // Display inventory orders
+      if (inventoryOrders.length > 0) {
+        inventoryContainer.innerHTML = inventoryOrders.map(order => createOrderHTML(order, 'delivery')).join('');
+      } else {
+        inventoryContainer.innerHTML = '<p class="no-orders">No orders in inventory</p>';
+      }
+
+      // Display delivery orders
+      if (deliveryOrders.length > 0) {
+        deliveryContainer.innerHTML = deliveryOrders.map(order => createOrderHTML(order, null)).join('');
+      } else {
+        deliveryContainer.innerHTML = '<p class="no-orders">No orders for delivery</p>';
+      }
+    }
+
+    // Create HTML for an order item
+    function createOrderHTML(order, nextState) {
+      const canMove = nextState !== null;
+      const buttonHtml = canMove ?
+        `<button class="move-order-btn" onclick="moveOrder('${order.id}', '${nextState}')" title="Move to ${nextState}">↓</button>` :
+        `<button class="move-order-btn" disabled title="Final state">✓</button>`;
+
+      return `
+        <div class="order-item" data-order-id="${order.id}">
+          <div class="order-info">
+            <div class="order-number">#${order.numeroOrden || order.id.slice(-6)}</div>
+            <div class="order-details">
+              ${order.fechaLocal || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || 0)}
+            </div>
+          </div>
+          ${buttonHtml}
+        </div>
+      `;
+    }
+
+    // Move order to next state
+    async function moveOrder(orderId, nextState) {
+      if (!firebase || !firebase.firestore) {
+        console.error('❌ Firebase not available');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          logisticsState: nextState,
+          lastStateUpdate: new Date()
+        });
+
+        console.log(`✅ Order ${orderId} moved to ${nextState}`);
+
+        // Reload orders to reflect changes
+        loadLogisticsOrders();
+
+      } catch (error) {
+        console.error('❌ Error moving order:', error);
+        alert('Error moving order. Please try again.');
+      }
+    }
+
+    // Expose logistics functions globally
+    window.loadLogisticsOrders = loadLogisticsOrders;
+    window.moveOrder = moveOrder;
+
+    console.log('✅ Firebase inicializado en index.html');
   </script>
   
+  <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
+  <script>
+    // Initialize Material Design Components
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize all buttons
+      const buttons = document.querySelectorAll('.mdc-button');
+      buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+      
+      // Initialize checkboxes
+      const checkboxes = document.querySelectorAll('.mdc-checkbox');
+      checkboxes.forEach(checkbox => mdc.checkbox.MDCCheckbox.attachTo(checkbox));
+      
+      // Initialize text fields
+      const textFields = document.querySelectorAll('.mdc-text-field');
+      textFields.forEach(textField => mdc.textField.MDCTextField.attachTo(textField));
+      
+      // Initialize tab bar
+      const tabBar = document.querySelector('.mdc-tab-bar');
+      if (tabBar) {
+        const mdcTabBar = mdc.tabBar.MDCTabBar.attachTo(tabBar);
+
+        // Handle tab activation
+        mdcTabBar.listen('MDCTabBar:activated', (event) => {
+          const tab = tabBar.querySelectorAll('.mdc-tab')[event.detail.index];
+          const segment = tab.getAttribute('data-segment');
+          
+          // Trigger the existing tab functionality
+          if (window.handleTabClick) {
+            window.handleTabClick(segment);
+          }
+        });
+      }
+
+      // Add observer for logistics modal
+      const logisticsModal = document.getElementById('logisticsModal');
+      if (logisticsModal) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+              const target = mutation.target;
+              if (!target.classList.contains('hidden')) {
+                console.log('📦 Logistics modal opened, loading orders...');
+                setTimeout(() => {
+                  if (window.loadLogisticsOrders) {
+                    window.loadLogisticsOrders();
+                  } else {
+                    console.log('⚠️ loadLogisticsOrders not available yet, retrying...');
+                    setTimeout(() => window.loadLogisticsOrders && window.loadLogisticsOrders(), 500);
+                  }
+                }, 100);
+              }
+            }
+          });
+        });
+
+        observer.observe(logisticsModal, { attributes: true });
+        console.log('✅ Logistics modal observer added');
+      }
+    });
+  </script>
   <script src="main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   

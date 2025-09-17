@@ -4,8 +4,223 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>South Traders</title>
+  
+  <!-- Material Design CSS -->
+  <link href="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; color-scheme: light dark; }
+    :root { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif; 
+      color-scheme: dark;
+      --mdc-theme-primary: #4CAF50;
+      --mdc-theme-secondary: #2a2a33;
+      --mdc-theme-surface: #1e1e24;
+      --mdc-theme-background: #0f0f10;
+      --mdc-theme-on-primary: #ffffff;
+      --mdc-theme-on-secondary: #ffffff;
+      --mdc-theme-on-surface: #f1f1f1;
+      --mdc-theme-on-background: #f1f1f1;
+    }
+    
+    /* Material Design custom overrides for better visibility */
+    .mdc-tab {
+      color: #d0d0d0 !important; /* Color más claro para tabs no seleccionados */
+      background-color: #1b1b1f !important;
+      border-radius: 6px 6px 0 0 !important;
+      border: 1px solid #2a2a2a !important;
+      border-bottom: none !important;
+      margin-right: 4px !important;
+    }
+    
+    .mdc-tab--active {
+      color: #ffffff !important; /* Color para tab seleccionado */
+      background-color: #23232a !important;
+      font-weight: 600 !important;
+    }
+    
+    .mdc-tab:hover:not(.mdc-tab--active) {
+      color: #e8e8e8 !important; /* Color en hover para mejor visibilidad */
+      background-color: #2a2a2f !important;
+    }
+    
+    .mdc-tab-indicator__content--underline {
+      border-color: #4CAF50 !important;
+      border-width: 3px !important;
+    }
+    
+    /* Fix for all text elements that might appear black */
+    .mdc-tab__text-label,
+    .mdc-button__label,
+    .mdc-floating-label,
+    .mdc-text-field__input,
+    .mdc-form-field > label,
+    .mdc-checkbox ~ label,
+    span, p, div, h1, h2, h3, h4, h5, h6 {
+      color: inherit !important;
+    }
+    
+    /* Specific overrides for Material components */
+    .mdc-tab__text-label {
+      color: inherit !important;
+    }
+    
+    .mdc-button__label {
+      color: inherit !important;
+    }
+    
+    /* Text field improvements */
+    .mdc-text-field--outlined {
+      background-color: #1b1b1f !important;
+      box-shadow: none !important; /* Eliminar cualquier sombra por defecto */
+    }
+    
+    .mdc-text-field--outlined .mdc-notched-outline__leading,
+    .mdc-text-field--outlined .mdc-notched-outline__notch,
+    .mdc-text-field--outlined .mdc-notched-outline__trailing {
+      border-color: #3a3a44 !important;
+    }
+    
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+      border-color: #4CAF50 !important;
+    }
+    
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+    .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+      border-color: #4CAF50 !important;
+      border-width: 2px !important;
+    }
+    
+    .mdc-text-field__input {
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-floating-label {
+      color: #d0d0d0 !important; /* Gris más claro */
+    }
+    
+    .mdc-text-field--focused .mdc-floating-label {
+      color: #4CAF50 !important;
+    }
+    
+    /* Button improvements */
+    .mdc-button {
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-button--raised {
+      background-color: #4CAF50 !important;
+      color: #ffffff !important;
+    }
+    
+    .mdc-button--outlined {
+      border-color: #3a3a44 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .mdc-button--outlined:hover {
+      background-color: #2a2a33 !important;
+      border-color: #4CAF50 !important;
+    }
+    
+    /* Checkbox improvements */
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+      background-color: #4CAF50 !important;
+      border-color: #4CAF50 !important;
+    }
+    
+    .mdc-checkbox__background {
+      border-color: #3a3a44 !important;
+    }
+    
+    .mdc-form-field > label {
+      color: #f1f1f1 !important;
+    }
+    
+    /* General text color fixes */
+    .status {
+      color: #d0d0d0 !important;
+    }
+    
+    /* Toolbar spacing fix */
+    .toolbar {
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    
+    /* Search field specific styling - match button size */
+    .toolbar .search-field {
+      width: 160px !important; /* Ancho similar a botones */
+      height: 36px !important; /* Misma altura que botones MDC */
+      box-shadow: none !important; /* Eliminar sombra */
+      background: transparent !important; /* Fondo transparente */
+      margin: 0 !important; /* Eliminar márgenes extra */
+      align-self: center !important; /* Centrar verticalmente */
+    }
+
+    .toolbar .search-field .mdc-text-field__input {
+      height: 34px !important; /* Ajustar altura del input para coincidir */
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+      box-shadow: none !important; /* Eliminar sombra del input */
+      background: transparent !important; /* Fondo transparente */
+      line-height: 18px !important; /* Centrar texto verticalmente */
+    }
+
+    .toolbar .search-field .mdc-notched-outline__leading,
+    .toolbar .search-field .mdc-notched-outline__notch,
+    .toolbar .search-field .mdc-notched-outline__trailing {
+      height: 36px !important; /* Misma altura que el contenedor */
+      box-shadow: none !important; /* Eliminar sombra del borde */
+    }
+    
+    .toolbar .search-field .mdc-floating-label {
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+    }
+    
+    .toolbar .search-field .mdc-floating-label--float-above {
+      transform: translateY(-106%) scale(0.75) !important;
+    }
+    
+    /* Remove any elevation/shadow from text field */
+    .toolbar .search-field::before,
+    .toolbar .search-field::after {
+      display: none !important;
+    }
+    
+    .toolbar .search-field .mdc-text-field__ripple {
+      display: none !important;
+    }
+    
+    /* Additional shadow removal for all Material Design states */
+    .toolbar .search-field,
+    .toolbar .search-field.mdc-text-field--focused,
+    .toolbar .search-field.mdc-text-field--outlined,
+    .toolbar .search-field.mdc-text-field--outlined.mdc-text-field--focused {
+      box-shadow: none !important;
+      -webkit-box-shadow: none !important;
+      -moz-box-shadow: none !important;
+      background: #1b1b1f !important; /* Fondo sólido en lugar de transparente */
+    }
+    
+    /* Prevent any black text */
+    * {
+      color: inherit;
+    }
+    
+    /* Ensure all Material Design components inherit proper colors */
+    .mdc-tab *, 
+    .mdc-button *, 
+    .mdc-text-field *, 
+    .mdc-checkbox *,
+    .mdc-form-field * {
+      color: inherit !important;
+    }
+    
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
     header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; gap: 12px; }
     .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; }
@@ -661,7 +876,8 @@
     .toast-notification {
       position: fixed;
       top: 20px;
-      right: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
       z-index: 2000;
       padding: 16px 24px;
       background: linear-gradient(135deg, #4CAF50, #45a049);
@@ -669,15 +885,15 @@
       border-radius: 8px;
       font-weight: 500;
       box-shadow: 0 8px 32px rgba(76, 175, 80, 0.3);
-      transform: translateX(400px);
       opacity: 0;
       transition: all 0.3s ease;
       font-size: 14px;
       max-width: 300px;
+      text-align: center;
     }
 
     .toast-notification.show {
-      transform: translateX(0);
+      transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
 
@@ -720,6 +936,103 @@
     .qty-input[type=number] {
       -moz-appearance: textfield !important;
     }
+
+    /* Logistics Modal Styles */
+    .logistics-content {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .logistics-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #15151a;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .logistics-section h4 {
+      margin: 0 0 12px 0;
+      color: #4CAF50;
+      font-size: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 8px;
+    }
+
+    .logistics-orders {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .no-orders {
+      color: #b5b5b5;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a33;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .order-info {
+      flex: 1;
+    }
+
+    .order-number {
+      font-weight: 600;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+
+    .order-details {
+      font-size: 12px;
+      color: #b5b5b5;
+    }
+
+    .move-order-btn {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      margin-left: 12px;
+    }
+
+    .move-order-btn:hover {
+      background: #45a049;
+      transform: translateY(2px);
+    }
+
+    .move-order-btn:disabled {
+      background: #3a3a44;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Logout button specific styling */
+    #logoutBtn {
+      background-color: #f44336 !important;
+    }
+
+    #logoutBtn:hover {
+      background-color: #d32f2f !important;
+    }
   </style>
 </head>
 <body>
@@ -728,25 +1041,97 @@
   </header>
 
   <div class="container">
-    <div class="tabs" id="tabs">
-      <div class="tab active" data-segment="all">All</div>
-      <div class="tab" data-segment="iphone">Iphone</div>
-      <div class="tab" data-segment="macbooks">Macbooks</div>
-      <div class="tab" data-segment="samsung">Samsung</div>
+    <div class="mdc-tab-bar" role="tablist" id="tabs">
+      <div class="mdc-tab-scroller">
+        <div class="mdc-tab-scroller__scroll-area">
+          <div class="mdc-tab-scroller__scroll-content">
+            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-segment="all">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">All</span>
+              </span>
+              <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="iphone">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Iphone</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="macbooks">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Macbooks</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="samsung">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Samsung</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="toolbar">
-      <button id="exportBtn">Export to Excel</button>
-      <button id="filterBtn">Filter</button>
-      <button id="refreshBtn">Refresh</button>
-      <label>
-        Auto-refresh 30s
-        <input type="checkbox" id="autoToggle" checked>
-      </label>
+      <button class="mdc-button mdc-button--raised" id="exportBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+        <span class="mdc-button__label">Export to Excel</span>
+      </button>
+      <button class="mdc-button mdc-button--outlined" id="filterBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">filter_list</i>
+        <span class="mdc-button__label">Filter</span>
+      </button>
+      <div class="mdc-text-field mdc-text-field--outlined search-field">
+        <input class="mdc-text-field__input" type="text" id="searchBox" aria-describedby="search-helper-text">
+        <div class="mdc-notched-outline">
+          <div class="mdc-notched-outline__leading"></div>
+          <div class="mdc-notched-outline__notch">
+            <label for="searchBox" class="mdc-floating-label">Search model...</label>
+          </div>
+          <div class="mdc-notched-outline__trailing"></div>
+        </div>
+      </div>
+      <button class="mdc-button mdc-button--outlined" id="refreshBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+        <span class="mdc-button__label">Refresh</span>
+      </button>
+      <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+          <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+          <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="autoToggle">Auto-refresh 30s</label>
+      </div>
       <span class="status" id="statusText"></span>
-      <input type="text" id="searchBox" placeholder="Search model...">
       <div style="flex: 1;"></div> <!-- Spacer -->
-      <a href="#" id="logoutBtn" style="background-color: #f44336; color: white; padding: 6px 10px; border-radius: 4px; text-decoration: none;">Logout</a>
+      <a href="#" id="logoutBtn" class="mdc-button mdc-button--raised" style="text-decoration: none; background-color: #f44336 !important;">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">logout</i>
+        <span class="mdc-button__label">Logout</span>
+      </a>
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
@@ -754,9 +1139,9 @@
       <label><input type="checkbox" data-column="description" checked> Descripción</label>
       <label><input type="checkbox" data-column="grupo"> Grupo</label>
       <label><input type="checkbox" data-column="stock"> Stock</label>
-      <label><input type="checkbox" data-column="disponible"> Disponible</label>
+      <label><input type="checkbox" data-column="disponible" checked> Disponible</label>
       <label><input type="checkbox" data-column="fechaActualizacion"> Fecha Ult. Actualización</label>
-      <label><input type="checkbox" data-column="ordenVenta" checked> En Orden de Venta</label>
+      <label><input type="checkbox" data-column="ordenVenta"> En Orden de Venta</label>
       <label><input type="checkbox" data-column="ordenCompra"> En Orden de Compra</label>
       <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
       <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
@@ -831,7 +1216,6 @@
       <span class="close-button">&times;</span>
       <h2>🔧 Configuración</h2>
       
-      <h4>📞 Configuración de Contactos</h4>
       <div class="menu-content" id="configContent">
         <h4>📞 Configuración de Contactos</h4>
         
@@ -922,40 +1306,36 @@
       <h2>📊 Estadísticas</h2>
       
       <div class="stats-grid">
+        <!-- Advanced Analytics -->
         <div class="stat-item">
-          <div class="stat-label">Último refresco</div>
-          <div class="stat-value" id="lastRefreshStat">-</div>
+          <div class="stat-label">Item más comprado</div>
+          <div class="stat-value" id="mostPurchasedItemStat">-</div>
         </div>
-        
+
         <div class="stat-item">
-          <div class="stat-label">Total productos cargados</div>
-          <div class="stat-value" id="totalProductsStat">0</div>
+          <div class="stat-label">Mes con más ventas</div>
+          <div class="stat-value" id="bestSalesMonthStat">-</div>
         </div>
-        
+
         <div class="stat-item">
-          <div class="stat-label">Items en carrito</div>
-          <div class="stat-value" id="cartItemsStat">0</div>
+          <div class="stat-label">Item con más cambios de stock</div>
+          <div class="stat-value" id="mostStockChangesStat">-</div>
         </div>
-        
+
+        <!-- User Analytics -->
         <div class="stat-item">
-          <div class="stat-label">Valor total carrito</div>
-          <div class="stat-value" id="cartValueStat">$0</div>
+          <div class="stat-label">Usuarios registrados</div>
+          <div class="stat-value" id="totalUsersStat">-</div>
         </div>
-        
+
         <div class="stat-item">
-          <div class="stat-label">Tiempo de refresco</div>
-          <div class="stat-value" id="refreshTimeStat">30s</div>
-        </div>
-        
-        <div class="stat-item">
-          <div class="stat-label">Configuración guardada</div>
-          <div class="stat-value" id="configSavedStat">❌</div>
+          <div class="stat-label">Usuario más activo</div>
+          <div class="stat-value" id="mostActiveUserStat">-</div>
         </div>
       </div>
       
       <div class="stats-actions">
         <button class="refresh-stats-btn" id="refreshStatsBtn">🔄 Actualizar Stats</button>
-        <button class="clear-stats-btn" id="clearStatsBtn">🗑️ Limpiar Datos</button>
       </div>
     </div>
   </div>
@@ -986,30 +1366,27 @@
   <div id="logisticsModal" class="modal hidden">
     <div class="modal-content">
       <span class="close-button">&times;</span>
-      <h2>Logistics</h2>
-      
+      <h2>🚚 Logistics</h2>
+
       <div class="logistics-content">
         <div class="logistics-section">
-          <h4>Shipping Status</h4>
-          <div class="logistics-info">
-            <p>Track and manage shipping information for orders.</p>
-            <button class="logistics-btn" id="trackOrdersBtn">Track Orders</button>
+          <h4>📦 Preparing Order</h4>
+          <div class="logistics-orders" id="preparingOrders">
+            <p class="no-orders">No orders in preparation</p>
           </div>
         </div>
-        
+
         <div class="logistics-section">
-          <h4>Inventory Management</h4>
-          <div class="logistics-info">
-            <p>Manage stock levels and inventory updates.</p>
-            <button class="logistics-btn" id="inventoryBtn">Manage Inventory</button>
+          <h4>📋 Inventory Management</h4>
+          <div class="logistics-orders" id="inventoryOrders">
+            <p class="no-orders">No orders in inventory</p>
           </div>
         </div>
-        
+
         <div class="logistics-section">
-          <h4>Delivery Routes</h4>
-          <div class="logistics-info">
-            <p>Optimize delivery routes and schedules.</p>
-            <button class="logistics-btn" id="routesBtn">View Routes</button>
+          <h4>🚛 Delivery Routes</h4>
+          <div class="logistics-orders" id="deliveryOrders">
+            <p class="no-orders">No orders for delivery</p>
           </div>
         </div>
       </div>
@@ -1864,6 +2241,15 @@
         statsModalBtn.addEventListener('click', function() {
           closeMenu();
           openModal('statsModal');
+          // Load advanced statistics when stats modal opens
+          setTimeout(() => {
+            if (window.updateAdvancedStats) {
+              window.updateAdvancedStats();
+            } else {
+              console.log('⚠️ updateAdvancedStats not available yet, retrying...');
+              setTimeout(() => window.updateAdvancedStats && window.updateAdvancedStats(), 500);
+            }
+          }, 100);
         });
         console.log('✅ Stats modal button handler added');
       }
@@ -1883,6 +2269,15 @@
         logisticsModalBtn.addEventListener('click', function() {
           closeMenu();
           openModal('logisticsModal');
+          // Load orders when logistics modal opens
+          setTimeout(() => {
+            if (window.loadLogisticsOrders) {
+              window.loadLogisticsOrders();
+            } else {
+              console.log('⚠️ loadLogisticsOrders not available yet, retrying...');
+              setTimeout(() => window.loadLogisticsOrders && window.loadLogisticsOrders(), 500);
+            }
+          }, 100);
         });
         console.log('✅ Logistics modal button handler added');
       }
@@ -2007,7 +2402,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, collection, query, where, limit, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     // Configuración de Firebase
     const firebaseConfig = {
@@ -2036,9 +2431,11 @@
         doc,
         getDoc,
         setDoc,
+        updateDoc,
         collection,
         query,
         where,
+        orderBy,
         limit,
         getDocs,
         deleteDoc
@@ -2050,8 +2447,486 @@
     };
     
     console.log('✅ Firebase disponible globalmente');
+
+    // === LOGISTICS FUNCTIONALITY ===
+
+    // Load logistics orders from Firebase
+    async function loadLogisticsOrders() {
+      if (!firebase || !firebase.auth().currentUser) {
+        console.log('⚠️ No user authenticated for logistics');
+        return;
+      }
+
+      try {
+        const { collection, query, orderBy, getDocs, updateDoc, doc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const q = query(pedidosCollection, orderBy('timestamp', 'desc'));
+        const querySnapshot = await getDocs(q);
+
+        const orders = [];
+        const updatePromises = [];
+
+        querySnapshot.forEach(docSnapshot => {
+          const data = docSnapshot.data();
+
+          // Check if logisticsState exists, if not, set it to 'preparing'
+          if (!data.logisticsState) {
+            console.log(`🔄 Setting logisticsState to 'preparing' for order ${docSnapshot.id}`);
+            const orderRef = doc(db, 'pedidos', docSnapshot.id);
+            updatePromises.push(updateDoc(orderRef, { logisticsState: 'preparing' }));
+          }
+
+          orders.push({
+            id: docSnapshot.id,
+            ...data,
+            logisticsState: data.logisticsState || 'preparing' // Default state
+          });
+        });
+
+        // Update orders that don't have logisticsState
+        if (updatePromises.length > 0) {
+          await Promise.all(updatePromises);
+          console.log(`✅ Updated ${updatePromises.length} orders with logisticsState`);
+        }
+
+        console.log('📦 Loaded', orders.length, 'logistics orders');
+        displayLogisticsOrders(orders);
+
+      } catch (error) {
+        console.error('❌ Error loading logistics orders:', error);
+      }
+    }
+
+    // Display orders in their respective sections
+    function displayLogisticsOrders(orders) {
+      const preparingContainer = document.getElementById('preparingOrders');
+      const inventoryContainer = document.getElementById('inventoryOrders');
+      const deliveryContainer = document.getElementById('deliveryOrders');
+
+      if (!preparingContainer || !inventoryContainer || !deliveryContainer) {
+        console.warn('⚠️ Logistics containers not found');
+        return;
+      }
+
+      // Separate orders by state
+      const preparingOrders = orders.filter(order => order.logisticsState === 'preparing');
+      const inventoryOrders = orders.filter(order => order.logisticsState === 'inventory');
+      const deliveryOrders = orders.filter(order => order.logisticsState === 'delivery');
+
+      // Display preparing orders
+      if (preparingOrders.length > 0) {
+        preparingContainer.innerHTML = preparingOrders.map(order => createOrderHTML(order, 'inventory')).join('');
+      } else {
+        preparingContainer.innerHTML = '<p class="no-orders">No orders in preparation</p>';
+      }
+
+      // Display inventory orders
+      if (inventoryOrders.length > 0) {
+        inventoryContainer.innerHTML = inventoryOrders.map(order => createOrderHTML(order, 'delivery')).join('');
+      } else {
+        inventoryContainer.innerHTML = '<p class="no-orders">No orders in inventory</p>';
+      }
+
+      // Display delivery orders
+      if (deliveryOrders.length > 0) {
+        deliveryContainer.innerHTML = deliveryOrders.map(order => createOrderHTML(order, null)).join('');
+      } else {
+        deliveryContainer.innerHTML = '<p class="no-orders">No orders for delivery</p>';
+      }
+    }
+
+    // Create HTML for an order item
+    function createOrderHTML(order, nextState) {
+      const canMove = nextState !== null;
+      const buttonHtml = canMove ?
+        `<button class="move-order-btn" onclick="moveOrder('${order.id}', '${nextState}')" title="Move to ${nextState}">↓</button>` :
+        `<button class="move-order-btn" disabled title="Final state">✓</button>`;
+
+      return `
+        <div class="order-item" data-order-id="${order.id}">
+          <div class="order-info">
+            <div class="order-number">#${order.numeroOrden || order.id.slice(-6)}</div>
+            <div class="order-details">
+              ${order.fechaLocal || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || 0)}
+            </div>
+          </div>
+          ${buttonHtml}
+        </div>
+      `;
+    }
+
+    // Move order to next state
+    async function moveOrder(orderId, nextState) {
+      if (!firebase || !firebase.firestore) {
+        console.error('❌ Firebase not available');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          logisticsState: nextState,
+          lastStateUpdate: new Date()
+        });
+
+        console.log(`✅ Order ${orderId} moved to ${nextState}`);
+
+        // Reload orders to reflect changes
+        loadLogisticsOrders();
+
+      } catch (error) {
+        console.error('❌ Error moving order:', error);
+        alert('Error moving order. Please try again.');
+      }
+    }
+
+    // === ADVANCED ANALYTICS FUNCTIONALITY ===
+
+    // Calculate most purchased item from Firebase orders
+    async function getMostPurchasedItem() {
+      if (!firebase || !firebase.auth().currentUser) {
+        return "No data";
+      }
+
+      try {
+        const { collection, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const querySnapshot = await getDocs(pedidosCollection);
+
+        const itemCounts = {};
+
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.items && Array.isArray(data.items)) {
+            data.items.forEach(item => {
+              const itemName = item.description || item.articulo || 'Unknown';
+              const quantity = parseInt(item.quantity) || 1;
+              itemCounts[itemName] = (itemCounts[itemName] || 0) + quantity;
+            });
+          }
+        });
+
+        const sortedItems = Object.entries(itemCounts).sort(([,a], [,b]) => b - a);
+
+        if (sortedItems.length > 0) {
+          const [itemName, count] = sortedItems[0];
+          return `${itemName} (${count}x)`;
+        }
+
+        return "No purchases";
+      } catch (error) {
+        console.error('❌ Error calculating most purchased item:', error);
+        return "Error loading data";
+      }
+    }
+
+    // Calculate month with most sales from Firebase orders
+    async function getBestSalesMonth() {
+      if (!firebase || !firebase.auth().currentUser) {
+        return "No data";
+      }
+
+      try {
+        const { collection, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const querySnapshot = await getDocs(pedidosCollection);
+
+        const monthlySales = {};
+
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          let orderDate = null;
+
+          // Try to get date from different fields
+          if (data.timestamp) {
+            orderDate = new Date(data.timestamp);
+          } else if (data.fecha) {
+            orderDate = data.fecha.toDate ? data.fecha.toDate() : new Date(data.fecha);
+          } else if (data.fechaLocal) {
+            orderDate = new Date(data.fechaLocal);
+          }
+
+          if (orderDate && !isNaN(orderDate.getTime())) {
+            const monthKey = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+            const total = parseFloat(data.total) || 0;
+            monthlySales[monthKey] = (monthlySales[monthKey] || 0) + total;
+          }
+        });
+
+        const sortedMonths = Object.entries(monthlySales).sort(([,a], [,b]) => b - a);
+
+        if (sortedMonths.length > 0) {
+          const [monthKey, total] = sortedMonths[0];
+          const [year, month] = monthKey.split('-');
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          return `${monthNames[parseInt(month) - 1]} ${year} ($${Math.round(total)})`;
+        }
+
+        return "No sales data";
+      } catch (error) {
+        console.error('❌ Error calculating best sales month:', error);
+        return "Error loading data";
+      }
+    }
+
+    // Calculate item with most stock changes (theoretical stock variations)
+    async function getMostStockChangesItem() {
+      try {
+        // Use the data that's already loaded in the table
+        const tableRows = document.querySelectorAll('tbody tr:not(.totals-row)');
+
+        if (tableRows.length === 0) {
+          return "No data in table";
+        }
+
+        let maxItem = null;
+        let maxStock = 0;
+
+        tableRows.forEach(row => {
+          // Get the cells from the current row
+          const cells = row.querySelectorAll('td');
+          if (cells.length === 0) return;
+
+          // Try to find the description and theoretical stock columns
+          // Assuming article is first column and stockTeorico is in the table
+          let description = '';
+          let theoreticalStock = 0;
+
+          // Get description from first visible cell
+          if (cells[0]) {
+            description = cells[0].textContent.trim();
+          }
+
+          // Look for theoretical stock in the visible cells
+          cells.forEach(cell => {
+            const cellText = cell.textContent.trim();
+            const cellValue = parseInt(cellText) || 0;
+
+            // If this looks like a stock value (reasonable range)
+            if (cellValue > theoreticalStock && cellValue < 100000) {
+              theoreticalStock = cellValue;
+            }
+          });
+
+          if (theoreticalStock > maxStock && description) {
+            maxStock = theoreticalStock;
+            maxItem = { description, theoreticalStock };
+          }
+        });
+
+        if (maxItem && maxStock > 0) {
+          return `${maxItem.description} (${maxStock})`;
+        }
+
+        // Fallback: try to access global data if table scan didn't work
+        if (window.lastData && Array.isArray(window.lastData)) {
+          let fallbackMaxItem = null;
+          let fallbackMaxStock = 0;
+
+          window.lastData.forEach(item => {
+            const theoreticalStock = parseInt(item.stockTeorico) || 0;
+            if (theoreticalStock > fallbackMaxStock) {
+              fallbackMaxStock = theoreticalStock;
+              fallbackMaxItem = item;
+            }
+          });
+
+          if (fallbackMaxItem) {
+            return `${fallbackMaxItem.description || fallbackMaxItem.articulo} (${fallbackMaxStock})`;
+          }
+        }
+
+        return "No stock data available";
+      } catch (error) {
+        console.error('❌ Error calculating most stock changes:', error);
+        return "Analysis not available";
+      }
+    }
+
+    // Calculate total registered users from Firebase Auth
+    async function getTotalRegisteredUsers() {
+      try {
+        // Since we can't directly access all users from client-side Firebase Auth,
+        // we'll count unique users from orders as a proxy
+        if (!firebase || !firebase.auth().currentUser) {
+          return "Auth required";
+        }
+
+        const { collection, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const querySnapshot = await getDocs(pedidosCollection);
+
+        const uniqueUsers = new Set();
+
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          // Try different user identifier fields
+          if (data.userId) {
+            uniqueUsers.add(data.userId);
+          } else if (data.userEmail) {
+            uniqueUsers.add(data.userEmail);
+          } else if (data.usuario) {
+            uniqueUsers.add(data.usuario);
+          }
+        });
+
+        const totalUsers = uniqueUsers.size;
+        return totalUsers > 0 ? `${totalUsers} usuarios` : "No user data";
+
+      } catch (error) {
+        console.error('❌ Error calculating total users:', error);
+        return "Error loading users";
+      }
+    }
+
+    // Calculate most active user based on order count
+    async function getMostActiveUser() {
+      try {
+        if (!firebase || !firebase.auth().currentUser) {
+          return "Auth required";
+        }
+
+        const { collection, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const querySnapshot = await getDocs(pedidosCollection);
+
+        const userActivity = {};
+
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          let userIdentifier = null;
+
+          // Try to get user identifier
+          if (data.userEmail) {
+            userIdentifier = data.userEmail;
+          } else if (data.usuario) {
+            userIdentifier = data.usuario;
+          } else if (data.userId) {
+            userIdentifier = data.userId;
+          }
+
+          if (userIdentifier) {
+            userActivity[userIdentifier] = (userActivity[userIdentifier] || 0) + 1;
+          }
+        });
+
+        const sortedUsers = Object.entries(userActivity).sort(([,a], [,b]) => b - a);
+
+        if (sortedUsers.length > 0) {
+          const [userIdentifier, orderCount] = sortedUsers[0];
+          // Clean up email to show just the name part
+          const displayName = userIdentifier.includes('@') ?
+            userIdentifier.split('@')[0] : userIdentifier;
+          return `${displayName} (${orderCount} pedidos)`;
+        }
+
+        return "No activity data";
+
+      } catch (error) {
+        console.error('❌ Error calculating most active user:', error);
+        return "Error loading activity";
+      }
+    }
+
+    // Update advanced stats
+    async function updateAdvancedStats() {
+      console.log('📊 Updating advanced statistics...');
+
+      // Update most purchased item
+      const mostPurchasedItem = await getMostPurchasedItem();
+      const mostPurchasedStat = document.getElementById('mostPurchasedItemStat');
+      if (mostPurchasedStat) {
+        mostPurchasedStat.textContent = mostPurchasedItem;
+      }
+
+      // Update best sales month
+      const bestSalesMonth = await getBestSalesMonth();
+      const bestSalesMonthStat = document.getElementById('bestSalesMonthStat');
+      if (bestSalesMonthStat) {
+        bestSalesMonthStat.textContent = bestSalesMonth;
+      }
+
+      // Update most stock changes item
+      const mostStockChanges = await getMostStockChangesItem();
+      const mostStockChangesStat = document.getElementById('mostStockChangesStat');
+      if (mostStockChangesStat) {
+        mostStockChangesStat.textContent = mostStockChanges;
+      }
+
+      // Update total registered users
+      const totalUsers = await getTotalRegisteredUsers();
+      const totalUsersStat = document.getElementById('totalUsersStat');
+      if (totalUsersStat) {
+        totalUsersStat.textContent = totalUsers;
+      }
+
+      // Update most active user
+      const mostActiveUser = await getMostActiveUser();
+      const mostActiveUserStat = document.getElementById('mostActiveUserStat');
+      if (mostActiveUserStat) {
+        mostActiveUserStat.textContent = mostActiveUser;
+      }
+
+      console.log('✅ Advanced statistics updated');
+    }
+
+    // Expose advanced stats function globally
+    window.updateAdvancedStats = updateAdvancedStats;
+
+    // Expose logistics functions globally
+    window.loadLogisticsOrders = loadLogisticsOrders;
+    window.moveOrder = moveOrder;
+
+    console.log('✅ Firebase disponible globalmente');
   </script>
 
+  <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
+  <script>
+    // Initialize Material Design Components
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize all buttons
+      const buttons = document.querySelectorAll('.mdc-button');
+      buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+      
+      // Initialize checkboxes
+      const checkboxes = document.querySelectorAll('.mdc-checkbox');
+      checkboxes.forEach(checkbox => mdc.checkbox.MDCCheckbox.attachTo(checkbox));
+      
+      // Initialize text fields
+      const textFields = document.querySelectorAll('.mdc-text-field');
+      textFields.forEach(textField => mdc.textField.MDCTextField.attachTo(textField));
+      
+      // Initialize tab bar
+      const tabBar = document.querySelector('.mdc-tab-bar');
+      if (tabBar) {
+        const mdcTabBar = mdc.tabBar.MDCTabBar.attachTo(tabBar);
+        
+        // Handle tab activation
+        mdcTabBar.listen('MDCTabBar:activated', (event) => {
+          const tab = tabBar.querySelectorAll('.mdc-tab')[event.detail.index];
+          const segment = tab.getAttribute('data-segment');
+          
+          // Trigger the existing tab functionality
+          if (window.handleTabClick) {
+            window.handleTabClick(segment);
+          }
+        });
+      }
+    });
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>

@@ -71,9 +71,9 @@ function updateCartButtonStyles(itemId, quantity) {
   const cartBtn = document.querySelector(`.cart-btn[data-item="${itemId}"]`);
   if (cartBtn) {
     const isActive = quantity > 0;
-    cartBtn.style.background = isActive ? '#d32f2f' : '#fff';
+    cartBtn.style.background = isActive ? '#4CAF50' : '#fff';
     cartBtn.style.color = isActive ? '#fff' : '#333';
-    cartBtn.style.border = `1px solid ${isActive ? '#d32f2f' : '#ddd'}`;
+    cartBtn.style.border = `1px solid ${isActive ? '#4CAF50' : '#ddd'}`;
     
     const svg = cartBtn.querySelector('svg');
     if (svg) {
@@ -363,10 +363,16 @@ function renderRows() {
   const macbooksCount = mapped.filter(segmentFilterPredicate('macbooks')).length;
   const samsungCount = mapped.filter(segmentFilterPredicate('samsung')).length;
 
-  document.querySelector('.tab[data-segment="all"]').textContent = `All (${allCount})`;
-  document.querySelector('.tab[data-segment="iphone"]').textContent = `Iphone (${iphoneCount})`;
-  document.querySelector('.tab[data-segment="macbooks"]').textContent = `Macbooks (${macbooksCount})`;
-  document.querySelector('.tab[data-segment="samsung"]').textContent = `Samsung (${samsungCount})`;
+  // Update tab counts with Material Design structure
+  const allTab = document.querySelector('.mdc-tab[data-segment="all"] .mdc-tab__text-label');
+  const iphoneTab = document.querySelector('.mdc-tab[data-segment="iphone"] .mdc-tab__text-label');
+  const macbooksTab = document.querySelector('.mdc-tab[data-segment="macbooks"] .mdc-tab__text-label');
+  const samsungTab = document.querySelector('.mdc-tab[data-segment="samsung"] .mdc-tab__text-label');
+
+  if (allTab) allTab.textContent = `All (${allCount})`;
+  if (iphoneTab) iphoneTab.textContent = `iPhone (${iphoneCount})`;
+  if (macbooksTab) macbooksTab.textContent = `MacBooks (${macbooksCount})`;
+  if (samsungTab) samsungTab.textContent = `Samsung (${samsungCount})`;
 
   const table = document.querySelector('table');
   const thead = table.querySelector('thead');
@@ -484,9 +490,9 @@ function renderRows() {
             <button class="qty-btn" data-action="increase" data-item="${itemId}">+</button>
             <button class="cart-btn" data-item="${itemId}" title="Add to cart"
               style="
-                background:${quantity > 0 ? '#d32f2f' : '#fff'};
+                background:${quantity > 0 ? '#4CAF50' : '#fff'};
                 color:${quantity > 0 ? '#fff' : '#333'};
-                border:1px solid ${quantity > 0 ? '#d32f2f' : '#ddd'};
+                border:1px solid ${quantity > 0 ? '#4CAF50' : '#ddd'};
                 border-radius:4px;
                 padding:8px 20px;
                 min-width:140px;
@@ -592,14 +598,29 @@ async function refresh() {
   }
 }
 
-function handleTabClick(e) {
-  const tab = e.target.closest('.tab');
-  if (!tab) return;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  currentSegment = tab.getAttribute('data-segment') || 'all';
+function handleTabClick(segmentOrEvent) {
+  let segment;
+  
+  // Check if it's called with a segment string (from Material Design) or an event (legacy)
+  if (typeof segmentOrEvent === 'string') {
+    segment = segmentOrEvent;
+  } else {
+    // Legacy event handling for backward compatibility
+    const tab = segmentOrEvent.target.closest('.tab, .mdc-tab');
+    if (!tab) return;
+    segment = tab.getAttribute('data-segment') || 'all';
+    
+    // Handle legacy tab activation
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  }
+  
+  currentSegment = segment;
   renderRows();
 }
+
+// Make handleTabClick available globally for Material Design tabs
+window.handleTabClick = handleTabClick;
 
 function setupAutoRefresh() {
   const checkbox = document.getElementById('autoToggle');
