@@ -557,7 +557,7 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
-    <span id="versionBtn" class="version-btn">v0.11</span>
+    <span id="versionBtn" class="version-btn">v0.12</span>
     <button id="maximizeBtn" class="icon-button">&#x2195;</button>
   </header>
 
@@ -646,6 +646,20 @@
         </div>
         <label for="autoToggle">Auto-refresh 30s</label>
       </div>
+
+      <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+          <input type="checkbox" class="mdc-checkbox__native-control" id="hideZeroValues">
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+          <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="hideZeroValues">Hide zero values</label>
+      </div>
       <span class="status" id="statusText"></span>
       <div style="flex: 1;"></div> <!-- Spacer -->
       <a href="login.html" class="mdc-button mdc-button--raised" style="text-decoration: none; background-color: #f44336;">
@@ -665,9 +679,6 @@
       <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
       <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
       <label><input type="checkbox" data-column="transito"> Stock Teorico Transito</label>
-      
-      <hr style="border-color: #3a3a44; margin: 8px 0;">
-      <label><input type="checkbox" id="hideZeroValues"> Mostrar solo productos con stock disponible</label>
     </div>
 
     <div id="errorBox" class="error hidden"></div>
@@ -729,7 +740,16 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.11 - Actual</h3>
+          <h3>v0.12 - Actual</h3>
+          <ul>
+            <li>🔍 <strong>Filtro de productos con stock 0 corregido</strong></li>
+            <li>✅ Agregado checkbox "Hide zero values" en barra superior</li>
+            <li>📋 Mostrar todos los productos por defecto (incluyendo stock 0)</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.11</h3>
           <ul>
             <li>🛒 <strong>Sistema de confirmación de órdenes implementado</strong></li>
             <li>📧 Eliminados botones de envío por WhatsApp y Email</li>

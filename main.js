@@ -346,9 +346,6 @@ function renderRows() {
     // Mostrar solo productos con stock teórico disponible
     mapped = mapped.filter(p => p.teorico > 0);
     console.log('Productos después del filtro (teorico > 0):', mapped.length);
-  } else {
-    // Filter: only show products where stock > 0 OR transit > 0 (default behavior)
-    mapped = mapped.filter(p => p.teorico > 0 || p.transito > 0);
   }
 
   // Add search filter
