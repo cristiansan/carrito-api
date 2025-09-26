@@ -1,0 +1,3507 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administration - South Traders</title>
+
+  <!-- Material Design CSS -->
+  <link href="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, sans-serif;
+      color-scheme: dark;
+      --mdc-theme-primary: #4CAF50;
+      --mdc-theme-secondary: #2a2a33;
+      --mdc-theme-surface: #1e1e24;
+      --mdc-theme-background: #0f0f10;
+      --mdc-theme-on-primary: #ffffff;
+      --mdc-theme-on-secondary: #ffffff;
+      --mdc-theme-on-surface: #f1f1f1;
+      --mdc-theme-on-background: #f1f1f1;
+    }
+
+    /* Material Design custom overrides */
+    .mdc-tab {
+      color: #d0d0d0 !important;
+      background-color: #1b1b1f !important;
+      border-radius: 6px 6px 0 0 !important;
+      border: 1px solid #2a2a2a !important;
+      border-bottom: none !important;
+      margin-right: 4px !important;
+    }
+
+    .mdc-tab--active {
+      color: #ffffff !important;
+      background-color: #23232a !important;
+      font-weight: 600 !important;
+    }
+
+    .mdc-tab:hover:not(.mdc-tab--active) {
+      color: #e8e8e8 !important;
+      background-color: #2a2a2f !important;
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: #4CAF50 !important;
+      border-width: 3px !important;
+    }
+
+    /* Fix for all text elements */
+    .mdc-tab__text-label,
+    .mdc-button__label,
+    .mdc-floating-label,
+    .mdc-text-field__input,
+    .mdc-form-field > label,
+    span, p, div, h1, h2, h3, h4, h5, h6 {
+      color: inherit !important;
+    }
+
+    /* Button improvements */
+    .mdc-button {
+      color: #f1f1f1 !important;
+    }
+
+    .mdc-button--raised {
+      background-color: #4CAF50 !important;
+      color: #ffffff !important;
+    }
+
+    .mdc-button--outlined {
+      border-color: #3a3a44 !important;
+      color: #f1f1f1 !important;
+    }
+
+    .mdc-button--outlined:hover {
+      background-color: #2a2a33 !important;
+      border-color: #4CAF50 !important;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f0f10;
+      color: #f1f1f1;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      background: #121214;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      height: auto;
+      max-width: 150px;
+      width: 100%;
+      object-fit: contain;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #fafafa;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #2a2a33;
+      color: #f1f1f1;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid #3a3a44;
+      transition: background-color 0.2s;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: #3a3a44;
+      color: #f1f1f1;
+    }
+
+    .container {
+      padding: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .tab-content {
+      background: #1e1e24;
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 16px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .tab-content h2 {
+      color: #4CAF50;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .content-placeholder {
+      color: #b5b5b5;
+      font-style: italic;
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 16px;
+    }
+
+    .admin-section {
+      background: #15151a;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .admin-section h3 {
+      color: #4CAF50;
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+
+    .sellers-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .sellers-header h3 {
+      margin: 0;
+    }
+
+    .add-seller-btn {
+      background-color: #4CAF50 !important;
+    }
+
+    .seller-card {
+      background: #2a2a33;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #3a3a44;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .seller-card:hover {
+      background: #2f2f3a;
+      border-color: #4CAF50;
+    }
+
+    .seller-info {
+      flex: 1;
+    }
+
+    .seller-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f1f1f1;
+      margin-bottom: 4px;
+    }
+
+    .seller-details {
+      font-size: 13px;
+      color: #b5b5b5;
+    }
+
+    .seller-status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 12px;
+      font-weight: 500;
+    }
+
+    .status-active {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .status-inactive {
+      background: rgba(158, 158, 158, 0.2);
+      color: #9e9e9e;
+    }
+
+    .seller-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 12px;
+    }
+
+    .delete-seller-btn {
+      background: #f44336 !important;
+      color: white !important;
+      min-width: auto !important;
+      padding: 8px !important;
+    }
+
+    .edit-seller-btn {
+      background: #FF9800 !important;
+      color: white !important;
+      min-width: auto !important;
+      padding: 8px !important;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-item {
+      text-align: center;
+      background: #2a2a33;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #3a3a44;
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #b5b5b5;
+      text-transform: uppercase;
+    }
+
+    .loading-sellers {
+      text-align: center;
+      color: #b5b5b5;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    .no-sellers {
+      text-align: center;
+      color: #b5b5b5;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    /* Modal styles for add/edit seller */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal:not(.hidden) {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: #1e1e24;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #2a2a2a;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 8px;
+      position: relative;
+      color: #f1f1f1;
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      cursor: pointer;
+    }
+
+    .close-button:hover {
+      color: #f1f1f1;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #f1f1f1;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      background: #2a2a33;
+      color: #f1f1f1;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+
+    /* Client-specific styles */
+    .clients-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .clients-header h3 {
+      margin: 0;
+    }
+
+    .add-client-btn {
+      background-color: #2196F3 !important;
+    }
+
+    .client-card {
+      background: #2a2a33;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #3a3a44;
+      transition: all 0.2s ease;
+    }
+
+    .client-card:hover {
+      background: #2f2f3a;
+      border-color: #2196F3;
+    }
+
+    .client-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .client-main-info {
+      flex: 1;
+    }
+
+    .client-number {
+      font-size: 12px;
+      color: #2196F3;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .client-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f1f1f1;
+      margin-bottom: 4px;
+    }
+
+    .client-price-list {
+      font-size: 13px;
+      color: #FF9800;
+      margin-bottom: 8px;
+    }
+
+    .client-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .client-detail-item {
+      font-size: 13px;
+      color: #b5b5b5;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .client-detail-label {
+      font-weight: 500;
+    }
+
+    .client-detail-value {
+      color: #f1f1f1;
+    }
+
+    .client-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .client-link {
+      color: #2196F3;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .client-link:hover {
+      text-decoration: underline;
+    }
+
+    .loading-clients, .no-clients {
+      text-align: center;
+      color: #b5b5b5;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    /* Form specific styles for clients */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-row-triple {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row, .form-row-triple {
+        grid-template-columns: 1fr;
+      }
+
+      .client-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Prevent any black text */
+    * {
+      color: inherit;
+    }
+
+    .mdc-tab *,
+    .mdc-button *,
+    .mdc-text-field *,
+    .mdc-form-field * {
+      color: inherit !important;
+    }
+
+    /* Product pricing table styles */
+    .prices-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .prices-header h3 {
+      margin: 0;
+    }
+
+    .prices-actions-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #2a2a33;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .products-table thead {
+      background: #1e1e24;
+    }
+
+    .products-table th {
+      padding: 12px 16px;
+      text-align: left;
+      color: #4CAF50;
+      font-weight: 600;
+      border-bottom: 2px solid #3a3a44;
+      font-size: 14px;
+    }
+
+    .products-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #3a3a44;
+      color: #f1f1f1;
+    }
+
+    .products-table tr:hover {
+      background: #2f2f3a;
+    }
+
+    .products-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .product-code {
+      font-family: monospace;
+      color: #2196F3;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .product-description {
+      color: #f1f1f1;
+      font-size: 14px;
+    }
+
+    .price-input {
+      width: 100px;
+      padding: 6px 8px;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      background: #1e1e24;
+      color: #f1f1f1;
+      text-align: right;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .price-input:focus {
+      border-color: #4CAF50;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .price-input:hover {
+      border-color: #4a4a54;
+    }
+
+    .price-input.modified {
+      border-color: #FF9800;
+      background: rgba(255, 152, 0, 0.1);
+    }
+
+    .loading-products, .no-products {
+      text-align: center;
+      color: #b5b5b5;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    /* Loading spinner animation */
+    .loading-spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid #3a3a44;
+      border-top: 3px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .price-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .price-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #b5b5b5;
+    }
+
+    .price-stat {
+      background: #2a2a33;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #3a3a44;
+    }
+
+    .price-stat-number {
+      color: #4CAF50;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    /* Responsive table */
+    @media (max-width: 1024px) {
+      .products-table {
+        font-size: 12px;
+      }
+
+      .products-table th,
+      .products-table td {
+        padding: 8px 10px;
+      }
+
+      .price-input {
+        width: 80px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .prices-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .products-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .price-actions {
+        justify-content: center;
+      }
+    }
+
+    /* Order management table styles */
+    .orders-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .orders-header h3 {
+      margin: 0;
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #2a2a33;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+
+    .orders-table thead {
+      background: #1e1e24;
+    }
+
+    .orders-table th {
+      padding: 10px 12px;
+      text-align: left;
+      color: #4CAF50;
+      font-weight: 600;
+      border-bottom: 2px solid #3a3a44;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .orders-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #3a3a44;
+      color: #f1f1f1;
+      vertical-align: middle;
+    }
+
+    .orders-table tr:hover {
+      background: #2f2f3a;
+    }
+
+    .orders-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .order-input {
+      width: 100%;
+      min-width: 80px;
+      padding: 4px 6px;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      background: #1e1e24;
+      color: #f1f1f1;
+      font-size: 12px;
+      font-family: inherit;
+    }
+
+    .order-input:focus {
+      border-color: #4CAF50;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .order-input:hover {
+      border-color: #4a4a54;
+    }
+
+    .order-input.modified {
+      border-color: #FF9800;
+      background: rgba(255, 152, 0, 0.1);
+    }
+
+    .order-date-input {
+      width: 110px;
+    }
+
+    .order-number-input {
+      width: 100px;
+      text-align: center;
+      font-family: monospace;
+    }
+
+    .order-client-input {
+      width: 80px;
+      text-align: center;
+    }
+
+    .order-name-input {
+      min-width: 150px;
+    }
+
+    .order-amount-input {
+      width: 100px;
+      text-align: right;
+      font-family: monospace;
+    }
+
+    .order-select {
+      width: 100%;
+      min-width: 120px;
+      padding: 4px 6px;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      background: #1e1e24;
+      color: #f1f1f1;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .order-select:focus {
+      border-color: #4CAF50;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .order-select:hover {
+      border-color: #4a4a54;
+    }
+
+    .order-select.modified {
+      border-color: #FF9800;
+      background: rgba(255, 152, 0, 0.1);
+    }
+
+    .status-badge {
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-block;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .status-a-confirmar {
+      background: rgba(158, 158, 158, 0.2);
+      color: #9e9e9e;
+    }
+
+    .status-confirmado {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196F3;
+    }
+
+    .status-confirmado-modificaciones {
+      background: rgba(255, 152, 0, 0.2);
+      color: #FF9800;
+    }
+
+    .status-en-preparacion {
+      background: rgba(156, 39, 176, 0.2);
+      color: #9C27B0;
+    }
+
+    .status-en-camino {
+      background: rgba(255, 193, 7, 0.2);
+      color: #FFC107;
+    }
+
+    .status-entregado {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+
+    .loading-orders, .no-orders {
+      text-align: center;
+      color: #b5b5b5;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .order-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #b5b5b5;
+    }
+
+    .order-stat {
+      background: #2a2a33;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #3a3a44;
+    }
+
+    .order-stat-number {
+      color: #4CAF50;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    /* Responsive orders table */
+    @media (max-width: 1200px) {
+      .orders-table {
+        font-size: 11px;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding: 8px 6px;
+      }
+
+      .order-input,
+      .order-select {
+        font-size: 11px;
+        padding: 3px 4px;
+      }
+
+      .order-name-input {
+        min-width: 120px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .orders-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .orders-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .order-actions {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 14px;
+      }
+      h1 {
+        font-size: 18px;
+      }
+      .container {
+        padding: 8px;
+      }
+      .header {
+        padding: 12px;
+      }
+      .tab-content {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo" class="header-logo">
+    <h1>Administration Panel</h1>
+    <a href="marketplace.html" class="back-btn">← Back to Marketplace</a>
+  </header>
+
+  <div class="container">
+    <div class="mdc-tab-bar" role="tablist" id="tabs">
+      <div class="mdc-tab-scroller">
+        <div class="mdc-tab-scroller__scroll-area">
+          <div class="mdc-tab-scroller__scroll-content">
+            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-tab="precios">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Precios</span>
+              </span>
+              <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="clientes">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Clientes</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="vendedor">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Vendedor</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="master">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Master</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div id="precios-content" class="tab-content">
+      <h2>💰 Gestión de Precios</h2>
+      <div class="admin-section">
+        <div class="prices-header">
+          <h3>Lista de Productos y Precios</h3>
+          <div class="prices-actions-buttons">
+            <button class="mdc-button mdc-button--outlined" id="importPricesBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">upload_file</i>
+              <span class="mdc-button__label">Importar Precios</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="exportCsvBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+              <span class="mdc-button__label">Exportar CSV</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="exportExcelBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+              <span class="mdc-button__label">Exportar Excel</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" id="saveAllPricesBtn" style="display: none;">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+              <span class="mdc-button__label">Guardar Todos los Precios</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="loadProductsBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+              <span class="mdc-button__label">Actualizar Productos</span>
+            </button>
+          </div>
+          <input type="file" id="pricesFileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+        </div>
+
+        <div id="productsContainer">
+          <div class="loading-products">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Cargando productos...</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="clientes-content" class="tab-content" style="display: none;">
+      <h2>👥 Gestión de Clientes</h2>
+
+      <div class="admin-section">
+        <div class="clients-header">
+          <h3>Lista de Clientes</h3>
+          <button class="mdc-button mdc-button--raised add-client-btn" id="addClientBtn">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">person_add</i>
+            <span class="mdc-button__label">Agregar Cliente</span>
+          </button>
+        </div>
+
+        <div id="clientsContainer">
+          <div class="loading-clients">
+            <p>Cargando clientes...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Estadísticas</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" id="totalClients">0</span>
+            <span class="stat-label">Total Clientes</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="activeClients">0</span>
+            <span class="stat-label">Activos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="totalCredit">$0</span>
+            <span class="stat-label">Crédito Total</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="totalBalance">$0</span>
+            <span class="stat-label">Saldo Total</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vendedor-content" class="tab-content" style="display: none;">
+      <h2>🤝 Gestión de Vendedores</h2>
+
+      <div class="admin-section">
+        <div class="sellers-header">
+          <h3>Lista de Vendedores</h3>
+          <button class="mdc-button mdc-button--raised add-seller-btn" id="addSellerBtn">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">person_add</i>
+            <span class="mdc-button__label">Agregar Vendedor</span>
+          </button>
+        </div>
+
+        <div id="sellersContainer">
+          <div class="loading-sellers">
+            <p>Cargando vendedores...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Estadísticas</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" id="totalSellers">0</span>
+            <span class="stat-label">Total Vendedores</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="activeSellers">0</span>
+            <span class="stat-label">Activos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="master-content" class="tab-content" style="display: none;">
+      <h2>⚙️ Gestión de Órdenes Master</h2>
+      <div class="admin-section">
+        <div class="orders-header">
+          <h3>Lista de Órdenes</h3>
+          <button class="mdc-button mdc-button--raised" id="addOrderBtn">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">add</i>
+            <span class="mdc-button__label">Agregar Orden</span>
+          </button>
+        </div>
+
+        <div id="ordersContainer">
+          <div class="loading-orders">
+            <p>Cargando órdenes...</p>
+          </div>
+        </div>
+
+        <div class="order-actions" style="margin-top: 20px; display: none;" id="orderActions">
+          <button class="mdc-button mdc-button--raised" id="saveAllOrdersBtn">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+            <span class="mdc-button__label">Guardar Todos los Cambios</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Estadísticas</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" id="totalOrders">0</span>
+            <span class="stat-label">Total Órdenes</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="confirmedOrders">0</span>
+            <span class="stat-label">Confirmadas</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="inPreparationOrders">0</span>
+            <span class="stat-label">En Preparación</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="deliveredOrders">0</span>
+            <span class="stat-label">Entregadas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Seller Modal -->
+  <div id="sellerModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button" id="closeSellerModal">&times;</span>
+      <h2 id="sellerModalTitle">Agregar Vendedor</h2>
+
+      <form id="sellerForm">
+        <div class="form-group">
+          <label for="sellerName">Nombre Completo *</label>
+          <input type="text" id="sellerName" name="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="sellerEmail">Email</label>
+          <input type="email" id="sellerEmail" name="email">
+        </div>
+
+        <div class="form-group">
+          <label for="sellerPhone">Teléfono</label>
+          <input type="tel" id="sellerPhone" name="phone">
+        </div>
+
+        <div class="form-group">
+          <label for="sellerTerritory">Territorio</label>
+          <input type="text" id="sellerTerritory" name="territory" placeholder="Ej: Zona Norte, Centro, etc.">
+        </div>
+
+        <div class="form-group">
+          <label for="sellerCommission">Comisión (%)</label>
+          <input type="number" id="sellerCommission" name="commission" min="0" max="100" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label for="sellerStatus">Estado</label>
+          <select id="sellerStatus" name="status">
+            <option value="active">Activo</option>
+            <option value="inactive">Inactivo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sellerNotes">Notas</label>
+          <textarea id="sellerNotes" name="notes" rows="3" placeholder="Información adicional..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+          <button type="button" class="mdc-button mdc-button--outlined" id="cancelSellerBtn">
+            <span class="mdc-button__label">Cancelar</span>
+          </button>
+          <button type="submit" class="mdc-button mdc-button--raised" id="saveSellerBtn">
+            <span class="mdc-button__label">Guardar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add/Edit Client Modal -->
+  <div id="clientModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 700px;">
+      <span class="close-button" id="closeClientModal">&times;</span>
+      <h2 id="clientModalTitle">Agregar Cliente</h2>
+
+      <form id="clientForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="clientNumber">Nro de Cliente *</label>
+            <input type="text" id="clientNumber" name="clientNumber" required>
+          </div>
+          <div class="form-group">
+            <label for="clientName">Nombre *</label>
+            <input type="text" id="clientName" name="name" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="clientPriceList">Lista de Precio</label>
+            <input type="number" id="clientPriceList" name="priceList" min="1" step="1">
+          </div>
+          <div class="form-group">
+            <label for="clientPhone">Teléfono</label>
+            <input type="tel" id="clientPhone" name="phone">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clientAddress">Dirección de Entrega</label>
+          <textarea id="clientAddress" name="address" rows="2" placeholder="Dirección completa..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="clientVendor">Vendedor</label>
+            <select id="clientVendor" name="vendorId">
+              <option value="">Seleccionar vendedor...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="clientId">ID (Link)</label>
+            <input type="url" id="clientId" name="idLink" placeholder="https://...">
+          </div>
+        </div>
+
+        <div class="form-row-triple">
+          <div class="form-group">
+            <label for="clientCredit">Crédito</label>
+            <input type="number" id="clientCredit" name="credit" min="0" step="0.01" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label for="clientPaymentDays">Días de Pago</label>
+            <input type="number" id="clientPaymentDays" name="paymentDays" min="0" step="1" placeholder="30">
+          </div>
+          <div class="form-group">
+            <label for="clientBalance">Saldo</label>
+            <input type="number" id="clientBalance" name="balance" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clientNotes">Notas</label>
+          <textarea id="clientNotes" name="notes" rows="2" placeholder="Información adicional..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+          <button type="button" class="mdc-button mdc-button--outlined" id="cancelClientBtn">
+            <span class="mdc-button__label">Cancelar</span>
+          </button>
+          <button type="submit" class="mdc-button mdc-button--raised" id="saveClientBtn">
+            <span class="mdc-button__label">Guardar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 400px;">
+      <span class="close-button" id="closeConfirmModal">&times;</span>
+      <h2>Confirmar Eliminación</h2>
+      <p id="confirmMessage">¿Estás seguro de que deseas eliminar este registro?</p>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="mdc-button mdc-button--outlined" id="cancelDeleteBtn">
+          <span class="mdc-button__label">Cancelar</span>
+        </button>
+        <button type="button" class="mdc-button mdc-button--raised delete-seller-btn" id="confirmDeleteBtn">
+          <span class="mdc-button__label">Eliminar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
+  <!-- SheetJS library for Excel file support -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module">
+    // === FIREBASE CONFIGURATION ===
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
+      authDomain: "carrito-138c3.firebaseapp.com",
+      projectId: "carrito-138c3",
+      storageBucket: "carrito-138c3.appspot.com",
+      messagingSenderId: "579670725719",
+      appId: "1:579670725719:web:carrito138c3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // === EXPOSAR FIREBASE EN WINDOW PARA COMPATIBILIDAD ===
+    window.firebase = {
+      app: () => app,
+      auth: () => auth,
+      firestore: () => db,
+      firestoreHelpers: {
+        doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where
+      },
+      authHelpers: {
+        onAuthStateChanged, signOut
+      }
+    };
+
+    // === ADMIN ACCESS CONTROL ===
+    async function checkAdminAccess(user) {
+      try {
+        console.log('🔐 Verificando acceso admin para:', user.email);
+
+        // Usar el mismo patrón que marketplace.html
+        if (typeof firebase !== 'undefined' && firebase.firestoreHelpers) {
+          const { doc, getDoc } = firebase.firestoreHelpers;
+          const userRef = doc(firebase.firestore(), 'usuarios', user.uid);
+          const userDoc = await getDoc(userRef);
+
+          let isAdmin = false;
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            isAdmin = userData.admin === true;
+            console.log('👤 Usuario encontrado:', userData);
+            console.log('🔐 Es admin:', isAdmin);
+
+            if (!isAdmin) {
+              console.log('🚫 Usuario no es admin, redirigiendo...');
+              alert('Acceso denegado. Esta página es solo para administradores.');
+              window.location.href = 'marketplace.html';
+              return false;
+            }
+
+            console.log('✅ Acceso admin confirmado para:', user.email);
+            return true;
+          } else {
+            console.log('⚠️ Usuario no encontrado en Firestore, redirigiendo...');
+            alert('Usuario no encontrado en el sistema.');
+            window.location.href = 'marketplace.html';
+            return false;
+          }
+        } else {
+          console.log('⚠️ Firebase helpers not available, waiting...');
+          // Retry after a short delay
+          setTimeout(() => {
+            if (user) checkAdminAccess(user);
+          }, 1000);
+          return false;
+        }
+      } catch (error) {
+        console.error('❌ Error verificando acceso admin:', error);
+        alert('Error verificando permisos. Redirigiendo...');
+        window.location.href = 'marketplace.html';
+        return false;
+      }
+    }
+
+    // === AUTH STATE LISTENER (Mismo patrón que marketplace.html) ===
+    // Usar setTimeout para esperar que Firebase esté completamente cargado
+    setTimeout(() => {
+      if (window.firebase && window.firebase.firestoreHelpers) {
+        firebase.auth().onAuthStateChanged(async function(user) {
+          if (user) {
+            console.log('👤 Usuario autenticado en Administration.html:', user.email);
+            console.log('🔍 UID del usuario:', user.uid);
+
+            const hasAccess = await checkAdminAccess(user);
+            if (hasAccess) {
+              console.log('✅ Usuario admin confirmado, mostrando página');
+            }
+          } else {
+            console.log('👤 Usuario no autenticado, redirigiendo a login...');
+            window.location.href = 'login.html';
+          }
+        });
+      } else {
+        console.log('⚠️ Firebase not ready, retrying...');
+        // Retry if Firebase not ready
+        setTimeout(arguments.callee, 500);
+      }
+    }, 1000); // Mismo delay que marketplace.html
+
+    console.log('✅ Firebase inicializado en Administration.html');
+
+    // === SELLER MANAGEMENT FUNCTIONS ===
+
+    // Load sellers from Firebase
+    async function loadSellers() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for sellers, waiting...');
+          setTimeout(loadSellers, 1000);
+          return;
+        }
+
+        const { collection, getDocs, orderBy, query, addDoc, deleteDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        console.log('📋 Cargando vendedores...');
+
+        const sellersCollection = collection(db, 'vendedores');
+        const q = query(sellersCollection, orderBy('name', 'asc'));
+        const querySnapshot = await getDocs(q);
+
+        window.sellers = [];
+        querySnapshot.forEach((doc) => {
+          window.sellers.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        console.log('✅ Vendedores cargados:', window.sellers.length);
+        displaySellers();
+        updateStats();
+
+      } catch (error) {
+        console.error('❌ Error cargando vendedores:', error);
+        document.getElementById('sellersContainer').innerHTML = `
+          <div class="no-sellers">
+            Error cargando vendedores. Inténtalo de nuevo.
+          </div>
+        `;
+      }
+    }
+
+    // Display sellers in the UI
+    function displaySellers() {
+      const container = document.getElementById('sellersContainer');
+
+      if (window.sellers.length === 0) {
+        container.innerHTML = `
+          <div class="no-sellers">
+            No hay vendedores registrados. Haz clic en "Agregar Vendedor" para crear uno.
+          </div>
+        `;
+        return;
+      }
+
+      const sellersHTML = window.sellers.map(seller => `
+        <div class="seller-card" data-seller-id="${seller.id}">
+          <div class="seller-info">
+            <div class="seller-name">${seller.name}</div>
+            <div class="seller-details">
+              ${seller.email}${seller.phone ? ' • ' + seller.phone : ''}
+              ${seller.territory ? ' • ' + seller.territory : ''}
+              ${seller.commission ? ' • ' + seller.commission + '% comisión' : ''}
+            </div>
+          </div>
+          <span class="seller-status ${seller.status === 'active' ? 'status-active' : 'status-inactive'}">
+            ${seller.status === 'active' ? 'Activo' : 'Inactivo'}
+          </span>
+          <div class="seller-actions">
+            <button class="mdc-button edit-seller-btn" onclick="editSeller('${seller.id}')">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="mdc-button delete-seller-btn" onclick="confirmDeleteSeller('${seller.id}', '${seller.name}')">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      container.innerHTML = sellersHTML;
+
+      // Initialize button ripples
+      const buttons = container.querySelectorAll('.mdc-button');
+      buttons.forEach(button => {
+        if (!button._mdcRipple) {
+          mdc.ripple.MDCRipple.attachTo(button);
+        }
+      });
+    }
+
+    // Update statistics
+    function updateStats() {
+      const totalSellers = window.sellers.length;
+      const activeSellers = window.sellers.filter(s => s.status === 'active').length;
+
+      document.getElementById('totalSellers').textContent = totalSellers;
+      document.getElementById('activeSellers').textContent = activeSellers;
+    }
+
+    // Add or update seller
+    async function saveSeller(sellerData) {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          throw new Error('Firebase not available');
+        }
+
+        const { collection, addDoc, updateDoc, doc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        if (window.currentEditingSellerId) {
+          // Update existing seller
+          const sellerRef = doc(db, 'vendedores', window.currentEditingSellerId);
+          await updateDoc(sellerRef, {
+            ...sellerData,
+            updatedAt: new Date()
+          });
+          console.log('✅ Vendedor actualizado:', window.currentEditingSellerId);
+        } else {
+          // Add new seller
+          const sellersCollection = collection(db, 'vendedores');
+          const docRef = await addDoc(sellersCollection, {
+            ...sellerData,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+          console.log('✅ Vendedor agregado:', docRef.id);
+        }
+
+        // Reload sellers
+        await loadSellers();
+        closeSellerModal();
+
+      } catch (error) {
+        console.error('❌ Error guardando vendedor:', error);
+        alert('Error guardando vendedor. Inténtalo de nuevo.');
+      }
+    }
+
+    // Delete seller
+    async function deleteSeller(sellerId) {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          throw new Error('Firebase not available');
+        }
+
+        const { doc, deleteDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const sellerRef = doc(db, 'vendedores', sellerId);
+        await deleteDoc(sellerRef);
+
+        console.log('✅ Vendedor eliminado:', sellerId);
+        await loadSellers();
+
+      } catch (error) {
+        console.error('❌ Error eliminando vendedor:', error);
+        alert('Error eliminando vendedor. Inténtalo de nuevo.');
+      }
+    }
+
+    // === PRODUCT PRICING FUNCTIONS ===
+
+    // Load products from API (same endpoint as used in main.js)
+    async function loadProducts() {
+      console.log('🚀 loadProducts called');
+      try {
+        // Check if we're already loading
+        if (window.productsLoading) {
+          console.log('⏳ Products already loading, skipping...');
+          return;
+        }
+
+        window.productsLoading = true;
+
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for products, waiting...');
+          window.productsLoading = false;
+          setTimeout(() => {
+            console.log('🔄 Retrying loadProducts after Firebase delay');
+            loadProducts();
+          }, 1000);
+          return;
+        }
+
+        console.log('📦 Cargando productos desde API...');
+
+        // Show loading state in button
+        const loadBtn = document.getElementById('loadProductsBtn');
+        const originalLoadText = loadBtn ? loadBtn.querySelector('.mdc-button__label').textContent : '';
+        if (loadBtn) {
+          loadBtn.querySelector('.mdc-button__label').innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px;"></div>Cargando...';
+          loadBtn.disabled = true;
+        }
+
+        // Show loading state
+        const container = document.getElementById('productsContainer');
+        container.innerHTML = `
+          <div class="loading-products">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Cargando productos desde la API...</p>
+            </div>
+          </div>
+        `;
+
+        // Use same API configuration as main.js
+        const API_BASE = '/api';
+        const AUTH_URL = `${API_BASE}/authenticate`;
+        const STOCK_URL = `${API_BASE}/stock`;
+
+        const CREDENTIALS = {
+          username: 'Api',
+          md5password: 'e10adc3949ba59abbe56e057f20f883e'
+        };
+
+        // Authenticate
+        const authResp = await fetch(AUTH_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(CREDENTIALS)
+        });
+
+        if (!authResp.ok) {
+          throw new Error(`Authentication failed (${authResp.status})`);
+        }
+
+        const authData = await authResp.json();
+        if (!authData.ok || !authData.token) {
+          throw new Error('Invalid authentication response');
+        }
+
+        // Fetch stock data
+        const query = new URLSearchParams({ format: 'JSON', ViewOption: 0 }).toString();
+        const stockResp = await fetch(`${STOCK_URL}?${query}`, {
+          headers: { Authorization: `Bearer ${authData.token}` }
+        });
+
+        if (!stockResp.ok) {
+          throw new Error(`Error fetching stock (${stockResp.status})`);
+        }
+
+        const stockData = await stockResp.json();
+        const products = Array.isArray(stockData) ? stockData : (stockData.data || stockData.list || []);
+
+        // Process and store products with existing prices
+        window.products = await processProductsWithPrices(products);
+
+        console.log('✅ Productos cargados:', window.products.length);
+        displayProducts();
+
+        // Restore button state
+        if (loadBtn) {
+          loadBtn.querySelector('.mdc-button__label').textContent = originalLoadText;
+          loadBtn.disabled = false;
+        }
+
+        // Reset loading flag
+        window.productsLoading = false;
+
+      } catch (error) {
+        console.error('❌ Error cargando productos:', error);
+
+        // Restore button state on error
+        const loadBtn = document.getElementById('loadProductsBtn');
+        const originalLoadText = loadBtn ? loadBtn.querySelector('.mdc-button__label').textContent.replace(/.*Cargando.../, 'Actualizar Productos') : 'Actualizar Productos';
+        if (loadBtn) {
+          loadBtn.querySelector('.mdc-button__label').textContent = originalLoadText;
+          loadBtn.disabled = false;
+        }
+
+        // Reset loading flag
+        window.productsLoading = false;
+
+        document.getElementById('productsContainer').innerHTML = `
+          <div class="no-products">
+            Error cargando productos: ${error.message}
+            <br><br>
+            <button class="mdc-button mdc-button--outlined" onclick="loadProducts()">
+              <span class="mdc-button__label">Reintentar</span>
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Process products and merge with existing price data from Firebase
+    async function processProductsWithPrices(rawProducts) {
+      const { collection, getDocs } = firebase.firestoreHelpers;
+      const db = firebase.firestore();
+
+      // Load existing prices from Firebase
+      const pricesCollection = collection(db, 'precios');
+      const pricesSnapshot = await getDocs(pricesCollection);
+
+      const existingPrices = new Map();
+      pricesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        existingPrices.set(data.articulo, {
+          id: doc.id,
+          precio1: data.precio1 || 0,
+          precio2: data.precio2 || 0,
+          precio3: data.precio3 || 0,
+          precio4: data.precio4 || 0
+        });
+      });
+
+      // Process and normalize product data
+      return rawProducts.map(raw => {
+        // Extract articulo and description using same logic as main.js
+        const articulo = getFirstExisting(raw, ['Artículo', 'Articulo', 'item', 'Item', 'Codigo', 'Código']) || '';
+        const description = getFirstExisting(raw, ['Descripción', 'Descripcion', 'description', 'Description', 'Detalle']) || '';
+
+        // Get existing prices or set defaults
+        const prices = existingPrices.get(articulo) || {
+          precio1: 0,
+          precio2: 0,
+          precio3: 0,
+          precio4: 0
+        };
+
+        return {
+          articulo,
+          description,
+          ...prices,
+          modified: false
+        };
+      }).filter(product => product.articulo && product.description); // Only include products with both fields
+    }
+
+    // Helper function from main.js for extracting fields
+    function normalizeKey(key) {
+      return String(key)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // quitar acentos
+        .replace(/[^a-z0-9]/g, '');
+    }
+
+    function getFirstExisting(row, candidateKeys) {
+      const normalizedMap = new Map();
+      for (const k of Object.keys(row || {})) {
+        normalizedMap.set(normalizeKey(k), k);
+      }
+      for (const c of candidateKeys) {
+        const nk = normalizeKey(c);
+        if (normalizedMap.has(nk)) {
+          const originalKey = normalizedMap.get(nk);
+          return row[originalKey];
+        }
+      }
+      return undefined;
+    }
+
+    // Display products in pricing table
+    function displayProducts() {
+      const container = document.getElementById('productsContainer');
+
+      if (!window.products || window.products.length === 0) {
+        container.innerHTML = `
+          <div class="no-products">
+            No se encontraron productos.
+            <br><br>
+            <button class="mdc-button mdc-button--outlined" onclick="loadProducts()">
+              <span class="mdc-button__label">Cargar Productos</span>
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const productsHTML = `
+        <div class="price-stats">
+          <div class="price-stat">
+            Total productos: <span class="price-stat-number">${window.products.length}</span>
+          </div>
+          <div class="price-stat">
+            Con precios: <span class="price-stat-number">${window.products.filter(p => p.precio1 > 0 || p.precio2 > 0 || p.precio3 > 0 || p.precio4 > 0).length}</span>
+          </div>
+        </div>
+
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Artículo</th>
+              <th>Descripción</th>
+              <th>Precio 1</th>
+              <th>Precio 2</th>
+              <th>Precio 3</th>
+              <th>Precio 4</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${window.products.map(product => `
+              <tr data-articulo="${product.articulo}">
+                <td>
+                  <span class="product-code">${product.articulo}</span>
+                </td>
+                <td>
+                  <span class="product-description">${product.description}</span>
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio1"
+                         value="${product.precio1}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio2"
+                         value="${product.precio2}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio3"
+                         value="${product.precio3}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio4"
+                         value="${product.precio4}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = productsHTML;
+
+      // Show save button
+      const saveBtn = document.getElementById('saveAllPricesBtn');
+      if (saveBtn) {
+        saveBtn.style.display = 'inline-flex';
+      }
+
+      // Add event listeners to price inputs
+      setupPriceInputListeners();
+    }
+
+    // Setup event listeners for price inputs
+    function setupPriceInputListeners() {
+      const priceInputs = document.querySelectorAll('.price-input');
+      priceInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          const articulo = this.dataset.articulo;
+          const priceField = this.dataset.price;
+          const value = parseFloat(this.value) || 0;
+
+          // Find and update the product in memory
+          const product = window.products.find(p => p.articulo === articulo);
+          if (product) {
+            product[priceField] = value;
+            product.modified = true;
+            this.classList.add('modified');
+          }
+        });
+
+        input.addEventListener('blur', function() {
+          // Format the value on blur
+          const value = parseFloat(this.value) || 0;
+          this.value = value.toFixed(2);
+        });
+      });
+    }
+
+    // Save all prices to Firebase
+    async function saveAllPrices() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          throw new Error('Firebase not available');
+        }
+
+        if (!window.products) {
+          throw new Error('No products loaded');
+        }
+
+        const { collection, doc, setDoc, updateDoc, addDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+        const pricesCollection = collection(db, 'precios');
+
+        console.log('💾 Guardando precios...');
+
+        // Show saving indicator
+        const saveBtn = document.getElementById('saveAllPricesBtn');
+        const originalText = saveBtn.querySelector('.mdc-button__label').textContent;
+        saveBtn.querySelector('.mdc-button__label').innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px;"></div>Guardando...';
+        saveBtn.disabled = true;
+
+        let savedCount = 0;
+
+        for (const product of window.products) {
+          const priceData = {
+            articulo: product.articulo,
+            description: product.description,
+            precio1: product.precio1 || 0,
+            precio2: product.precio2 || 0,
+            precio3: product.precio3 || 0,
+            precio4: product.precio4 || 0,
+            updatedAt: new Date()
+          };
+
+          if (product.id) {
+            // Update existing price record
+            const priceRef = doc(db, 'precios', product.id);
+            await updateDoc(priceRef, priceData);
+          } else {
+            // Create new price record
+            const docRef = await addDoc(pricesCollection, {
+              ...priceData,
+              createdAt: new Date()
+            });
+            product.id = docRef.id;
+          }
+
+          product.modified = false;
+          savedCount++;
+        }
+
+        // Remove modified styling from all inputs
+        document.querySelectorAll('.price-input.modified').forEach(input => {
+          input.classList.remove('modified');
+        });
+
+        console.log(`✅ Precios guardados: ${savedCount} productos`);
+        alert(`Precios guardados exitosamente para ${savedCount} productos`);
+
+        // Restore button
+        saveBtn.querySelector('.mdc-button__label').textContent = originalText;
+        saveBtn.disabled = false;
+
+      } catch (error) {
+        console.error('❌ Error guardando precios:', error);
+        alert('Error guardando precios. Inténtalo de nuevo.');
+
+        // Restore button
+        const saveBtn = document.getElementById('saveAllPricesBtn');
+        saveBtn.querySelector('.mdc-button__label').textContent = 'Guardar Todos los Precios';
+        saveBtn.disabled = false;
+      }
+    }
+
+    // Import prices from CSV/Excel file
+    async function importPrices() {
+      const fileInput = document.getElementById('pricesFileInput');
+      fileInput.click();
+    }
+
+    // Process imported price file
+    async function processPriceFile(file) {
+      try {
+        console.log('📁 Procesando archivo de precios:', file.name);
+
+        let data;
+        const fileName = file.name.toLowerCase();
+
+        if (fileName.endsWith('.csv')) {
+          data = await parseCSV(file);
+        } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+          data = await parseExcel(file);
+        } else {
+          throw new Error('Formato de archivo no soportado. Use CSV (.csv) o Excel (.xlsx, .xls)');
+        }
+
+        // Validate and process data
+        const processedPrices = validateAndProcessPriceData(data);
+
+        if (processedPrices.length === 0) {
+          throw new Error('No se encontraron datos válidos en el archivo');
+        }
+
+        // Show preview and confirm import
+        const confirmMessage = `¿Desea importar ${processedPrices.length} precios desde el archivo "${file.name}"?\n\nPrimeros 3 registros:\n${processedPrices.slice(0, 3).map(p => `• ${p.articulo}: ${p.description} (Precios: ${p.precio1}, ${p.precio2}, ${p.precio3}, ${p.precio4})`).join('\n')}`;
+
+        if (confirm(confirmMessage)) {
+          // Show progress
+          const container = document.getElementById('productsContainer');
+          container.innerHTML = `
+            <div class="loading-products">
+              <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Importando ${processedPrices.length} precios...</p>
+              </div>
+            </div>
+          `;
+
+          await importPriceData(processedPrices);
+          alert(`✅ Precios importados exitosamente: ${processedPrices.length} registros`);
+
+          // Reload products to show updated prices (with small delay to ensure Firebase propagation)
+          setTimeout(() => {
+            if (window.loadProducts) {
+              console.log('🔄 Reloading products after import...');
+              window.loadProducts();
+            }
+          }, 500);
+        }
+
+      } catch (error) {
+        console.error('❌ Error importando precios:', error);
+        alert(`Error importando precios: ${error.message}`);
+      }
+    }
+
+    // Parse CSV file
+    function parseCSV(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (!line) continue;
+
+              const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+              const row = {};
+              headers.forEach((header, index) => {
+                row[header] = values[index] || '';
+              });
+              data.push(row);
+            }
+            resolve(data);
+          } catch (error) {
+            reject(new Error('Error parsing CSV: ' + error.message));
+          }
+        };
+        reader.onerror = () => reject(new Error('Error reading file'));
+        reader.readAsText(file, 'UTF-8');
+      });
+    }
+
+    // Parse Excel file using SheetJS
+    function parseExcel(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            // Check if XLSX library is loaded
+            if (typeof XLSX === 'undefined') {
+              throw new Error('SheetJS library not loaded. Please refresh the page and try again.');
+            }
+
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            // Get first worksheet
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert to JSON
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+              header: 1, // Use first row as header
+              defval: '' // Default value for empty cells
+            });
+
+            if (jsonData.length < 2) {
+              throw new Error('El archivo Excel debe tener al menos una fila de encabezados y una fila de datos');
+            }
+
+            // Convert to same format as CSV parser
+            const headers = jsonData[0].map(h => String(h).trim());
+            const processedData = [];
+
+            for (let i = 1; i < jsonData.length; i++) {
+              const row = jsonData[i];
+              const rowObj = {};
+
+              headers.forEach((header, index) => {
+                rowObj[header] = row[index] ? String(row[index]).trim() : '';
+              });
+
+              // Skip empty rows
+              const hasData = Object.values(rowObj).some(value => value && value.trim());
+              if (hasData) {
+                processedData.push(rowObj);
+              }
+            }
+
+            console.log(`📊 Excel procesado: ${processedData.length} filas, Columnas: ${headers.join(', ')}`);
+            resolve(processedData);
+
+          } catch (error) {
+            reject(new Error('Error parsing Excel file: ' + error.message));
+          }
+        };
+
+        reader.onerror = () => reject(new Error('Error reading Excel file'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    // Validate and process price data
+    function validateAndProcessPriceData(data) {
+      const processedPrices = [];
+
+      for (const row of data) {
+        // Look for common column names (case insensitive)
+        const articulo = findColumnValue(row, ['articulo', 'codigo', 'item', 'article', 'code']);
+        const description = findColumnValue(row, ['descripcion', 'description', 'detalle', 'nombre', 'name']);
+        const precio1 = parseFloat(findColumnValue(row, ['precio1', 'precio_1', 'price1', 'price_1']) || 0);
+        const precio2 = parseFloat(findColumnValue(row, ['precio2', 'precio_2', 'price2', 'price_2']) || 0);
+        const precio3 = parseFloat(findColumnValue(row, ['precio3', 'precio_3', 'price3', 'price_3']) || 0);
+        const precio4 = parseFloat(findColumnValue(row, ['precio4', 'precio_4', 'price4', 'price_4']) || 0);
+
+        if (articulo && articulo.trim()) {
+          processedPrices.push({
+            articulo: articulo.trim(),
+            description: description ? description.trim() : '',
+            precio1,
+            precio2,
+            precio3,
+            precio4
+          });
+        }
+      }
+
+      return processedPrices;
+    }
+
+    // Helper function to find column value by different possible names
+    function findColumnValue(row, possibleNames) {
+      for (const name of possibleNames) {
+        for (const key in row) {
+          if (key.toLowerCase().includes(name.toLowerCase())) {
+            return row[key];
+          }
+        }
+      }
+      return null;
+    }
+
+    // Import price data to Firebase
+    async function importPriceData(pricesData) {
+      if (!window.firebase || !firebase.firestoreHelpers) {
+        throw new Error('Firebase not available');
+      }
+
+      const { collection, doc, setDoc, addDoc, getDocs, query, where } = firebase.firestoreHelpers;
+      const db = firebase.firestore();
+      const pricesCollection = collection(db, 'precios');
+
+      let importedCount = 0;
+      let updatedCount = 0;
+
+      for (const priceData of pricesData) {
+        try {
+          // Check if price record already exists
+          const q = query(pricesCollection, where('articulo', '==', priceData.articulo));
+          const existingDocs = await getDocs(q);
+
+          const dataToSave = {
+            articulo: priceData.articulo,
+            description: priceData.description,
+            precio1: priceData.precio1 || 0,
+            precio2: priceData.precio2 || 0,
+            precio3: priceData.precio3 || 0,
+            precio4: priceData.precio4 || 0,
+            updatedAt: new Date()
+          };
+
+          if (existingDocs.empty) {
+            // Create new price record
+            await addDoc(pricesCollection, {
+              ...dataToSave,
+              createdAt: new Date()
+            });
+            importedCount++;
+            console.log(`✅ Created price for: ${priceData.articulo}`);
+          } else {
+            // Update existing price record
+            const existingDoc = existingDocs.docs[0];
+            const priceRef = doc(db, 'precios', existingDoc.id);
+            await updateDoc(priceRef, dataToSave);
+            updatedCount++;
+            console.log(`✅ Updated price for: ${priceData.articulo}`);
+          }
+        } catch (error) {
+          console.warn('Error importing price for', priceData.articulo, error);
+        }
+      }
+
+      console.log(`✅ Importación completada: ${importedCount} nuevos, ${updatedCount} actualizados`);
+    }
+
+    // Export prices to CSV
+    function exportPricesToCSV() {
+      try {
+        if (!window.products || window.products.length === 0) {
+          alert('No hay productos cargados para exportar');
+          return;
+        }
+
+        // Prepare CSV data
+        const headers = ['Articulo', 'Descripcion', 'Precio1', 'Precio2', 'Precio3', 'Precio4'];
+        const csvData = [headers];
+
+        // Add product data
+        window.products.forEach(product => {
+          csvData.push([
+            product.articulo || '',
+            product.description || '',
+            product.precio1 || 0,
+            product.precio2 || 0,
+            product.precio3 || 0,
+            product.precio4 || 0
+          ]);
+        });
+
+        // Convert to CSV string
+        const csvContent = csvData.map(row =>
+          row.map(field => `"${String(field).replace(/"/g, '""')}"`)
+             .join(',')
+        ).join('\n');
+
+        // Create and download file
+        const fileName = `precios_${getCurrentDateString()}.csv`;
+        downloadFile(csvContent, fileName, 'text/csv;charset=utf-8;');
+
+        console.log(`✅ CSV exportado: ${window.products.length} productos`);
+        alert(`CSV exportado exitosamente: ${window.products.length} productos`);
+
+      } catch (error) {
+        console.error('❌ Error exportando CSV:', error);
+        alert('Error exportando CSV: ' + error.message);
+      }
+    }
+
+    // Export prices to Excel
+    function exportPricesToExcel() {
+      try {
+        if (!window.products || window.products.length === 0) {
+          alert('No hay productos cargados para exportar');
+          return;
+        }
+
+        // Check if XLSX library is loaded
+        if (typeof XLSX === 'undefined') {
+          alert('SheetJS library not loaded. Please refresh the page and try again.');
+          return;
+        }
+
+        // Prepare Excel data
+        const headers = ['Articulo', 'Descripcion', 'Precio1', 'Precio2', 'Precio3', 'Precio4'];
+        const excelData = [headers];
+
+        // Add product data
+        window.products.forEach(product => {
+          excelData.push([
+            product.articulo || '',
+            product.description || '',
+            product.precio1 || 0,
+            product.precio2 || 0,
+            product.precio3 || 0,
+            product.precio4 || 0
+          ]);
+        });
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+        // Set column widths
+        ws['!cols'] = [
+          { width: 15 }, // Articulo
+          { width: 40 }, // Descripcion
+          { width: 12 }, // Precio1
+          { width: 12 }, // Precio2
+          { width: 12 }, // Precio3
+          { width: 12 }  // Precio4
+        ];
+
+        // Format header row
+        const headerStyle = {
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          fill: { fgColor: { rgb: "4CAF50" } },
+          alignment: { horizontal: "center", vertical: "center" }
+        };
+
+        // Apply header style
+        for (let col = 0; col < headers.length; col++) {
+          const cellRef = XLSX.utils.encode_cell({ r: 0, c: col });
+          if (!ws[cellRef]) ws[cellRef] = { t: 's', v: '' };
+          ws[cellRef].s = headerStyle;
+        }
+
+        // Format price columns as currency
+        for (let row = 1; row <= window.products.length; row++) {
+          for (let col = 2; col < 6; col++) { // Columns C to F (Precio1-4)
+            const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+            if (ws[cellRef]) {
+              ws[cellRef].z = '#,##0.00';
+              ws[cellRef].t = 'n';
+            }
+          }
+        }
+
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Precios');
+
+        // Generate and download file
+        const fileName = `precios_${getCurrentDateString()}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        console.log(`✅ Excel exportado: ${window.products.length} productos`);
+        alert(`Excel exportado exitosamente: ${window.products.length} productos`);
+
+      } catch (error) {
+        console.error('❌ Error exportando Excel:', error);
+        alert('Error exportando Excel: ' + error.message);
+      }
+    }
+
+    // Helper function to get current date string
+    function getCurrentDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      return `${year}${month}${day}_${hours}${minutes}`;
+    }
+
+    // Helper function to download file
+    function downloadFile(content, fileName, contentType) {
+      const blob = new Blob([content], { type: contentType });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    // Expose functions globally
+    window.loadProducts = loadProducts;
+    window.saveAllPrices = saveAllPrices;
+    window.importPrices = importPrices;
+    window.processPriceFile = processPriceFile;
+    window.exportPricesToCSV = exportPricesToCSV;
+    window.exportPricesToExcel = exportPricesToExcel;
+
+    // === ORDER MANAGEMENT FUNCTIONS ===
+
+    // Order status options
+    const ORDER_STATUS_OPTIONS = [
+      { value: 'A_CONFIRMAR', label: 'A CONFIRMAR', class: 'status-a-confirmar' },
+      { value: 'CONFIRMADO', label: 'CONFIRMADO', class: 'status-confirmado' },
+      { value: 'CONFIRMADO_MODIFICACIONES', label: 'CONFIRMADO CON MODIFICACIONES', class: 'status-confirmado-modificaciones' },
+      { value: 'EN_PREPARACION', label: 'EN PREPARACION', class: 'status-en-preparacion' },
+      { value: 'EN_CAMINO', label: 'EN CAMINO', class: 'status-en-camino' },
+      { value: 'ENTREGADO', label: 'ENTREGADO', class: 'status-entregado' }
+    ];
+
+    // Load orders from Firebase
+    async function loadOrders() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for orders, waiting...');
+          setTimeout(loadOrders, 1000);
+          return;
+        }
+
+        const { collection, getDocs, orderBy, query } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        console.log('📋 Cargando órdenes...');
+
+        const ordersCollection = collection(db, 'ordenes');
+        const q = query(ordersCollection, orderBy('fecha', 'desc'));
+        const querySnapshot = await getDocs(q);
+
+        window.orders = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          window.orders.push({
+            id: doc.id,
+            ...data,
+            // Convert timestamp to date string for input
+            fecha: data.fecha && data.fecha.toDate ? data.fecha.toDate().toISOString().split('T')[0] :
+                   (data.fecha || new Date().toISOString().split('T')[0]),
+            modified: false
+          });
+        });
+
+        console.log('✅ Órdenes cargadas:', window.orders.length);
+        displayOrders();
+        updateOrderStats();
+
+      } catch (error) {
+        console.error('❌ Error cargando órdenes:', error);
+        document.getElementById('ordersContainer').innerHTML = `
+          <div class="no-orders">
+            Error cargando órdenes. Inténtalo de nuevo.
+          </div>
+        `;
+      }
+    }
+
+    // Display orders in table
+    function displayOrders() {
+      const container = document.getElementById('ordersContainer');
+
+      if (!window.orders || window.orders.length === 0) {
+        container.innerHTML = `
+          <div class="no-orders">
+            No hay órdenes registradas. Haz clic en "Agregar Orden" para crear una.
+          </div>
+        `;
+        return;
+      }
+
+      const ordersHTML = `
+        <div class="order-stats">
+          <div class="order-stat">
+            Total órdenes: <span class="order-stat-number">${window.orders.length}</span>
+          </div>
+          <div class="order-stat">
+            Pendientes: <span class="order-stat-number">${window.orders.filter(o => !['ENTREGADO'].includes(o.status)).length}</span>
+          </div>
+        </div>
+
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Nro Sistema1</th>
+              <th>Nro OPPEN</th>
+              <th>Nro Cliente</th>
+              <th>Cliente</th>
+              <th>Vendedor</th>
+              <th>Monto Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${window.orders.map(order => `
+              <tr data-order-id="${order.id}">
+                <td>
+                  <input type="date"
+                         class="order-input order-date-input"
+                         data-order-id="${order.id}"
+                         data-field="fecha"
+                         value="${order.fecha}">
+                </td>
+                <td>
+                  <input type="text"
+                         class="order-input order-number-input"
+                         data-order-id="${order.id}"
+                         data-field="numeroSistema1"
+                         value="${order.numeroSistema1 || ''}"
+                         placeholder="Sistema1">
+                </td>
+                <td>
+                  <input type="text"
+                         class="order-input order-number-input"
+                         data-order-id="${order.id}"
+                         data-field="numeroOppen"
+                         value="${order.numeroOppen || ''}"
+                         placeholder="OPPEN">
+                </td>
+                <td>
+                  <input type="text"
+                         class="order-input order-client-input"
+                         data-order-id="${order.id}"
+                         data-field="numeroCliente"
+                         value="${order.numeroCliente || ''}"
+                         placeholder="Cliente #">
+                </td>
+                <td>
+                  <input type="text"
+                         class="order-input order-name-input"
+                         data-order-id="${order.id}"
+                         data-field="cliente"
+                         value="${order.cliente || ''}"
+                         placeholder="Nombre cliente">
+                </td>
+                <td>
+                  <select class="order-select"
+                          data-order-id="${order.id}"
+                          data-field="vendedor">
+                    <option value="">Seleccionar vendedor...</option>
+                    ${(window.sellers || []).map(seller => `
+                      <option value="${seller.id}" ${order.vendedor === seller.id ? 'selected' : ''}>
+                        ${seller.name}
+                      </option>
+                    `).join('')}
+                  </select>
+                </td>
+                <td>
+                  <input type="number"
+                         class="order-input order-amount-input"
+                         data-order-id="${order.id}"
+                         data-field="montoTotal"
+                         value="${order.montoTotal || ''}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <select class="order-select"
+                          data-order-id="${order.id}"
+                          data-field="status">
+                    ${ORDER_STATUS_OPTIONS.map(status => `
+                      <option value="${status.value}" ${order.status === status.value ? 'selected' : ''}>
+                        ${status.label}
+                      </option>
+                    `).join('')}
+                  </select>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = ordersHTML;
+
+      // Show order actions
+      document.getElementById('orderActions').style.display = 'block';
+
+      // Add event listeners
+      setupOrderInputListeners();
+    }
+
+    // Setup event listeners for order inputs
+    function setupOrderInputListeners() {
+      const orderInputs = document.querySelectorAll('.order-input, .order-select');
+      orderInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          const orderId = this.dataset.orderId;
+          const field = this.dataset.field;
+          let value = this.value;
+
+          // Convert numeric fields
+          if (field === 'montoTotal') {
+            value = parseFloat(value) || 0;
+          }
+
+          // Find and update the order in memory
+          const order = window.orders.find(o => o.id === orderId);
+          if (order) {
+            order[field] = value;
+            order.modified = true;
+            this.classList.add('modified');
+          }
+        });
+
+        // Format amount on blur
+        if (input.classList.contains('order-amount-input')) {
+          input.addEventListener('blur', function() {
+            const value = parseFloat(this.value) || 0;
+            this.value = value.toFixed(2);
+          });
+        }
+      });
+    }
+
+    // Add new order
+    function addOrder() {
+      const newOrder = {
+        id: 'new_' + Date.now(),
+        fecha: new Date().toISOString().split('T')[0],
+        numeroSistema1: '',
+        numeroOppen: '',
+        numeroCliente: '',
+        cliente: '',
+        vendedor: '',
+        montoTotal: 0,
+        status: 'A_CONFIRMAR',
+        modified: true,
+        isNew: true
+      };
+
+      if (!window.orders) {
+        window.orders = [];
+      }
+
+      window.orders.unshift(newOrder);
+      displayOrders();
+      updateOrderStats();
+    }
+
+    // Save all orders to Firebase
+    async function saveAllOrders() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          throw new Error('Firebase not available');
+        }
+
+        if (!window.orders) {
+          throw new Error('No orders loaded');
+        }
+
+        const { collection, doc, setDoc, updateDoc, addDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        console.log('💾 Guardando órdenes...');
+
+        // Show saving indicator
+        const saveBtn = document.getElementById('saveAllOrdersBtn');
+        const originalText = saveBtn.querySelector('.mdc-button__label').textContent;
+        saveBtn.querySelector('.mdc-button__label').textContent = 'Guardando...';
+        saveBtn.disabled = true;
+
+        let savedCount = 0;
+
+        for (const order of window.orders) {
+          if (!order.modified) continue;
+
+          const orderData = {
+            fecha: new Date(order.fecha),
+            numeroSistema1: order.numeroSistema1 || '',
+            numeroOppen: order.numeroOppen || '',
+            numeroCliente: order.numeroCliente || '',
+            cliente: order.cliente || '',
+            vendedor: order.vendedor || '',
+            montoTotal: order.montoTotal || 0,
+            status: order.status || 'A_CONFIRMAR',
+            updatedAt: new Date()
+          };
+
+          if (order.isNew) {
+            // Create new order
+            const ordersCollection = collection(db, 'ordenes');
+            const docRef = await addDoc(ordersCollection, {
+              ...orderData,
+              createdAt: new Date()
+            });
+            order.id = docRef.id;
+            order.isNew = false;
+          } else {
+            // Update existing order
+            const orderRef = doc(db, 'ordenes', order.id);
+            await updateDoc(orderRef, orderData);
+          }
+
+          order.modified = false;
+          savedCount++;
+        }
+
+        // Remove modified styling from all inputs
+        document.querySelectorAll('.order-input.modified, .order-select.modified').forEach(input => {
+          input.classList.remove('modified');
+        });
+
+        console.log(`✅ Órdenes guardadas: ${savedCount} órdenes`);
+        alert(`Órdenes guardadas exitosamente: ${savedCount} registros`);
+
+        // Restore button
+        saveBtn.querySelector('.mdc-button__label').textContent = originalText;
+        saveBtn.disabled = false;
+
+        // Reload to get updated data
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ Error guardando órdenes:', error);
+        alert('Error guardando órdenes. Inténtalo de nuevo.');
+
+        // Restore button
+        const saveBtn = document.getElementById('saveAllOrdersBtn');
+        saveBtn.querySelector('.mdc-button__label').textContent = 'Guardar Todos los Cambios';
+        saveBtn.disabled = false;
+      }
+    }
+
+    // Update order statistics
+    function updateOrderStats() {
+      if (!window.orders) return;
+
+      const totalOrders = window.orders.length;
+      const confirmedOrders = window.orders.filter(o => o.status === 'CONFIRMADO' || o.status === 'CONFIRMADO_MODIFICACIONES').length;
+      const inPreparationOrders = window.orders.filter(o => o.status === 'EN_PREPARACION').length;
+      const deliveredOrders = window.orders.filter(o => o.status === 'ENTREGADO').length;
+
+      document.getElementById('totalOrders').textContent = totalOrders;
+      document.getElementById('confirmedOrders').textContent = confirmedOrders;
+      document.getElementById('inPreparationOrders').textContent = inPreparationOrders;
+      document.getElementById('deliveredOrders').textContent = deliveredOrders;
+    }
+
+    // Expose functions globally
+    window.loadOrders = loadOrders;
+    window.saveAllOrders = saveAllOrders;
+    window.addOrder = addOrder;
+
+    // === CLIENT MANAGEMENT FUNCTIONS ===
+
+    // Load clients from Firebase
+    async function loadClients() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for clients, waiting...');
+          setTimeout(loadClients, 1000);
+          return;
+        }
+
+        const { collection, getDocs, orderBy, query } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        console.log('👥 Cargando clientes...');
+
+        const clientsCollection = collection(db, 'clientes');
+        const q = query(clientsCollection, orderBy('name', 'asc'));
+        const querySnapshot = await getDocs(q);
+
+        window.clients = [];
+        querySnapshot.forEach((doc) => {
+          window.clients.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        console.log('✅ Clientes cargados:', window.clients.length);
+        displayClients();
+        updateClientStats();
+
+      } catch (error) {
+        console.error('❌ Error cargando clientes:', error);
+        document.getElementById('clientsContainer').innerHTML = `
+          <div class="no-clients">
+            Error cargando clientes. Inténtalo de nuevo.
+          </div>
+        `;
+      }
+    }
+
+    // Display clients in the UI
+    function displayClients() {
+      const container = document.getElementById('clientsContainer');
+
+      if (window.clients.length === 0) {
+        container.innerHTML = `
+          <div class="no-clients">
+            No hay clientes registrados. Haz clic en "Agregar Cliente" para crear uno.
+          </div>
+        `;
+        return;
+      }
+
+      const clientsHTML = window.clients.map(client => {
+        const vendorName = window.sellers.find(s => s.id === client.vendorId)?.name || 'Sin asignar';
+
+        return `
+          <div class="client-card" data-client-id="${client.id}">
+            <div class="client-header">
+              <div class="client-main-info">
+                <div class="client-number">Cliente #${client.clientNumber || 'N/A'}</div>
+                <div class="client-name">${client.name}</div>
+                <div class="client-price-list">Lista de Precio: ${client.priceList || 'No asignada'}</div>
+              </div>
+              <div class="client-actions">
+                ${client.idLink ? `<a href="${client.idLink}" target="_blank" class="client-link">Ver ID</a>` : ''}
+                <button class="mdc-button edit-seller-btn" onclick="editClient('${client.id}')">
+                  <i class="material-icons">edit</i>
+                </button>
+                <button class="mdc-button delete-seller-btn" onclick="confirmDeleteClient('${client.id}', '${client.name}')">
+                  <i class="material-icons">delete</i>
+                </button>
+              </div>
+            </div>
+
+            <div class="client-details-grid">
+              <div class="client-detail-item">
+                <span class="client-detail-label">Dirección:</span>
+                <span class="client-detail-value">${client.address || 'No especificada'}</span>
+              </div>
+              <div class="client-detail-item">
+                <span class="client-detail-label">Teléfono:</span>
+                <span class="client-detail-value">${client.phone || 'No especificado'}</span>
+              </div>
+              <div class="client-detail-item">
+                <span class="client-detail-label">Vendedor:</span>
+                <span class="client-detail-value">${vendorName}</span>
+              </div>
+              <div class="client-detail-item">
+                <span class="client-detail-label">Crédito:</span>
+                <span class="client-detail-value">$${formatNumber(client.credit || 0)}</span>
+              </div>
+              <div class="client-detail-item">
+                <span class="client-detail-label">Días de Pago:</span>
+                <span class="client-detail-value">${client.paymentDays || 0} días</span>
+              </div>
+              <div class="client-detail-item">
+                <span class="client-detail-label">Saldo:</span>
+                <span class="client-detail-value">$${formatNumber(client.balance || 0)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = clientsHTML;
+
+      // Initialize button ripples
+      const buttons = container.querySelectorAll('.mdc-button');
+      buttons.forEach(button => {
+        if (!button._mdcRipple) {
+          mdc.ripple.MDCRipple.attachTo(button);
+        }
+      });
+    }
+
+    // Update client statistics
+    function updateClientStats() {
+      const totalClients = window.clients.length;
+      const activeClients = window.clients.filter(c => (c.credit || 0) > 0).length;
+      const totalCredit = window.clients.reduce((sum, c) => sum + (c.credit || 0), 0);
+      const totalBalance = window.clients.reduce((sum, c) => sum + (c.balance || 0), 0);
+
+      document.getElementById('totalClients').textContent = totalClients;
+      document.getElementById('activeClients').textContent = activeClients;
+      document.getElementById('totalCredit').textContent = '$' + formatNumber(totalCredit);
+      document.getElementById('totalBalance').textContent = '$' + formatNumber(totalBalance);
+    }
+
+    // Helper function to format numbers
+    function formatNumber(num) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+
+    // Expose functions globally
+    window.loadSellers = loadSellers;
+    window.loadClients = loadClients;
+
+  </script>
+
+  <script>
+    // === GLOBAL MANAGEMENT VARIABLES ===
+    window.sellers = [];
+    window.clients = [];
+    window.currentEditingSellerId = null;
+    window.currentEditingClientId = null;
+    window.sellerToDelete = null;
+    window.clientToDelete = null;
+
+    // === MODAL FUNCTIONS (Available immediately) ===
+    window.openSellerModal = function() {
+      document.getElementById('sellerModal').classList.remove('hidden');
+    };
+
+    window.closeSellerModal = function() {
+      document.getElementById('sellerModal').classList.add('hidden');
+      document.getElementById('sellerForm').reset();
+      window.currentEditingSellerId = null;
+      document.getElementById('sellerModalTitle').textContent = 'Agregar Vendedor';
+    };
+
+    window.openConfirmModal = function() {
+      document.getElementById('confirmModal').classList.remove('hidden');
+    };
+
+    window.closeConfirmModal = function() {
+      document.getElementById('confirmModal').classList.add('hidden');
+      window.sellerToDelete = null;
+    };
+
+    // === SELLER ACTION FUNCTIONS ===
+    window.editSeller = function(sellerId) {
+      const seller = window.sellers.find(s => s.id === sellerId);
+      if (!seller) return;
+
+      window.currentEditingSellerId = sellerId;
+
+      document.getElementById('sellerModalTitle').textContent = 'Editar Vendedor';
+      document.getElementById('sellerName').value = seller.name || '';
+      document.getElementById('sellerEmail').value = seller.email || '';
+      document.getElementById('sellerPhone').value = seller.phone || '';
+      document.getElementById('sellerTerritory').value = seller.territory || '';
+      document.getElementById('sellerCommission').value = seller.commission || '';
+      document.getElementById('sellerStatus').value = seller.status || 'active';
+      document.getElementById('sellerNotes').value = seller.notes || '';
+
+      window.openSellerModal();
+    };
+
+    window.confirmDeleteSeller = function(sellerId, sellerName) {
+      window.sellerToDelete = sellerId;
+      window.clientToDelete = null;
+      document.getElementById('confirmMessage').textContent =
+        `¿Estás seguro de que deseas eliminar al vendedor "${sellerName}"?`;
+      window.openConfirmModal();
+    };
+
+    // === CLIENT MODAL FUNCTIONS ===
+    window.openClientModal = function() {
+      document.getElementById('clientModal').classList.remove('hidden');
+      populateVendorDropdown();
+    };
+
+    window.closeClientModal = function() {
+      document.getElementById('clientModal').classList.add('hidden');
+      document.getElementById('clientForm').reset();
+      window.currentEditingClientId = null;
+      document.getElementById('clientModalTitle').textContent = 'Agregar Cliente';
+    };
+
+    // === CLIENT ACTION FUNCTIONS ===
+    window.editClient = function(clientId) {
+      const client = window.clients.find(c => c.id === clientId);
+      if (!client) return;
+
+      window.currentEditingClientId = clientId;
+
+      document.getElementById('clientModalTitle').textContent = 'Editar Cliente';
+      document.getElementById('clientNumber').value = client.clientNumber || '';
+      document.getElementById('clientName').value = client.name || '';
+      document.getElementById('clientPriceList').value = client.priceList || '';
+      document.getElementById('clientPhone').value = client.phone || '';
+      document.getElementById('clientAddress').value = client.address || '';
+      document.getElementById('clientVendor').value = client.vendorId || '';
+      document.getElementById('clientId').value = client.idLink || '';
+      document.getElementById('clientCredit').value = client.credit || '';
+      document.getElementById('clientPaymentDays').value = client.paymentDays || '';
+      document.getElementById('clientBalance').value = client.balance || '';
+      document.getElementById('clientNotes').value = client.notes || '';
+
+      window.openClientModal();
+    };
+
+    window.confirmDeleteClient = function(clientId, clientName) {
+      window.clientToDelete = clientId;
+      window.sellerToDelete = null;
+      document.getElementById('confirmMessage').textContent =
+        `¿Estás seguro de que deseas eliminar al cliente "${clientName}"?`;
+      window.openConfirmModal();
+    };
+
+    function populateVendorDropdown() {
+      const vendorSelect = document.getElementById('clientVendor');
+      if (!vendorSelect) return;
+
+      // Clear existing options except the first one
+      vendorSelect.innerHTML = '<option value="">Seleccionar vendedor...</option>';
+
+      // Add vendors from sellers list
+      if (window.sellers && window.sellers.length > 0) {
+        window.sellers
+          .filter(seller => seller.status === 'active')
+          .forEach(seller => {
+            const option = document.createElement('option');
+            option.value = seller.id;
+            option.textContent = seller.name;
+            vendorSelect.appendChild(option);
+          });
+      }
+    }
+
+    // Initialize Material Design Components
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize all buttons
+      const buttons = document.querySelectorAll('.mdc-button');
+      buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+
+      // Initialize tab bar
+      const tabBar = document.querySelector('.mdc-tab-bar');
+      if (tabBar) {
+        const mdcTabBar = mdc.tabBar.MDCTabBar.attachTo(tabBar);
+
+        // Handle tab activation
+        mdcTabBar.listen('MDCTabBar:activated', (event) => {
+          const tab = tabBar.querySelectorAll('.mdc-tab')[event.detail.index];
+          const tabId = tab.getAttribute('data-tab');
+
+          // Hide all tab contents
+          const allTabContents = document.querySelectorAll('.tab-content');
+          allTabContents.forEach(content => {
+            content.style.display = 'none';
+          });
+
+          // Show selected tab content
+          const selectedContent = document.getElementById(tabId + '-content');
+          if (selectedContent) {
+            selectedContent.style.display = 'block';
+          }
+
+          console.log('📋 Tab switched to:', tabId);
+
+          // Load data when switching tabs
+          if (tabId === 'precios') {
+            console.log('📋 Switching to precios tab');
+            setTimeout(() => {
+              if (window.loadProducts) {
+                console.log('📦 Calling loadProducts from tab switch');
+                window.loadProducts();
+              } else {
+                console.warn('⚠️ loadProducts not available, retrying...');
+                // Retry a few times in case loadProducts isn't ready yet
+                let retries = 0;
+                const retryLoad = () => {
+                  retries++;
+                  if (window.loadProducts && retries <= 5) {
+                    console.log('📦 Retry successful, calling loadProducts');
+                    window.loadProducts();
+                  } else if (retries <= 5) {
+                    setTimeout(retryLoad, 500);
+                  } else {
+                    console.error('❌ Failed to load products after multiple retries');
+                  }
+                };
+                setTimeout(retryLoad, 500);
+              }
+            }, 100);
+          } else if (tabId === 'vendedor') {
+            setTimeout(() => {
+              if (window.loadSellers) {
+                window.loadSellers();
+              }
+            }, 100);
+          } else if (tabId === 'clientes') {
+            setTimeout(() => {
+              // Load sellers first to populate dropdown, then load clients
+              if (window.loadSellers && window.loadClients) {
+                window.loadSellers().then(() => {
+                  window.loadClients();
+                });
+              }
+            }, 100);
+          } else if (tabId === 'master') {
+            setTimeout(() => {
+              // Load sellers first to populate dropdown, then load orders
+              if (window.loadSellers && window.loadOrders) {
+                window.loadSellers().then(() => {
+                  window.loadOrders();
+                });
+              }
+            }, 100);
+          }
+        });
+      }
+
+      // === PRODUCT PRICING EVENT LISTENERS ===
+
+      // Load Products button
+      const loadProductsBtn = document.getElementById('loadProductsBtn');
+      if (loadProductsBtn) {
+        loadProductsBtn.addEventListener('click', function() {
+          if (window.loadProducts) {
+            window.loadProducts();
+          }
+        });
+      }
+
+      // Save All Prices button
+      const saveAllPricesBtn = document.getElementById('saveAllPricesBtn');
+      if (saveAllPricesBtn) {
+        saveAllPricesBtn.addEventListener('click', function() {
+          if (window.saveAllPrices) {
+            window.saveAllPrices();
+          }
+        });
+      }
+
+      // Import Prices button
+      const importPricesBtn = document.getElementById('importPricesBtn');
+      if (importPricesBtn) {
+        importPricesBtn.addEventListener('click', function() {
+          if (window.importPrices) {
+            window.importPrices();
+          }
+        });
+      }
+
+      // File input for prices import
+      const pricesFileInput = document.getElementById('pricesFileInput');
+      if (pricesFileInput) {
+        pricesFileInput.addEventListener('change', function(event) {
+          const file = event.target.files[0];
+          if (file && window.processPriceFile) {
+            window.processPriceFile(file);
+          }
+          // Clear the input so the same file can be selected again
+          event.target.value = '';
+        });
+      }
+
+      // Export CSV button
+      const exportCsvBtn = document.getElementById('exportCsvBtn');
+      if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', function() {
+          if (window.exportPricesToCSV) {
+            window.exportPricesToCSV();
+          }
+        });
+      }
+
+      // Export Excel button
+      const exportExcelBtn = document.getElementById('exportExcelBtn');
+      if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', function() {
+          if (window.exportPricesToExcel) {
+            window.exportPricesToExcel();
+          }
+        });
+      }
+
+      // === ORDER MANAGEMENT EVENT LISTENERS ===
+
+      // Add Order button
+      const addOrderBtn = document.getElementById('addOrderBtn');
+      if (addOrderBtn) {
+        addOrderBtn.addEventListener('click', function() {
+          if (window.addOrder) {
+            window.addOrder();
+          }
+        });
+      }
+
+      // Save All Orders button
+      const saveAllOrdersBtn = document.getElementById('saveAllOrdersBtn');
+      if (saveAllOrdersBtn) {
+        saveAllOrdersBtn.addEventListener('click', function() {
+          if (window.saveAllOrders) {
+            window.saveAllOrders();
+          }
+        });
+      }
+
+      // === SELLER MANAGEMENT EVENT LISTENERS ===
+
+      // Add Seller button
+      const addSellerBtn = document.getElementById('addSellerBtn');
+      if (addSellerBtn) {
+        addSellerBtn.addEventListener('click', function() {
+          window.currentEditingSellerId = null;
+          document.getElementById('sellerModalTitle').textContent = 'Agregar Vendedor';
+          document.getElementById('sellerForm').reset();
+          window.openSellerModal();
+        });
+      }
+
+      // === CLIENT MANAGEMENT EVENT LISTENERS ===
+
+      // Add Client button
+      const addClientBtn = document.getElementById('addClientBtn');
+      if (addClientBtn) {
+        addClientBtn.addEventListener('click', function() {
+          window.currentEditingClientId = null;
+          document.getElementById('clientModalTitle').textContent = 'Agregar Cliente';
+          document.getElementById('clientForm').reset();
+          window.openClientModal();
+        });
+      }
+
+      // Close client modal buttons
+      const closeClientModal = document.getElementById('closeClientModal');
+      const cancelClientBtn = document.getElementById('cancelClientBtn');
+      if (closeClientModal) {
+        closeClientModal.addEventListener('click', window.closeClientModal);
+      }
+      if (cancelClientBtn) {
+        cancelClientBtn.addEventListener('click', window.closeClientModal);
+      }
+
+      // Close seller modal buttons
+      const closeSellerModal = document.getElementById('closeSellerModal');
+      const cancelSellerBtn = document.getElementById('cancelSellerBtn');
+      if (closeSellerModal) {
+        closeSellerModal.addEventListener('click', window.closeSellerModal);
+      }
+      if (cancelSellerBtn) {
+        cancelSellerBtn.addEventListener('click', window.closeSellerModal);
+      }
+
+      // Close confirm modal buttons
+      const closeConfirmModal = document.getElementById('closeConfirmModal');
+      const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+      if (closeConfirmModal) {
+        closeConfirmModal.addEventListener('click', window.closeConfirmModal);
+      }
+      if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', window.closeConfirmModal);
+      }
+
+      // Confirm delete button
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async function() {
+          const { doc, deleteDoc } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+
+          try {
+            if (window.sellerToDelete) {
+              // Delete seller
+              const sellerRef = doc(db, 'vendedores', window.sellerToDelete);
+              await deleteDoc(sellerRef);
+              console.log('✅ Vendedor eliminado:', window.sellerToDelete);
+              window.closeConfirmModal();
+              if (window.loadSellers) window.loadSellers();
+            } else if (window.clientToDelete) {
+              // Delete client
+              const clientRef = doc(db, 'clientes', window.clientToDelete);
+              await deleteDoc(clientRef);
+              console.log('✅ Cliente eliminado:', window.clientToDelete);
+              window.closeConfirmModal();
+              if (window.loadClients) window.loadClients();
+            }
+          } catch (error) {
+            console.error('❌ Error eliminando registro:', error);
+            alert('Error eliminando registro. Inténtalo de nuevo.');
+          }
+        });
+      }
+
+      // Seller form submission
+      const sellerForm = document.getElementById('sellerForm');
+      if (sellerForm) {
+        sellerForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          // Wait for Firebase to be ready if needed
+          let retries = 0;
+          while ((!window.firebase || !window.firebase.firestoreHelpers) && retries < 10) {
+            console.log('⏳ Waiting for Firebase to be ready...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            retries++;
+          }
+
+          const formData = new FormData(sellerForm);
+          const sellerData = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            territory: formData.get('territory'),
+            commission: formData.get('commission') ? parseFloat(formData.get('commission')) : null,
+            status: formData.get('status'),
+            notes: formData.get('notes')
+          };
+
+          // Validate required fields
+          if (!sellerData.name) {
+            alert('Por favor completa el campo obligatorio: Nombre');
+            return;
+          }
+
+          try {
+            if (!window.firebase || !window.firebase.firestoreHelpers) {
+              throw new Error('Firebase not available');
+            }
+
+            console.log('🔥 Firebase helpers available:', Object.keys(window.firebase.firestoreHelpers));
+
+            const { collection, addDoc, updateDoc, doc } = window.firebase.firestoreHelpers;
+
+            if (!addDoc) {
+              throw new Error('addDoc function not available');
+            }
+            if (!updateDoc) {
+              throw new Error('updateDoc function not available');
+            }
+            const db = window.firebase.firestore();
+
+            if (window.currentEditingSellerId) {
+              // Update existing seller
+              const sellerRef = doc(db, 'vendedores', window.currentEditingSellerId);
+              await updateDoc(sellerRef, {
+                ...sellerData,
+                updatedAt: new Date()
+              });
+              console.log('✅ Vendedor actualizado:', window.currentEditingSellerId);
+            } else {
+              // Add new seller
+              const sellersCollection = collection(db, 'vendedores');
+              const docRef = await addDoc(sellersCollection, {
+                ...sellerData,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              });
+              console.log('✅ Vendedor agregado:', docRef.id);
+            }
+
+            window.closeSellerModal();
+            if (window.loadSellers) window.loadSellers();
+
+          } catch (error) {
+            console.error('❌ Error guardando vendedor:', error);
+            alert('Error guardando vendedor. Inténtalo de nuevo.');
+          }
+        });
+      }
+
+      // Client form submission
+      const clientForm = document.getElementById('clientForm');
+      if (clientForm) {
+        clientForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          // Wait for Firebase to be ready if needed
+          let retries = 0;
+          while ((!window.firebase || !window.firebase.firestoreHelpers) && retries < 10) {
+            console.log('⏳ Waiting for Firebase to be ready...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            retries++;
+          }
+
+          const formData = new FormData(clientForm);
+          const clientData = {
+            clientNumber: formData.get('clientNumber'),
+            name: formData.get('name'),
+            priceList: formData.get('priceList') ? parseInt(formData.get('priceList')) : null,
+            phone: formData.get('phone'),
+            address: formData.get('address'),
+            vendorId: formData.get('vendorId'),
+            idLink: formData.get('idLink'),
+            credit: formData.get('credit') ? parseFloat(formData.get('credit')) : 0,
+            paymentDays: formData.get('paymentDays') ? parseInt(formData.get('paymentDays')) : 0,
+            balance: formData.get('balance') ? parseFloat(formData.get('balance')) : 0,
+            notes: formData.get('notes')
+          };
+
+          // Validate required fields
+          if (!clientData.clientNumber || !clientData.name) {
+            alert('Por favor completa los campos obligatorios: Nro de Cliente y Nombre');
+            return;
+          }
+
+          try {
+            if (!window.firebase || !window.firebase.firestoreHelpers) {
+              throw new Error('Firebase not available');
+            }
+
+            console.log('🔥 Firebase helpers available:', Object.keys(window.firebase.firestoreHelpers));
+
+            const { collection, addDoc, updateDoc, doc } = window.firebase.firestoreHelpers;
+
+            if (!addDoc) {
+              throw new Error('addDoc function not available');
+            }
+            if (!updateDoc) {
+              throw new Error('updateDoc function not available');
+            }
+
+            const db = window.firebase.firestore();
+
+            if (window.currentEditingClientId) {
+              // Update existing client
+              const clientRef = doc(db, 'clientes', window.currentEditingClientId);
+              await updateDoc(clientRef, {
+                ...clientData,
+                updatedAt: new Date()
+              });
+              console.log('✅ Cliente actualizado:', window.currentEditingClientId);
+            } else {
+              // Add new client
+              const clientsCollection = collection(db, 'clientes');
+              const docRef = await addDoc(clientsCollection, {
+                ...clientData,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              });
+              console.log('✅ Cliente agregado:', docRef.id);
+            }
+
+            window.closeClientModal();
+            if (window.loadClients) window.loadClients();
+
+          } catch (error) {
+            console.error('❌ Error guardando cliente:', error);
+            alert('Error guardando cliente. Inténtalo de nuevo.');
+          }
+        });
+      }
+
+      // Close modals when clicking outside
+      window.addEventListener('click', function(event) {
+        const sellerModal = document.getElementById('sellerModal');
+        const clientModal = document.getElementById('clientModal');
+        const confirmModal = document.getElementById('confirmModal');
+
+        if (event.target === sellerModal) {
+          window.closeSellerModal();
+        }
+        if (event.target === clientModal) {
+          window.closeClientModal();
+        }
+        if (event.target === confirmModal) {
+          window.closeConfirmModal();
+        }
+      });
+
+      console.log('✅ Administration page initialized');
+
+      // Auto-load precios if it's the active tab
+      setTimeout(() => {
+        const activeTab = document.querySelector('.mdc-tab--active');
+        if (activeTab && activeTab.getAttribute('data-tab') === 'precios') {
+          console.log('🎯 Precios tab is active by default, auto-loading products');
+          if (window.loadProducts) {
+            window.loadProducts();
+          } else {
+            console.log('⚠️ loadProducts not ready, will retry...');
+            // Retry with increasing delays
+            let attempts = 0;
+            const tryLoad = () => {
+              attempts++;
+              if (window.loadProducts) {
+                console.log('✅ loadProducts ready, loading now');
+                window.loadProducts();
+              } else if (attempts < 10) {
+                setTimeout(tryLoad, attempts * 500);
+              } else {
+                console.error('❌ Failed to auto-load products after 10 attempts');
+              }
+            };
+            setTimeout(tryLoad, 500);
+          }
+        }
+      }, 2000); // Give everything time to initialize
+    });
+  </script>
+</body>
+</html>

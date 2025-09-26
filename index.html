@@ -557,7 +557,7 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
-    <span id="versionBtn" class="version-btn">v0.12</span>
+    <span id="versionBtn" class="version-btn">v0.16</span>
     <button id="maximizeBtn" class="icon-button">&#x2195;</button>
   </header>
 
@@ -633,6 +633,11 @@
         <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
         <span class="mdc-button__label">Refresh</span>
       </button>
+      <button class="mdc-button mdc-button--outlined" id="reconnectBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">wifi_off</i>
+        <span class="mdc-button__label">Reconnect</span>
+      </button>
       <div class="mdc-form-field">
         <div class="mdc-checkbox">
           <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
@@ -659,6 +664,19 @@
           <div class="mdc-checkbox__ripple"></div>
         </div>
         <label for="hideZeroValues">Hide zero values</label>
+      </div>
+      <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+          <input type="checkbox" class="mdc-checkbox__native-control" id="showAllProducts">
+          <div class="mdc-checkbox__background">
+            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+            </svg>
+            <div class="mdc-checkbox__mixedmark"></div>
+          </div>
+          <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="showAllProducts">Show all products (including zero stock)</label>
       </div>
       <span class="status" id="statusText"></span>
       <div style="flex: 1;"></div> <!-- Spacer -->
@@ -740,7 +758,55 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.12 - Actual</h3>
+          <h3>v0.16 - Actual</h3>
+          <ul>
+            <li>📸 <strong>Sistema de Confirmación Fotográfica de Entregas</strong></li>
+            <li>🚚 <strong>Logistics mejorado:</strong> Nombres actualizados a "Pedido en Preparacion", "Pedido en Camino", "Pedido Entregado"</li>
+            <li>📱 <strong>Captura de fotos:</strong> Opción para tomar foto desde cámara o seleccionar archivo</li>
+            <li>☁️ <strong>Almacenamiento inteligente:</strong> Fotos guardadas directamente en Firestore (evita problemas CORS)</li>
+            <li>🗜️ <strong>Compresión automática:</strong> Imágenes optimizadas para reducir espacio de almacenamiento</li>
+            <li>👁️ <strong>Visualización de fotos:</strong> Modal para ver fotos de entrega con información detallada</li>
+            <li>✅ <strong>Flujo obligatorio:</strong> Foto requerida antes de marcar pedido como entregado</li>
+            <li>🎨 <strong>Interfaz optimizada:</strong> Botones de foto compactos que no interfieren con el texto</li>
+            <li>📊 <strong>Múltiples pedidos:</strong> Visualización correcta de todos los pedidos entregados</li>
+            <li>🔧 <strong>Compatible localhost:</strong> Sistema diseñado para funcionar en desarrollo local</li>
+            <li>👤 <strong>PROFILE como primera opción de menú</strong></li>
+            <li>🎨 <strong>ADMIN con colores estándar del menú</strong></li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.15</h3>
+          <ul>
+            <li>⚙️ <strong>Página de Administración completamente funcional</strong></li>
+            <li>💰 <strong>Gestión de Precios:</strong> Listado completo de productos con 4 precios editables</li>
+            <li>📤 <strong>Importar Precios:</strong> Soporte para archivos CSV y Excel (.xlsx/.xls)</li>
+            <li>📥 <strong>Exportar Precios:</strong> Descarga en formato CSV y Excel con formato profesional</li>
+            <li>💾 <strong>Guardado Automático:</strong> Los precios se guardan en Firebase instantáneamente</li>
+            <li>📋 <strong>Gestión de Órdenes Master:</strong> Sistema completo de seguimiento de órdenes</li>
+            <li>🔄 <strong>Estados de Orden:</strong> A Confirmar → En Preparación → En Camino → Entregado</li>
+            <li>👥 <strong>Gestión de Vendedores:</strong> Sistema completo de alta, edición y eliminación</li>
+            <li>🏢 <strong>Gestión de Clientes:</strong> Administración de clientes con asignación de vendedores</li>
+            <li>🎨 <strong>Animaciones de Carga:</strong> Spinners elegantes durante procesos largos</li>
+            <li>🔄 <strong>Auto-carga Inteligente:</strong> Datos se cargan automáticamente al cambiar pestañas</li>
+            <li>📊 <strong>Estadísticas en Tiempo Real:</strong> Contadores automáticos por cada sección</li>
+            <li>🛡️ <strong>Manejo Robusto de Errores:</strong> Validaciones y recuperación automática</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.13</h3>
+          <ul>
+            <li>🍔 <strong>Botón logout movido al menú hamburger</strong></li>
+            <li>🔽 Logout y versión reubicados al fondo del menú hamburger</li>
+            <li>📜 Número de versión ahora abre el modal de changelog al hacer clic</li>
+            <li>🧹 Removido texto "Totals" de la fila de totales en listado</li>
+            <li>🎨 Mejorado diseño del footer del menú con separador visual</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.12</h3>
           <ul>
             <li>🔍 <strong>Filtro de productos con stock 0 corregido</strong></li>
             <li>✅ Agregado checkbox "Hide zero values" en barra superior</li>

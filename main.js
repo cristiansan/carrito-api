@@ -244,16 +244,34 @@ function mapRow(raw) {
   }
   teorico = Number.isFinite(Number(teorico)) ? Number(teorico) : parseLocaleNumber(String(teorico ?? ''));
   if (!Number.isFinite(teorico)) teorico = 0;
+  // Si el stock es menor a 0, mostrarlo como 0
+  if (teorico < 0) teorico = 0;
   
   // stock teorico transito (transito - for backward compatibility)
   let transito = getFirstExisting(raw, [
     'Stock Teorico Transito',
-    'TheoreticalStockTransito'
+    'Stock Teórico Transito',
+    'Stock Teorico de Transito',
+    'Stock Teórico de Tránsito',
+    'TheoreticalStockTransito',
+    'Transito',
+    'Tránsito',
+    'En Transito',
+    'En Tránsito'
   ]);
   if (transito === undefined) {
     for (const [k, v] of Object.entries(raw)) {
       const nk = normalizeKey(k);
-      if ((/stockteoreicotransito/.test(nk))) { transito = v; break; }
+      if ((/stockte[o|ó]ricotransito/.test(nk) ||
+           /stockte[o|ó]ricodetransito/.test(nk) ||
+           /stockte[o|ó]ricodetransito/.test(nk) ||
+           /transito/.test(nk) ||
+           /transit/.test(nk) ||
+           /entransito/.test(nk))) {
+        transito = v;
+        console.log(`Found transito field: "${k}" = ${v}`);
+        break;
+      }
     }
   }
   transito = Number.isFinite(Number(transito)) ? Number(transito) : parseLocaleNumber(String(transito ?? ''));
@@ -323,6 +341,20 @@ function renderRows() {
   
   // Apply zero values filter first
   let mapped = mappedStockData;
+
+  // First apply default filter: only show products with stock > 0 OR transit > 0
+  // This matches the behavior in comparar.txt, unless "Show all products" is checked
+  const showAllProducts = document.getElementById('showAllProducts');
+  const shouldShowOnlyAvailable = !(showAllProducts && showAllProducts.checked);
+
+  if (shouldShowOnlyAvailable) {
+    const beforeAvailableFilter = mapped.length;
+    mapped = mapped.filter(p => p.teorico > 0 || p.transito > 0);
+    console.log('Productos después del filtro de disponibilidad (teorico > 0 OR transito > 0):', mapped.length, 'de', beforeAvailableFilter);
+  } else {
+    console.log('Mostrando TODOS los productos (incluyendo stock cero):', mapped.length);
+  }
+
   const hideZeroValues = document.getElementById('hideZeroValues');
   
   console.log('Total productos antes del filtro:', mapped.length);
@@ -346,6 +378,20 @@ function renderRows() {
     // Mostrar solo productos con stock teórico disponible
     mapped = mapped.filter(p => p.teorico > 0);
     console.log('Productos después del filtro (teorico > 0):', mapped.length);
+  }
+
+  // Apply stock and transit filter
+  const hideZeroStockAndTransit = document.getElementById('hideZeroStockAndTransit');
+
+  console.log('Stock/Transit filter encontrado:', !!hideZeroStockAndTransit);
+  console.log('Stock/Transit filter marcado:', hideZeroStockAndTransit ? hideZeroStockAndTransit.checked : 'N/A');
+
+  if (hideZeroStockAndTransit && hideZeroStockAndTransit.checked) {
+    // Ocultar productos donde stock = 0 Y transito = 0
+    // Mostrar solo productos donde stock > 0 OR transito > 0
+    const beforeStockTransitFilter = mapped.length;
+    mapped = mapped.filter(p => p.teorico > 0 || p.transito > 0);
+    console.log('Productos después del filtro stock/tránsito (stock > 0 OR transito > 0):', mapped.length, 'de', beforeStockTransitFilter);
   }
 
   // Add search filter
@@ -533,8 +579,8 @@ function renderRows() {
       // Primera columna - vacía
       td.innerHTML = '';
     } else if (index === 1) {
-      // Segunda columna - etiqueta "Totals"
-      td.innerHTML = '<strong>Totals</strong>';
+      // Segunda columna - vacía (sin etiqueta "Totals")
+      td.innerHTML = '';
     } else if (numericColumns.includes(col.id)) {
       // Columnas numéricas - mostrar total
       td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
@@ -549,6 +595,12 @@ function renderRows() {
   
   // Actualizar estadísticas KPI - using fixed function
   updateStatsFixed(filtered, totals);
+}
+
+async function forceReconnect() {
+  authToken = null;
+  tokenExpiresAt = 0;
+  await refresh();
 }
 
 async function refresh() {
@@ -571,6 +623,23 @@ async function refresh() {
         Object.keys(item).forEach(key => allKeys.add(key));
       });
       console.log('All available keys in data:', Array.from(allKeys));
+
+      // Look specifically for transit-related keys
+      const transitKeys = Array.from(allKeys).filter(key =>
+        /transito|transit|tránsito/i.test(key)
+      );
+      console.log('Transit-related keys found:', transitKeys);
+
+      // Check if we have the specific products mentioned by the user
+      const iphoneFTZ = allStockData.filter(item =>
+        Object.values(item).some(value =>
+          String(value).includes('MLPF3LZ/A-FTZ') || String(value).includes('MLPG3LZ/A-FTZ')
+        )
+      );
+      if (iphoneFTZ.length > 0) {
+        console.log('Found iPhone FTZ products:', iphoneFTZ.length);
+        console.log('Sample iPhone FTZ product:', iphoneFTZ[0]);
+      }
       
       // Map the data for better debugging
       const sampleMapped = mapRow(firstItem);
@@ -587,6 +656,25 @@ async function refresh() {
     // Log the first few mapped items for verification
     if (mappedStockData && mappedStockData.length > 0) {
       console.log('First 3 mapped items:', mappedStockData.slice(0, 3));
+
+      // Check for products with transit > 0
+      const withTransit = mappedStockData.filter(p => p.transito > 0);
+      console.log('Products with transit > 0:', withTransit.length);
+      if (withTransit.length > 0) {
+        console.log('Sample products with transit:', withTransit.slice(0, 5));
+      }
+
+      // Check specifically for iPhone 13 FTZ products
+      const iphoneFTZMapped = mappedStockData.filter(p =>
+        /MLPF3LZ\/A-FTZ|MLPG3LZ\/A-FTZ/i.test(p.articulo) ||
+        /MLPF3LZ\/A-FTZ|MLPG3LZ\/A-FTZ/i.test(p.description)
+      );
+      if (iphoneFTZMapped.length > 0) {
+        console.log('iPhone 13 FTZ products mapped:', iphoneFTZMapped.length);
+        console.log('Sample iPhone FTZ mapped products:', iphoneFTZMapped.slice(0, 3));
+      } else {
+        console.log('No iPhone 13 FTZ products found in mapped data');
+      }
     }
   } catch (err) {
     console.error('Error in refresh:', err);
@@ -627,7 +715,7 @@ function setupAutoRefresh() {
       autoIntervalId = null;
     }
     if (checkbox.checked) {
-      autoIntervalId = setInterval(refresh, 10_000);
+      autoIntervalId = setInterval(refresh, 30_000);
     }
   };
   checkbox.addEventListener('change', apply);
@@ -794,6 +882,11 @@ function setupUI() {
     refreshBtn.addEventListener('click', () => refresh());
   }
 
+  const reconnectBtn = document.getElementById('reconnectBtn');
+  if (reconnectBtn) {
+    reconnectBtn.addEventListener('click', () => forceReconnect());
+  }
+
   const exportBtn = document.getElementById('exportBtn');
   if (exportBtn) {
     exportBtn.addEventListener('click', exportToExcel);
@@ -805,9 +898,25 @@ function setupUI() {
   }
 
   const hideZeroValues = document.getElementById('hideZeroValues');
-  
+
   if (hideZeroValues) {
     hideZeroValues.addEventListener('change', () => {
+      renderRows();
+    });
+  }
+
+  const hideZeroStockAndTransit = document.getElementById('hideZeroStockAndTransit');
+
+  if (hideZeroStockAndTransit) {
+    hideZeroStockAndTransit.addEventListener('change', () => {
+      renderRows();
+    });
+  }
+
+  const showAllProducts = document.getElementById('showAllProducts');
+
+  if (showAllProducts) {
+    showAllProducts.addEventListener('change', () => {
       renderRows();
     });
   }

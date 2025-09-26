@@ -529,6 +529,8 @@
       overflow-y: auto;
       padding: 20px;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
     
     .slide-menu.active .slide-menu-content {
@@ -589,6 +591,35 @@
       background: #4CAF50;
       color: white;
       transform: translateX(4px);
+    }
+
+    .menu-logout-btn {
+      background: #f44336 !important;
+      color: white !important;
+    }
+
+    .menu-logout-btn:hover {
+      background: #d32f2f !important;
+    }
+
+
+    .menu-footer {
+      margin-top: auto;
+      border-top: 1px solid #3a3a44;
+      padding-top: 16px;
+    }
+
+    .menu-version {
+      text-align: center;
+      color: #b5b5b5;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .menu-version:hover {
+      color: #4CAF50;
     }
     
     
@@ -743,6 +774,138 @@
     
     .clear-stats-btn:hover {
       background: #c82333;
+    }
+
+    /* Profile Modal Styles */
+    .profile-form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .profile-section {
+      margin-bottom: 30px;
+    }
+
+    .profile-section h3 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+      font-size: 18px;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 8px;
+    }
+
+    .profile-field {
+      margin-bottom: 20px;
+    }
+
+    .profile-field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .profile-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .profile-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    .profile-textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 30px 0 20px 0;
+    }
+
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-save-btn {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+    }
+
+    .profile-save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .profile-clear-btn {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+      color: white;
+    }
+
+    .profile-clear-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+    }
+
+    .profile-info {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #4CAF50;
+      margin-top: 20px;
+    }
+
+    .profile-info p {
+      margin: 8px 0;
+      color: #333;
+    }
+
+    .profile-info small {
+      color: #666;
+      font-style: italic;
+    }
+
+    .btn-icon {
+      font-size: 16px;
+    }
+
+    /* Responsive Profile */
+    @media (max-width: 768px) {
+      .profile-form {
+        padding: 0 10px;
+      }
+
+      .profile-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .profile-btn {
+        justify-content: center;
+      }
     }
 
     /* Historial Modal Styles */
@@ -973,6 +1136,218 @@
       margin: 0;
     }
 
+    /* Photo Upload Styles */
+    .photo-upload-content {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .upload-options {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 24px 0;
+    }
+
+    .upload-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 150px;
+    }
+
+    .camera-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .camera-btn:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+
+    .file-btn {
+      background: #2196F3;
+      color: white;
+    }
+
+    .file-btn:hover {
+      background: #1976D2;
+      transform: translateY(-2px);
+    }
+
+    .photo-preview {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .photo-preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      margin-bottom: 16px;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .upload-confirm-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .upload-confirm-btn:hover {
+      background: #45a049;
+    }
+
+    .upload-cancel-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .upload-cancel-btn:hover {
+      background: #d32f2f;
+    }
+
+    .upload-progress {
+      margin-top: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #4CAF50;
+      width: 0%;
+      transition: width 0.3s ease;
+      animation: pulse 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    /* Photo View Styles */
+    .photo-view-content {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .photo-view-content img {
+      max-width: 100%;
+      max-height: 500px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      margin-bottom: 16px;
+    }
+
+    .photo-info {
+      background: #15151a;
+      padding: 12px;
+      border-radius: 6px;
+      color: #b5b5b5;
+    }
+
+    .photo-info p {
+      margin: 4px 0;
+    }
+
+    .order-item {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .order-id {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .move-order-btn {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .move-order-btn:hover {
+      background: #1976D2;
+    }
+
+    .view-photo-btn {
+      background: #FF9800;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 10px;
+      min-width: auto;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .view-photo-btn:hover {
+      background: #F57C00;
+    }
+
+    .delivered-status {
+      color: #4CAF50;
+      font-size: 12px;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .order-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .order-item {
       display: flex;
       justify-content: space-between;
@@ -1112,6 +1487,11 @@
         <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
         <span class="mdc-button__label">Refresh</span>
       </button>
+      <button class="mdc-button mdc-button--outlined" id="reconnectBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">wifi_off</i>
+        <span class="mdc-button__label">Reconnect</span>
+      </button>
       <div class="mdc-form-field">
         <div class="mdc-checkbox">
           <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
@@ -1127,11 +1507,6 @@
       </div>
       <span class="status" id="statusText"></span>
       <div style="flex: 1;"></div> <!-- Spacer -->
-      <a href="#" id="logoutBtn" class="mdc-button mdc-button--raised" style="text-decoration: none; background-color: #f44336 !important;">
-        <span class="mdc-button__ripple"></span>
-        <i class="material-icons mdc-button__icon" aria-hidden="true">logout</i>
-        <span class="mdc-button__label">Logout</span>
-      </a>
     </div>
 
     <div id="columnFilterDropdown" class="hidden">
@@ -1154,6 +1529,8 @@
 
       <hr style="border-color: #3a3a44; margin: 8px 0;">
       <label><input type="checkbox" id="hideZeroValues"> Mostrar solo productos con stock disponible</label>
+      <label><input type="checkbox" id="hideZeroStockAndTransit" checked> Ocultar productos sin stock ni tránsito</label>
+      <label><input type="checkbox" id="showAllProducts"> Show all products (including zero stock)</label>
     </div>
 
     <div id="errorBox" class="error hidden"></div>
@@ -1195,6 +1572,9 @@
       </div>
       
       <div class="menu-sections">
+        <button class="menu-btn" id="profileModalBtn">
+          PROFILE
+        </button>
         <button class="menu-btn" id="configModalBtn">
           CONFIG
         </button>
@@ -1207,6 +1587,18 @@
         <button class="menu-btn" id="logisticsModalBtn">
           LOGISTICS
         </button>
+        <button class="menu-btn" id="adminBtn" style="display: none;">
+          ADMIN
+        </button>
+      </div>
+
+      <div class="menu-footer">
+        <button class="menu-btn menu-logout-btn" id="menuLogoutBtn">
+          LOGOUT
+        </button>
+        <div class="menu-version" id="menuVersionBtn">
+          v0.16
+        </div>
       </div>
       
     </div>
@@ -1342,6 +1734,56 @@
     </div>
   </div>
 
+  <!-- PROFILE Modal -->
+  <div id="profileModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>👤 Mi Perfil</h2>
+
+      <div class="profile-form">
+        <div class="profile-section">
+          <h3>Información Personal</h3>
+
+          <div class="profile-field">
+            <label for="profileName">Nombre Completo</label>
+            <input type="text" id="profileName" class="profile-input" placeholder="Ingresa tu nombre completo">
+          </div>
+
+          <div class="profile-field">
+            <label for="profileAddress">Dirección</label>
+            <textarea id="profileAddress" class="profile-input profile-textarea" placeholder="Ingresa tu dirección completa" rows="3"></textarea>
+          </div>
+
+          <div class="profile-field">
+            <label for="profilePhone">Teléfono Principal</label>
+            <input type="tel" id="profilePhone" class="profile-input" placeholder="+54 11 1234-5678">
+          </div>
+
+          <div class="profile-field">
+            <label for="profileContactPhone">Teléfono de Contacto</label>
+            <input type="tel" id="profileContactPhone" class="profile-input" placeholder="+54 11 8765-4321">
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button class="profile-btn profile-save-btn" id="saveProfileBtn">
+            <span class="btn-icon">💾</span>
+            Guardar Perfil
+          </button>
+          <button class="profile-btn profile-clear-btn" id="clearProfileBtn">
+            <span class="btn-icon">🗑️</span>
+            Limpiar Datos
+          </button>
+        </div>
+
+        <div class="profile-info">
+          <p><strong>📧 Usuario:</strong> <span id="profileUserEmail">-</span></p>
+          <p><small>Los datos del perfil se guardan automáticamente en tu cuenta.</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- HISTORIAL Modal -->
   <div id="historialModal" class="modal hidden">
     <div class="modal-content">
@@ -1372,24 +1814,79 @@
 
       <div class="logistics-content">
         <div class="logistics-section">
-          <h4>📦 Preparing Order</h4>
+          <h4>📦 Pedido en Preparacion</h4>
           <div class="logistics-orders" id="preparingOrders">
             <p class="no-orders">No orders in preparation</p>
           </div>
         </div>
 
         <div class="logistics-section">
-          <h4>📋 Inventory Management</h4>
+          <h4>🚛 Pedido en Camino</h4>
           <div class="logistics-orders" id="inventoryOrders">
             <p class="no-orders">No orders in inventory</p>
           </div>
         </div>
 
         <div class="logistics-section">
-          <h4>🚛 Delivery Routes</h4>
+          <h4>✅ Pedido Entregado</h4>
           <div class="logistics-orders" id="deliveryOrders">
             <p class="no-orders">No orders for delivery</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO UPLOAD Modal -->
+  <div id="photoUploadModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>📸 Confirmar Entrega</h2>
+
+      <div class="photo-upload-content">
+        <p>Para marcar el pedido como entregado, por favor suba una foto de confirmación:</p>
+
+        <div class="upload-options">
+          <button class="upload-btn camera-btn" id="cameraBtn">
+            📷 Tomar Foto
+          </button>
+          <button class="upload-btn file-btn" id="fileBtn">
+            📁 Seleccionar Archivo
+          </button>
+        </div>
+
+        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display: none;">
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+
+        <div id="photoPreview" class="photo-preview" style="display: none;">
+          <img id="previewImage" src="" alt="Preview">
+          <div class="photo-actions">
+            <button class="upload-confirm-btn" id="confirmUploadBtn">✅ Confirmar Entrega</button>
+            <button class="upload-cancel-btn" id="cancelUploadBtn">❌ Cancelar</button>
+          </div>
+        </div>
+
+        <div id="uploadProgress" class="upload-progress" style="display: none;">
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+          <p>Subiendo foto...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO VIEW Modal -->
+  <div id="photoViewModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>📸 Foto de Entrega</h2>
+
+      <div class="photo-view-content">
+        <img id="viewImage" src="" alt="Delivery Photo">
+        <div class="photo-info">
+          <p id="photoDate"></p>
+          <p id="photoOrder"></p>
         </div>
       </div>
     </div>
@@ -1936,6 +2433,7 @@
             const statsModalBtn = document.getElementById('statsModalBtn');
             const historialModalBtn = document.getElementById('historialModalBtn');
             const logisticsModalBtn = document.getElementById('logisticsModalBtn');
+            const adminBtn = document.getElementById('adminBtn');
             
             console.log('🔍 Elementos encontrados:');
             console.log('- hamburgerBtn:', !!hamburgerBtn);
@@ -1988,6 +2486,10 @@
                 historialModalBtn.style.display = 'block';
                 console.log('✅ HISTORIAL visible para usuario no-admin');
               }
+              if (adminBtn) {
+                adminBtn.style.display = 'none';
+                console.log('🚫 ADMIN ocultado para usuario no-admin');
+              }
               
             } else {
               console.log('✅ Usuario ADMIN: mostrando todos los controles');
@@ -2033,6 +2535,10 @@
               if (historialModalBtn) {
                 historialModalBtn.style.display = 'block';
                 console.log('✅ HISTORIAL visible');
+              }
+              if (adminBtn) {
+                adminBtn.style.display = 'block';
+                console.log('✅ ADMIN visible para usuario admin');
               }
             }
           };
@@ -2113,7 +2619,88 @@
         console.log('🚫 Error en verificación: mostrando historial y logistics por seguridad');
       }
     }
-    
+
+    // === PROFILE FUNCTIONALITY ===
+    async function loadUserProfile() {
+      try {
+        // Show current user email
+        const user = firebase.auth().currentUser;
+        if (user) {
+          document.getElementById('profileUserEmail').textContent = user.email;
+        }
+
+        // Load profile data from Firebase
+        if (user) {
+          const db = firebase.firestore();
+          const profileRef = db.collection('userProfiles').doc(user.uid);
+          const doc = await profileRef.get();
+
+          if (doc.exists) {
+            const profileData = doc.data();
+            document.getElementById('profileName').value = profileData.name || '';
+            document.getElementById('profileAddress').value = profileData.address || '';
+            document.getElementById('profilePhone').value = profileData.phone || '';
+            document.getElementById('profileContactPhone').value = profileData.contactPhone || '';
+          } else {
+            // Initialize empty profile
+            clearProfileFields();
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error loading profile:', error);
+      }
+    }
+
+    async function saveUserProfile() {
+      try {
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          alert('Debes estar autenticado para guardar el perfil');
+          return;
+        }
+
+        const profileData = {
+          name: document.getElementById('profileName').value.trim(),
+          address: document.getElementById('profileAddress').value.trim(),
+          phone: document.getElementById('profilePhone').value.trim(),
+          contactPhone: document.getElementById('profileContactPhone').value.trim(),
+          updatedAt: new Date()
+        };
+
+        // Validation
+        if (!profileData.name) {
+          alert('El nombre es obligatorio');
+          return;
+        }
+
+        const db = firebase.firestore();
+        const profileRef = db.collection('userProfiles').doc(user.uid);
+
+        await profileRef.set(profileData, { merge: true });
+
+        console.log('✅ Profile saved successfully');
+        alert('Perfil guardado exitosamente!');
+
+      } catch (error) {
+        console.error('❌ Error saving profile:', error);
+        alert('Error guardando el perfil. Inténtalo de nuevo.');
+      }
+    }
+
+    function clearProfileFields() {
+      document.getElementById('profileName').value = '';
+      document.getElementById('profileAddress').value = '';
+      document.getElementById('profilePhone').value = '';
+      document.getElementById('profileContactPhone').value = '';
+    }
+
+    function clearUserProfile() {
+      if (confirm('¿Estás seguro de que deseas limpiar todos los datos del perfil?')) {
+        clearProfileFields();
+        console.log('🗑️ Profile fields cleared');
+      }
+    }
+
     // === HAMBURGER MENU FUNCTIONALITY (Simplified) ===
     let menuOpen = false;
 
@@ -2228,6 +2815,19 @@
         console.log('✅ Save config handler added');
       }
 
+      // Botones del perfil
+      const saveProfileBtn = document.getElementById('saveProfileBtn');
+      if (saveProfileBtn) {
+        saveProfileBtn.addEventListener('click', saveUserProfile);
+        console.log('✅ Save profile handler added');
+      }
+
+      const clearProfileBtn = document.getElementById('clearProfileBtn');
+      if (clearProfileBtn) {
+        clearProfileBtn.addEventListener('click', clearUserProfile);
+        console.log('✅ Clear profile handler added');
+      }
+
       // Botones del menú para abrir modales
       const configModalBtn = document.getElementById('configModalBtn');
       if (configModalBtn) {
@@ -2256,6 +2856,16 @@
         console.log('✅ Stats modal button handler added');
       }
 
+      const profileModalBtn = document.getElementById('profileModalBtn');
+      if (profileModalBtn) {
+        profileModalBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('profileModal');
+          loadUserProfile();
+        });
+        console.log('✅ Profile modal button handler added');
+      }
+
       const historialModalBtn = document.getElementById('historialModalBtn');
       if (historialModalBtn) {
         historialModalBtn.addEventListener('click', function() {
@@ -2282,6 +2892,64 @@
           }, 100);
         });
         console.log('✅ Logistics modal button handler added');
+      }
+
+      const menuLogoutBtn = document.getElementById('menuLogoutBtn');
+      if (menuLogoutBtn) {
+        menuLogoutBtn.addEventListener('click', function() {
+          closeMenu();
+          console.log('🚪 Cerrando sesión desde menu...');
+
+          if (typeof firebase !== 'undefined' && firebase.auth()) {
+            // Cerrar sesión en Firebase
+            firebase.authHelpers.signOut(firebase.auth()).then(() => {
+              console.log('✅ Sesión cerrada en Firebase');
+
+              // Limpiar datos de localStorage
+              localStorage.removeItem('userAuthenticated');
+              localStorage.removeItem('userEmail');
+              localStorage.removeItem('userDisplayName');
+              localStorage.removeItem('userPhotoURL');
+              localStorage.removeItem('cart');
+
+              console.log('🧹 localStorage limpiado');
+
+              // Redirigir al login
+              window.location.href = 'login.html';
+            }).catch((error) => {
+              console.error('❌ Error cerrando sesión:', error);
+              // Redirigir de todas formas
+              window.location.href = 'login.html';
+            });
+          } else {
+            // Limpiar localStorage y redirigir
+            localStorage.removeItem('userAuthenticated');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userDisplayName');
+            localStorage.removeItem('userPhotoURL');
+            localStorage.removeItem('cart');
+            window.location.href = 'login.html';
+          }
+        });
+        console.log('✅ Menu logout button handler added');
+      }
+
+      const menuVersionBtn = document.getElementById('menuVersionBtn');
+      if (menuVersionBtn) {
+        menuVersionBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('changelogModal');
+        });
+        console.log('✅ Menu version button handler added');
+      }
+
+      const adminBtn = document.getElementById('adminBtn');
+      if (adminBtn) {
+        adminBtn.addEventListener('click', function() {
+          closeMenu();
+          window.location.href = 'Administration.html';
+        });
+        console.log('✅ Admin button handler added');
       }
 
       // Event listeners para botones del historial
@@ -2347,54 +3015,7 @@
         }, 1000); // Esperar a que Firebase se cargue completamente
       }
       
-      // Funcionalidad del botón logout
-      const logoutBtn = document.getElementById('logoutBtn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          
-          console.log('🚪 Cerrando sesión...');
-          
-          if (typeof firebase !== 'undefined' && firebase.auth()) {
-            // Cerrar sesión en Firebase
-            firebase.authHelpers.signOut(firebase.auth()).then(() => {
-              console.log('✅ Sesión cerrada en Firebase');
-              
-              // Limpiar datos de localStorage
-              localStorage.removeItem('userAuthenticated');
-              localStorage.removeItem('userEmail');
-              localStorage.removeItem('userDisplayName');
-              localStorage.removeItem('userPhotoURL');
-              localStorage.removeItem('cart');
-              
-              console.log('🧹 localStorage limpiado');
-              
-              // Redirigir al login
-              window.location.href = 'login.html';
-            }).catch((error) => {
-              console.error('❌ Error cerrando sesión:', error);
-              // Redirigir de todas formas
-              window.location.href = 'login.html';
-            });
-          } else {
-            console.log('⚠️ Firebase no disponible, cerrando sesión localmente');
-            
-            // Limpiar datos de localStorage
-            localStorage.removeItem('userAuthenticated');
-            localStorage.removeItem('userEmail');
-            localStorage.removeItem('userDisplayName');
-            localStorage.removeItem('userPhotoURL');
-            localStorage.removeItem('cart');
-            
-            // Redirigir al login
-            window.location.href = 'login.html';
-          }
-        });
-        
-        console.log('✅ Logout button handler added');
-      } else {
-        console.warn('⚠️ Logout button not found');
-      }
+      // Old logout button removed - now in hamburger menu
       
       console.log('✅ Menu setup complete');
     });
@@ -2405,6 +3026,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    // Firebase Storage removed - using only Firestore for photos
 
     // Configuración de Firebase
     const firebaseConfig = {
@@ -2420,9 +3042,9 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    
-    console.log('🔥 Firebase inicializado en marketplace.html');
-    
+
+    console.log('🔥 Firebase inicializado en marketplace.html (solo Auth y Firestore)');
+
     // Hacer Firebase disponible globalmente
     window.firebase = {
       app: () => app,
@@ -2442,6 +3064,7 @@
         getDocs,
         deleteDoc
       },
+      // Storage helpers removed - using only Firestore
       // Funciones de Auth que necesitamos
       authHelpers: {
         signOut
@@ -2531,9 +3154,14 @@
         inventoryContainer.innerHTML = '<p class="no-orders">No orders in inventory</p>';
       }
 
-      // Display delivery orders
-      if (deliveryOrders.length > 0) {
-        deliveryContainer.innerHTML = deliveryOrders.map(order => createOrderHTML(order, null)).join('');
+      // Display delivery orders (en camino) and delivered orders together
+      const deliveredOrders = orders.filter(order => order.logisticsState === 'delivered');
+      const allDeliveryOrders = [...deliveryOrders, ...deliveredOrders];
+
+      if (allDeliveryOrders.length > 0) {
+        const deliveryOrdersHtml = deliveryOrders.map(order => createOrderHTML(order, 'delivered')).join('');
+        const deliveredOrdersHtml = deliveredOrders.map(order => createOrderHTML(order, null)).join('');
+        deliveryContainer.innerHTML = deliveryOrdersHtml + deliveredOrdersHtml;
       } else {
         deliveryContainer.innerHTML = '<p class="no-orders">No orders for delivery</p>';
       }
@@ -2542,9 +3170,24 @@
     // Create HTML for an order item
     function createOrderHTML(order, nextState) {
       const canMove = nextState !== null;
-      const buttonHtml = canMove ?
-        `<button class="move-order-btn" onclick="moveOrder('${order.id}', '${nextState}')" title="Move to ${nextState}">↓</button>` :
-        `<button class="move-order-btn" disabled title="Final state">✓</button>`;
+      const isDelivering = nextState === 'delivered';
+      let buttonHtml = '';
+
+      if (canMove) {
+        if (isDelivering) {
+          buttonHtml = `<button class="move-order-btn" onclick="initiateDelivery('${order.id}')" title="Marcar como Entregado">📸 Entregar</button>`;
+        } else {
+          buttonHtml = `<button class="move-order-btn" onclick="moveOrder('${order.id}', '${nextState}')" title="Move to ${nextState}">↓</button>`;
+        }
+      } else {
+        // This is a delivered order - show photo view button if photo exists
+        const photoViewBtn = order.deliveryPhoto ?
+          `<button class="view-photo-btn" onclick="viewDeliveryPhoto('${order.id}')" title="Ver foto de entrega">📸</button>` : '';
+        buttonHtml = `<div class="order-actions">
+          <span class="delivered-status">✓ Entregado</span>
+          ${photoViewBtn}
+        </div>`;
+      }
 
       return `
         <div class="order-item" data-order-id="${order.id}">
@@ -2888,9 +3531,324 @@
     // Expose advanced stats function globally
     window.updateAdvancedStats = updateAdvancedStats;
 
+    // === PHOTO UPLOAD FUNCTIONALITY ===
+
+    let currentOrderId = null;
+    let selectedPhoto = null;
+
+    // Initiate delivery process - opens photo upload modal
+    function initiateDelivery(orderId) {
+      currentOrderId = orderId;
+      openModal('photoUploadModal');
+    }
+
+    // Setup photo upload event listeners
+    function setupPhotoUpload() {
+      const cameraBtn = document.getElementById('cameraBtn');
+      const fileBtn = document.getElementById('fileBtn');
+      const photoInput = document.getElementById('photoInput');
+      const fileInput = document.getElementById('fileInput');
+      const previewImage = document.getElementById('previewImage');
+      const photoPreview = document.getElementById('photoPreview');
+      const confirmBtn = document.getElementById('confirmUploadBtn');
+      const cancelBtn = document.getElementById('cancelUploadBtn');
+
+      if (cameraBtn) {
+        cameraBtn.addEventListener('click', () => {
+          photoInput.click();
+        });
+      }
+
+      if (fileBtn) {
+        fileBtn.addEventListener('click', () => {
+          fileInput.click();
+        });
+      }
+
+      if (photoInput) {
+        photoInput.addEventListener('change', handlePhotoSelection);
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener('change', handlePhotoSelection);
+      }
+
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmDelivery);
+      }
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', cancelPhotoUpload);
+      }
+    }
+
+    // Handle photo selection
+    function handlePhotoSelection(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen válido.');
+        return;
+      }
+
+      selectedPhoto = file;
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const previewImage = document.getElementById('previewImage');
+        const photoPreview = document.getElementById('photoPreview');
+
+        if (previewImage && photoPreview) {
+          previewImage.src = e.target.result;
+          photoPreview.style.display = 'block';
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    // Confirm delivery with photo upload
+    async function confirmDelivery() {
+      if (!selectedPhoto || !currentOrderId) {
+        alert('Error: No se seleccionó foto o pedido.');
+        return;
+      }
+
+      try {
+        // Show upload progress
+        const uploadProgress = document.getElementById('uploadProgress');
+        const photoPreview = document.getElementById('photoPreview');
+
+        if (uploadProgress && photoPreview) {
+          photoPreview.style.display = 'none';
+          uploadProgress.style.display = 'block';
+        }
+
+        // Upload photo to Firebase Storage
+        const photoUrl = await uploadPhotoToFirebase(selectedPhoto, currentOrderId);
+
+        // Update order with photo and delivered status
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', currentOrderId);
+        await updateDoc(orderRef, {
+          logisticsState: 'delivered',
+          deliveryPhoto: photoUrl,
+          deliveryDate: new Date(),
+          lastStateUpdate: new Date()
+        });
+
+        console.log(`✅ Order ${currentOrderId} delivered with photo`);
+
+        // Close modal and reload orders
+        closeModal('photoUploadModal');
+        resetPhotoUpload();
+        loadLogisticsOrders();
+
+      } catch (error) {
+        console.error('❌ Error confirming delivery:', error);
+        alert('Error al confirmar entrega. Intenta nuevamente.');
+
+        // Hide upload progress on error
+        const uploadProgress = document.getElementById('uploadProgress');
+        const photoPreview = document.getElementById('photoPreview');
+
+        if (uploadProgress && photoPreview) {
+          uploadProgress.style.display = 'none';
+          photoPreview.style.display = 'block';
+        }
+      }
+    }
+
+    // Save photo directly to Firestore (avoids CORS issues)
+    async function uploadPhotoToFirebase(file, orderId) {
+      const currentUser = firebase.auth().currentUser;
+      if (!currentUser) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      console.log('📤 Guardando foto directamente en Firestore...');
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          try {
+            const base64 = e.target.result;
+
+            // Compress image if it's too large (optional)
+            const compressedBase64 = await compressImage(base64, 0.8, 800);
+
+            // Save photo directly to Firestore
+            const { doc, setDoc } = firebase.firestoreHelpers;
+            const db = firebase.firestore();
+
+            const photoId = `${currentUser.uid}_${orderId}_${Date.now()}`;
+            const photoRef = doc(db, 'delivery-photos', photoId);
+
+            await setDoc(photoRef, {
+              orderId: orderId,
+              userId: currentUser.uid,
+              photoData: compressedBase64,
+              uploadDate: new Date(),
+              fileName: `${photoId}.jpg`,
+              fileSize: file.size,
+              fileType: file.type
+            });
+
+            console.log('✅ Foto guardada en Firestore:', photoId);
+            resolve(`firestore:${photoId}`);
+          } catch (error) {
+            console.error('❌ Error guardando foto en Firestore:', error);
+            reject(new Error(`Error al guardar la foto: ${error.message}`));
+          }
+        };
+
+        reader.onerror = () => {
+          reject(new Error('Error al leer el archivo de imagen'));
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Compress image to reduce Firestore storage usage
+    function compressImage(base64, quality = 0.8, maxWidth = 800) {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        img.onload = () => {
+          // Calculate new dimensions
+          let { width, height } = img;
+
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw and compress
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+
+          resolve(compressedBase64);
+        };
+
+        img.src = base64;
+      });
+    }
+
+    // Cancel photo upload
+    function cancelPhotoUpload() {
+      resetPhotoUpload();
+      closeModal('photoUploadModal');
+    }
+
+    // Reset photo upload state
+    function resetPhotoUpload() {
+      selectedPhoto = null;
+      currentOrderId = null;
+
+      const photoPreview = document.getElementById('photoPreview');
+      const uploadProgress = document.getElementById('uploadProgress');
+      const previewImage = document.getElementById('previewImage');
+      const photoInput = document.getElementById('photoInput');
+      const fileInput = document.getElementById('fileInput');
+
+      if (photoPreview) photoPreview.style.display = 'none';
+      if (uploadProgress) uploadProgress.style.display = 'none';
+      if (previewImage) previewImage.src = '';
+      if (photoInput) photoInput.value = '';
+      if (fileInput) fileInput.value = '';
+    }
+
+    // View delivery photo
+    async function viewDeliveryPhoto(orderId) {
+      try {
+        const { doc, getDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        const orderSnap = await getDoc(orderRef);
+
+        if (!orderSnap.exists()) {
+          alert('Pedido no encontrado');
+          return;
+        }
+
+        const orderData = orderSnap.data();
+        if (!orderData.deliveryPhoto) {
+          alert('No hay foto de entrega para este pedido');
+          return;
+        }
+
+        console.log('📖 Cargando foto de entrega...');
+
+        // All photos are now stored in Firestore
+        const photoId = orderData.deliveryPhoto.replace('firestore:', '');
+        const photoRef = doc(db, 'delivery-photos', photoId);
+        const photoSnap = await getDoc(photoRef);
+
+        if (!photoSnap.exists()) {
+          alert('Foto no encontrada en la base de datos');
+          return;
+        }
+
+        const photoData = photoSnap.data();
+        const photoSrc = photoData.photoData;
+
+        console.log('✅ Foto cargada desde Firestore');
+
+        // Show photo in modal
+        const viewImage = document.getElementById('viewImage');
+        const photoDate = document.getElementById('photoDate');
+        const photoOrder = document.getElementById('photoOrder');
+
+        if (viewImage) {
+          viewImage.src = photoSrc;
+          // Add loading state
+          viewImage.onload = () => {
+            console.log('✅ Foto mostrada en modal');
+          };
+          viewImage.onerror = () => {
+            console.error('❌ Error mostrando foto');
+            alert('Error al mostrar la foto');
+          };
+        }
+
+        if (photoDate) {
+          const uploadDate = photoData.uploadDate ? new Date(photoData.uploadDate.toDate()).toLocaleString() : 'No disponible';
+          photoDate.textContent = `Fecha de entrega: ${uploadDate}`;
+        }
+
+        if (photoOrder) {
+          photoOrder.textContent = `Pedido #${orderData.numeroOrden || orderId.slice(-6)}`;
+        }
+
+        openModal('photoViewModal');
+
+      } catch (error) {
+        console.error('❌ Error viewing photo:', error);
+        alert(`Error al cargar la foto: ${error.message}`);
+      }
+    }
+
+    // Initialize photo upload when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      setupPhotoUpload();
+    });
+
     // Expose logistics functions globally
     window.loadLogisticsOrders = loadLogisticsOrders;
     window.moveOrder = moveOrder;
+    window.initiateDelivery = initiateDelivery;
+    window.viewDeliveryPhoto = viewDeliveryPhoto;
 
     console.log('✅ Firebase disponible globalmente');
   </script>
@@ -2929,6 +3887,215 @@
       }
     });
   </script>
+
+  <!-- CHANGELOG Modal -->
+  <div id="changelogModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Changelog - Historial de Versiones</h2>
+      <div id="changelogContent">
+        <div class="version-section">
+          <h3>v0.16 - Actual</h3>
+          <ul>
+            <li>📸 <strong>Sistema de Confirmación Fotográfica de Entregas</strong></li>
+            <li>🚚 <strong>Logistics mejorado:</strong> Nombres actualizados a "Pedido en Preparacion", "Pedido en Camino", "Pedido Entregado"</li>
+            <li>📱 <strong>Captura de fotos:</strong> Opción para tomar foto desde cámara o seleccionar archivo</li>
+            <li>☁️ <strong>Almacenamiento inteligente:</strong> Fotos guardadas directamente en Firestore (evita problemas CORS)</li>
+            <li>🗜️ <strong>Compresión automática:</strong> Imágenes optimizadas para reducir espacio de almacenamiento</li>
+            <li>👁️ <strong>Visualización de fotos:</strong> Modal para ver fotos de entrega con información detallada</li>
+            <li>✅ <strong>Flujo obligatorio:</strong> Foto requerida antes de marcar pedido como entregado</li>
+            <li>🎨 <strong>Interfaz optimizada:</strong> Botones de foto compactos que no interfieren con el texto</li>
+            <li>📊 <strong>Múltiples pedidos:</strong> Visualización correcta de todos los pedidos entregados</li>
+            <li>🔧 <strong>Compatible localhost:</strong> Sistema diseñado para funcionar en desarrollo local</li>
+            <li>👤 <strong>PROFILE como primera opción de menú</strong></li>
+            <li>🎨 <strong>ADMIN con colores estándar del menú</strong></li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.15</h3>
+          <ul>
+            <li>⚙️ <strong>Página de Administración completamente funcional</strong></li>
+            <li>💰 <strong>Gestión de Precios:</strong> Listado completo de productos con 4 precios editables</li>
+            <li>📤 <strong>Importar Precios:</strong> Soporte para archivos CSV y Excel (.xlsx/.xls)</li>
+            <li>📥 <strong>Exportar Precios:</strong> Descarga en formato CSV y Excel con formato profesional</li>
+            <li>💾 <strong>Guardado Automático:</strong> Los precios se guardan en Firebase instantáneamente</li>
+            <li>📋 <strong>Gestión de Órdenes Master:</strong> Sistema completo de seguimiento de órdenes</li>
+            <li>🔄 <strong>Estados de Orden:</strong> A Confirmar → En Preparación → En Camino → Entregado</li>
+            <li>👥 <strong>Gestión de Vendedores:</strong> Sistema completo de alta, edición y eliminación</li>
+            <li>🏢 <strong>Gestión de Clientes:</strong> Administración de clientes con asignación de vendedores</li>
+            <li>🎨 <strong>Animaciones de Carga:</strong> Spinners elegantes durante procesos largos</li>
+            <li>🔄 <strong>Auto-carga Inteligente:</strong> Datos se cargan automáticamente al cambiar pestañas</li>
+            <li>📊 <strong>Estadísticas en Tiempo Real:</strong> Contadores automáticos por cada sección</li>
+            <li>🛡️ <strong>Manejo Robusto de Errores:</strong> Validaciones y recuperación automática</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.13</h3>
+          <ul>
+            <li>🍔 <strong>Botón logout movido al menú hamburger</strong></li>
+            <li>🔽 Logout y versión reubicados al fondo del menú hamburger</li>
+            <li>📜 Número de versión ahora abre el modal de changelog al hacer clic</li>
+            <li>🧹 Removido texto "Totals" de la fila de totales en listado</li>
+            <li>🎨 Mejorado diseño del footer del menú con separador visual</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.12</h3>
+          <ul>
+            <li>🔍 <strong>Filtro de productos con stock 0 corregido</strong></li>
+            <li>✅ Agregado checkbox "Hide zero values" en barra superior</li>
+            <li>📋 Mostrar todos los productos por defecto (incluyendo stock 0)</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.11</h3>
+          <ul>
+            <li>🛒 <strong>Sistema de confirmación de órdenes implementado</strong></li>
+            <li>📧 Eliminados botones de envío por WhatsApp y Email</li>
+            <li>✅ Nuevo botón único "Confirmar Orden" con numeración automática</li>
+            <li>🔢 Numeración de órdenes comenzando desde #10000, #10001, etc.</li>
+            <li>📋 Historial mejorado con números de orden y información del usuario</li>
+            <li>👤 Visualización de quién realizó cada orden en el historial</li>
+            <li>🔧 Campo de cantidad editable manualmente en marketplace</li>
+            <li>⌨️ Input numérico para ingresar cantidades altas (50, 100, etc.)</li>
+            <li>🔄 Compatibilidad mejorada entre Firebase v10 modular y compat SDK</li>
+            <li>🗑️ Funciones de limpiar y exportar historial completamente implementadas</li>
+            <li>📊 Exportación a CSV con datos completos de órdenes</li>
+            <li>🛡️ Manejo de errores robusto para evitar bloqueos de interfaz</li>
+            <li>🎯 Flujo simplificado: confirmar → número único → historial → redirect</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.10 - Sistema de Permisos</h3>
+          <ul>
+            <li>🔐 <strong>Sistema de permisos de usuario implementado</strong></li>
+            <li>👤 Verificación automática de permisos admin basada en Firebase</li>
+            <li>🚫 Usuarios no-admin: acceso restringido a filtros de columnas</li>
+            <li>✅ Usuarios no-admin: acceso permitido a HISTORIAL y LOGISTICS</li>
+            <li>🎯 Sistema consistente entre index.html, marketplace.html y order.html</li>
+            <li>🔧 Botón LOGISTICS agregado al menú de order.html</li>
+            <li>🚚 Modal de logistics completo con 3 secciones funcionales</li>
+            <li>🛡️ Manejo de errores con permisos restrictivos por seguridad</li>
+            <li>📋 Logging detallado para debugging de permisos</li>
+            <li>⚙️ Integración automática con onAuthStateChanged de Firebase</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.9 - Sistema Dinámico de Columnas</h3>
+          <ul>
+            <li>📊 <strong>Sistema completo de columnas dinámicas implementado</strong></li>
+            <li>🔧 Agregadas todas las columnas de la API (15 total) con filtrado</li>
+            <li>💾 Persistencia de filtros seleccionados en localStorage</li>
+            <li>📈 KPIs dinámicos que se actualizan según columnas visibles</li>
+            <li>🎯 Configuración específica de columnas por página (index vs marketplace)</li>
+            <li>📐 Columna descripción con ancho doble (30%)</li>
+            <li>🏷️ Limpieza de etiquetas KPI (removido "SUMA" y "SUMA EN")</li>
+            <li>🚀 Botón Logistics agregado en marketplace (sin iconos)</li>
+            <li>⚡ Optimización de compatibilidad JavaScript navegadores antiguos</li>
+            <li>🔄 Sistema de mapeo robusto con fallbacks para datos API</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.8 - Menu Administrativo</h3>
+          <ul>
+            <li>🍔 <strong>Hamburger menu administrativo implementado</strong></li>
+            <li>🔐 Sistema de permisos admin basado en Firestore</li>
+            <li>⚙️ Panel de configuración con WhatsApp y Email</li>
+            <li>💾 Almacenamiento automático en Firebase de configuraciones</li>
+            <li>🔔 Sistema de notificaciones toast con animaciones</li>
+            <li>📱 Integración automática con formulario de pedidos</li>
+            <li>📞 Configuración de contacto persistente entre sesiones</li>
+            <li>🚪 Función Logout mejorada y funcional</li>
+            <li>📋 Auto-relleno de datos de contacto en order.html</li>
+            <li>✨ Interfaz de configuración intuitiva y responsive</li>
+            <li>🛠️ Debug mejorado y manejo de errores Firebase</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.7 - Sistema de Pagos Crypto</h3>
+          <ul>
+            <li>💰 <strong>Sistema de pago crypto implementado</strong></li>
+            <li>🔗 Agregado QR code con address USDT (BSC) para pagos</li>
+            <li>📝 Campo para hash de transacción con validación</li>
+            <li>📋 Función de copia de address al clipboard</li>
+            <li>🎯 Validación automática de formato de hash (0x + 66 chars)</li>
+            <li>✅ Confirmación y almacenamiento local de transacciones</li>
+            <li>🛒 Botón "Seguir Comprando" para volver al marketplace</li>
+            <li>🔄 Estados visuales dinámicos en botones de pago</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.6 - Marketplace Mejorado</h3>
+          <ul>
+            <li>🚪 Botón Logout funcional en marketplace</li>
+            <li>🔴 Valores en 0 mostrados en color rojo</li>
+            <li>📊 KPIs integrados en marketplace (Total Productos, Stock, Transit)</li>
+            <li>🎨 Botones Add to Cart dinámicos (blanco→rojo con cantidad)</li>
+            <li>0️⃣ Quantity por defecto en 0 en lugar de 1</li>
+            <li>🔧 Lógica mejorada para actualización visual de botones</li>
+            <li>🎯 Estilos consistentes entre páginas</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.5</h3>
+          <ul>
+            <li>✅ Eliminada columna "Stock Teórico"</li>
+            <li>✅ Reordenadas columnas: Disponible | En Tránsito</li>
+            <li>✅ Agregado sistema de versiones con changelog</li>
+            <li>🔧 Optimización de la interfaz</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.4</h3>
+          <ul>
+            <li>📊 Agregadas estadísticas en tiempo real</li>
+            <li>🔍 Mejorado sistema de filtros por columnas</li>
+            <li>📱 Optimización responsive</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.3</h3>
+          <ul>
+            <li>📤 Funcionalidad de exportación a Excel</li>
+            <li>🔄 Auto-refresh cada 30 segundos</li>
+            <li>🎨 Mejorado tema oscuro</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.2</h3>
+          <ul>
+            <li>🔐 Sistema de autenticación</li>
+            <li>📋 Tabs de categorías (All, iPhone, MacBooks, Samsung)</li>
+            <li>🔍 Búsqueda por modelo</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.1</h3>
+          <ul>
+            <li>🎉 Versión inicial</li>
+            <li>📊 Tabla básica de inventario</li>
+            <li>🌙 Interfaz con tema oscuro</li>
+            <li>📱 Diseño responsive básico</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
