@@ -222,9 +222,38 @@
     }
     
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
-    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; gap: 12px; }
-    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; }
+    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; }
+    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; position: absolute; left: 16px; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
+    .header-stats {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .header-stat-card {
+      text-align: center;
+      padding: 12px 20px;
+      background: #15151a;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      min-width: 120px;
+    }
+
+    .header-stat-number {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+
+    .header-stat-label {
+      font-size: 0.85em;
+      color: #b5b5b5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
     .container { padding: 16px; width: 100%; box-sizing: border-box; }
     .tabs { display: flex; gap: 8px; border-bottom: 1px solid #2a2a2a; margin-bottom: 12px; }
     .tab { padding: 8px 12px; cursor: pointer; border: 1px solid #2a2a2a; border-bottom: none; border-radius: 6px 6px 0 0; background: #1b1b1f; color: #e6e6e6; }
@@ -243,35 +272,6 @@
     .zero-value {
       color: #ff6b6b !important;
       font-weight: 500;
-    }
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-      padding: 16px;
-      background: #1e1e24;
-      border-radius: 8px;
-      border: 1px solid #2a2a2a;
-    }
-    .stat-card {
-      text-align: center;
-      padding: 12px;
-      background: #15151a;
-      border-radius: 6px;
-      border: 1px solid #2a2a2a;
-    }
-    .stat-number {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #4CAF50;
-      margin-bottom: 4px;
-    }
-    .stat-label {
-      font-size: 0.85em;
-      color: #b5b5b5;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
     th.sortable {
       cursor: pointer;
@@ -1920,6 +1920,20 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
+    <div class="header-stats" id="headerStats">
+      <div class="header-stat-card" id="headerTotalProducts">
+        <div class="header-stat-number">0</div>
+        <div class="header-stat-label">PRODUCTOS</div>
+      </div>
+      <div class="header-stat-card" id="headerStockTeorico">
+        <div class="header-stat-number">0</div>
+        <div class="header-stat-label">STOCK</div>
+      </div>
+      <div class="header-stat-card" id="headerStockTransito">
+        <div class="header-stat-number">0</div>
+        <div class="header-stat-label">TRÁNSITO</div>
+      </div>
+    </div>
   </header>
 
   <div class="container">
@@ -1989,16 +2003,6 @@
           <div class="mdc-notched-outline__trailing"></div>
         </div>
       </div>
-      <button class="mdc-button mdc-button--outlined" id="refreshBtn">
-        <span class="mdc-button__ripple"></span>
-        <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
-        <span class="mdc-button__label">Refresh</span>
-      </button>
-      <button class="mdc-button mdc-button--outlined" id="reconnectBtn">
-        <span class="mdc-button__ripple"></span>
-        <i class="material-icons mdc-button__icon" aria-hidden="true">wifi_off</i>
-        <span class="mdc-button__label">Reconnect</span>
-      </button>
       <div class="mdc-form-field">
         <div class="mdc-checkbox">
           <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
@@ -2010,7 +2014,7 @@
           </div>
           <div class="mdc-checkbox__ripple"></div>
         </div>
-        <label for="autoToggle">Auto-refresh 30s</label>
+        <label for="autoToggle">Auto-refresh 90s</label>
       </div>
       <span class="status" id="statusText"></span>
       <div style="flex: 1;"></div> <!-- Spacer -->
@@ -2041,8 +2045,6 @@
     </div>
 
     <div id="errorBox" class="error hidden"></div>
-
-    <div class="stats-container" id="statsContainer" style="display: none;"></div>
 
     <!-- Add to Cart button (top only) -->
     <div style="text-align: right; margin-bottom: 12px;">
@@ -2107,7 +2109,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.21
+          v0.22
         </div>
       </div>
       
@@ -2186,7 +2188,7 @@
           
           <div class="stat-item">
             <div class="stat-label">Tiempo de refresco</div>
-            <div class="stat-value" id="refreshTimeStat">30s</div>
+            <div class="stat-value" id="refreshTimeStat">90s</div>
           </div>
           
           <div class="stat-item">
@@ -2646,6 +2648,14 @@
         </div>
       </div>
 
+      <div class="order-details-section" id="detailSaveOrderContainer" style="display: none;">
+        <button class="mdc-button mdc-button--raised" id="detailSaveOrderBtn" style="width: 100%; background-color: #FF9800 !important;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+          <span class="mdc-button__label">Guardar Cambios</span>
+        </button>
+      </div>
+
       <div class="order-details-section" id="detailEditOrderContainer" style="display: none;">
         <button class="mdc-button mdc-button--raised" id="detailEditOrderBtn" style="width: 100%; background-color: #4CAF50 !important;">
           <span class="mdc-button__ripple"></span>
@@ -2657,7 +2667,9 @@
   </div>
 
   <script>
-    console.log('🚀 Simple hamburger menu starting');
+    // Limpiar consola al cargar la página
+    console.clear();
+    console.log('🚀 Marketplace cargado - Consola limpiada');
     
     // === FIREBASE STATUS CHECK ===
     function checkFirebaseStatus() {
@@ -4495,10 +4507,16 @@
         }
       }
 
+      // Agregar indicador de edición si existe
+      let orderNumberDisplay = `#${order.numeroOrden || order.id.slice(-6)}`;
+      if (order.editadaPor && order.editadaPorNombre) {
+        orderNumberDisplay += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
+      }
+
       return `
         <div class="order-item" data-order-id="${order.id}">
           <div class="order-info">
-            <div class="order-number">#${order.numeroOrden || order.id.slice(-6)}</div>
+            <div class="order-number">${orderNumberDisplay}</div>
             <div class="order-details">
               ${order.fechaLocal || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || 0)}
             </div>
@@ -4586,7 +4604,11 @@
         };
 
         // Llenar información general
-        document.getElementById('detailOrderNumber').textContent = `#${order.numeroOrden || order.id.slice(-6)}`;
+        let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
+        if (order.editadaPor && order.editadaPorNombre) {
+          orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
+        }
+        document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
         document.getElementById('detailClientName').textContent = order.clienteNombre || order.usuarioEmail || '-';
         document.getElementById('detailClientEmail').textContent = order.clienteEmail || order.usuarioEmail || '-';
         document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
@@ -4603,6 +4625,10 @@
         // Llenar tabla de items con campos editables
         const itemsTableBody = document.getElementById('detailOrderItems');
         itemsTableBody.innerHTML = '';
+
+        // Declarar hasChanges en el scope de la función
+        let hasChanges = false;
+        const originalItems = order.items ? JSON.parse(JSON.stringify(order.items)) : [];
 
         if (order.items && order.items.length > 0) {
           order.items.forEach((item, index) => {
@@ -4625,7 +4651,8 @@
             itemsTableBody.appendChild(row);
           });
 
-          // Agregar event listeners para actualizar subtotales
+          // Agregar event listeners para actualizar subtotales y detectar cambios
+
           const quantityInputs = itemsTableBody.querySelectorAll('.editable-quantity');
           quantityInputs.forEach(input => {
             input.addEventListener('change', function() {
@@ -4647,6 +4674,13 @@
               const newTotal = order.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
               order.total = newTotal;
               document.getElementById('detailOrderTotal').textContent = `$${newTotal.toFixed(2)}`;
+
+              // Detectar si hubo cambios
+              hasChanges = true;
+              const saveContainer = document.getElementById('detailSaveOrderContainer');
+              if (saveContainer) {
+                saveContainer.style.display = 'block';
+              }
             });
           });
         } else {
@@ -4655,6 +4689,95 @@
 
         // Mostrar total
         document.getElementById('detailOrderTotal').textContent = `$${(order.total || 0).toFixed(2)}`;
+
+        // Configurar botón Guardar
+        const saveOrderContainer = document.getElementById('detailSaveOrderContainer');
+        const saveOrderBtn = document.getElementById('detailSaveOrderBtn');
+
+        // Ocultar botón Guardar inicialmente
+        if (saveOrderContainer) {
+          saveOrderContainer.style.display = 'none';
+        }
+
+        // Remover event listeners previos del botón Guardar
+        if (saveOrderBtn) {
+          const newSaveBtn = saveOrderBtn.cloneNode(true);
+          saveOrderBtn.parentNode.replaceChild(newSaveBtn, saveOrderBtn);
+
+          // Agregar nuevo event listener para Guardar
+          newSaveBtn.addEventListener('click', async () => {
+            try {
+              console.log('💾 Guardando cambios en la orden...');
+
+              const currentUser = firebase.auth().currentUser;
+              if (!currentUser) {
+                alert('❌ Debes estar autenticado para guardar cambios');
+                return;
+              }
+
+              // Obtener email y nombre del usuario actual
+              const userEmail = currentUser.email;
+              let userName = userEmail;
+
+              // Intentar obtener el nombre del vendedor desde Firestore
+              try {
+                const { doc, getDoc } = firebase.firestoreHelpers;
+                const db = firebase.firestore();
+                const userRef = doc(db, 'usuarios', currentUser.uid);
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = userData.nombre || userData.email || userEmail;
+                }
+              } catch (e) {
+                console.warn('⚠️ No se pudo obtener nombre de usuario:', e);
+              }
+
+              // Actualizar orden en Firebase con información de quién editó
+              const { doc, updateDoc } = firebase.firestoreHelpers;
+              const db = firebase.firestore();
+              const orderRef = doc(db, 'pedidos', order.id);
+
+              await updateDoc(orderRef, {
+                items: order.items,
+                total: order.total,
+                editadaPor: currentUser.uid,
+                editadaPorEmail: userEmail,
+                editadaPorNombre: userName,
+                fechaEdicion: new Date().toISOString(),
+                fechaEdicionLocal: new Date().toLocaleString('es-AR')
+              });
+
+              console.log('✅ Orden guardada exitosamente');
+
+              // Actualizar el número de orden con el indicador de edición
+              let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
+              orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${userName})</span>`;
+              document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+
+              // Ocultar botón Guardar
+              saveOrderContainer.style.display = 'none';
+              hasChanges = false;
+
+              // Actualizar cache de órdenes
+              const orderIndex = allOrdersCache.findIndex(o => o.id === order.id);
+              if (orderIndex !== -1) {
+                allOrdersCache[orderIndex] = { ...order, editadaPor: currentUser.uid, editadaPorNombre: userName };
+              }
+
+              // Recargar órdenes en seguimiento para reflejar cambios
+              if (window.loadLogisticsOrders) {
+                await loadLogisticsOrders();
+              }
+
+              alert('✅ Cambios guardados exitosamente');
+            } catch (error) {
+              console.error('❌ Error guardando cambios:', error);
+              alert('❌ Error al guardar cambios. Por favor intenta nuevamente.');
+            }
+          });
+        }
 
         // Mostrar botón "Seguir Comprando" en todos los estados
         const editOrderContainer = document.getElementById('detailEditOrderContainer');
@@ -4780,6 +4903,16 @@
         // Mostrar modal
         document.getElementById('orderDetailsModal').style.display = 'block';
 
+        // Inicializar botones MDC después de agregar al DOM
+        setTimeout(() => {
+          const mdcButtons = document.querySelectorAll('#orderDetailsModal .mdc-button');
+          mdcButtons.forEach(button => {
+            if (!button._mdcRipple) {
+              mdc.ripple.MDCRipple.attachTo(button);
+            }
+          });
+        }, 100);
+
       } catch (error) {
         console.error('❌ Error mostrando detalles de orden:', error);
         alert('Error al cargar detalles de la orden');
@@ -4791,32 +4924,87 @@
       try {
         console.log('🛒 Cargando orden en carrito para editar:', order);
 
-        // Convertir items de la orden al formato del carrito
+        // Guardar orden en localStorage primero
         const cartItems = order.items.map(item => ({
           item: item.articulo,
           description: item.description,
           price: item.price,
           quantity: item.quantity
         }));
-
-        // Guardar en localStorage
         localStorage.setItem('cart', JSON.stringify(cartItems));
-
-        // Guardar ID de la orden original para poder actualizarla
         localStorage.setItem('editingOrderId', order.id);
+        console.log('💾 Orden guardada en localStorage:', cartItems.length, 'items');
 
-        console.log('✅ Orden cargada en carrito:', cartItems.length, 'items');
+        // Verificar si mappedStockData está disponible
+        if (!window.mappedStockData || window.mappedStockData.length === 0) {
+          console.log('⚠️ mappedStockData no disponible, recargando página para cargar productos...');
 
-        // Cerrar el modal
-        document.getElementById('orderDetailsModal').style.display = 'none';
+          // Cerrar el modal antes de recargar
+          const modal = document.getElementById('orderDetailsModal');
+          if (modal) modal.style.display = 'none';
 
-        // Actualizar el badge del carrito para reflejar los items cargados
+          const logisticsModal = document.getElementById('logisticsModal');
+          if (logisticsModal) logisticsModal.classList.add('hidden');
+
+          // Recargar la página - el código de carga del carrito lo manejará
+          window.location.reload();
+          return;
+        }
+
+        // Si mappedStockData está disponible, cargar directamente
+        console.log('✅ mappedStockData disponible, cargando productos...');
+
+        // Limpiar selectedItems antes de cargar la orden
+        if (window.selectedItems) {
+          window.selectedItems.clear();
+          console.log('🗑️ selectedItems limpiado');
+        }
+
+        // Cargar items directamente en selectedItems
+        let loadedCount = 0;
+        order.items.forEach(item => {
+          console.log(`🔍 Cargando producto: "${item.articulo}" x${item.quantity}`);
+
+          // Buscar el producto en mappedStockData
+          const product = window.mappedStockData.find(p =>
+            p.articulo === item.articulo ||
+            p.articulo.trim() === item.articulo.trim() ||
+            p.articulo.toLowerCase() === item.articulo.toLowerCase()
+          );
+
+          if (product && window.selectedItems) {
+            window.selectedItems.set(item.articulo, {
+              product: product,
+              quantity: item.quantity
+            });
+            console.log(`✅ Producto cargado: ${item.articulo} x${item.quantity}`);
+            loadedCount++;
+          } else {
+            console.warn(`⚠️ Producto no encontrado: ${item.articulo}`);
+          }
+        });
+
+        console.log(`✅ Orden cargada: ${loadedCount}/${order.items.length} productos en selectedItems`);
+
+        // Cerrar modales
+        const orderModal = document.getElementById('orderDetailsModal');
+        if (orderModal) orderModal.style.display = 'none';
+
+        const logisticsModal = document.getElementById('logisticsModal');
+        if (logisticsModal) logisticsModal.classList.add('hidden');
+
+        // Re-renderizar la tabla para mostrar las cantidades
+        if (window.renderRows) {
+          console.log('🔄 Re-renderizando tabla con productos del carrito...');
+          window.renderRows();
+        }
+
+        // Actualizar badge del carrito
         if (window.updateCartBadge) {
           window.updateCartBadge();
         }
 
-        // Recargar la página para mostrar el carrito actualizado en marketplace
-        window.location.reload();
+        console.log('✅ Vista actualizada con productos de la orden');
 
       } catch (error) {
         console.error('❌ Error cargando orden en carrito:', error);
@@ -5541,46 +5729,105 @@
         try {
           const cartItems = JSON.parse(cartData);
           console.log('📦 Cargando carrito desde localStorage:', cartItems.length, 'items');
+          console.log('📦 Contenido del carrito:', cartItems);
 
-          // Wait for products to be loaded before populating selectedItems
-          const waitForProducts = setInterval(() => {
-            if (window.mappedStockData && window.mappedStockData.length > 0) {
-              clearInterval(waitForProducts);
+          // Function to load cart items into selectedItems
+          function loadCartIntoSelectedItems() {
+            console.log('📊 Total productos disponibles:', window.mappedStockData.length);
+            console.log('📊 Primeros 3 productos:', window.mappedStockData.slice(0, 3).map(p => p.articulo));
 
-              cartItems.forEach(cartItem => {
-                // Find the product in the mapped stock data
-                const product = window.mappedStockData.find(p =>
-                  p.articulo === cartItem.item
-                );
+            let loadedCount = 0;
+            cartItems.forEach(cartItem => {
+              console.log(`🔍 Buscando producto: "${cartItem.item}"`);
 
-                if (product && window.selectedItems) {
-                  // Add to selectedItems map
-                  window.selectedItems.set(cartItem.item, {
-                    product: product,
-                    quantity: cartItem.quantity
-                  });
-
-                  console.log(`✅ Producto cargado en carrito: ${cartItem.item} x${cartItem.quantity}`);
-
-                  // Update the quantity input in the table
-                  const qtyInput = document.querySelector(`.qty-input[data-item="${cartItem.item}"]`);
-                  if (qtyInput) {
-                    qtyInput.value = cartItem.quantity;
-                  }
+              // Find the product in the mapped stock data
+              const product = window.mappedStockData.find(p => {
+                const match = p.articulo === cartItem.item ||
+                              p.articulo.trim() === cartItem.item.trim() ||
+                              p.articulo.toLowerCase() === cartItem.item.toLowerCase();
+                if (match) {
+                  console.log(`✅ Producto encontrado: ${p.articulo}`);
                 }
+                return match;
               });
 
-              console.log('✅ Carrito cargado en selectedItems:', window.selectedItems.size, 'productos');
+              if (product && window.selectedItems) {
+                // Add to selectedItems map
+                window.selectedItems.set(cartItem.item, {
+                  product: product,
+                  quantity: cartItem.quantity
+                });
+
+                console.log(`✅ Producto cargado en carrito: ${cartItem.item} x${cartItem.quantity}`);
+                console.log(`✅ selectedItems ahora tiene:`, window.selectedItems.get(cartItem.item));
+                loadedCount++;
+              } else {
+                console.warn(`⚠️ Producto NO encontrado en mappedStockData: "${cartItem.item}"`);
+                console.warn(`⚠️ Intentando buscar con búsqueda parcial...`);
+
+                // Try partial match
+                const partialMatch = window.mappedStockData.find(p =>
+                  p.articulo.includes(cartItem.item) || cartItem.item.includes(p.articulo)
+                );
+
+                if (partialMatch) {
+                  console.log(`✅ Producto encontrado con búsqueda parcial: ${partialMatch.articulo}`);
+                  window.selectedItems.set(partialMatch.articulo, {
+                    product: partialMatch,
+                    quantity: cartItem.quantity
+                  });
+                  loadedCount++;
+                }
+              }
+            });
+
+            console.log(`✅ Carrito cargado: ${loadedCount}/${cartItems.length} productos en selectedItems`);
+            console.log('✅ selectedItems.size:', window.selectedItems.size);
+            console.log('✅ Contenido de selectedItems:', Array.from(window.selectedItems.entries()));
+
+            // Forzar re-render de la tabla para mostrar las cantidades
+            if (window.renderRows) {
+              console.log('🔄 Re-renderizando tabla para mostrar cantidades...');
+              window.renderRows();
+            } else {
+              console.warn('⚠️ window.renderRows no está disponible');
+            }
+
+            // Actualizar badge del carrito
+            if (window.updateCartBadge) {
+              window.updateCartBadge();
+            }
+
+            // Limpiar localStorage después de cargar exitosamente
+            localStorage.removeItem('cart');
+            console.log('✅ Vista actualizada con productos del carrito');
+          }
+
+          // Wait for products to be loaded before populating selectedItems
+          let attempts = 0;
+          const maxAttempts = 100; // 10 seconds max
+          const waitForProducts = setInterval(() => {
+            attempts++;
+            console.log(`⏳ Esperando mappedStockData... intento ${attempts}/${maxAttempts}`);
+
+            if (window.mappedStockData && window.mappedStockData.length > 0) {
+              clearInterval(waitForProducts);
+              console.log('✅ mappedStockData disponible, cargando carrito...');
+              loadCartIntoSelectedItems();
+            } else if (attempts >= maxAttempts) {
+              clearInterval(waitForProducts);
+              console.error('❌ Timeout: mappedStockData nunca se cargó después de 10 segundos');
+              console.log('🗑️ Limpiando localStorage del carrito para evitar problemas futuros');
+              localStorage.removeItem('cart');
+              localStorage.removeItem('editingOrderId');
             }
           }, 100); // Check every 100ms
 
-          // Timeout after 5 seconds
-          setTimeout(() => {
-            clearInterval(waitForProducts);
-          }, 5000);
         } catch (error) {
           console.error('❌ Error cargando carrito desde localStorage:', error);
         }
+      } else {
+        console.log('ℹ️ No hay carrito en localStorage');
       }
     });
   </script>
@@ -5835,7 +6082,7 @@
           <h3>v0.3</h3>
           <ul>
             <li>📤 Funcionalidad de exportación a Excel</li>
-            <li>🔄 Auto-refresh cada 30 segundos</li>
+            <li>🔄 Auto-refresh cada 90 segundos</li>
             <li>🎨 Mejorado tema oscuro</li>
           </ul>
         </div>

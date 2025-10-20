@@ -3106,7 +3106,7 @@
       }
     }
 
-    // Admin edit order function - show order details
+    // Admin edit order function - redirect to marketplace with order items
     async function adminEditOrder(orderId) {
       if (!isUserAdmin) {
         alert('⚠️ No tienes permisos para editar órdenes');
@@ -3127,41 +3127,30 @@
 
         const order = orderDoc.data();
 
-        // Format order details
-        let details = `📋 DETALLES DE LA ORDEN #${order.numeroOrden || orderId.slice(-6)}\n\n`;
-        details += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        details += `📅 Fecha: ${order.fechaLocal || order.fecha || 'N/A'}\n`;
-        details += `👤 Cliente: ${order.cliente || 'N/A'}\n`;
-        details += `📱 Teléfono: ${order.telefono || 'N/A'}\n`;
-        details += `📧 Email: ${order.email || 'N/A'}\n`;
-        details += `📦 Estado: ${order.logisticsState || 'N/A'}\n`;
-        details += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
-
-        details += `📦 PRODUCTOS:\n`;
+        // Save order items to localStorage for marketplace to load
         if (order.items && order.items.length > 0) {
-          order.items.forEach((item, index) => {
-            details += `\n${index + 1}. ${item.description || item.item}\n`;
-            details += `   Cantidad: ${item.quantity}\n`;
-            details += `   Precio: $${formatNumber(item.price || 0)}\n`;
-            details += `   Subtotal: $${formatNumber((item.price || 0) * (item.quantity || 0))}\n`;
-          });
+          const cartItems = order.items.map(item => ({
+            item: item.articulo || item.item,
+            description: item.description,
+            price: item.price,
+            quantity: item.quantity
+          }));
+
+          localStorage.setItem('cart', JSON.stringify(cartItems));
+          localStorage.setItem('editingOrderId', orderId);
+
+          console.log('📦 Orden guardada en localStorage, redirigiendo a marketplace...');
+          console.log('📦 Items:', cartItems);
+
+          // Redirect to marketplace
+          window.location.href = 'marketplace.html';
         } else {
-          details += 'No hay productos\n';
+          alert('⚠️ Esta orden no tiene productos para editar');
         }
 
-        details += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-        details += `💰 TOTAL: $${formatNumber(order.total || order.montoTotal || 0)}\n`;
-        details += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-
-        // Show details in alert
-        alert(details);
-
-        // Also log to console for easy copy
-        console.log('📋 ORDER DETAILS:', order);
-
       } catch (error) {
-        console.error('❌ Error loading order details:', error);
-        alert('❌ Error al cargar los detalles de la orden');
+        console.error('❌ Error loading order:', error);
+        alert('❌ Error al cargar la orden');
       }
     }
 
@@ -3821,6 +3810,10 @@
   </script>
 
   <script>
+    // Limpiar consola al cargar la página
+    console.clear();
+    console.log('🚀 Administration cargado - Consola limpiada');
+
     // === GLOBAL MANAGEMENT VARIABLES ===
     window.sellers = [];
     window.clients = [];

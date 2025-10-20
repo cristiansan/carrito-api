@@ -29,6 +29,9 @@ let isUserLoggedIn = false; // Track if user is logged in
 // Expose selectedItems globally for cart functionality
 window.selectedItems = selectedItems;
 
+// Expose mappedStockData globally for cart loading functionality
+window.mappedStockData = mappedStockData;
+
 // Version control for column visibility defaults
 const COLUMN_VISIBILITY_VERSION = 3; // Increment this when changing defaults
 
@@ -441,9 +444,12 @@ function mapRow(raw) {
 
 function renderRows() {
   const isMarketplace = window.location.pathname.includes('marketplace.html');
-  
+
   // Store the mapped data for cart lookups
   mappedStockData = allStockData.map(mapRow);
+
+  // Update global window reference for cart loading
+  window.mappedStockData = mappedStockData;
   
   // Apply zero values filter first
   let mapped = mappedStockData;
@@ -822,7 +828,7 @@ function setupAutoRefresh() {
       autoIntervalId = null;
     }
     if (checkbox.checked) {
-      autoIntervalId = setInterval(refresh, 30_000);
+      autoIntervalId = setInterval(refresh, 90_000);
     }
   };
   checkbox.addEventListener('change', apply);

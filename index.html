@@ -849,7 +849,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.21</span>
+    <span id="versionBtn" class="version-btn">v0.22</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -872,7 +872,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.21</button>
+      <button id="mobileVersionBtn">v0.22</button>
     </div>
   </div>
 
@@ -954,7 +954,7 @@
           </div>
           <div class="mdc-checkbox__ripple"></div>
         </div>
-        <label for="autoToggle">Auto-refresh 30s</label>
+        <label for="autoToggle">Auto-refresh 90s</label>
       </div>
 
       <div class="mdc-form-field">
@@ -1331,7 +1331,7 @@
           <h3>v0.3</h3>
           <ul>
             <li>📤 Funcionalidad de exportación a Excel</li>
-            <li>🔄 Auto-refresh cada 30 segundos</li>
+            <li>🔄 Auto-refresh cada 90 segundos</li>
             <li>🎨 Mejorado tema oscuro</li>
           </ul>
         </div>
@@ -1660,6 +1660,10 @@
   
   <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
   <script>
+    // Limpiar consola al cargar la página
+    console.clear();
+    console.log('🚀 Index cargado - Consola limpiada');
+
     // Initialize Material Design Components
     document.addEventListener('DOMContentLoaded', () => {
       // Initialize all buttons
