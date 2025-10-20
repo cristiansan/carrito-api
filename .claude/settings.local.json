@@ -52,7 +52,15 @@
       "Bash(dir)",
       "Bash(dir:*)",
       "Bash(python:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(tasklist)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(start http://localhost:3002/importar-clientes-inicial.html)",
+      "Bash(start http://localhost:3002/marketplace.html)",
+      "Bash(start http://localhost:3002/Administration.html)",
+      "Bash(start http://localhost:3002/cart.html)"
     ],
     "deny": [],
     "ask": []

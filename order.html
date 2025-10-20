@@ -1522,6 +1522,13 @@
       CONTACT_CONFIG.companyName = APP_CONFIG.companyName;
     }
 
+    // Actualizar labels de botones con la configuración
+    function updateButtonLabels() {
+      // Esta función puede ser expandida en el futuro si se requiere
+      // actualizar dinámicamente los labels de los botones
+      console.log('📝 Labels de botones actualizados');
+    }
+
     // Calcular tiempo de refresco en milisegundos
     function getRefreshTimeMs() {
       let time = APP_CONFIG.refreshTime;
@@ -1745,6 +1752,91 @@
       return orderNumber;
     }
 
+    // Enviar orden al vendedor por WhatsApp
+    async function sendOrderToSellerWhatsApp(orderData, orderNumber) {
+      try {
+        console.log('📱 Buscando vendedor para enviar WhatsApp...');
+
+        if (!currentUser || !currentUser.email) {
+          console.warn('⚠️ No hay usuario autenticado para buscar vendedor');
+          return;
+        }
+
+        // 1. Buscar el cliente por email del usuario
+        const clientesSnapshot = await firebase.firestore()
+          .collection('clientes')
+          .where('email', '==', currentUser.email)
+          .limit(1)
+          .get();
+
+        if (clientesSnapshot.empty) {
+          console.warn('⚠️ No se encontró cliente asociado al email:', currentUser.email);
+          return;
+        }
+
+        const clienteData = clientesSnapshot.docs[0].data();
+        const vendedorId = clienteData.vendedorId || clienteData.vendedor;
+
+        if (!vendedorId) {
+          console.warn('⚠️ Cliente no tiene vendedor asignado');
+          return;
+        }
+
+        console.log('👤 Cliente encontrado, vendedor ID:', vendedorId);
+
+        // 2. Buscar el vendedor
+        const vendedorDoc = await firebase.firestore()
+          .collection('vendedores')
+          .doc(vendedorId)
+          .get();
+
+        if (!vendedorDoc.exists) {
+          console.warn('⚠️ No se encontró el vendedor con ID:', vendedorId);
+          return;
+        }
+
+        const vendedorData = vendedorDoc.data();
+        let vendedorPhone = vendedorData.phone || vendedorData.telefono;
+
+        if (!vendedorPhone) {
+          console.warn('⚠️ Vendedor no tiene teléfono configurado');
+          return;
+        }
+
+        // Limpiar el número de teléfono (remover espacios, guiones, etc)
+        vendedorPhone = vendedorPhone.replace(/\D/g, '');
+
+        console.log('📞 Vendedor encontrado:', vendedorData.name, '- Teléfono:', vendedorPhone);
+
+        // 3. Construir el mensaje de WhatsApp
+        const clienteNombre = clienteData.nombre || clienteData.nombreComercial || currentUser.displayName || currentUser.email;
+
+        let mensaje = `🛒 *NUEVA ORDEN #${orderNumber}*\n\n`;
+        mensaje += `👤 *Cliente:* ${clienteNombre}\n`;
+        mensaje += `📧 *Email:* ${currentUser.email}\n`;
+        mensaje += `📅 *Fecha:* ${orderData.fechaLocal}\n\n`;
+        mensaje += `📦 *Productos (${orderData.cantidadItems}):*\n`;
+
+        orderData.items.forEach((item, index) => {
+          mensaje += `${index + 1}. ${item.description || item.articulo}\n`;
+          mensaje += `   Cantidad: ${item.quantity} x $${formatNumber(item.price)}\n`;
+        });
+
+        mensaje += `\n💰 *TOTAL: $${formatNumber(orderData.total)}*\n\n`;
+        mensaje += `🏢 ${orderData.empresa || 'South Traders'}`;
+
+        // 4. Abrir WhatsApp
+        const whatsappUrl = `https://wa.me/${vendedorPhone}?text=${encodeURIComponent(mensaje)}`;
+
+        console.log('✅ Abriendo WhatsApp para vendedor...');
+        window.open(whatsappUrl, '_blank');
+
+      } catch (error) {
+        console.error('❌ Error enviando mensaje al vendedor:', error);
+        // No detener el proceso si falla el WhatsApp
+      }
+    }
+
     // Guardar pedido completo en Firebase con número de orden
     async function saveOrderToFirebase(orderData, orderNumber) {
       if (!currentUser) {
@@ -1790,6 +1882,9 @@
         } else {
           console.error('❌ Verificación: Documento NO existe en Firebase');
         }
+
+        // Enviar notificación al vendedor por WhatsApp
+        await sendOrderToSellerWhatsApp(orderToSave, orderNumber);
 
         return true;
       } catch (error) {
@@ -2281,7 +2376,7 @@
           localStorage.removeItem('cart');
 
           // Mostrar confirmación con número de orden
-          alert(`✅ ¡Orden confirmada exitosamente!\n\nNúmero de Orden: #${orderNumber}\nTotal: $${formatNumber(orderData.total)}\n\nPuedes ver los detalles en el historial.`);
+          alert(`✅ Tu orden fue enviada con éxito, un vendedor se contactará con vos en los próximos minutos.\n\nNúmero de Orden: #${orderNumber}\nTotal: $${formatNumber(orderData.total)}`);
 
           // Redirigir a marketplace inmediatamente
           window.location.href = 'marketplace.html';
@@ -2299,7 +2394,7 @@
 
           addToHistorial('Confirmada', orderForStorage.resumen);
 
-          alert(`✅ ¡Orden confirmada localmente!\n\nNúmero de Orden: #${orderNumber}\nTotal: $${formatNumber(orderData.total)}\n\nNota: Se guardó en el dispositivo (sin sincronización).`);
+          alert(`✅ Tu orden fue enviada con éxito, un vendedor se contactará con vos en los próximos minutos.\n\nNúmero de Orden: #${orderNumber}\nTotal: $${formatNumber(orderData.total)}`);
 
           // Limpiar carrito y redirigir
           localStorage.removeItem('cart');
@@ -2356,7 +2451,7 @@
             
             if (!isAdmin) {
               console.log('🚫 Usuario NO-ADMIN: ocultando CONFIG y STATS');
-              
+
               // Ocultar opciones administrativas
               if (configModalBtn) {
                 configModalBtn.style.display = 'none';
@@ -2366,7 +2461,7 @@
                 statsModalBtn.style.display = 'none';
                 console.log('✅ STATS ocultado');
               }
-              
+
               // Mostrar opciones básicas
               if (historialModalBtn) {
                 historialModalBtn.style.display = 'block';
@@ -2376,10 +2471,17 @@
                 logisticsModalBtn.style.display = 'block';
                 console.log('✅ LOGISTICS visible para usuario no-admin');
               }
-              
+
+              // Ocultar botón de limpiar historial para usuarios no-admin
+              const clearHistorialBtn = document.getElementById('clearHistorialBtn');
+              if (clearHistorialBtn) {
+                clearHistorialBtn.style.display = 'none';
+                console.log('🚫 Botón "Limpiar Historial" ocultado para usuario no-admin');
+              }
+
             } else {
               console.log('✅ Usuario ADMIN: mostrando todas las opciones del menú');
-              
+
               // Mostrar todas las opciones
               if (configModalBtn) {
                 configModalBtn.style.display = 'block';
@@ -2396,6 +2498,13 @@
               if (logisticsModalBtn) {
                 logisticsModalBtn.style.display = 'block';
                 console.log('✅ LOGISTICS visible');
+              }
+
+              // Mostrar botón de limpiar historial para usuarios admin
+              const clearHistorialBtn = document.getElementById('clearHistorialBtn');
+              if (clearHistorialBtn) {
+                clearHistorialBtn.style.display = 'block';
+                console.log('✅ Botón "Limpiar Historial" visible para usuario admin');
               }
             }
           };

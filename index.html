@@ -32,18 +32,18 @@
       border-bottom: none !important;
       margin-right: 4px !important;
     }
-    
+
     .mdc-tab--active {
       color: #ffffff !important; /* Color para tab seleccionado */
       background-color: #23232a !important;
       font-weight: 600 !important;
     }
-    
+
     .mdc-tab:hover:not(.mdc-tab--active) {
       color: #e8e8e8 !important; /* Color en hover para mejor visibilidad */
       background-color: #2a2a2f !important;
     }
-    
+
     .mdc-tab-indicator__content--underline {
       border-color: #4CAF50 !important;
       border-width: 3px !important;
@@ -222,8 +222,8 @@
     }
     
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
-    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; gap: 12px; }
-    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; }
+    header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; }
+    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; position: absolute; left: 16px; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
     .container { padding: 16px; width: 100%; box-sizing: border-box; }
     .tabs { display: flex; gap: 8px; border-bottom: 1px solid #2a2a2a; margin-bottom: 12px; }
@@ -257,20 +257,7 @@
       background: #1b1b1f;
       color: #f0f0f0;
     }
-    .icon-button {
-      background: none;
-      border: none;
-      color: #f1f1f1;
-      font-size: 24px;
-      cursor: pointer;
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
     .version-btn {
-      position: absolute;
-      top: 10px;
-      right: 50px;
       background: #2a2a33;
       color: #f1f1f1;
       padding: 4px 8px;
@@ -279,6 +266,8 @@
       cursor: pointer;
       border: 1px solid #3a3a44;
       transition: background-color 0.2s;
+      position: absolute;
+      right: 16px;
     }
     .version-btn:hover {
       background: #3a3a44;
@@ -328,15 +317,38 @@
     #columnFilterDropdown input[type="checkbox"] {
       accent-color: #2a2a33;
     }
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    .header-stats {
+      display: flex;
       gap: 12px;
-      margin-bottom: 16px;
-      padding: 16px;
-      background: #1e1e24;
-      border-radius: 8px;
+      align-items: center;
+    }
+
+    .header-stat-card {
+      text-align: center;
+      padding: 6px 12px;
+      background: #15151a;
+      border-radius: 6px;
       border: 1px solid #2a2a2a;
+      min-width: 100px;
+    }
+
+    .header-stat-number {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 2px;
+    }
+
+    .header-stat-label {
+      font-size: 0.7em;
+      color: #b5b5b5;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .stats-container {
+      display: none !important;
     }
     .stat-card {
       text-align: center;
@@ -438,6 +450,181 @@
       font-weight: bold;
       font-size: 1.2em;
       text-align: right;
+    }
+
+    /* Mobile KPIs container */
+    .mobile-kpis {
+      display: none;
+    }
+
+    /* Mobile Menu Styles */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      background: #2a2a33;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      padding: 8px;
+      cursor: pointer;
+      color: #f1f1f1;
+    }
+
+    .mobile-menu-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1002;
+    }
+
+    .mobile-menu-overlay.active {
+      display: block;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100%;
+      background: #1e1e24;
+      z-index: 1003;
+      transition: right 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-menu.active {
+      right: 0;
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 20px 15px 20px;
+      border-bottom: 1px solid #2a2a2a;
+      flex-shrink: 0;
+    }
+
+    .mobile-menu-header h3 {
+      margin: 0;
+      color: #4CAF50;
+      font-size: 18px;
+    }
+
+    .mobile-menu-close {
+      background: none;
+      border: none;
+      color: #f1f1f1;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-menu-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px 20px 15px 20px;
+    }
+
+    .mobile-menu-content .mdc-button,
+    .mobile-menu-content .mdc-text-field,
+    .mobile-menu-content .mdc-form-field {
+      width: 100% !important;
+    }
+
+    .mobile-menu-content .mdc-button {
+      min-height: 36px !important;
+      padding: 6px 12px !important;
+      font-size: 13px !important;
+    }
+
+    .mobile-menu-content .mdc-button .material-icons {
+      font-size: 18px !important;
+    }
+
+    .mobile-menu-content .mdc-text-field {
+      margin-bottom: 0 !important;
+      height: 36px !important;
+    }
+
+    .mobile-menu-content .mdc-text-field__input {
+      font-size: 13px !important;
+      padding: 6px 12px !important;
+    }
+
+    .mobile-menu-content .mdc-floating-label {
+      font-size: 13px !important;
+    }
+
+    .mobile-menu-content .mdc-form-field {
+      margin: 0 !important;
+      padding: 6px 0 !important;
+      font-size: 13px !important;
+    }
+
+    .mobile-menu-content .mdc-form-field label {
+      font-size: 13px !important;
+    }
+
+    /* Make all menu items consistent except login */
+    .mobile-menu-content > *:not(:first-child):not(.menu-separator) {
+      background-color: #2a2a33 !important;
+      border: 1px solid #3a3a44 !important;
+    }
+
+    .mobile-menu-content .mdc-button--outlined:not(.mdc-button--raised) {
+      background-color: #2a2a33 !important;
+      border-color: #3a3a44 !important;
+      color: #f1f1f1 !important;
+    }
+
+    .mobile-menu-separator {
+      border-top: 1px solid #2a2a2a;
+      margin: 6px 0;
+    }
+
+    .mobile-menu-version {
+      flex-shrink: 0;
+      padding: 12px 20px;
+      background: #15151a;
+      border-top: 1px solid #2a2a2a;
+      text-align: center;
+      font-size: 12px;
+      color: #b5b5b5;
+    }
+
+    .mobile-menu-version button {
+      background: #2a2a33;
+      color: #f1f1f1;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #3a3a44;
+      transition: background-color 0.2s;
+    }
+
+    .mobile-menu-version button:hover {
+      background: #3a3a44;
     }
 
     /* Logistics Modal Styles */
@@ -545,11 +732,102 @@
         padding: 6px 8px;
       }
       .toolbar {
-        flex-wrap: wrap;
+        display: none !important;
+      }
+
+      .mobile-menu-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mdc-tab-bar {
+        display: none !important;
+      }
+
+      .version-btn {
+        display: none !important;
+      }
+
+      .header-stats {
+        display: none !important;
+      }
+
+      .mobile-kpis {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 12px;
+        background: #1e1e24;
+        border-radius: 8px;
+        border: 1px solid #2a2a2a;
+      }
+
+      .mobile-kpis .header-stat-card {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+      }
+
+      .mobile-kpis .header-stat-label {
+        font-size: 0.75em;
+        text-align: left;
+        white-space: normal;
+      }
+
+      .mobile-kpis .header-stat-number {
+        font-size: 1.1em;
+        text-align: right;
+        margin-bottom: 0;
       }
       th, td {
         padding: 4px;
         font-size: 12px;
+      }
+
+      /* Tabs verticales en móviles */
+      .mdc-tab-bar {
+        max-width: 200px !important;
+      }
+
+      .mdc-tab-scroller__scroll-area {
+        overflow-x: hidden !important;
+      }
+
+      .mdc-tab-scroller__scroll-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        align-items: flex-start !important;
+      }
+
+      .mdc-tab {
+        border-radius: 6px !important;
+        margin-right: 0 !important;
+        width: 200px !important;
+        min-width: 200px !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        border-bottom: 1px solid #2a2a2a !important;
+      }
+
+      .mdc-tab__content {
+        justify-content: flex-start !important;
+      }
+
+      .mdc-tab-indicator__content--underline {
+        border-left-width: 3px !important;
+        border-bottom-width: 0 !important;
+      }
+
+      .mdc-tab-indicator {
+        height: 100% !important;
+        width: 3px !important;
+        left: 0 !important;
+        right: auto !important;
       }
     }
   </style>
@@ -557,9 +835,46 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
-    <span id="versionBtn" class="version-btn">v0.16</span>
-    <button id="maximizeBtn" class="icon-button">&#x2195;</button>
+    <div class="header-stats" id="headerStats">
+      <div class="header-stat-card" id="headerTotalProducts">
+        <div class="header-stat-number">0</div>
+        <div class="header-stat-label">Productos</div>
+      </div>
+      <div class="header-stat-card" id="headerStockTeorico">
+        <div class="header-stat-number">0</div>
+        <div class="header-stat-label">Stock</div>
+      </div>
+      <div class="header-stat-card" id="headerStockTransito">
+        <div class="header-stat-number">0</div>
+        <div class="header-stat-label">Tránsito</div>
+      </div>
+    </div>
+    <span id="versionBtn" class="version-btn">v0.21</span>
   </header>
+
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <i class="material-icons">menu</i>
+  </button>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <h3>Menu</h3>
+      <button class="mobile-menu-close" id="mobileMenuClose">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    <div class="mobile-menu-content" id="mobileMenuContent">
+      <!-- Content will be cloned from toolbar -->
+    </div>
+    <div class="mobile-menu-version">
+      <button id="mobileVersionBtn">v0.21</button>
+    </div>
+  </div>
 
   <div class="container">
     <div class="mdc-tab-bar" role="tablist" id="tabs">
@@ -628,16 +943,6 @@
           <div class="mdc-notched-outline__trailing"></div>
         </div>
       </div>
-      <button class="mdc-button mdc-button--outlined" id="refreshBtn">
-        <span class="mdc-button__ripple"></span>
-        <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
-        <span class="mdc-button__label">Refresh</span>
-      </button>
-      <button class="mdc-button mdc-button--outlined" id="reconnectBtn">
-        <span class="mdc-button__ripple"></span>
-        <i class="material-icons mdc-button__icon" aria-hidden="true">wifi_off</i>
-        <span class="mdc-button__label">Reconnect</span>
-      </button>
       <div class="mdc-form-field">
         <div class="mdc-checkbox">
           <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
@@ -694,14 +999,39 @@
       <label><input type="checkbox" data-column="disponible" checked> Disponible</label>
       <label><input type="checkbox" data-column="ordenVenta"> En Orden de Venta</label>
       <label><input type="checkbox" data-column="ordenCompra"> En Orden de Compra</label>
-      <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
-      <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
-      <label><input type="checkbox" data-column="transito"> Stock Teorico Transito</label>
+      <label><input type="checkbox" data-column="stockTeorico" checked> Stock</label>
+      <label><input type="checkbox" data-column="teorico"> Stock</label>
+      <label><input type="checkbox" data-column="transito"> Tránsito</label>
     </div>
 
     <div id="errorBox" class="error hidden"></div>
 
     <div class="stats-container" id="statsContainer" style="display: none;"></div>
+
+    <!-- Mobile KPIs -->
+    <div class="mobile-kpis" id="mobileKpis">
+      <div class="header-stat-card" id="mobileHeaderTotalProducts">
+        <div class="header-stat-label">Productos</div>
+        <div class="header-stat-number">0</div>
+      </div>
+      <div class="header-stat-card" id="mobileHeaderStockTeorico">
+        <div class="header-stat-label">Stock</div>
+        <div class="header-stat-number">0</div>
+      </div>
+      <div class="header-stat-card" id="mobileHeaderStockTransito">
+        <div class="header-stat-label">Tránsito</div>
+        <div class="header-stat-number">0</div>
+      </div>
+    </div>
+
+    <!-- Add to Cart button (top only) -->
+    <div style="text-align: right; margin-bottom: 12px; display: none;" id="addToCartContainer">
+      <button class="mdc-button mdc-button--raised" id="addToCartBtn" style="background-color: #f44336 !important;">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">shopping_cart</i>
+        <span class="mdc-button__label">Add to Cart</span>
+      </button>
+    </div>
 
     <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table>
@@ -758,7 +1088,76 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.16 - Actual</h3>
+          <h3>v0.21 - Actual</h3>
+          <ul>
+            <li>🛒 <strong>Cart.html mejorado:</strong> Cantidades editables directamente en el carrito</li>
+            <li>✏️ <strong>Input numérico:</strong> Cambiar cantidades sin recargar página</li>
+            <li>✅ <strong>Confirmación directa:</strong> Confirmar orden desde cart.html sin ir a order.html</li>
+            <li>🎉 <strong>Modal de éxito:</strong> Mensaje elegante de orden confirmada con número</li>
+            <li>📱 <strong>WhatsApp integrado:</strong> Notificación automática al vendedor desde cart.html</li>
+            <li>🔧 <strong>Firebase sincronizado:</strong> Configuración correcta entre marketplace y cart</li>
+            <li>🚫 <strong>Permisos SEGUIMIENTO:</strong> Usuarios no-admin no pueden mover órdenes</li>
+            <li>👁️ <strong>Solo visualización:</strong> No-admin puede ver estados pero no modificarlos</li>
+            <li>🔒 <strong>Botones ocultos:</strong> Cambio de estado y cancelación solo para admin</li>
+            <li>🗑️ <strong>Historial protegido:</strong> Botón "Limpiar Historial" solo para admin</li>
+            <li>⚠️ <strong>Validación doble:</strong> Función moveOrder verifica permisos antes de ejecutar</li>
+            <li>🎨 <strong>Estado visual:</strong> Muestra estado actual para usuarios no-admin</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.20</h3>
+          <ul>
+            <li>📋 <strong>MASTER completamente rediseñado:</strong> Sección sincronizada con SEGUIMIENTO</li>
+            <li>🎯 <strong>Misma estructura visual:</strong> 9 estados organizados en secciones (Borrador, Revisión, Aprobada, etc.)</li>
+            <li>📊 <strong>10 KPIs actualizados:</strong> Total + cada estado individual con contadores en tiempo real</li>
+            <li>🔄 <strong>Botón Actualizar reubicado:</strong> Posicionado arriba de los KPIs para acceso rápido</li>
+            <li>🗑️ <strong>Función Borrar Todas las Órdenes:</strong> Botón rojo con doble confirmación de seguridad</li>
+            <li>⚠️ <strong>Confirmación obligatoria:</strong> Requiere escribir "BORRAR TODO" para evitar eliminaciones accidentales</li>
+            <li>📱 <strong>Notificación WhatsApp automática:</strong> Cada orden confirmada se envía al vendedor asignado</li>
+            <li>👥 <strong>Detección de vendedor:</strong> Sistema busca el vendedor del cliente automáticamente</li>
+            <li>💬 <strong>Mensaje formateado:</strong> WhatsApp con detalles completos (productos, cantidades, precios, total)</li>
+            <li>🎯 <strong>Santiago asignado a todos:</strong> 421 clientes actualizados con vendedor por defecto</li>
+            <li>🔧 <strong>Bug fixes:</strong> Eliminada declaración duplicada de formatNumber</li>
+            <li>🐛 <strong>Correcciones JavaScript:</strong> Funciones de importación/exportación de clientes ahora funcionan correctamente</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.19</h3>
+          <ul>
+            <li>🔒 <strong>Control de acceso mejorado en Administration:</strong> Usuarios no-admin pueden VER pero NO editar</li>
+            <li>📋 <strong>Modo solo lectura:</strong> Campos deshabilitados para usuarios sin permisos admin</li>
+            <li>🚫 <strong>Botones ocultos:</strong> "Agregar Orden" y "Guardar" no visibles para no-admin</li>
+            <li>🔍 <strong>Búsqueda de clientes:</strong> Campo de búsqueda con filtro en tiempo real por 9 campos</li>
+            <li>⚡ <strong>Búsqueda inteligente:</strong> Debounce de 300ms y búsqueda instantánea con Enter</li>
+            <li>👥 <strong>Columna Vendedor:</strong> Asignación de vendedores a clientes desde tabla</li>
+            <li>📊 <strong>Dropdown dinámico:</strong> Selector de vendedor en cada fila de cliente</li>
+            <li>🎯 <strong>Santiago por defecto:</strong> Asignación automática a clientes sin vendedor</li>
+            <li>💾 <strong>Actualización instantánea:</strong> Cambios de vendedor guardados en tiempo real en Firebase</li>
+            <li>✅ <strong>Confirmación de orden mejorada:</strong> Nuevo mensaje personalizado de orden enviada</li>
+            <li>🔧 <strong>Bug fix:</strong> Función updateButtonLabels faltante agregada en order.html</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.18</h3>
+          <ul>
+            <li>👥 <strong>Módulo CLIENTES completo:</strong> Gestión completa de clientes con 14 campos en Administration</li>
+            <li>➕ <strong>Agregar/Editar clientes:</strong> Formulario completo para crear y modificar clientes</li>
+            <li>📥 <strong>Importar desde Excel:</strong> Carga masiva de clientes desde archivos .xls/.xlsx</li>
+            <li>📤 <strong>Exportar a Excel:</strong> Descarga del listado completo de clientes</li>
+            <li>🗑️ <strong>Eliminar clientes:</strong> Opción para borrar clientes con confirmación</li>
+            <li>💾 <strong>Integración Firebase:</strong> Todos los datos guardados en Firestore</li>
+            <li>📋 <strong>Seguimiento de Pedidos:</strong> LOGISTICS renombrado a SEGUIMIENTO con 9 estados</li>
+            <li>🔄 <strong>Flujo completo:</strong> Borrador → En revisión → Aprobada → En preparación → Listo para retiro/Despacho → Despachada → Entregada → Cerrada → Cancelada</li>
+            <li>🎯 <strong>Menú optimizado:</strong> CLIENTES movido a Administration, CONFIG y STATS removidos del menú marketplace</li>
+            <li>📱 <strong>Historial compacto:</strong> Órdenes minimizadas y modal responsive</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.16</h3>
           <ul>
             <li>📸 <strong>Sistema de Confirmación Fotográfica de Entregas</strong></li>
             <li>🚚 <strong>Logistics mejorado:</strong> Nombres actualizados a "Pedido en Preparacion", "Pedido en Camino", "Pedido Entregado"</li>
@@ -1064,15 +1463,44 @@
       if (user) {
         console.log('👤 Usuario autenticado en index.html, verificando permisos...');
         await checkUserPermissions(user);
+
+        // Set global login flag for price display
+        window.isUserLoggedIn = true;
+        console.log('💰 Usuario logueado, cargando precios desde Firebase...');
+
+        // Show Add to Cart button for logged in users
+        const addToCartContainer = document.getElementById('addToCartContainer');
+        if (addToCartContainer) addToCartContainer.style.display = 'block';
+
+        // Load prices from Firebase
+        if (window.loadPricesFromFirebase) {
+          await window.loadPricesFromFirebase();
+          console.log('✅ Precios cargados desde Firebase');
+
+          // Refresh the view to show prices
+          if (window.renderRows) {
+            window.renderRows();
+            console.log('🔄 Vista actualizada con columna de precios');
+          }
+        } else {
+          console.log('⚠️ loadPricesFromFirebase no disponible aún');
+        }
       } else {
         console.log('👤 Usuario no autenticado - página accesible sin login');
         // No redirigir automáticamente - permitir acceso sin autenticación
         // Los usuarios pueden usar el botón Login si desean autenticarse
-        
+
+        // Reset login flag
+        window.isUserLoggedIn = false;
+
+        // Hide Add to Cart button for non-authenticated users
+        const addToCartContainer = document.getElementById('addToCartContainer');
+        if (addToCartContainer) addToCartContainer.style.display = 'none';
+
         // Ocultar controles administrativos para usuarios no autenticados
         const filterBtn = document.getElementById('filterBtn');
         const columnFilterDropdown = document.getElementById('columnFilterDropdown');
-        
+
         if (filterBtn) {
           filterBtn.style.display = 'none';
           console.log('✅ Filtros ocultados para usuario no autenticado');
@@ -1237,6 +1665,46 @@
       // Initialize all buttons
       const buttons = document.querySelectorAll('.mdc-button');
       buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+
+      // Setup Add to Cart button
+      const addToCartBtn = document.getElementById('addToCartBtn');
+
+      function handleAddToCart() {
+        // Check if selectedItems exists and has items
+        if (!window.selectedItems || window.selectedItems.size === 0) {
+          alert('Por favor selecciona al menos un producto con cantidad mayor a 0');
+          return;
+        }
+
+        // Filter out items with quantity 0
+        const itemsToAdd = [];
+        window.selectedItems.forEach(({ product, quantity }, id) => {
+          if (quantity > 0) {
+            itemsToAdd.push({
+              item: product.articulo,
+              description: product.description,
+              price: product.price,
+              quantity
+            });
+          }
+        });
+
+        if (itemsToAdd.length === 0) {
+          alert('Por favor selecciona al menos un producto con cantidad mayor a 0');
+          return;
+        }
+
+        // Save cart to localStorage
+        localStorage.setItem('cart', JSON.stringify(itemsToAdd));
+        console.log('Cart saved with', itemsToAdd.length, 'items, redirecting to cart.html');
+
+        // Redirect to cart page
+        window.location.href = 'cart.html';
+      }
+
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', handleAddToCart);
+      }
       
       // Initialize checkboxes
       const checkboxes = document.querySelectorAll('.mdc-checkbox');
@@ -1287,6 +1755,175 @@
 
         observer.observe(logisticsModal, { attributes: true });
         console.log('✅ Logistics modal observer added');
+      }
+
+      // Mobile Menu functionality
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+      const mobileMenuClose = document.getElementById('mobileMenuClose');
+      const mobileMenuContent = document.getElementById('mobileMenuContent');
+      const toolbar = document.querySelector('.toolbar');
+
+      function openMobileMenu() {
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Clone toolbar content into mobile menu if not already done
+        if (mobileMenuContent.children.length === 0 && toolbar) {
+          const toolbarChildren = Array.from(toolbar.children);
+
+          // 1. First add Login button (find the link to login.html)
+          const loginLink = toolbarChildren.find(child => child.tagName === 'A' && child.href && child.href.includes('login.html'));
+          if (loginLink) {
+            const loginClone = loginLink.cloneNode(true);
+            mobileMenuContent.appendChild(loginClone);
+          }
+
+          // 2. Add separator after login
+          const separator1 = document.createElement('div');
+          separator1.className = 'menu-separator';
+          separator1.style.borderTop = '1px solid #2a2a2a';
+          separator1.style.margin = '8px 0';
+          mobileMenuContent.appendChild(separator1);
+
+          // 3. Add tabs (All, iPhone, MacBooks, Samsung)
+          const tabsContainer = document.getElementById('tabs');
+          if (tabsContainer) {
+            const tabs = tabsContainer.querySelectorAll('.mdc-tab');
+            tabs.forEach(tab => {
+              const tabBtn = document.createElement('button');
+              tabBtn.className = 'mdc-button mdc-button--outlined';
+
+              const ripple = document.createElement('span');
+              ripple.className = 'mdc-button__ripple';
+
+              const label = document.createElement('span');
+              label.className = 'mdc-button__label';
+              label.textContent = tab.querySelector('.mdc-tab__text-label').textContent;
+
+              tabBtn.appendChild(ripple);
+              tabBtn.appendChild(label);
+
+              // Copy data-segment attribute
+              const segment = tab.getAttribute('data-segment');
+              tabBtn.setAttribute('data-segment', segment);
+
+              // Add click event
+              tabBtn.addEventListener('click', () => {
+                // Trigger the tab click
+                tab.click();
+                closeMobileMenu();
+              });
+
+              // Mark active tab
+              if (tab.classList.contains('mdc-tab--active')) {
+                tabBtn.classList.add('mdc-button--raised');
+                tabBtn.style.backgroundColor = '#4CAF50';
+                tabBtn.style.color = '#ffffff';
+              }
+
+              mobileMenuContent.appendChild(tabBtn);
+              mdc.ripple.MDCRipple.attachTo(tabBtn);
+            });
+          }
+
+          // 4. Add separator after tabs
+          const separator2 = document.createElement('div');
+          separator2.className = 'menu-separator';
+          separator2.style.borderTop = '1px solid #2a2a2a';
+          separator2.style.margin = '8px 0';
+          mobileMenuContent.appendChild(separator2);
+
+          // 5. Add remaining toolbar items (except login which was already added)
+          toolbarChildren.forEach(child => {
+            // Skip login link as it's already added, and skip the spacer div
+            if ((child.tagName === 'A' && child.href && child.href.includes('login.html')) ||
+                (child.tagName === 'DIV' && child.style.flex === '1')) {
+              return;
+            }
+
+            const clone = child.cloneNode(true);
+
+            // Re-attach event listeners for cloned elements
+            if (clone.id === 'exportBtn') {
+              clone.addEventListener('click', () => {
+                closeMobileMenu();
+                document.getElementById('exportBtn').click();
+              });
+            } else if (clone.id === 'filterBtn') {
+              clone.addEventListener('click', () => {
+                closeMobileMenu();
+                document.getElementById('filterBtn').click();
+              });
+            } else if (clone.querySelector('#searchBox')) {
+              const searchInput = clone.querySelector('#searchBox');
+              searchInput.addEventListener('input', (e) => {
+                document.getElementById('searchBox').value = e.target.value;
+                document.getElementById('searchBox').dispatchEvent(new Event('input'));
+              });
+            } else if (clone.querySelector('#autoToggle')) {
+              const checkbox = clone.querySelector('#autoToggle');
+              checkbox.addEventListener('change', (e) => {
+                document.getElementById('autoToggle').checked = e.target.checked;
+                document.getElementById('autoToggle').dispatchEvent(new Event('change'));
+              });
+            } else if (clone.querySelector('#hideZeroValues')) {
+              const checkbox = clone.querySelector('#hideZeroValues');
+              checkbox.addEventListener('change', (e) => {
+                document.getElementById('hideZeroValues').checked = e.target.checked;
+                document.getElementById('hideZeroValues').dispatchEvent(new Event('change'));
+              });
+            } else if (clone.querySelector('#showAllProducts')) {
+              const checkbox = clone.querySelector('#showAllProducts');
+              checkbox.addEventListener('change', (e) => {
+                document.getElementById('showAllProducts').checked = e.target.checked;
+                document.getElementById('showAllProducts').dispatchEvent(new Event('change'));
+              });
+            }
+
+            mobileMenuContent.appendChild(clone);
+          });
+
+          // Re-initialize Material Design components in mobile menu
+          const buttons = mobileMenuContent.querySelectorAll('.mdc-button');
+          buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+
+          const checkboxes = mobileMenuContent.querySelectorAll('.mdc-checkbox');
+          checkboxes.forEach(checkbox => mdc.checkbox.MDCCheckbox.attachTo(checkbox));
+
+          const textFields = mobileMenuContent.querySelectorAll('.mdc-text-field');
+          textFields.forEach(textField => mdc.textField.MDCTextField.attachTo(textField));
+        }
+      }
+
+      function closeMobileMenu() {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+      }
+
+      if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+      }
+
+      if (mobileMenuOverlay) {
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+      }
+
+      // Mobile version button
+      const mobileVersionBtn = document.getElementById('mobileVersionBtn');
+      if (mobileVersionBtn) {
+        mobileVersionBtn.addEventListener('click', () => {
+          closeMobileMenu();
+          // Trigger the main version button click
+          document.getElementById('versionBtn').click();
+        });
       }
     });
   </script>

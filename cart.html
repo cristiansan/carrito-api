@@ -256,6 +256,135 @@
       font-weight: bold;
       font-size: 1.1em;
     }
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    th.sortable:hover {
+      background-color: #2a2a33;
+    }
+    th.sortable::after {
+      content: ' ↕';
+      opacity: 0.5;
+      font-size: 12px;
+    }
+    th.sortable.asc::after {
+      content: ' ↑';
+      opacity: 1;
+    }
+    th.sortable.desc::after {
+      content: ' ↓';
+      opacity: 1;
+    }
+    .quantity-input {
+      width: 60px;
+      padding: 5px;
+      text-align: center;
+      background: #2a2a33;
+      color: #f1f1f1;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .quantity-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    /* Modal de éxito */
+    .success-modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      animation: fadeIn 0.3s;
+    }
+    .success-modal-content {
+      background-color: #1e1e24;
+      margin: 10% auto;
+      padding: 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      animation: slideDown 0.3s;
+      border: 2px solid #4CAF50;
+    }
+    .success-icon {
+      font-size: 80px;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+    .success-title {
+      font-size: 28px;
+      color: #4CAF50;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    .success-message {
+      font-size: 16px;
+      color: #d0d0d0;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .order-number {
+      font-size: 24px;
+      color: #4CAF50;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Client selector for admin */
+    .client-selector-container {
+      margin-top: 20px;
+      padding: 20px;
+      background: #15151a;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+    .client-selector-label {
+      display: block;
+      margin-bottom: 10px;
+      color: #4CAF50;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .client-selector {
+      width: 100%;
+      padding: 10px;
+      background: #2a2a33;
+      color: #f1f1f1;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .client-selector:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+    .client-selector option {
+      background: #2a2a33;
+      color: #f1f1f1;
+    }
   </style>
 </head>
 <body>
@@ -281,17 +410,216 @@
           </a>
         </div>
       </div>
+
+      <!-- Contenedor para selector de clientes (solo admin) -->
+      <div id="clientSelectorContainer" class="client-selector-container" style="display: none;"></div>
     </div>
   </div>
 
+  <!-- Modal de éxito -->
+  <div id="successModal" class="success-modal">
+    <div class="success-modal-content">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">¡Orden Confirmada!</h2>
+      <p class="success-message">Tu orden ha sido enviada exitosamente</p>
+      <div class="order-number" id="orderNumberDisplay"></div>
+      <p class="success-message">Se ha notificado a tu vendedor por WhatsApp</p>
+      <button class="mdc-button mdc-button--raised" onclick="window.location.href='marketplace.html'" style="margin-top: 20px;">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__label">Volver al Catálogo</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
+      authDomain: "carrito-138c3.firebaseapp.com",
+      projectId: "carrito-138c3",
+      storageBucket: "carrito-138c3.appspot.com",
+      messagingSenderId: "579670725719",
+      appId: "1:579670725719:web:carrito138c3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Hacer Firebase accesible globalmente
+    window.firebase = {
+      app: () => app,
+      auth: () => auth,
+      firestore: () => db,
+      firestoreHelpers: {
+        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit
+      }
+    };
+
+    // Verificar autenticación y permisos admin
+    let authCheckTimeout;
+    window.isUserAdmin = false;
+
+    onAuthStateChanged(auth, async (user) => {
+      // Limpiar timeout previo
+      if (authCheckTimeout) {
+        clearTimeout(authCheckTimeout);
+      }
+
+      window.currentUser = user;
+      if (user) {
+        console.log('✅ Usuario autenticado:', user.email);
+
+        // Verificar si es admin
+        try {
+          const userRef = doc(db, 'usuarios', user.uid);
+          const userDoc = await getDoc(userRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            window.isUserAdmin = userData.admin === true;
+            console.log('🔐 Usuario es admin:', window.isUserAdmin);
+
+            // Si es admin, cargar dropdown de clientes
+            if (window.isUserAdmin) {
+              await loadClientesDropdown();
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error verificando permisos:', error);
+          window.isUserAdmin = false;
+        }
+      } else {
+        // Dar 3 segundos para que Firebase cargue la sesión
+        authCheckTimeout = setTimeout(() => {
+          if (!window.currentUser) {
+            console.log('⚠️ Usuario no autenticado después de esperar, redirigiendo a login...');
+            alert('Debes iniciar sesión para acceder al carrito');
+            window.location.href = 'login.html';
+          }
+        }, 3000);
+      }
+    });
+  </script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Variable global para almacenar cliente seleccionado
+    window.selectedClienteData = null;
+
+    // Cargar dropdown de clientes para admin
+    async function loadClientesDropdown() {
+      try {
+        console.log('📋 Cargando clientes para dropdown admin...');
+
+        const { collection, getDocs } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+
+        const clientesRef = collection(db, 'clientes');
+        const clientesSnapshot = await getDocs(clientesRef);
+
+        const clientes = [];
+        clientesSnapshot.forEach(doc => {
+          const data = doc.data();
+
+          // Prioridad: nombreComercial > nombre > name > email
+          let displayName = data.nombreComercial || data.nombre || data.name || data.email || 'Sin nombre';
+
+          // Si tiene nombreComercial y nombre, mostrar ambos
+          if (data.nombreComercial && data.nombre && data.nombreComercial !== data.nombre) {
+            displayName = `${data.nombreComercial} - ${data.nombre}`;
+          }
+
+          clientes.push({
+            id: doc.id,
+            nombre: displayName,
+            codigo: data.codigo || '',
+            email: data.email || '',
+            vendedorId: data.vendedorId || data.vendedor || null
+          });
+        });
+
+        // Ordenar por código numérico
+        clientes.sort((a, b) => {
+          const codigoA = parseInt(a.codigo) || 0;
+          const codigoB = parseInt(b.codigo) || 0;
+          return codigoA - codigoB;
+        });
+
+        console.log(`✅ ${clientes.length} clientes cargados`);
+
+        // Buscar el contenedor del dropdown
+        const dropdownContainer = document.getElementById('clientSelectorContainer');
+        if (!dropdownContainer) {
+          console.warn('⚠️ Container para dropdown de clientes no encontrado');
+          return;
+        }
+
+        // Crear el HTML del dropdown
+        let html = `
+          <label class="client-selector-label">
+            👥 Seleccionar Cliente (Admin):
+          </label>
+          <select id="clientSelector" class="client-selector">
+            <option value="">-- Usar mi usuario (${window.currentUser.email}) --</option>
+        `;
+
+        clientes.forEach(cliente => {
+          // Mostrar: [Codigo] Nombre (email) si tiene código, sino solo Nombre (email)
+          const displayText = cliente.codigo
+            ? `[${cliente.codigo}] ${cliente.nombre}${cliente.email ? ' (' + cliente.email + ')' : ''}`
+            : `${cliente.nombre}${cliente.email ? ' (' + cliente.email + ')' : ''}`;
+
+          html += `<option value="${cliente.id}" data-email="${cliente.email}" data-vendedor="${cliente.vendedorId || ''}">${displayText}</option>`;
+        });
+
+        html += `</select>`;
+
+        dropdownContainer.innerHTML = html;
+        dropdownContainer.style.display = 'block';
+
+        // Agregar event listener al selector
+        const selector = document.getElementById('clientSelector');
+        if (selector) {
+          selector.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (this.value) {
+              window.selectedClienteData = {
+                id: this.value,
+                email: selectedOption.getAttribute('data-email'),
+                nombre: selectedOption.textContent.split(' (')[0],
+                vendedorId: selectedOption.getAttribute('data-vendedor') || null
+              };
+              console.log('👤 Cliente seleccionado:', window.selectedClienteData);
+            } else {
+              window.selectedClienteData = null;
+              console.log('👤 Usando usuario actual');
+            }
+          });
+        }
+
+        console.log('✅ Dropdown de clientes creado');
+
+      } catch (error) {
+        console.error('❌ Error cargando clientes:', error);
+      }
+    }
+
+    // Esperar a que Firebase esté listo
+    function initCart() {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       const container = document.getElementById('cartSummary');
-      
+      const editingOrderId = localStorage.getItem('editingOrderId');
+
       if (!container) return;
-      
+
       if (cart.length === 0) {
+        // Limpiar editingOrderId si el carrito está vacío
+        localStorage.removeItem('editingOrderId');
+
         // Mostrar mensaje de carrito vacío
         container.innerHTML = `
           <div class="empty-cart">
@@ -305,34 +633,57 @@
         `;
         return;
       }
-      
+
       let total = 0;
-      let html = `
-        <table>
+      let totalItems = 0;
+
+      // Mostrar indicador si se está editando una orden
+      let editingIndicator = '';
+      if (editingOrderId) {
+        editingIndicator = `
+          <div style="background: #2a2a33; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #FFC107;">
+            <span style="color: #FFC107; font-weight: 600;">✏️ Editando Orden</span>
+            <p style="margin: 5px 0 0 0; color: #b5b5b5; font-size: 14px;">
+              Estás modificando una orden existente. Al confirmar se actualizará la orden original.
+            </p>
+          </div>
+        `;
+      }
+
+      let html = editingIndicator + `
+        <table id="cartTable">
           <thead>
             <tr>
-              <th>Item</th>
-              <th>Descripción</th>
-              <th class="text-right">Precio Unit.</th>
-              <th class="text-right">Cantidad</th>
-              <th class="text-right">Total</th>
+              <th class="sortable" data-sort="item">Item</th>
+              <th class="sortable" data-sort="description">Descripción</th>
+              <th class="sortable text-right" data-sort="price">Precio Unit.</th>
+              <th class="sortable text-right" data-sort="quantity">Cantidad</th>
+              <th class="sortable text-right" data-sort="total">Total</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
       `;
-      
+
       cart.forEach((item, index) => {
         const rowTotal = item.price * item.quantity;
         total += rowTotal;
-        
+        totalItems += item.quantity;
+
         html += `
           <tr data-item-id="${item.item}">
             <td>${item.item}</td>
             <td>${item.description}</td>
             <td class="text-right">$${item.price.toFixed(2)}</td>
-            <td class="text-right">${item.quantity}</td>
-            <td class="text-right">$${rowTotal.toFixed(2)}</td>
+            <td class="text-right">
+              <input type="number"
+                     class="quantity-input"
+                     data-index="${index}"
+                     value="${item.quantity}"
+                     min="1"
+                     max="9999">
+            </td>
+            <td class="text-right" id="row-total-${index}">$${rowTotal.toFixed(2)}</td>
             <td class="text-right">
               <button class="mdc-button mdc-button--outlined remove-item" data-index="${index}" style="padding: 5px 10px; font-size: 12px;">
                 <span class="mdc-button__ripple"></span>
@@ -343,10 +694,15 @@
           </tr>
         `;
       });
-      
+
       html += `
           </tbody>
           <tfoot>
+            <tr>
+              <td colspan="3" class="text-right"><strong>Total Items:</strong></td>
+              <td class="text-right"><strong>${totalItems}</strong></td>
+              <td colspan="2"></td>
+            </tr>
             <tr class="total-row">
               <td colspan="4" class="text-right"><strong>Total:</strong></td>
               <td class="text-right"><strong>$${total.toFixed(2)}</strong></td>
@@ -354,7 +710,7 @@
             </tr>
           </tfoot>
         </table>
-        
+
         <div class="actions">
           <a href="marketplace.html" class="mdc-button mdc-button--outlined" style="text-decoration: none;">
             <span class="mdc-button__ripple"></span>
@@ -363,8 +719,8 @@
           </a>
           <button id="checkoutBtn" class="mdc-button mdc-button--raised">
             <span class="mdc-button__ripple"></span>
-            <span class="mdc-button__label">Proceder al Pago</span>
-            <i class="material-icons mdc-button__icon" aria-hidden="true">arrow_forward</i>
+            <span class="mdc-button__label">${editingOrderId ? 'ACTUALIZAR ORDEN' : 'CONFIRMAR ORDEN'}</span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">${editingOrderId ? 'update' : 'check_circle'}</i>
           </button>
         </div>
       `;
@@ -378,17 +734,132 @@
           removeItemFromCart(index);
         });
       });
-      
-      // Manejador para el botón de pago
+
+      // Agregar manejadores para los inputs de cantidad
+      document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          const newQuantity = parseInt(this.value);
+          updateItemQuantity(index, newQuantity);
+        });
+      });
+
+      // Manejador para el botón de confirmar orden
       const checkoutBtn = document.getElementById('checkoutBtn');
       if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', function() {
-          // Redirigir a order.html
-          window.location.href = 'order.html';
+        checkoutBtn.addEventListener('click', async function() {
+          await confirmOrder();
         });
       }
+    }
+
+    // Sorting state
+    let currentSort = {
+      column: null,
+      direction: 'asc'
+    };
+
+    // Handle column sorting
+    function handleSortClick(e) {
+      const th = e.target.closest('th.sortable');
+      if (!th) return;
+
+      const column = th.getAttribute('data-sort');
+      if (currentSort.column === column) {
+        // Toggle direction if same column clicked
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        // Set new column and default to ascending
+        currentSort.column = column;
+        currentSort.direction = 'asc';
+      }
+
+      // Update visual indicators
+      document.querySelectorAll('th.sortable').forEach(header => {
+        header.classList.remove('asc', 'desc');
+      });
+      th.classList.add(currentSort.direction);
+
+      // Sort and re-render
+      sortAndRenderCart();
+    }
+
+    function sortAndRenderCart() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+      if (cart.length === 0 || !currentSort.column) {
+        initCart();
+        return;
+      }
+
+      // Sort the cart array
+      cart.sort((a, b) => {
+        let aVal, bVal;
+
+        switch(currentSort.column) {
+          case 'item':
+            aVal = a.item || '';
+            bVal = b.item || '';
+            break;
+          case 'description':
+            aVal = a.description || '';
+            bVal = b.description || '';
+            break;
+          case 'price':
+            aVal = a.price || 0;
+            bVal = b.price || 0;
+            break;
+          case 'quantity':
+            aVal = a.quantity || 0;
+            bVal = b.quantity || 0;
+            break;
+          case 'total':
+            aVal = (a.price || 0) * (a.quantity || 0);
+            bVal = (b.price || 0) * (b.quantity || 0);
+            break;
+          default:
+            return 0;
+        }
+
+        const dir = currentSort.direction === 'asc' ? 1 : -1;
+
+        if (typeof aVal === 'string') {
+          return aVal.localeCompare(bVal) * dir;
+        }
+        return (aVal - bVal) * dir;
+      });
+
+      // Save sorted cart back to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      // Re-render
+      initCart();
+
+      // Re-attach sort event listeners after render
+      attachSortListeners();
+    }
+
+    function attachSortListeners() {
+      const sortableHeaders = document.querySelectorAll('th.sortable');
+      sortableHeaders.forEach(th => {
+        th.addEventListener('click', handleSortClick);
+      });
+
+      // Restore visual indicators
+      if (currentSort.column) {
+        const activeHeader = document.querySelector(`th.sortable[data-sort="${currentSort.column}"]`);
+        if (activeHeader) {
+          activeHeader.classList.add(currentSort.direction);
+        }
+      }
+    }
+
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      initCart();
+      attachSortListeners();
     });
-    
+
     function removeItemFromCart(index) {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (index >= 0 && index < cart.length) {
@@ -396,6 +867,272 @@
         localStorage.setItem('cart', JSON.stringify(cart));
         // Recargar la página para actualizar la vista
         window.location.reload();
+      }
+    }
+
+    function updateItemQuantity(index, newQuantity) {
+      if (newQuantity < 1) newQuantity = 1;
+      if (newQuantity > 9999) newQuantity = 9999;
+
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (index >= 0 && index < cart.length) {
+        cart[index].quantity = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        // Recargar la página para actualizar los totales
+        window.location.reload();
+      }
+    }
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+      }).format(num);
+    }
+
+    async function getNextOrderNumber() {
+      try {
+        const { collection, query, orderBy, limit, getDocs } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+
+        const pedidosRef = collection(db, 'pedidos');
+        const q = query(pedidosRef, orderBy('numeroOrden', 'desc'), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          return 10000;
+        } else {
+          const lastOrder = querySnapshot.docs[0].data();
+          return (lastOrder.numeroOrden || 10000) + 1;
+        }
+      } catch (error) {
+        console.error('Error obteniendo siguiente número de orden:', error);
+        return 10000 + Math.floor(Math.random() * 1000);
+      }
+    }
+
+    async function confirmOrder() {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (cart.length === 0) {
+          alert('El carrito está vacío');
+          return;
+        }
+
+        // Esperar un momento para que Firebase termine de inicializar
+        let attempts = 0;
+        while (!window.currentUser && attempts < 20) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+
+        if (!window.currentUser) {
+          alert('Debes iniciar sesión para confirmar la orden');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const editingOrderId = localStorage.getItem('editingOrderId');
+        const isEditing = !!editingOrderId;
+
+        console.log(isEditing ? '📝 Actualizando orden existente...' : '📦 Confirmando orden nueva...');
+
+        // Obtener número de orden (solo si es nueva, si se está editando usar el existente)
+        let orderNumber;
+        let existingOrderData = null;
+
+        if (isEditing) {
+          // Obtener datos de la orden existente
+          const { doc, getDoc } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+          const orderRef = doc(db, 'pedidos', editingOrderId);
+          const orderDoc = await getDoc(orderRef);
+
+          if (orderDoc.exists()) {
+            existingOrderData = orderDoc.data();
+            orderNumber = existingOrderData.numeroOrden;
+            console.log('📋 Actualizando orden existente #', orderNumber);
+          } else {
+            alert('No se encontró la orden a editar');
+            return;
+          }
+        } else {
+          orderNumber = await getNextOrderNumber();
+          console.log('📋 Número de orden nueva:', orderNumber);
+        }
+
+        // Buscar datos del cliente
+        const { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+
+        let clienteNombre = window.currentUser.email;
+        let clienteEmail = window.currentUser.email;
+        let vendedorId = null;
+
+        // Si es admin y seleccionó un cliente, usar ese cliente
+        if (window.isUserAdmin && window.selectedClienteData) {
+          console.log('👤 Admin cargando orden para cliente:', window.selectedClienteData.nombre);
+          clienteNombre = window.selectedClienteData.nombre;
+          clienteEmail = window.selectedClienteData.email;
+          vendedorId = window.selectedClienteData.vendedorId;
+        } else {
+          // Usuario normal o admin sin cliente seleccionado: usar su propio email
+          const clientesRef = collection(db, 'clientes');
+          const clientesQuery = query(clientesRef, where('email', '==', window.currentUser.email), limit(1));
+          const clientesSnapshot = await getDocs(clientesQuery);
+
+          if (!clientesSnapshot.empty) {
+            const clienteData = clientesSnapshot.docs[0].data();
+            clienteNombre = clienteData.nombre || clienteData.name || window.currentUser.email;
+            vendedorId = clienteData.vendedorId || clienteData.vendedor;
+          }
+        }
+
+        // Preparar datos de la orden
+        const now = new Date();
+        const fechaLocal = now.toLocaleDateString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        let total = 0;
+        let cantidadItems = 0;
+        const items = cart.map(item => {
+          const subtotal = item.price * item.quantity;
+          total += subtotal;
+          cantidadItems += item.quantity;
+          return {
+            articulo: item.item,
+            description: item.description,
+            quantity: item.quantity,
+            price: item.price,
+            subtotal: subtotal
+          };
+        });
+
+        const orderToSave = {
+          numeroOrden: orderNumber,
+          usuarioEmail: window.currentUser.email, // Email del usuario que creó la orden
+          usuarioUid: window.currentUser.uid,
+          clienteEmail: clienteEmail, // Email del cliente (puede ser diferente si admin carga para otro)
+          clienteNombre: clienteNombre,
+          vendedorId: vendedorId,
+          items: items,
+          total: total,
+          cantidadItems: cantidadItems,
+          fecha: now,
+          timestamp: now, // Para ordenar en marketplace.html
+          fechaLocal: fechaLocal,
+          logisticsState: isEditing ? (existingOrderData.logisticsState || 'borrador') : 'borrador',
+          estado: isEditing ? (existingOrderData.estado || 'pendiente') : 'pendiente',
+          creadoPorAdmin: window.isUserAdmin && window.selectedClienteData ? true : false
+        };
+
+        // Solo agregar campos de modificación si estamos editando
+        if (isEditing) {
+          orderToSave.ultimaModificacion = now;
+          orderToSave.fechaUltimaModificacion = fechaLocal;
+        }
+
+        // Guardar o actualizar en Firebase
+        if (isEditing) {
+          // Actualizar orden existente
+          const orderRef = doc(db, 'pedidos', editingOrderId);
+          await updateDoc(orderRef, orderToSave);
+          console.log('✅ Orden actualizada en Firebase');
+        } else {
+          // Crear nueva orden
+          const pedidosRef = collection(db, 'pedidos');
+          await addDoc(pedidosRef, orderToSave);
+          console.log('✅ Orden guardada en Firebase');
+        }
+
+        // Enviar WhatsApp al vendedor
+        if (vendedorId) {
+          await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
+        }
+
+        // Mostrar modal de éxito
+        document.getElementById('orderNumberDisplay').textContent = `Orden #${orderNumber}`;
+
+        // Cambiar mensaje según si es nueva o actualización
+        const successMessage = document.querySelector('.success-title');
+        if (isEditing) {
+          successMessage.textContent = '¡Orden Actualizada!';
+        } else {
+          successMessage.textContent = '¡Orden Confirmada!';
+        }
+
+        document.getElementById('successModal').style.display = 'block';
+
+        // Limpiar carrito y editingOrderId
+        localStorage.removeItem('cart');
+        localStorage.removeItem('editingOrderId');
+
+      } catch (error) {
+        console.error('❌ Error confirmando orden:', error);
+        alert('Hubo un error al confirmar la orden. Por favor intenta de nuevo.');
+      }
+    }
+
+    async function sendOrderToSellerWhatsApp(orderData, orderNumber, clienteNombre) {
+      try {
+        console.log('📱 Enviando WhatsApp al vendedor...');
+
+        if (!orderData.vendedorId) {
+          console.log('⚠️ No hay vendedor asignado');
+          return;
+        }
+
+        const { doc, getDoc } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+
+        const vendedorRef = doc(db, 'vendedores', orderData.vendedorId);
+        const vendedorDoc = await getDoc(vendedorRef);
+
+        if (!vendedorDoc.exists()) {
+          console.log('⚠️ Vendedor no encontrado');
+          return;
+        }
+
+        const vendedorData = vendedorDoc.data();
+        let vendedorPhone = vendedorData.phone || vendedorData.telefono;
+
+        if (!vendedorPhone) {
+          console.log('⚠️ Vendedor sin teléfono');
+          return;
+        }
+
+        vendedorPhone = vendedorPhone.replace(/\D/g, '');
+
+        // Construir mensaje
+        let mensaje = `🛒 *NUEVA ORDEN #${orderNumber}*\n\n`;
+        mensaje += `👤 *Cliente:* ${clienteNombre}\n`;
+        mensaje += `📧 *Email:* ${orderData.clienteEmail || orderData.usuarioEmail}\n`;
+        if (orderData.creadoPorAdmin) {
+          mensaje += `👨‍💼 *Creada por:* ${orderData.usuarioEmail} (Admin)\n`;
+        }
+        mensaje += `📅 *Fecha:* ${orderData.fechaLocal}\n\n`;
+        mensaje += `📦 *Productos (${orderData.cantidadItems}):*\n`;
+
+        orderData.items.forEach((item, index) => {
+          mensaje += `${index + 1}. ${item.description || item.articulo}\n`;
+          mensaje += `   Cantidad: ${item.quantity} x ${formatNumber(item.price)}\n`;
+        });
+
+        mensaje += `\n💰 *TOTAL: ${formatNumber(orderData.total)}*\n\n`;
+
+        const whatsappUrl = `https://wa.me/${vendedorPhone}?text=${encodeURIComponent(mensaje)}`;
+        window.open(whatsappUrl, '_blank');
+
+        console.log('✅ WhatsApp enviado');
+
+      } catch (error) {
+        console.error('❌ Error enviando WhatsApp:', error);
       }
     }
   </script>

@@ -378,11 +378,22 @@
       margin: auto;
       padding: 20px;
       border: 1px solid #2a2a2a;
-      width: 80%;
-      max-width: 500px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
       border-radius: 8px;
       position: relative;
       color: #f1f1f1;
+    }
+
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 95%;
+        max-width: 95%;
+        padding: 15px;
+        max-height: 95vh;
+      }
     }
     .close-button {
       color: #aaa;
@@ -434,6 +445,48 @@
       th, td {
         padding: 4px;
         font-size: 12px;
+      }
+
+      /* Tabs verticales en móviles */
+      .mdc-tab-bar {
+        max-width: 200px !important;
+      }
+
+      .mdc-tab-scroller__scroll-area {
+        overflow-x: hidden !important;
+      }
+
+      .mdc-tab-scroller__scroll-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        align-items: flex-start !important;
+      }
+
+      .mdc-tab {
+        border-radius: 6px !important;
+        margin-right: 0 !important;
+        width: 200px !important;
+        min-width: 200px !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        border-bottom: 1px solid #2a2a2a !important;
+      }
+
+      .mdc-tab__content {
+        justify-content: flex-start !important;
+      }
+
+      .mdc-tab-indicator__content--underline {
+        border-left-width: 3px !important;
+        border-bottom-width: 0 !important;
+      }
+
+      .mdc-tab-indicator {
+        height: 100% !important;
+        width: 3px !important;
+        left: 0 !important;
+        right: auto !important;
       }
     }
 
@@ -914,6 +967,160 @@
       overflow-y: auto;
     }
 
+    /* Clientes Modal Styles */
+    .clientes-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .import-excel-btn, .export-excel-btn, .add-client-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .import-excel-btn {
+      background: #2196F3;
+      color: white;
+    }
+
+    .import-excel-btn:hover {
+      background: #1976D2;
+    }
+
+    .export-excel-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .export-excel-btn:hover {
+      background: #45a049;
+    }
+
+    .add-client-btn {
+      background: #FF9800;
+      color: white;
+    }
+
+    .add-client-btn:hover {
+      background: #F57C00;
+    }
+
+    .clientes-content {
+      margin-top: 16px;
+    }
+
+    .clientes-table-container {
+      max-height: 60vh;
+      overflow: auto;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+    }
+
+    /* Scrollbar styling for clientes table */
+    .clientes-table-container::-webkit-scrollbar {
+      width: 14px;
+      height: 14px;
+    }
+
+    .clientes-table-container::-webkit-scrollbar-track {
+      background: #1e1e24;
+      border-radius: 6px;
+    }
+
+    .clientes-table-container::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 6px;
+      border: 2px solid #1e1e24;
+    }
+
+    .clientes-table-container::-webkit-scrollbar-thumb:hover {
+      background: #45a049;
+    }
+
+    /* Firefox scrollbar */
+    .clientes-table-container {
+      scrollbar-width: auto;
+      scrollbar-color: #4CAF50 #1e1e24;
+    }
+
+    .clientes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .clientes-table th {
+      position: sticky;
+      top: 0;
+      background: #2a2a33;
+      color: #f1f1f1;
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 2px solid #4CAF50;
+      font-weight: 600;
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    .clientes-table td {
+      padding: 8px;
+      border-bottom: 1px solid #2a2a2a;
+      color: #f1f1f1;
+    }
+
+    .clientes-table tr:hover {
+      background: #2a2a33;
+    }
+
+    .clientes-table tr:nth-child(even) {
+      background: #1b1b1f;
+    }
+
+    .edit-client-btn, .delete-client-btn {
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    .edit-client-btn {
+      background: #2196F3;
+      color: white;
+    }
+
+    .edit-client-btn:hover {
+      background: #1976D2;
+    }
+
+    .delete-client-btn {
+      background: #F44336;
+      color: white;
+    }
+
+    .delete-client-btn:hover {
+      background: #D32F2F;
+    }
+
+    @media (max-width: 768px) {
+      .clientes-table {
+        font-size: 11px;
+      }
+
+      .clientes-table th,
+      .clientes-table td {
+        padding: 6px 4px;
+      }
+    }
+
     .historial-header {
       display: flex;
       gap: 10px;
@@ -973,27 +1180,81 @@
 
     .historial-item {
       background: #2a2a33;
-      padding: 16px;
-      border-radius: 8px;
-      border-left: 4px solid #4CAF50;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-left: 3px solid #4CAF50;
       cursor: pointer;
       transition: all 0.2s ease;
+      margin-bottom: 8px;
     }
 
     .historial-item:hover {
       background: #3a3a44;
-      transform: translateX(4px);
+      transform: translateX(2px);
     }
 
-    .historial-items-preview {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #3a3a44;
+    .historial-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .historial-date {
+      font-size: 12px;
       color: #b5b5b5;
     }
 
+    .historial-method {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4CAF50;
+    }
+
+    .historial-summary {
+      font-size: 13px;
+      color: #f1f1f1;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .historial-user {
+      font-size: 11px;
+      color: #9e9e9e;
+      margin-bottom: 4px;
+    }
+
+    .historial-items-preview {
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid #3a3a44;
+      color: #b5b5b5;
+      font-size: 11px;
+      display: none; /* Hide by default (minimized) */
+    }
+
+    .historial-item.expanded .historial-items-preview {
+      display: block;
+    }
+
     .historial-items-preview small {
-      margin-right: 8px;
+      margin-right: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .historial-item {
+        padding: 6px 10px;
+      }
+
+      .historial-summary {
+        font-size: 12px;
+      }
+
+      .historial-date, .historial-method {
+        font-size: 11px;
+      }
     }
 
     .historial-item-header {
@@ -1342,6 +1603,162 @@
       margin-right: 8px;
     }
 
+    .closed-status {
+      color: #9E9E9E;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .cancelled-status {
+      color: #F44336;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .current-status {
+      color: #2196F3;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Order Details Modal */
+    .order-details-modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      overflow-y: auto;
+    }
+
+    .order-details-modal-content {
+      background-color: #1e1e24;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 700px;
+      border: 2px solid #4CAF50;
+      position: relative;
+    }
+
+    .order-details-close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 20px;
+    }
+
+    .order-details-close:hover,
+    .order-details-close:focus {
+      color: #f1f1f1;
+    }
+
+    .order-details-header {
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .order-details-title {
+      font-size: 24px;
+      color: #4CAF50;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .order-details-section {
+      margin-bottom: 20px;
+    }
+
+    .order-details-section h3 {
+      color: #4CAF50;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 5px;
+    }
+
+    .order-details-info {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .order-details-label {
+      color: #b5b5b5;
+      font-weight: 500;
+    }
+
+    .order-details-value {
+      color: #f1f1f1;
+    }
+
+    .order-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .order-items-table th {
+      background: #2a2a33;
+      color: #ffffff;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .order-items-table td {
+      padding: 10px;
+      border-bottom: 1px solid #2a2a2a;
+      color: #f1f1f1;
+    }
+
+    .order-items-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .order-total {
+      text-align: right;
+      font-size: 20px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #4CAF50;
+    }
+
+    .order-item {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .order-item:hover {
+      transform: translateX(5px);
+      background: #34343c;
+    }
+
+    .cancel-order-btn {
+      background: #F44336;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .cancel-order-btn:hover {
+      background: #D32F2F;
+    }
+
     .order-actions {
       display: flex;
       align-items: center;
@@ -1398,6 +1815,96 @@
       background: #3a3a44;
       cursor: not-allowed;
       transform: none;
+    }
+
+    .move-order-btn-up {
+      background: #FF9800;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      margin-left: 12px;
+    }
+
+    .move-order-btn-up:hover {
+      background: #F57C00;
+      transform: translateY(-2px);
+    }
+
+    .move-order-btn-photo {
+      background: #9C27B0;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      margin-left: 12px;
+    }
+
+    .move-order-btn-photo:hover {
+      background: #7B1FA2;
+      transform: scale(1.1);
+    }
+
+    /* Sortable table headers */
+    .sortable-header {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 20px !important;
+    }
+
+    .sortable-header:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .sort-arrow {
+      position: absolute;
+      right: 5px;
+      opacity: 0.5;
+      font-size: 12px;
+    }
+
+    .sortable-header.sort-asc .sort-arrow::after {
+      content: ' ↑';
+      opacity: 1;
+      color: #00BCD4;
+    }
+
+    .sortable-header.sort-desc .sort-arrow::after {
+      content: ' ↓';
+      opacity: 1;
+      color: #00BCD4;
+    }
+
+    /* Editable quantity input in modal */
+    .editable-quantity {
+      width: 60px;
+      padding: 4px 8px;
+      border: 1px solid #444;
+      background: #2a2a34;
+      color: white;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .editable-quantity:focus {
+      outline: none;
+      border-color: #00BCD4;
     }
 
     /* Logout button specific styling */
@@ -1518,9 +2025,9 @@
       <label><input type="checkbox" data-column="fechaActualizacion"> Fecha Ult. Actualización</label>
       <label><input type="checkbox" data-column="ordenVenta"> En Orden de Venta</label>
       <label><input type="checkbox" data-column="ordenCompra"> En Orden de Compra</label>
-      <label><input type="checkbox" data-column="stockTeorico" checked> Stock Teórico</label>
-      <label><input type="checkbox" data-column="teorico"> Stock Teorico de Stock</label>
-      <label><input type="checkbox" data-column="transito"> Stock Teorico Transito</label>
+      <label><input type="checkbox" data-column="stockTeorico" checked> Stock</label>
+      <label><input type="checkbox" data-column="teorico"> Stock</label>
+      <label><input type="checkbox" data-column="transito"> Tránsito</label>
       <label><input type="checkbox" data-column="costoContable"> Costo Contable</label>
       <label><input type="checkbox" data-column="totalCostoContable"> Total Costo Contable</label>
       <label><input type="checkbox" data-column="monedaCostoContable"> Moneda de Costo Contable</label>
@@ -1536,6 +2043,15 @@
     <div id="errorBox" class="error hidden"></div>
 
     <div class="stats-container" id="statsContainer" style="display: none;"></div>
+
+    <!-- Add to Cart button (top only) -->
+    <div style="text-align: right; margin-bottom: 12px;">
+      <button class="mdc-button mdc-button--raised" id="addToCartBtn" style="background-color: #f44336 !important;">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">shopping_cart</i>
+        <span class="mdc-button__label">Add to Cart</span>
+      </button>
+    </div>
 
     <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table>
@@ -1575,17 +2091,11 @@
         <button class="menu-btn" id="profileModalBtn">
           PROFILE
         </button>
-        <button class="menu-btn" id="configModalBtn">
-          CONFIG
-        </button>
-        <button class="menu-btn" id="statsModalBtn">
-          STATS
-        </button>
         <button class="menu-btn" id="historialModalBtn">
           HISTORIAL
         </button>
         <button class="menu-btn" id="logisticsModalBtn">
-          LOGISTICS
+          SEGUIMIENTO
         </button>
         <button class="menu-btn" id="adminBtn" style="display: none;">
           ADMIN
@@ -1597,7 +2107,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.16
+          v0.21
         </div>
       </div>
       
@@ -1806,34 +2316,217 @@
     </div>
   </div>
 
-  <!-- LOGISTICS Modal -->
+  <!-- SEGUIMIENTO Modal -->
   <div id="logisticsModal" class="modal hidden">
     <div class="modal-content">
       <span class="close-button">&times;</span>
-      <h2>🚚 Logistics</h2>
+      <h2>📋 Seguimiento de Pedidos</h2>
 
       <div class="logistics-content">
         <div class="logistics-section">
-          <h4>📦 Pedido en Preparacion</h4>
-          <div class="logistics-orders" id="preparingOrders">
-            <p class="no-orders">No orders in preparation</p>
+          <h4>📝 Borrador</h4>
+          <div class="logistics-orders" id="borradorOrders">
+            <p class="no-orders">No hay pedidos en borrador</p>
           </div>
         </div>
 
         <div class="logistics-section">
-          <h4>🚛 Pedido en Camino</h4>
-          <div class="logistics-orders" id="inventoryOrders">
-            <p class="no-orders">No orders in inventory</p>
+          <h4>🔍 En Revisión</h4>
+          <div class="logistics-orders" id="revisionOrders">
+            <p class="no-orders">No hay pedidos en revisión</p>
           </div>
         </div>
 
         <div class="logistics-section">
-          <h4>✅ Pedido Entregado</h4>
-          <div class="logistics-orders" id="deliveryOrders">
-            <p class="no-orders">No orders for delivery</p>
+          <h4>✅ Aprobada</h4>
+          <div class="logistics-orders" id="aprobadaOrders">
+            <p class="no-orders">No hay pedidos aprobados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>📦 En Preparación</h4>
+          <div class="logistics-orders" id="preparacionOrders">
+            <p class="no-orders">No hay pedidos en preparación</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚚 Listo para Retiro/Despacho</h4>
+          <div class="logistics-orders" id="listoOrders">
+            <p class="no-orders">No hay pedidos listos</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚛 Despachada</h4>
+          <div class="logistics-orders" id="despachadaOrders">
+            <p class="no-orders">No hay pedidos despachados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>✅ Entregada</h4>
+          <div class="logistics-orders" id="entregadaOrders">
+            <p class="no-orders">No hay pedidos entregados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🔒 Cerrada</h4>
+          <div class="logistics-orders" id="cerradaOrders">
+            <p class="no-orders">No hay pedidos cerrados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>❌ Cancelada</h4>
+          <div class="logistics-orders" id="canceladaOrders">
+            <p class="no-orders">No hay pedidos cancelados</p>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- CLIENTES Modal -->
+  <div id="clientesModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 1200px;">
+      <span class="close-button">&times;</span>
+      <h2>👥 Gestión de Clientes</h2>
+
+      <div class="clientes-header">
+        <button class="import-excel-btn" id="importClientesBtn">📥 Importar Excel</button>
+        <button class="export-excel-btn" id="exportClientesBtn">📤 Exportar Excel</button>
+        <button class="add-client-btn" id="addClientBtn" onclick="openAddClientModal()">➕ Agregar Cliente</button>
+        <input type="file" id="excelFileInput" accept=".xls,.xlsx" style="display: none;">
+      </div>
+
+      <div class="clientes-content">
+        <div class="clientes-table-container">
+          <table class="clientes-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Nombre Comercial</th>
+                <th>Grupo</th>
+                <th>Departamento</th>
+                <th>Inscripción</th>
+                <th>Nro Documento</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Provincia</th>
+                <th>País</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Saldo Crédito</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="clientesTableBody">
+              <tr>
+                <td colspan="15" style="text-align: center; padding: 20px;">
+                  Cargando clientes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGREGAR/EDITAR CLIENTE Modal -->
+  <div id="addClientModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+      <span class="close-button">&times;</span>
+      <h2 id="clientModalTitle">➕ Agregar Cliente</h2>
+
+      <form id="clientForm" style="display: grid; gap: 15px; margin-top: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Código *</label>
+            <input type="text" id="clientCodigo" required style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Grupo</label>
+            <input type="text" id="clientGrupo" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Nombre *</label>
+          <input type="text" id="clientNombre" required style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+        </div>
+
+        <div>
+          <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Nombre Comercial</label>
+          <input type="text" id="clientNombreComercial" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Inscripción</label>
+            <input type="text" id="clientInscripcion" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Nro Documento</label>
+            <input type="text" id="clientNroDocumento" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Dirección</label>
+          <input type="text" id="clientDireccion" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Ciudad</label>
+            <input type="text" id="clientCiudad" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Provincia</label>
+            <input type="text" id="clientProvincia" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">País</label>
+            <input type="text" id="clientPais" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Teléfono</label>
+            <input type="text" id="clientTelefono" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Email</label>
+            <input type="email" id="clientEmail" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Departamento</label>
+            <input type="text" id="clientDepartamento" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; color: #f1f1f1; font-size: 13px;">Saldo Crédito</label>
+            <input type="number" id="clientSaldoCredito" step="0.01" placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+          <button type="button" class="cancel-btn" onclick="closeModal('addClientModal')" style="padding: 10px 20px; border: 1px solid #3a3a44; border-radius: 4px; background: #2a2a33; color: #f1f1f1; cursor: pointer;">
+            Cancelar
+          </button>
+          <button type="submit" class="save-btn" style="padding: 10px 20px; border: none; border-radius: 4px; background: #4CAF50; color: white; cursor: pointer; font-weight: 500;">
+            Guardar Cliente
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1888,6 +2581,77 @@
           <p id="photoDate"></p>
           <p id="photoOrder"></p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div id="orderDetailsModal" class="order-details-modal">
+    <div class="order-details-modal-content">
+      <span class="order-details-close">&times;</span>
+
+      <div class="order-details-header">
+        <h2 class="order-details-title" id="orderDetailsTitle">Detalles de la Orden</h2>
+      </div>
+
+      <div class="order-details-section">
+        <h3>📋 Información General</h3>
+        <div class="order-details-info">
+          <span class="order-details-label">Número de Orden:</span>
+          <span class="order-details-value" id="detailOrderNumber">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Cliente:</span>
+          <span class="order-details-value" id="detailClientName">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Email:</span>
+          <span class="order-details-value" id="detailClientEmail">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Fecha:</span>
+          <span class="order-details-value" id="detailOrderDate">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Estado:</span>
+          <span class="order-details-value" id="detailOrderState">-</span>
+        </div>
+        <div class="order-details-info" id="detailAdminCreatedContainer" style="display: none;">
+          <span class="order-details-label">Creada por (Admin):</span>
+          <span class="order-details-value" id="detailAdminCreated">-</span>
+        </div>
+      </div>
+
+      <div class="order-details-section">
+        <h3>🛒 Productos</h3>
+        <table class="order-items-table" id="detailOrderTable">
+          <thead>
+            <tr>
+              <th class="sortable-header" data-sort-column="articulo">Artículo <span class="sort-arrow">↕</span></th>
+              <th class="sortable-header" data-sort-column="description">Descripción <span class="sort-arrow">↕</span></th>
+              <th class="sortable-header" data-sort-column="quantity" style="text-align: center;">Cantidad <span class="sort-arrow">↕</span></th>
+              <th class="sortable-header" data-sort-column="price" style="text-align: right;">Precio Unit. <span class="sort-arrow">↕</span></th>
+              <th class="sortable-header" data-sort-column="subtotal" style="text-align: right;">Subtotal <span class="sort-arrow">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="detailOrderItems">
+            <tr>
+              <td colspan="5" style="text-align: center;">No hay items</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="order-total">
+          <span>TOTAL: </span>
+          <span id="detailOrderTotal">$0.00</span>
+        </div>
+      </div>
+
+      <div class="order-details-section" id="detailEditOrderContainer" style="display: none;">
+        <button class="mdc-button mdc-button--raised" id="detailEditOrderBtn" style="width: 100%; background-color: #4CAF50 !important;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">shopping_cart</i>
+          <span class="mdc-button__label">Seguir Comprando / Editar Orden</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1985,7 +2749,7 @@
         console.log(`✅ Cargados ${pedidos.length} pedidos desde Firebase en marketplace`);
 
         historialList.innerHTML = pedidos.map(pedido => `
-          <div class="historial-item" onclick="showOrderDetails('${pedido.id}')">
+          <div class="historial-item" data-order-id="${pedido.id}">
             <div class="historial-item-header">
               <div class="historial-date">${pedido.fechaLocal}</div>
               <div class="historial-method">${pedido.numeroOrden ? `#${pedido.numeroOrden}` : (pedido.estado || 'Confirmada')}</div>
@@ -1998,6 +2762,17 @@
             </div>
           </div>
         `).join('');
+
+        // Add event listener for historial items
+        historialList.addEventListener('click', (e) => {
+          const historialItem = e.target.closest('.historial-item');
+          if (historialItem) {
+            const orderId = historialItem.getAttribute('data-order-id');
+            if (orderId) {
+              showOrderDetails(orderId);
+            }
+          }
+        });
 
       } catch (error) {
         console.error('❌ Error cargando historial en marketplace:', error);
@@ -2017,79 +2792,6 @@
     }
 
     // Mostrar detalles de un pedido
-    async function showOrderDetails(orderId) {
-      if (!firebase || !firebase.firestore) {
-        console.error('❌ Firebase no está disponible para mostrar detalles');
-        alert('❌ Error: Firebase no está disponible');
-        return;
-      }
-
-      try {
-        const { doc: docRef, getDoc } = firebase.firestoreHelpers;
-        const db = firebase.firestore();
-
-        const orderDoc = docRef(db, 'pedidos', orderId);
-        const doc = await getDoc(orderDoc);
-
-        if (!doc.exists()) {
-          alert('❌ Pedido no encontrado');
-          return;
-        }
-
-        const orderData = doc.data();
-
-        const detailsHtml = `
-          <h3>📋 Detalles de la Orden ${orderData.numeroOrden ? `#${orderData.numeroOrden}` : ''}</h3>
-          <p><strong>Fecha:</strong> ${orderData.fechaLocal}</p>
-          <p><strong>Estado:</strong> ${orderData.estado || 'Confirmada'}</p>
-          ${orderData.userDisplayName || orderData.userEmail ? `<p><strong>Usuario:</strong> ${orderData.userDisplayName || orderData.userEmail}</p>` : ''}
-          <p><strong>Total:</strong> $${formatNumber(orderData.total)}</p>
-
-          <h4>🛒 Productos (${orderData.items.length}):</h4>
-          <div style="max-height: 200px; overflow-y: auto;">
-            ${orderData.items.map(item => `
-              <div style="padding: 8px; border-bottom: 1px solid #3a3a44;">
-                <strong>${item.description}</strong><br>
-                <small>Cantidad: ${item.quantity} | Precio: $${formatNumber(item.price)}</small>
-              </div>
-            `).join('')}
-          </div>
-
-          ${orderData.empresa ? `<h4>🏢 Empresa:</h4><p><small>${orderData.empresa}</small></p>` : ''}
-        `;
-
-        // Crear modal temporal para mostrar detalles
-        const detailModal = document.createElement('div');
-        detailModal.className = 'modal';
-        detailModal.innerHTML = `
-          <div class="modal-content">
-            <span class="close-button">&times;</span>
-            ${detailsHtml}
-          </div>
-        `;
-
-        document.body.appendChild(detailModal);
-        detailModal.classList.remove('hidden');
-
-        // Event listener para cerrar
-        detailModal.querySelector('.close-button').addEventListener('click', () => {
-          document.body.removeChild(detailModal);
-        });
-
-        detailModal.addEventListener('click', (e) => {
-          if (e.target === detailModal) {
-            document.body.removeChild(detailModal);
-          }
-        });
-
-      } catch (error) {
-        console.error('❌ Error cargando detalles:', error);
-        alert('❌ Error cargando detalles del pedido');
-        // No relanzar el error para evitar romper el flujo
-        return;
-      }
-    }
-
     // Limpiar historial (Firebase + localStorage)
     async function clearHistorial() {
       if (!confirm('¿Estás seguro de que quieres eliminar todo el historial de pedidos?')) {
@@ -2268,23 +2970,28 @@
       try {
         if (typeof firebase !== 'undefined' && firebase.auth().currentUser) {
           const user = firebase.auth().currentUser;
-          
+
           // Usar las funciones de Firebase importadas
           const { doc, getDoc } = firebase.firestoreHelpers;
           const configRef = doc(firebase.firestore(), 'configuracion', user.uid);
           const configDoc = await getDoc(configRef);
-          
+
           if (configDoc.exists()) {
             APP_CONFIG = { ...APP_CONFIG, ...configDoc.data() };
             console.log('✅ Configuración cargada desde Firebase:', APP_CONFIG);
             updateConfigInputs();
-            
+
             // Mostrar toast informativo
             showToast('Configuración cargada desde la nube', 'success');
           }
         }
       } catch (error) {
-        console.error('Error cargando configuración:', error);
+        // Silenciar errores de permisos - la configuración es opcional
+        if (error.code === 'permission-denied') {
+          console.log('ℹ️ No hay configuración personalizada (esto es normal)');
+        } else {
+          console.error('Error cargando configuración:', error);
+        }
       }
     }
 
@@ -2402,16 +3109,19 @@
       }
     }
     
+    // Variable global para almacenar permisos de admin
+    window.isUserAdmin = false;
+
     // === USER PERMISSIONS CHECK ===
     async function checkUserPermissions(user) {
       try {
         console.log('🔐 Verificando permisos para usuario:', user.email);
-        
+
         if (typeof firebase !== 'undefined' && firebase.firestoreHelpers) {
           const { doc, getDoc } = firebase.firestoreHelpers;
           const userRef = doc(firebase.firestore(), 'usuarios', user.uid);
           const userDoc = await getDoc(userRef);
-          
+
           let isAdmin = false;
           if (userDoc.exists()) {
             const userData = userDoc.data();
@@ -2421,6 +3131,9 @@
           } else {
             console.log('⚠️ Usuario no encontrado en Firestore, asumiendo no-admin');
           }
+
+          // Guardar globalmente
+          window.isUserAdmin = isAdmin;
           
           // Función para aplicar visibilidad de controles
           const applyControlsVisibility = () => {
@@ -2446,14 +3159,14 @@
             
             if (!isAdmin) {
               console.log('🚫 Usuario NO-ADMIN: mostrando solo menú con historial');
-              
+
               // Mostrar menú hamburguesa (pero con opciones limitadas)
               if (hamburgerBtn) {
                 hamburgerBtn.style.display = 'block';
                 hamburgerBtn.style.visibility = 'visible';
                 console.log('✅ Menú hamburguesa visible');
               }
-              
+
               // Ocultar filtros completamente para no-admin
               if (filterBtn) {
                 filterBtn.style.display = 'none !important';
@@ -2468,7 +3181,7 @@
                 columnFilterDropdown.classList.add('hidden');
                 console.log('✅ Dropdown de filtros ocultado completamente');
               }
-              
+
               // Ocultar opciones administrativas del menú (mostrar HISTORIAL y LOGISTICS)
               if (configModalBtn) {
                 configModalBtn.style.display = 'none';
@@ -2490,10 +3203,17 @@
                 adminBtn.style.display = 'none';
                 console.log('🚫 ADMIN ocultado para usuario no-admin');
               }
+
+              // Ocultar botón de limpiar historial para usuarios no-admin
+              const clearHistorialBtn = document.getElementById('clearHistorialBtn');
+              if (clearHistorialBtn) {
+                clearHistorialBtn.style.display = 'none';
+                console.log('🚫 Botón "Limpiar Historial" ocultado para usuario no-admin');
+              }
               
             } else {
               console.log('✅ Usuario ADMIN: mostrando todos los controles');
-              
+
               // Mostrar todos los controles
               if (hamburgerBtn) {
                 hamburgerBtn.style.display = 'block';
@@ -2518,7 +3238,7 @@
                 }
                 console.log('✅ Dropdown de filtros completamente restaurado y funcional');
               }
-              
+
               // Mostrar todas las opciones del menú
               if (configModalBtn) {
                 configModalBtn.style.display = 'block';
@@ -2539,6 +3259,13 @@
               if (adminBtn) {
                 adminBtn.style.display = 'block';
                 console.log('✅ ADMIN visible para usuario admin');
+              }
+
+              // Mostrar botón de limpiar historial para usuarios admin
+              const clearHistorialBtn = document.getElementById('clearHistorialBtn');
+              if (clearHistorialBtn) {
+                clearHistorialBtn.style.display = 'block';
+                console.log('✅ Botón "Limpiar Historial" visible para usuario admin');
               }
             }
           };
@@ -2619,6 +3346,411 @@
         console.log('🚫 Error en verificación: mostrando historial y logistics por seguridad');
       }
     }
+
+    // === CLIENTES FUNCTIONALITY ===
+
+    async function loadClientes() {
+      const tableBody = document.getElementById('clientesTableBody');
+
+      if (!tableBody) {
+        console.warn('⚠️ Elemento clientesTableBody no encontrado');
+        return;
+      }
+
+      if (!firebase || !firebase.firestore) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="15" style="text-align: center; padding: 20px;">
+              ❌ Firebase no está disponible
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      try {
+        console.log('👥 Cargando clientes desde Firebase...');
+
+        const { collection, getDocs, query, orderBy } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const clientesCollection = collection(db, 'clientes');
+        const q = query(clientesCollection, orderBy('codigo', 'asc'));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="15" style="text-align: center; padding: 20px;">
+                📝 No hay clientes registrados
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        const clientes = [];
+        querySnapshot.forEach(doc => {
+          clientes.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        console.log(`✅ Cargados ${clientes.length} clientes desde Firebase`);
+
+        tableBody.innerHTML = clientes.map(cliente => `
+          <tr>
+            <td>${cliente.codigo || ''}</td>
+            <td>${cliente.nombre || ''}</td>
+            <td>${cliente.nombreComercial || ''}</td>
+            <td>${cliente.grupo || ''}</td>
+            <td>${cliente.departamento || ''}</td>
+            <td>${cliente.inscripcion || ''}</td>
+            <td>${cliente.nroDocumento || ''}</td>
+            <td>${cliente.direccion || ''}</td>
+            <td>${cliente.ciudad || ''}</td>
+            <td>${cliente.provincia || ''}</td>
+            <td>${cliente.pais || ''}</td>
+            <td>${cliente.telefono || ''}</td>
+            <td>${cliente.email || ''}</td>
+            <td style="text-align: right;">${cliente.saldoCredito ? parseFloat(cliente.saldoCredito).toFixed(2) : '0.00'}</td>
+            <td>
+              <button class="edit-client-btn" onclick="editCliente('${cliente.id}')">✏️</button>
+              <button class="delete-client-btn" onclick="deleteCliente('${cliente.id}')">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (error) {
+        console.error('❌ Error cargando clientes:', error);
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="15" style="text-align: center; padding: 20px;">
+              ❌ Error cargando clientes
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    async function importClientes() {
+      const fileInput = document.getElementById('excelFileInput');
+      fileInput.click();
+    }
+
+    async function handleExcelImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!firebase || !firebase.firestore) {
+        alert('❌ Firebase no está disponible');
+        return;
+      }
+
+      try {
+        console.log('📥 Importando archivo Excel:', file.name);
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+            console.log('📊 Datos leídos del Excel:', jsonData.length, 'filas');
+
+            const { collection, doc, setDoc } = firebase.firestoreHelpers;
+            const db = firebase.firestore();
+
+            let importados = 0;
+            let saltados = 0;
+
+            for (const row of jsonData) {
+              // Extract and validate codigo (convert to string and trim)
+              let codigo = row['Código'] || row['Codigo'] || '';
+              if (codigo !== null && codigo !== undefined) {
+                codigo = String(codigo).trim();
+              }
+
+              // Skip rows without valid codigo
+              if (!codigo || codigo === '' || codigo === 'null' || codigo === 'undefined') {
+                console.log('⚠️ Saltando fila sin código válido:', row);
+                saltados++;
+                continue;
+              }
+
+              const saldoCredito = row['Saldo Crédito'] || row['Saldo Credito'] || row['SaldoCredito'] || 0;
+
+              const clienteData = {
+                codigo: codigo,
+                nombre: String(row['Nombre'] || '').trim(),
+                nombreComercial: String(row['Nombre Comercial'] || '').trim(),
+                grupo: String(row['Grupo de Clientes'] || row['Grupo'] || '').trim(),
+                departamento: String(row['Departamento'] || '').trim(),
+                inscripcion: String(row['Inscripción'] || row['Inscripcion'] || '').trim(),
+                nroDocumento: String(row['Nro Documento'] || '').trim(),
+                direccion: String(row['Dirección'] || row['Direccion'] || '').trim(),
+                ciudad: String(row['Nombre (Ciudad)'] || row['Ciudad'] || '').trim(),
+                provincia: String(row['Provincia'] || '').trim(),
+                pais: String(row['País'] || row['Pais'] || '').trim(),
+                telefono: String(row['Teléfono'] || row['Telefono'] || '').trim(),
+                email: String(row['Email'] || '').trim(),
+                saldoCredito: parseFloat(saldoCredito) || 0
+              };
+
+              // Use codigo as document ID
+              const clienteRef = doc(db, 'clientes', clienteData.codigo);
+              await setDoc(clienteRef, clienteData);
+              importados++;
+
+              if (importados % 50 === 0) {
+                console.log(`📊 Progreso: ${importados} clientes importados...`);
+              }
+            }
+
+            console.log(`✅ Importación completada: ${importados} clientes importados, ${saltados} filas saltadas`);
+            alert(`✅ Importados ${importados} clientes correctamente${saltados > 0 ? `\n⚠️ ${saltados} filas saltadas por falta de código` : ''}`);
+
+            // Reload clientes
+            loadClientes();
+
+          } catch (error) {
+            console.error('❌ Error procesando Excel:', error);
+            alert('❌ Error procesando archivo Excel: ' + error.message);
+          }
+        };
+
+        reader.readAsArrayBuffer(file);
+
+      } catch (error) {
+        console.error('❌ Error importando clientes:', error);
+        alert('❌ Error importando clientes: ' + error.message);
+      }
+
+      // Reset file input
+      event.target.value = '';
+    }
+
+    async function exportClientes() {
+      if (!firebase || !firebase.firestore) {
+        alert('❌ Firebase no está disponible');
+        return;
+      }
+
+      try {
+        console.log('📤 Exportando clientes a Excel...');
+
+        const { collection, getDocs, query, orderBy } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const clientesCollection = collection(db, 'clientes');
+        const q = query(clientesCollection, orderBy('codigo', 'asc'));
+        const querySnapshot = await getDocs(q);
+
+        const clientes = [];
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          clientes.push({
+            'Código': data.codigo || '',
+            'Nombre': data.nombre || '',
+            'Nombre Comercial': data.nombreComercial || '',
+            'Grupo de Clientes': data.grupo || '',
+            'Departamento': data.departamento || '',
+            'Inscripción': data.inscripcion || '',
+            'Nro Documento': data.nroDocumento || '',
+            'Dirección': data.direccion || '',
+            'Nombre (Ciudad)': data.ciudad || '',
+            'Provincia': data.provincia || '',
+            'País': data.pais || '',
+            'Teléfono': data.telefono || '',
+            'Email': data.email || '',
+            'Saldo Crédito': data.saldoCredito || 0
+          });
+        });
+
+        if (clientes.length === 0) {
+          alert('⚠️ No hay clientes para exportar');
+          return;
+        }
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(clientes);
+        XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
+
+        // Download file
+        const fecha = new Date().toISOString().split('T')[0];
+        XLSX.writeFile(wb, `Listado_de_Clientes_${fecha}.xlsx`);
+
+        console.log(`✅ Exportados ${clientes.length} clientes a Excel`);
+        alert(`✅ Exportados ${clientes.length} clientes correctamente`);
+
+      } catch (error) {
+        console.error('❌ Error exportando clientes:', error);
+        alert('❌ Error exportando clientes: ' + error.message);
+      }
+    }
+
+    let currentEditingClienteId = null;
+
+    function openAddClientModal() {
+      // Reset form
+      document.getElementById('clientForm').reset();
+      document.getElementById('clientModalTitle').textContent = '➕ Agregar Cliente';
+      currentEditingClienteId = null;
+
+      // Enable codigo field for new clients
+      document.getElementById('clientCodigo').disabled = false;
+
+      openModal('addClientModal');
+    }
+
+    async function editCliente(clienteId) {
+      if (!firebase || !firebase.firestore) {
+        alert('❌ Firebase no está disponible');
+        return;
+      }
+
+      try {
+        const { doc, getDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const clienteRef = doc(db, 'clientes', clienteId);
+        const clienteDoc = await getDoc(clienteRef);
+
+        if (!clienteDoc.exists()) {
+          alert('❌ Cliente no encontrado');
+          return;
+        }
+
+        const cliente = clienteDoc.data();
+
+        // Set form title
+        document.getElementById('clientModalTitle').textContent = '✏️ Editar Cliente';
+        currentEditingClienteId = clienteId;
+
+        // Fill form
+        document.getElementById('clientCodigo').value = cliente.codigo || '';
+        document.getElementById('clientCodigo').disabled = true; // Don't allow changing codigo
+        document.getElementById('clientNombre').value = cliente.nombre || '';
+        document.getElementById('clientNombreComercial').value = cliente.nombreComercial || '';
+        document.getElementById('clientGrupo').value = cliente.grupo || '';
+        document.getElementById('clientDepartamento').value = cliente.departamento || '';
+        document.getElementById('clientInscripcion').value = cliente.inscripcion || '';
+        document.getElementById('clientNroDocumento').value = cliente.nroDocumento || '';
+        document.getElementById('clientDireccion').value = cliente.direccion || '';
+        document.getElementById('clientCiudad').value = cliente.ciudad || '';
+        document.getElementById('clientProvincia').value = cliente.provincia || '';
+        document.getElementById('clientPais').value = cliente.pais || '';
+        document.getElementById('clientTelefono').value = cliente.telefono || '';
+        document.getElementById('clientEmail').value = cliente.email || '';
+        document.getElementById('clientSaldoCredito').value = cliente.saldoCredito || 0;
+
+        openModal('addClientModal');
+
+      } catch (error) {
+        console.error('❌ Error cargando cliente:', error);
+        alert('❌ Error cargando cliente: ' + error.message);
+      }
+    }
+
+    async function saveCliente(event) {
+      event.preventDefault();
+
+      if (!firebase || !firebase.firestore) {
+        alert('❌ Firebase no está disponible');
+        return;
+      }
+
+      try {
+        const saldoCreditoValue = document.getElementById('clientSaldoCredito').value.trim();
+
+        const clienteData = {
+          codigo: document.getElementById('clientCodigo').value.trim(),
+          nombre: document.getElementById('clientNombre').value.trim(),
+          nombreComercial: document.getElementById('clientNombreComercial').value.trim(),
+          grupo: document.getElementById('clientGrupo').value.trim(),
+          departamento: document.getElementById('clientDepartamento').value.trim(),
+          inscripcion: document.getElementById('clientInscripcion').value.trim(),
+          nroDocumento: document.getElementById('clientNroDocumento').value.trim(),
+          direccion: document.getElementById('clientDireccion').value.trim(),
+          ciudad: document.getElementById('clientCiudad').value.trim(),
+          provincia: document.getElementById('clientProvincia').value.trim(),
+          pais: document.getElementById('clientPais').value.trim(),
+          telefono: document.getElementById('clientTelefono').value.trim(),
+          email: document.getElementById('clientEmail').value.trim(),
+          saldoCredito: saldoCreditoValue ? parseFloat(saldoCreditoValue) : 0
+        };
+
+        if (!clienteData.codigo) {
+          alert('⚠️ El código es requerido');
+          return;
+        }
+
+        if (!clienteData.nombre) {
+          alert('⚠️ El nombre es requerido');
+          return;
+        }
+
+        const { doc, setDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const clienteRef = doc(db, 'clientes', clienteData.codigo);
+        await setDoc(clienteRef, clienteData);
+
+        console.log(`✅ Cliente ${clienteData.codigo} guardado`);
+        alert(currentEditingClienteId ? '✅ Cliente actualizado correctamente' : '✅ Cliente agregado correctamente');
+
+        // Close modal and reload
+        closeModal('addClientModal');
+        loadClientes();
+
+      } catch (error) {
+        console.error('❌ Error guardando cliente:', error);
+        alert('❌ Error guardando cliente: ' + error.message);
+      }
+    }
+
+    window.openAddClientModal = openAddClientModal;
+    window.saveCliente = saveCliente;
+
+    async function deleteCliente(clienteId) {
+      if (!confirm('⚠️ ¿Estás seguro de eliminar este cliente?')) {
+        return;
+      }
+
+      if (!firebase || !firebase.firestore) {
+        alert('❌ Firebase no está disponible');
+        return;
+      }
+
+      try {
+        const { doc, deleteDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const clienteRef = doc(db, 'clientes', clienteId);
+        await deleteDoc(clienteRef);
+
+        console.log(`✅ Cliente ${clienteId} eliminado`);
+        alert('✅ Cliente eliminado correctamente');
+
+        // Reload clientes
+        loadClientes();
+
+      } catch (error) {
+        console.error('❌ Error eliminando cliente:', error);
+        alert('❌ Error eliminando cliente: ' + error.message);
+      }
+    }
+
+    // Expose functions globally
+    window.loadClientes = loadClientes;
+    window.importClientes = importClientes;
+    window.exportClientes = exportClientes;
+    window.editCliente = editCliente;
+    window.deleteCliente = deleteCliente;
 
     // === PROFILE FUNCTIONALITY ===
     async function loadUserProfile() {
@@ -2876,6 +4008,23 @@
         console.log('✅ Historial modal button handler added');
       }
 
+      const clientesModalBtn = document.getElementById('clientesModalBtn');
+      if (clientesModalBtn) {
+        clientesModalBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('clientesModal');
+          loadClientes();
+        });
+        console.log('✅ Clientes modal button handler added');
+      }
+
+      // Client form submit handler
+      const clientForm = document.getElementById('clientForm');
+      if (clientForm) {
+        clientForm.addEventListener('submit', saveCliente);
+        console.log('✅ Client form submit handler added');
+      }
+
       const logisticsModalBtn = document.getElementById('logisticsModalBtn');
       if (logisticsModalBtn) {
         logisticsModalBtn.addEventListener('click', function() {
@@ -2965,6 +4114,24 @@
         console.log('✅ Export historial button handler added');
       }
 
+      const importClientesBtn = document.getElementById('importClientesBtn');
+      if (importClientesBtn) {
+        importClientesBtn.addEventListener('click', importClientes);
+        console.log('✅ Import clientes button handler added');
+      }
+
+      const exportClientesBtn = document.getElementById('exportClientesBtn');
+      if (exportClientesBtn) {
+        exportClientesBtn.addEventListener('click', exportClientes);
+        console.log('✅ Export clientes button handler added');
+      }
+
+      const excelFileInput = document.getElementById('excelFileInput');
+      if (excelFileInput) {
+        excelFileInput.addEventListener('change', handleExcelImport);
+        console.log('✅ Excel file input handler added');
+      }
+
       // Cerrar modales con botón X
       document.querySelectorAll('.close-button').forEach(button => {
         button.addEventListener('click', function() {
@@ -3009,6 +4176,33 @@
                 await checkUserPermissions(user);
                 console.log('👤 Usuario autenticado, cargando configuración...');
                 loadConfig();
+
+                // Load prices from Firebase for marketplace
+                console.log('💰 Cargando precios desde Firebase para marketplace...');
+                if (window.loadPricesFromFirebase) {
+                  await window.loadPricesFromFirebase();
+                  console.log('✅ Precios cargados en marketplace');
+
+                  // Refresh view to show prices
+                  if (window.renderRows) {
+                    window.renderRows();
+                    console.log('🔄 Vista actualizada con precios de Firebase');
+                  }
+                } else {
+                  console.log('⚠️ loadPricesFromFirebase no disponible aún');
+                }
+              } else {
+                // Even without login, marketplace should load prices
+                console.log('👤 Usuario no autenticado, cargando precios de Firebase...');
+                if (window.loadPricesFromFirebase) {
+                  await window.loadPricesFromFirebase();
+                  console.log('✅ Precios cargados en marketplace (sin login)');
+
+                  if (window.renderRows) {
+                    window.renderRows();
+                    console.log('🔄 Vista actualizada con precios de Firebase');
+                  }
+                }
               }
             });
           }
@@ -3096,17 +4290,26 @@
         querySnapshot.forEach(docSnapshot => {
           const data = docSnapshot.data();
 
-          // Check if logisticsState exists, if not, set it to 'preparing'
+          // Check if logisticsState exists, if not, set it to 'borrador'
           if (!data.logisticsState) {
-            console.log(`🔄 Setting logisticsState to 'preparing' for order ${docSnapshot.id}`);
+            console.log(`🔄 Setting logisticsState to 'borrador' for order ${docSnapshot.id}`);
             const orderRef = doc(db, 'pedidos', docSnapshot.id);
-            updatePromises.push(updateDoc(orderRef, { logisticsState: 'preparing' }));
+            updatePromises.push(updateDoc(orderRef, { logisticsState: 'borrador' }));
+          }
+
+          // Check if timestamp exists, if not, use fecha or create new timestamp
+          if (!data.timestamp) {
+            console.log(`🔄 Setting timestamp for order ${docSnapshot.id}`);
+            const orderRef = doc(db, 'pedidos', docSnapshot.id);
+            const timestampValue = data.fecha || new Date();
+            updatePromises.push(updateDoc(orderRef, { timestamp: timestampValue }));
           }
 
           orders.push({
             id: docSnapshot.id,
             ...data,
-            logisticsState: data.logisticsState || 'preparing' // Default state
+            logisticsState: data.logisticsState || 'borrador', // Default state
+            timestamp: data.timestamp || data.fecha || new Date() // Use fecha as fallback
           });
         });
 
@@ -3117,6 +4320,10 @@
         }
 
         console.log('📦 Loaded', orders.length, 'logistics orders');
+
+        // Guardar en cache para el modal de detalles
+        allOrdersCache = orders;
+
         displayLogisticsOrders(orders);
 
       } catch (error) {
@@ -3126,67 +4333,166 @@
 
     // Display orders in their respective sections
     function displayLogisticsOrders(orders) {
-      const preparingContainer = document.getElementById('preparingOrders');
-      const inventoryContainer = document.getElementById('inventoryOrders');
-      const deliveryContainer = document.getElementById('deliveryOrders');
+      const containers = {
+        borrador: document.getElementById('borradorOrders'),
+        revision: document.getElementById('revisionOrders'),
+        aprobada: document.getElementById('aprobadaOrders'),
+        preparacion: document.getElementById('preparacionOrders'),
+        listo: document.getElementById('listoOrders'),
+        despachada: document.getElementById('despachadaOrders'),
+        entregada: document.getElementById('entregadaOrders'),
+        cerrada: document.getElementById('cerradaOrders'),
+        cancelada: document.getElementById('canceladaOrders')
+      };
 
-      if (!preparingContainer || !inventoryContainer || !deliveryContainer) {
-        console.warn('⚠️ Logistics containers not found');
+      // Check if all containers exist
+      const missingContainers = Object.entries(containers).filter(([key, val]) => !val).map(([key]) => key);
+      if (missingContainers.length > 0) {
+        console.warn('⚠️ Seguimiento containers not found:', missingContainers);
         return;
       }
 
+      // Define state flow: current state -> next state (null = final state)
+      const stateFlow = {
+        borrador: 'revision',
+        revision: 'aprobada',
+        aprobada: 'preparacion',
+        preparacion: 'listo',
+        listo: 'despachada',
+        despachada: 'entregada',
+        entregada: 'cerrada',
+        cerrada: null,
+        cancelada: null
+      };
+
       // Separate orders by state
-      const preparingOrders = orders.filter(order => order.logisticsState === 'preparing');
-      const inventoryOrders = orders.filter(order => order.logisticsState === 'inventory');
-      const deliveryOrders = orders.filter(order => order.logisticsState === 'delivery');
+      const ordersByState = {
+        borrador: orders.filter(order => order.logisticsState === 'borrador'),
+        revision: orders.filter(order => order.logisticsState === 'revision'),
+        aprobada: orders.filter(order => order.logisticsState === 'aprobada'),
+        preparacion: orders.filter(order => order.logisticsState === 'preparacion'),
+        listo: orders.filter(order => order.logisticsState === 'listo'),
+        despachada: orders.filter(order => order.logisticsState === 'despachada'),
+        entregada: orders.filter(order => order.logisticsState === 'entregada'),
+        cerrada: orders.filter(order => order.logisticsState === 'cerrada'),
+        cancelada: orders.filter(order => order.logisticsState === 'cancelada')
+      };
 
-      // Display preparing orders
-      if (preparingOrders.length > 0) {
-        preparingContainer.innerHTML = preparingOrders.map(order => createOrderHTML(order, 'inventory')).join('');
-      } else {
-        preparingContainer.innerHTML = '<p class="no-orders">No orders in preparation</p>';
-      }
+      // Display orders in each section
+      Object.entries(ordersByState).forEach(([state, stateOrders]) => {
+        const container = containers[state];
+        const nextState = stateFlow[state];
 
-      // Display inventory orders
-      if (inventoryOrders.length > 0) {
-        inventoryContainer.innerHTML = inventoryOrders.map(order => createOrderHTML(order, 'delivery')).join('');
-      } else {
-        inventoryContainer.innerHTML = '<p class="no-orders">No orders in inventory</p>';
-      }
+        if (stateOrders.length > 0) {
+          container.innerHTML = stateOrders.map(order => createOrderHTML(order, nextState, state)).join('');
+        } else {
+          const messages = {
+            borrador: 'No hay pedidos en borrador',
+            revision: 'No hay pedidos en revisión',
+            aprobada: 'No hay pedidos aprobados',
+            preparacion: 'No hay pedidos en preparación',
+            listo: 'No hay pedidos listos',
+            despachada: 'No hay pedidos despachados',
+            entregada: 'No hay pedidos entregados',
+            cerrada: 'No hay pedidos cerrados',
+            cancelada: 'No hay pedidos cancelados'
+          };
+          container.innerHTML = `<p class="no-orders">${messages[state]}</p>`;
+        }
+      });
 
-      // Display delivery orders (en camino) and delivered orders together
-      const deliveredOrders = orders.filter(order => order.logisticsState === 'delivered');
-      const allDeliveryOrders = [...deliveryOrders, ...deliveredOrders];
-
-      if (allDeliveryOrders.length > 0) {
-        const deliveryOrdersHtml = deliveryOrders.map(order => createOrderHTML(order, 'delivered')).join('');
-        const deliveredOrdersHtml = deliveredOrders.map(order => createOrderHTML(order, null)).join('');
-        deliveryContainer.innerHTML = deliveryOrdersHtml + deliveredOrdersHtml;
-      } else {
-        deliveryContainer.innerHTML = '<p class="no-orders">No orders for delivery</p>';
-      }
+      // Add event listeners to all order items using event delegation
+      Object.values(containers).forEach(container => {
+        container.addEventListener('click', (e) => {
+          const orderItem = e.target.closest('.order-item');
+          if (orderItem && !e.target.closest('button')) {
+            const orderId = orderItem.getAttribute('data-order-id');
+            if (orderId) {
+              showOrderDetails(orderId);
+            }
+          }
+        });
+      });
     }
 
     // Create HTML for an order item
-    function createOrderHTML(order, nextState) {
-      const canMove = nextState !== null;
-      const isDelivering = nextState === 'delivered';
+    function createOrderHTML(order, nextState, currentState) {
+      const isAdmin = window.isUserAdmin || false;
       let buttonHtml = '';
 
-      if (canMove) {
-        if (isDelivering) {
-          buttonHtml = `<button class="move-order-btn" onclick="initiateDelivery('${order.id}')" title="Marcar como Entregado">📸 Entregar</button>`;
-        } else {
-          buttonHtml = `<button class="move-order-btn" onclick="moveOrder('${order.id}', '${nextState}')" title="Move to ${nextState}">↓</button>`;
+      const stateLabels = {
+        borrador: 'Borrador',
+        revision: 'En Revisión',
+        aprobada: 'Aprobada',
+        preparacion: 'En Preparación',
+        listo: 'Listo para Retiro/Despacho',
+        despachada: 'Despachada',
+        entregada: 'Entregada',
+        cerrada: 'Cerrada',
+        cancelada: 'Cancelada'
+      };
+
+      // Define state flows for bidirectional movement
+      const stateFlow = {
+        borrador: { next: 'revision', prev: null },
+        revision: { next: 'aprobada', prev: 'borrador' },
+        aprobada: { next: 'preparacion', prev: 'revision' },
+        preparacion: { next: 'listo', prev: 'aprobada' },
+        listo: { next: 'despachada', prev: 'preparacion' },
+        despachada: { next: 'entregada', prev: 'listo' },
+        entregada: { next: 'cerrada', prev: 'despachada' },
+        cerrada: { next: null, prev: 'entregada' },
+        cancelada: { next: null, prev: 'entregada' }
+      };
+
+      const currentFlow = stateFlow[currentState];
+      const hasNext = currentFlow && currentFlow.next !== null;
+      const hasPrev = currentFlow && currentFlow.prev !== null;
+
+      // Solo mostrar botones de cambio de estado si el usuario es admin
+      if (isAdmin) {
+        // Flecha hacia arriba (volver al estado anterior)
+        if (hasPrev) {
+          const prevStateLabel = stateLabels[currentFlow.prev] || currentFlow.prev;
+          buttonHtml += `<button class="move-order-btn-up" onclick="moveOrder('${order.id}', '${currentFlow.prev}')" title="Volver a ${prevStateLabel}">↑</button>`;
+        }
+
+        // Flecha hacia abajo (avanzar al siguiente estado) y/o botón de foto
+        if (hasNext) {
+          const nextStateLabel = stateLabels[currentFlow.next] || currentFlow.next;
+
+          // Special handling for despachada -> entregada: show both arrow and photo button
+          if (currentFlow.next === 'entregada') {
+            // Mostrar flecha abajo para avanzar directamente sin foto
+            buttonHtml += `<button class="move-order-btn" onclick="moveOrder('${order.id}', 'entregada')" title="Mover a ${nextStateLabel}">↓</button>`;
+            // Mostrar botón de foto para entregar con foto
+            buttonHtml += `<button class="move-order-btn-photo" onclick="initiateDelivery('${order.id}')" title="Marcar como Entregado con Foto">📸</button>`;
+          } else {
+            buttonHtml += `<button class="move-order-btn" onclick="moveOrder('${order.id}', '${currentFlow.next}')" title="Mover a ${nextStateLabel}">↓</button>`;
+          }
+        }
+
+        // Add cancel button for non-cancelled and non-closed orders
+        if (currentState !== 'cancelada' && currentState !== 'cerrada') {
+          buttonHtml += `<button class="cancel-order-btn" onclick="moveOrder('${order.id}', 'cancelada')" title="Cancelar pedido">❌</button>`;
         }
       } else {
-        // This is a delivered order - show photo view button if photo exists
-        const photoViewBtn = order.deliveryPhoto ?
-          `<button class="view-photo-btn" onclick="viewDeliveryPhoto('${order.id}')" title="Ver foto de entrega">📸</button>` : '';
-        buttonHtml = `<div class="order-actions">
-          <span class="delivered-status">✓ Entregado</span>
-          ${photoViewBtn}
-        </div>`;
+        // Para usuarios no-admin, mostrar estado actual sin botones
+        if (currentState === 'entregada') {
+          // Show photo button for entregada state
+          const photoViewBtn = order.deliveryPhoto ?
+            `<button class="view-photo-btn" onclick="viewDeliveryPhoto('${order.id}')" title="Ver foto de entrega">📸</button>` : '';
+          buttonHtml = `<div class="order-actions">
+            <span class="delivered-status">✓ Entregada</span>
+            ${photoViewBtn}
+          </div>`;
+        } else if (currentState === 'cerrada') {
+          buttonHtml = `<span class="closed-status">🔒 Cerrada</span>`;
+        } else if (currentState === 'cancelada') {
+          buttonHtml = `<span class="cancelled-status">❌ Cancelada</span>`;
+        } else {
+          buttonHtml = `<span class="current-status">📋 ${stateLabels[currentState]}</span>`;
+        }
       }
 
       return `
@@ -3197,13 +4503,22 @@
               ${order.fechaLocal || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || 0)}
             </div>
           </div>
-          ${buttonHtml}
+          <div class="order-actions" onclick="event.stopPropagation()">
+            ${buttonHtml}
+          </div>
         </div>
       `;
     }
 
     // Move order to next state
     async function moveOrder(orderId, nextState) {
+      // Verificar que el usuario sea admin
+      if (!window.isUserAdmin) {
+        alert('⚠️ No tienes permisos para mover órdenes');
+        console.log('🚫 Usuario no-admin intentó mover orden');
+        return;
+      }
+
       if (!firebase || !firebase.firestore) {
         console.error('❌ Firebase not available');
         return;
@@ -3231,6 +4546,300 @@
     }
 
     // === ADVANCED ANALYTICS FUNCTIONALITY ===
+
+    // Show order details modal
+    let allOrdersCache = [];
+
+    async function showOrderDetails(orderId) {
+      try {
+        console.log('📋 Mostrando detalles de orden:', orderId);
+
+        // Buscar la orden en el cache
+        let order = allOrdersCache.find(o => o.id === orderId);
+
+        // Si no está en cache, buscar en Firebase
+        if (!order) {
+          const { doc, getDoc } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+          const orderRef = doc(db, 'pedidos', orderId);
+          const orderDoc = await getDoc(orderRef);
+
+          if (orderDoc.exists()) {
+            order = { id: orderDoc.id, ...orderDoc.data() };
+          } else {
+            alert('Orden no encontrada');
+            return;
+          }
+        }
+
+        // Mapeo de estados
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Llenar información general
+        document.getElementById('detailOrderNumber').textContent = `#${order.numeroOrden || order.id.slice(-6)}`;
+        document.getElementById('detailClientName').textContent = order.clienteNombre || order.usuarioEmail || '-';
+        document.getElementById('detailClientEmail').textContent = order.clienteEmail || order.usuarioEmail || '-';
+        document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
+        document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
+
+        // Mostrar si fue creada por admin
+        if (order.creadoPorAdmin) {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'grid';
+          document.getElementById('detailAdminCreated').textContent = order.usuarioEmail || '-';
+        } else {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'none';
+        }
+
+        // Llenar tabla de items con campos editables
+        const itemsTableBody = document.getElementById('detailOrderItems');
+        itemsTableBody.innerHTML = '';
+
+        if (order.items && order.items.length > 0) {
+          order.items.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-item-index', index);
+            row.innerHTML = `
+              <td>${item.articulo || '-'}</td>
+              <td>${item.description || '-'}</td>
+              <td style="text-align: center;">
+                <input type="number"
+                       class="editable-quantity"
+                       value="${item.quantity || 0}"
+                       min="0"
+                       data-item-index="${index}"
+                       data-price="${item.price || 0}">
+              </td>
+              <td style="text-align: right;">$${(item.price || 0).toFixed(2)}</td>
+              <td class="item-subtotal" style="text-align: right;">$${(item.subtotal || 0).toFixed(2)}</td>
+            `;
+            itemsTableBody.appendChild(row);
+          });
+
+          // Agregar event listeners para actualizar subtotales
+          const quantityInputs = itemsTableBody.querySelectorAll('.editable-quantity');
+          quantityInputs.forEach(input => {
+            input.addEventListener('change', function() {
+              const index = parseInt(this.getAttribute('data-item-index'));
+              const price = parseFloat(this.getAttribute('data-price'));
+              const quantity = parseInt(this.value) || 0;
+              const subtotal = price * quantity;
+
+              // Actualizar el item en el array
+              order.items[index].quantity = quantity;
+              order.items[index].subtotal = subtotal;
+
+              // Actualizar subtotal en la fila
+              const row = this.closest('tr');
+              const subtotalCell = row.querySelector('.item-subtotal');
+              subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+
+              // Recalcular total
+              const newTotal = order.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+              order.total = newTotal;
+              document.getElementById('detailOrderTotal').textContent = `$${newTotal.toFixed(2)}`;
+            });
+          });
+        } else {
+          itemsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay items</td></tr>';
+        }
+
+        // Mostrar total
+        document.getElementById('detailOrderTotal').textContent = `$${(order.total || 0).toFixed(2)}`;
+
+        // Mostrar botón "Seguir Comprando" en todos los estados
+        const editOrderContainer = document.getElementById('detailEditOrderContainer');
+        const editOrderBtn = document.getElementById('detailEditOrderBtn');
+
+        // Siempre mostrar el botón
+        editOrderContainer.style.display = 'block';
+
+        // Remover event listeners previos
+        const newEditBtn = editOrderBtn.cloneNode(true);
+        editOrderBtn.parentNode.replaceChild(newEditBtn, editOrderBtn);
+
+        // Agregar nuevo event listener
+        newEditBtn.addEventListener('click', () => {
+          editOrderInCart(order);
+        });
+
+        // Agregar funcionalidad de ordenamiento a las columnas
+        const sortableHeaders = document.querySelectorAll('#detailOrderTable .sortable-header');
+        let currentSortColumn = null;
+        let currentSortDirection = 'asc';
+
+        sortableHeaders.forEach(header => {
+          header.addEventListener('click', function() {
+            const column = this.getAttribute('data-sort-column');
+
+            // Si es la misma columna, cambiar dirección
+            if (currentSortColumn === column) {
+              currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+              currentSortColumn = column;
+              currentSortDirection = 'asc';
+            }
+
+            // Remover clases de ordenamiento de todos los headers
+            sortableHeaders.forEach(h => {
+              h.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            // Agregar clase de ordenamiento al header actual
+            this.classList.add(`sort-${currentSortDirection}`);
+
+            // Ordenar los items
+            order.items.sort((a, b) => {
+              let valueA, valueB;
+
+              switch(column) {
+                case 'articulo':
+                  valueA = (a.articulo || '').toLowerCase();
+                  valueB = (b.articulo || '').toLowerCase();
+                  break;
+                case 'description':
+                  valueA = (a.description || '').toLowerCase();
+                  valueB = (b.description || '').toLowerCase();
+                  break;
+                case 'quantity':
+                  valueA = a.quantity || 0;
+                  valueB = b.quantity || 0;
+                  break;
+                case 'price':
+                  valueA = a.price || 0;
+                  valueB = b.price || 0;
+                  break;
+                case 'subtotal':
+                  valueA = a.subtotal || 0;
+                  valueB = b.subtotal || 0;
+                  break;
+                default:
+                  return 0;
+              }
+
+              if (valueA < valueB) return currentSortDirection === 'asc' ? -1 : 1;
+              if (valueA > valueB) return currentSortDirection === 'asc' ? 1 : -1;
+              return 0;
+            });
+
+            // Volver a renderizar la tabla
+            itemsTableBody.innerHTML = '';
+            order.items.forEach((item, index) => {
+              const row = document.createElement('tr');
+              row.setAttribute('data-item-index', index);
+              row.innerHTML = `
+                <td>${item.articulo || '-'}</td>
+                <td>${item.description || '-'}</td>
+                <td style="text-align: center;">
+                  <input type="number"
+                         class="editable-quantity"
+                         value="${item.quantity || 0}"
+                         min="0"
+                         data-item-index="${index}"
+                         data-price="${item.price || 0}">
+                </td>
+                <td style="text-align: right;">$${(item.price || 0).toFixed(2)}</td>
+                <td class="item-subtotal" style="text-align: right;">$${(item.subtotal || 0).toFixed(2)}</td>
+              `;
+              itemsTableBody.appendChild(row);
+            });
+
+            // Re-agregar event listeners a los inputs de cantidad
+            const quantityInputs = itemsTableBody.querySelectorAll('.editable-quantity');
+            quantityInputs.forEach(input => {
+              input.addEventListener('change', function() {
+                const index = parseInt(this.getAttribute('data-item-index'));
+                const price = parseFloat(this.getAttribute('data-price'));
+                const quantity = parseInt(this.value) || 0;
+                const subtotal = price * quantity;
+
+                order.items[index].quantity = quantity;
+                order.items[index].subtotal = subtotal;
+
+                const row = this.closest('tr');
+                const subtotalCell = row.querySelector('.item-subtotal');
+                subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+
+                const newTotal = order.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+                order.total = newTotal;
+                document.getElementById('detailOrderTotal').textContent = `$${newTotal.toFixed(2)}`;
+              });
+            });
+          });
+        });
+
+        // Mostrar modal
+        document.getElementById('orderDetailsModal').style.display = 'block';
+
+      } catch (error) {
+        console.error('❌ Error mostrando detalles de orden:', error);
+        alert('Error al cargar detalles de la orden');
+      }
+    }
+
+    // Editar orden en marketplace.html (volver a comprar)
+    function editOrderInCart(order) {
+      try {
+        console.log('🛒 Cargando orden en carrito para editar:', order);
+
+        // Convertir items de la orden al formato del carrito
+        const cartItems = order.items.map(item => ({
+          item: item.articulo,
+          description: item.description,
+          price: item.price,
+          quantity: item.quantity
+        }));
+
+        // Guardar en localStorage
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+
+        // Guardar ID de la orden original para poder actualizarla
+        localStorage.setItem('editingOrderId', order.id);
+
+        console.log('✅ Orden cargada en carrito:', cartItems.length, 'items');
+
+        // Cerrar el modal
+        document.getElementById('orderDetailsModal').style.display = 'none';
+
+        // Actualizar el badge del carrito para reflejar los items cargados
+        if (window.updateCartBadge) {
+          window.updateCartBadge();
+        }
+
+        // Recargar la página para mostrar el carrito actualizado en marketplace
+        window.location.reload();
+
+      } catch (error) {
+        console.error('❌ Error cargando orden en carrito:', error);
+        alert('Error al cargar la orden en el carrito');
+      }
+    }
+
+    // Cerrar modal de detalles
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    if (orderDetailsModal) {
+      const closeBtn = orderDetailsModal.querySelector('.order-details-close');
+      if (closeBtn) {
+        closeBtn.onclick = function() {
+          orderDetailsModal.style.display = 'none';
+        };
+      }
+
+      window.onclick = function(event) {
+        if (event.target == orderDetailsModal) {
+          orderDetailsModal.style.display = 'none';
+        }
+      };
+    }
 
     // Calculate most purchased item from Firebase orders
     async function getMostPurchasedItem() {
@@ -3860,7 +5469,47 @@
       // Initialize all buttons
       const buttons = document.querySelectorAll('.mdc-button');
       buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
-      
+
+      // Setup Add to Cart button
+      const addToCartBtn = document.getElementById('addToCartBtn');
+
+      function handleAddToCart() {
+        // Check if selectedItems exists and has items
+        if (!window.selectedItems || window.selectedItems.size === 0) {
+          alert('Por favor selecciona al menos un producto con cantidad mayor a 0');
+          return;
+        }
+
+        // Filter out items with quantity 0
+        const itemsToAdd = [];
+        window.selectedItems.forEach(({ product, quantity }, id) => {
+          if (quantity > 0) {
+            itemsToAdd.push({
+              item: product.articulo,
+              description: product.description,
+              price: product.price,
+              quantity
+            });
+          }
+        });
+
+        if (itemsToAdd.length === 0) {
+          alert('Por favor selecciona al menos un producto con cantidad mayor a 0');
+          return;
+        }
+
+        // Save cart to localStorage
+        localStorage.setItem('cart', JSON.stringify(itemsToAdd));
+        console.log('Cart saved with', itemsToAdd.length, 'items, redirecting to cart.html');
+
+        // Redirect to cart page
+        window.location.href = 'cart.html';
+      }
+
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', handleAddToCart);
+      }
+
       // Initialize checkboxes
       const checkboxes = document.querySelectorAll('.mdc-checkbox');
       checkboxes.forEach(checkbox => mdc.checkbox.MDCCheckbox.attachTo(checkbox));
@@ -3873,17 +5522,65 @@
       const tabBar = document.querySelector('.mdc-tab-bar');
       if (tabBar) {
         const mdcTabBar = mdc.tabBar.MDCTabBar.attachTo(tabBar);
-        
+
         // Handle tab activation
         mdcTabBar.listen('MDCTabBar:activated', (event) => {
           const tab = tabBar.querySelectorAll('.mdc-tab')[event.detail.index];
           const segment = tab.getAttribute('data-segment');
-          
+
           // Trigger the existing tab functionality
           if (window.handleTabClick) {
             window.handleTabClick(segment);
           }
         });
+      }
+
+      // Load cart from localStorage and populate selectedItems (for "Seguir Comprando" functionality)
+      const cartData = localStorage.getItem('cart');
+      if (cartData) {
+        try {
+          const cartItems = JSON.parse(cartData);
+          console.log('📦 Cargando carrito desde localStorage:', cartItems.length, 'items');
+
+          // Wait for products to be loaded before populating selectedItems
+          const waitForProducts = setInterval(() => {
+            if (window.mappedStockData && window.mappedStockData.length > 0) {
+              clearInterval(waitForProducts);
+
+              cartItems.forEach(cartItem => {
+                // Find the product in the mapped stock data
+                const product = window.mappedStockData.find(p =>
+                  p.articulo === cartItem.item
+                );
+
+                if (product && window.selectedItems) {
+                  // Add to selectedItems map
+                  window.selectedItems.set(cartItem.item, {
+                    product: product,
+                    quantity: cartItem.quantity
+                  });
+
+                  console.log(`✅ Producto cargado en carrito: ${cartItem.item} x${cartItem.quantity}`);
+
+                  // Update the quantity input in the table
+                  const qtyInput = document.querySelector(`.qty-input[data-item="${cartItem.item}"]`);
+                  if (qtyInput) {
+                    qtyInput.value = cartItem.quantity;
+                  }
+                }
+              });
+
+              console.log('✅ Carrito cargado en selectedItems:', window.selectedItems.size, 'productos');
+            }
+          }, 100); // Check every 100ms
+
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            clearInterval(waitForProducts);
+          }, 5000);
+        } catch (error) {
+          console.error('❌ Error cargando carrito desde localStorage:', error);
+        }
       }
     });
   </script>
@@ -3895,7 +5592,76 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.16 - Actual</h3>
+          <h3>v0.21 - Actual</h3>
+          <ul>
+            <li>🛒 <strong>Cart.html mejorado:</strong> Cantidades editables directamente en el carrito</li>
+            <li>✏️ <strong>Input numérico:</strong> Cambiar cantidades sin recargar página</li>
+            <li>✅ <strong>Confirmación directa:</strong> Confirmar orden desde cart.html sin ir a order.html</li>
+            <li>🎉 <strong>Modal de éxito:</strong> Mensaje elegante de orden confirmada con número</li>
+            <li>📱 <strong>WhatsApp integrado:</strong> Notificación automática al vendedor desde cart.html</li>
+            <li>🔧 <strong>Firebase sincronizado:</strong> Configuración correcta entre marketplace y cart</li>
+            <li>🚫 <strong>Permisos SEGUIMIENTO:</strong> Usuarios no-admin no pueden mover órdenes</li>
+            <li>👁️ <strong>Solo visualización:</strong> No-admin puede ver estados pero no modificarlos</li>
+            <li>🔒 <strong>Botones ocultos:</strong> Cambio de estado y cancelación solo para admin</li>
+            <li>🗑️ <strong>Historial protegido:</strong> Botón "Limpiar Historial" solo para admin</li>
+            <li>⚠️ <strong>Validación doble:</strong> Función moveOrder verifica permisos antes de ejecutar</li>
+            <li>🎨 <strong>Estado visual:</strong> Muestra estado actual para usuarios no-admin</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.20</h3>
+          <ul>
+            <li>📋 <strong>MASTER completamente rediseñado:</strong> Sección sincronizada con SEGUIMIENTO</li>
+            <li>🎯 <strong>Misma estructura visual:</strong> 9 estados organizados en secciones</li>
+            <li>📊 <strong>10 KPIs actualizados:</strong> Total + cada estado individual con contadores en tiempo real</li>
+            <li>🔄 <strong>Botón Actualizar reubicado:</strong> Posicionado arriba de los KPIs</li>
+            <li>🗑️ <strong>Función Borrar Todas las Órdenes:</strong> Botón rojo con doble confirmación</li>
+            <li>⚠️ <strong>Confirmación obligatoria:</strong> Requiere escribir "BORRAR TODO"</li>
+            <li>📱 <strong>Notificación WhatsApp automática:</strong> Cada orden se envía al vendedor</li>
+            <li>👥 <strong>Detección de vendedor:</strong> Sistema busca el vendedor del cliente</li>
+            <li>💬 <strong>Mensaje formateado:</strong> WhatsApp con detalles completos</li>
+            <li>🎯 <strong>Santiago asignado a todos:</strong> 421 clientes actualizados</li>
+            <li>🔧 <strong>Bug fixes:</strong> Eliminada declaración duplicada de formatNumber</li>
+            <li>🐛 <strong>Correcciones JavaScript:</strong> Funciones de importación/exportación</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.19</h3>
+          <ul>
+            <li>🔒 <strong>Control de acceso mejorado en Administration:</strong> Usuarios no-admin pueden VER pero NO editar</li>
+            <li>📋 <strong>Modo solo lectura:</strong> Campos deshabilitados para usuarios sin permisos admin</li>
+            <li>🚫 <strong>Botones ocultos:</strong> "Agregar Orden" y "Guardar" no visibles para no-admin</li>
+            <li>🔍 <strong>Búsqueda de clientes:</strong> Campo de búsqueda con filtro en tiempo real por 9 campos</li>
+            <li>⚡ <strong>Búsqueda inteligente:</strong> Debounce de 300ms y búsqueda instantánea con Enter</li>
+            <li>👥 <strong>Columna Vendedor:</strong> Asignación de vendedores a clientes desde tabla</li>
+            <li>📊 <strong>Dropdown dinámico:</strong> Selector de vendedor en cada fila de cliente</li>
+            <li>🎯 <strong>Santiago por defecto:</strong> Asignación automática a clientes sin vendedor</li>
+            <li>💾 <strong>Actualización instantánea:</strong> Cambios de vendedor guardados en tiempo real en Firebase</li>
+            <li>✅ <strong>Confirmación de orden mejorada:</strong> Nuevo mensaje personalizado de orden enviada</li>
+            <li>🔧 <strong>Bug fix:</strong> Función updateButtonLabels faltante agregada en order.html</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.18</h3>
+          <ul>
+            <li>👥 <strong>Módulo CLIENTES completo:</strong> Gestión completa de clientes con 13 campos de información</li>
+            <li>➕ <strong>Agregar/Editar clientes:</strong> Formulario completo para crear y modificar clientes</li>
+            <li>📥 <strong>Importar desde Excel:</strong> Carga masiva de clientes desde archivos .xls/.xlsx</li>
+            <li>📤 <strong>Exportar a Excel:</strong> Descarga del listado completo de clientes</li>
+            <li>🗑️ <strong>Eliminar clientes:</strong> Opción para borrar clientes con confirmación</li>
+            <li>💾 <strong>Integración Firebase:</strong> Todos los datos guardados en Firestore</li>
+            <li>📋 <strong>Seguimiento de Pedidos:</strong> LOGISTICS renombrado a SEGUIMIENTO con 9 estados</li>
+            <li>🔄 <strong>Flujo completo:</strong> Borrador → En revisión → Aprobada → En preparación → Listo para retiro/Despacho → Despachada → Entregada → Cerrada → Cancelada</li>
+            <li>🎯 <strong>Menú optimizado:</strong> CONFIG y STATS removidos temporalmente</li>
+            <li>📱 <strong>Historial compacto:</strong> Órdenes minimizadas y modal responsive</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.16</h3>
           <ul>
             <li>📸 <strong>Sistema de Confirmación Fotográfica de Entregas</strong></li>
             <li>🚚 <strong>Logistics mejorado:</strong> Nombres actualizados a "Pedido en Preparacion", "Pedido en Camino", "Pedido Entregado"</li>

@@ -23,6 +23,15 @@ let currentSort = {
 };
 let searchQuery = '';
 let selectedItems = new Map();
+let pricesData = new Map(); // Store prices from Firebase (articulo -> precio1)
+let isUserLoggedIn = false; // Track if user is logged in
+
+// Expose selectedItems globally for cart functionality
+window.selectedItems = selectedItems;
+
+// Version control for column visibility defaults
+const COLUMN_VISIBILITY_VERSION = 3; // Increment this when changing defaults
+
 // Default column visibility
 const defaultColumnVisibility = {
   articulo: true, // Artículo - enabled by default
@@ -31,11 +40,11 @@ const defaultColumnVisibility = {
   stock: false,
   disponible: false,
   fechaActualizacion: false,
-  ordenVenta: true, // En Orden de Venta - enabled by default
+  ordenVenta: false, // En Orden de Venta - disabled by default
   ordenCompra: false,
-  stockTeorico: true, // Stock Teórico - enabled by default
-  teorico: false, // Stock Teorico de Stock - disabled by default
-  transito: false, // Stock Teorico Transito - disabled by default
+  stockTeorico: false, // Stock Teórico - disabled
+  teorico: true, // Stock Teorico de Stock - enabled by default
+  transito: true, // Stock Teorico Transito - enabled by default (Tránsito)
   costoContable: false,
   totalCostoContable: false,
   monedaCostoContable: false,
@@ -49,7 +58,11 @@ let columnVisibility = loadColumnVisibility();
 
 // Functions to persist column visibility
 function saveColumnVisibility() {
-  localStorage.setItem('columnVisibility', JSON.stringify(columnVisibility));
+  const dataToSave = {
+    version: COLUMN_VISIBILITY_VERSION,
+    visibility: columnVisibility
+  };
+  localStorage.setItem('columnVisibility', JSON.stringify(dataToSave));
 }
 
 function loadColumnVisibility() {
@@ -57,29 +70,21 @@ function loadColumnVisibility() {
     const saved = localStorage.getItem('columnVisibility');
     if (saved) {
       const parsed = JSON.parse(saved);
+
+      // Check if it's the old format (just the visibility object) or has a version
+      if (parsed.version === undefined || parsed.version < COLUMN_VISIBILITY_VERSION) {
+        // Reset to defaults if version is old or missing
+        console.log('Column visibility version outdated, resetting to defaults');
+        return { ...defaultColumnVisibility };
+      }
+
       // Merge with defaults to ensure all columns are defined
-      return { ...defaultColumnVisibility, ...parsed };
+      return { ...defaultColumnVisibility, ...parsed.visibility };
     }
   } catch (e) {
     console.error('Error loading column visibility:', e);
   }
   return { ...defaultColumnVisibility };
-}
-
-/* Función para actualizar estilos del botón add to cart */
-function updateCartButtonStyles(itemId, quantity) {
-  const cartBtn = document.querySelector(`.cart-btn[data-item="${itemId}"]`);
-  if (cartBtn) {
-    const isActive = quantity > 0;
-    cartBtn.style.background = isActive ? '#4CAF50' : '#fff';
-    cartBtn.style.color = isActive ? '#fff' : '#333';
-    cartBtn.style.border = `1px solid ${isActive ? '#4CAF50' : '#ddd'}`;
-    
-    const svg = cartBtn.querySelector('svg');
-    if (svg) {
-      svg.setAttribute('fill', isActive ? 'white' : '#333');
-    }
-  }
 }
 
 /* Utilidades */
@@ -192,6 +197,91 @@ async function fetchStock() {
   return rows;
 }
 
+// === FUNCIONES PARA PRECIOS ===
+async function loadPricesFromFirebase() {
+  // Check if Firebase is available
+  if (!window.firebase || !window.firebase.firestore) {
+    console.log('⚠️ Firebase not available, cannot load prices');
+    return;
+  }
+
+  // Determine if we're in marketplace (always load) or index (only if logged in)
+  const isMarketplace = window.location.pathname.includes('marketplace.html');
+  const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
+
+  // For index.html, require login. For marketplace, always load.
+  if (isIndex && !isUserLoggedIn) {
+    console.log('⚠️ Not loading prices: user not logged in on index.html');
+    return;
+  }
+
+  try {
+    const { collection, getDocs } = window.firebase.firestoreHelpers;
+    const db = window.firebase.firestore();
+
+    const pricesCollection = collection(db, 'precios');
+    const pricesSnapshot = await getDocs(pricesCollection);
+
+    pricesData.clear();
+
+    pricesSnapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log('📦 Price document:', { id: doc.id, data }); // Debug: show full document
+      if (data.articulo && data.precio1 !== undefined) {
+        pricesData.set(data.articulo, data.precio1);
+        console.log(`✅ Mapped price: ${data.articulo} -> $${data.precio1}`);
+      } else {
+        console.log(`⚠️ Skipping document (missing articulo or precio1):`, { articulo: data.articulo, precio1: data.precio1, allFields: Object.keys(data) });
+      }
+    });
+
+    console.log(`✅ Loaded ${pricesData.size} prices from Firebase (marketplace: ${isMarketplace}, index: ${isIndex}, logged: ${isUserLoggedIn})`);
+
+    // Log first 5 prices for debugging
+    const firstPrices = Array.from(pricesData.entries()).slice(0, 5);
+    console.log('📋 First 5 prices loaded:', firstPrices.map(([articulo, precio]) => `${articulo}: $${precio}`).join(', '));
+
+    // Show all available fields in first document for debugging
+    if (pricesSnapshot.docs.length > 0) {
+      const firstDoc = pricesSnapshot.docs[0].data();
+      console.log('🔍 Available fields in first price document:', Object.keys(firstDoc));
+      console.log('🔍 First document full data:', firstDoc);
+    }
+  } catch (error) {
+    console.error('❌ Error loading prices from Firebase:', error);
+  }
+}
+
+// Function to get price for an articulo
+function getPriceForArticulo(articulo) {
+  // In marketplace, allow getting prices even without login
+  const isMarketplace = window.location.pathname.includes('marketplace.html');
+
+  if (!isUserLoggedIn && !isMarketplace) return null;
+
+  // Try exact match first
+  let price = pricesData.get(articulo);
+
+  // If not found, try trimmed version (in case of whitespace differences)
+  if (price === undefined && articulo) {
+    const trimmedArticulo = String(articulo).trim();
+    price = pricesData.get(trimmedArticulo);
+
+    // If still not found, try case-insensitive search
+    if (price === undefined) {
+      for (const [key, value] of pricesData.entries()) {
+        if (String(key).trim().toUpperCase() === trimmedArticulo.toUpperCase()) {
+          price = value;
+          console.log(`🔍 Price found with case-insensitive match: "${articulo}" -> "${key}": $${price}`);
+          break;
+        }
+      }
+    }
+  }
+
+  return price !== undefined ? price : null;
+}
+
 function mapRow(raw) {
   // articulo/item
   const articulo = getFirstExisting(raw, ['Artículo', 'Articulo', 'item', 'Item', 'Codigo', 'Código']) ?? '';
@@ -294,20 +384,33 @@ function mapRow(raw) {
   let costoContableUnidadAlternativa = getFirstExisting(raw, ['Costo Contable Unidad Alternativa', 'CostoContableUnidadAlternativa']);
   costoContableUnidadAlternativa = Number.isFinite(Number(costoContableUnidadAlternativa)) ? Number(costoContableUnidadAlternativa) : parseLocaleNumber(String(costoContableUnidadAlternativa ?? ''));
   if (!Number.isFinite(costoContableUnidadAlternativa)) costoContableUnidadAlternativa = 0;
-  
-  let price = 1000; // Default price
 
-  if (/iphone/i.test(description || articulo || '')) {
-    price = 800;
-  } else if (/macbook/i.test(description || articulo || '')) {
-    price = 1200;
-  } else if (/samsung/i.test(description || articulo || '')) {
-    price = 500;
+  // Determine if we're in marketplace
+  const isMarketplace = window.location.pathname.includes('marketplace.html');
+  const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
+
+  // Get price from Firebase if user is logged in OR in marketplace
+  let price = null;
+  if (isUserLoggedIn || isMarketplace) {
+    price = getPriceForArticulo(articulo);
   }
 
-  // Don't include price in index.html
-  const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
-  
+  // For marketplace, always set a price (default if not found in Firebase)
+  // For index with logged in user, only set price from Firebase (no defaults)
+  if (isMarketplace) {
+    if (price === null) {
+      // Use default price logic for marketplace
+      price = 1000; // Default price
+      if (/iphone/i.test(description || articulo || '')) {
+        price = 800;
+      } else if (/macbook/i.test(description || articulo || '')) {
+        price = 1200;
+      } else if (/samsung/i.test(description || articulo || '')) {
+        price = 500;
+      }
+    }
+  }
+
   const baseData = {
     articulo: String(articulo),
     description: String(description),
@@ -325,12 +428,15 @@ function mapRow(raw) {
     monedaCostoContable: String(monedaCostoContable),
     costoContableUnidadAlternativa
   };
-  
-  if (isIndex) {
-    return baseData;
-  } else {
+
+  // Include price if:
+  // - In marketplace (always)
+  // - In index.html AND user is logged in AND price exists
+  if (isMarketplace || (isIndex && isUserLoggedIn && price !== null)) {
     return { ...baseData, price };
   }
+
+  return baseData;
 }
 
 function renderRows() {
@@ -438,9 +544,9 @@ function renderRows() {
     { id: 'fechaActualizacion', label: 'Fecha Ult. Actualización', sortable: true, class: '', width: '12%' },
     { id: 'ordenVenta', label: 'En Orden de Venta', sortable: true, class: 'right', width: '10%' },
     { id: 'ordenCompra', label: 'En Orden de Compra', sortable: true, class: 'right', width: '10%' },
-    { id: 'stockTeorico', label: 'Stock Teórico', sortable: true, class: 'right', width: '10%' },
-    { id: 'teorico', label: 'Stock Teorico de Stock', sortable: true, class: 'right', width: '12%' },
-    { id: 'transito', label: 'Stock Teorico Transito', sortable: true, class: 'right', width: '12%' },
+    { id: 'stockTeorico', label: 'Stock', sortable: true, class: 'right', width: '10%' },
+    { id: 'teorico', label: 'Stock', sortable: true, class: 'right', width: '12%' },
+    { id: 'transito', label: 'Tránsito', sortable: true, class: 'right', width: '12%' },
     { id: 'costoContable', label: 'Costo Contable', sortable: true, class: 'right', width: '10%' },
     { id: 'totalCostoContable', label: 'Total Costo Contable', sortable: true, class: 'right', width: '12%' },
     { id: 'monedaCostoContable', label: 'Moneda de Costo Contable', sortable: true, class: '', width: '10%' },
@@ -452,11 +558,17 @@ function renderRows() {
   if (isIndex) {
     const excludedColumnsForIndex = ['grupo', 'fechaActualizacion', 'costoContable', 'totalCostoContable', 'monedaCostoContable', 'costoContableUnidadAlternativa'];
     columns = columns.filter(col => !excludedColumnsForIndex.includes(col.id));
+
+    // Add price column if user is logged in
+    if (isUserLoggedIn) {
+      columns.push({ id: 'price', label: 'Precio', sortable: true, class: 'right', width: '12%' });
+    }
   }
 
-  // Solo en marketplace agregamos la columna Quantity
+  // Solo en marketplace agregamos la columna Price y Quantity
   if (isMarketplace) {
-    columns.push({ id: 'quantity', label: 'Quantity', sortable: false, class: '', width: '20%' });
+    columns.push({ id: 'price', label: 'Price', sortable: true, class: 'right', width: '12%' });
+    columns.push({ id: 'quantity', label: 'Quantity', sortable: false, class: '', width: '15%' });
   }
 
   let columnsToRender = columns.filter(col => columnVisibility[col.id] !== false);
@@ -531,35 +643,27 @@ function renderRows() {
             <button class="qty-btn" data-action="decrease" data-item="${itemId}">-</button>
             <input type="number" class="qty-input" data-item="${itemId}" value="${quantity}" min="0" max="999" style="width: 60px; text-align: center; padding: 4px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
             <button class="qty-btn" data-action="increase" data-item="${itemId}">+</button>
-            <button class="cart-btn" data-item="${itemId}" title="Add to cart"
-              style="
-                background:${quantity > 0 ? '#4CAF50' : '#fff'};
-                color:${quantity > 0 ? '#fff' : '#333'};
-                border:1px solid ${quantity > 0 ? '#4CAF50' : '#ddd'};
-                border-radius:4px;
-                padding:8px 20px;
-                min-width:140px;
-                display:flex;
-                align-items:center;
-                gap:10px;
-                font-size:16px;
-                font-weight:500;
-                cursor:pointer;
-              ">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="${quantity > 0 ? 'white' : '#333'}" viewBox="0 0 24 24">
-                <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-12.016-2l1.72-8h13.296l1.72 8h-16.736zm15.016-10v2h-16v-2h2.016l1.72-8h8.528l1.72 8h2.016z"/>
-              </svg>
-              <span style="white-space:nowrap;">Add to Cart</span>
-            </button>
           </div>
         `;
       } else {
         const value = r[col.id];
-        td.textContent = value;
-        // Add red color class for zero values in numeric columns
-        const numericColumns = ['disponible', 'ordenVenta', 'ordenCompra', 'stockTeorico', 'teorico', 'transito', 'costoContable', 'totalCostoContable', 'costoContableUnidadAlternativa'];
-        if (numericColumns.includes(col.id) && Number(value) === 0) {
-          td.classList.add('zero-value');
+
+        // Special handling for price column
+        if (col.id === 'price') {
+          if (value === null || value === undefined) {
+            td.textContent = '?';
+            td.style.fontWeight = 'bold';
+            td.style.color = '#ff9800'; // Orange color for unknown price
+          } else {
+            td.textContent = formatNumber(value);
+          }
+        } else {
+          td.textContent = value;
+          // Add red color class for zero values in numeric columns
+          const numericColumns = ['disponible', 'ordenVenta', 'ordenCompra', 'stockTeorico', 'teorico', 'transito', 'costoContable', 'totalCostoContable', 'costoContableUnidadAlternativa'];
+          if (numericColumns.includes(col.id) && Number(value) === 0) {
+            td.classList.add('zero-value');
+          }
         }
       }
       tr.appendChild(td);
@@ -595,6 +699,9 @@ function renderRows() {
   
   // Actualizar estadísticas KPI - using fixed function
   updateStatsFixed(filtered, totals);
+
+  // Update header KPIs
+  updateHeaderStats(filtered.length, totals);
 }
 
 async function forceReconnect() {
@@ -951,52 +1058,13 @@ function setupUI() {
 
   const tbody = document.getElementById('tbody');
   if (tbody) {
-    // Single event listener for cart button clicks
+    // Event listener for quantity increase/decrease buttons
     tbody.addEventListener('click', function(e) {
-      // Handle cart button click
-      const cartBtn = e.target.closest('.cart-btn');
-      if (cartBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const itemId = cartBtn.getAttribute('data-item');
-        const qtyElement = document.querySelector(`.qty-input[data-item="${itemId}"]`);
-
-        if (!itemId || !qtyElement) {
-          console.error('Could not find item ID or quantity element');
-          return;
-        }
-
-        const qty = parseInt(qtyElement.value, 10) || 1;
-        // Find the product in the mapped data
-        const product = mappedStockData.find(p => p.articulo === itemId);
-        
-        if (product) {
-          // Update selected items
-          selectedItems.set(itemId, { product, quantity: qty });
-          
-          // Save cart to localStorage
-          const cartData = Array.from(selectedItems.entries()).map(([id, { product, quantity }]) => ({
-            item: product.articulo,
-            description: product.description,
-            price: product.price,
-            quantity
-          }));
-          
-          localStorage.setItem('cart', JSON.stringify(cartData));
-          console.log('Cart saved, redirecting to cart.html');
-          
-          // Redirect to cart page
-          window.location.href = 'cart.html';
-        } else {
-          console.error('Product not found:', itemId);
-        }
-      } 
       // Handle quantity increase button
-      else if (e.target.closest('.qty-btn[data-action="increase"]')) {
+      if (e.target.closest('.qty-btn[data-action="increase"]')) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const btn = e.target.closest('.qty-btn');
         const itemId = btn.getAttribute('data-item');
         const qtyElement = document.querySelector(`.qty-input[data-item="${itemId}"]`);
@@ -1005,22 +1073,19 @@ function setupUI() {
           let qty = parseInt(qtyElement.value, 10) || 0;
           qty = Math.min(999, qty + 1); // Don't go over 999
           qtyElement.value = qty;
-          
+
           // Update selected items
           const product = mappedStockData.find(p => p.articulo === itemId);
           if (product) {
             selectedItems.set(itemId, { product, quantity: qty });
           }
-          
-          // Update cart button styles
-          updateCartButtonStyles(itemId, qty);
         }
       }
       // Handle quantity decrease button
       else if (e.target.closest('.qty-btn[data-action="decrease"]')) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const btn = e.target.closest('.qty-btn');
         const itemId = btn.getAttribute('data-item');
         const qtyElement = document.querySelector(`.qty-input[data-item="${itemId}"]`);
@@ -1029,26 +1094,13 @@ function setupUI() {
           let qty = parseInt(qtyElement.value, 10) || 0;
           qty = Math.max(0, qty - 1); // Don't go below 0
           qtyElement.value = qty;
-          
+
           // Update selected items
           const product = mappedStockData.find(p => p.articulo === itemId);
           if (product) {
             selectedItems.set(itemId, { product, quantity: qty });
           }
-          
-          // Update cart button styles
-          updateCartButtonStyles(itemId, qty);
         }
-      }
-      // Handle buy button click
-      else if (e.target.closest('.buy-btn')) {
-        handleBuyButtonClick(e);
-      }
-    });
-
-    tbody.addEventListener('change', (e) => {
-      if (e.target.classList.contains('buy-input')) {
-        handleBuyInputChange(e);
       }
     });
 
@@ -1069,9 +1121,6 @@ function setupUI() {
         } else if (qty === 0) {
           selectedItems.delete(itemId);
         }
-
-        // Update cart button styles
-        updateCartButtonStyles(itemId, qty);
       }
     });
   }
@@ -1204,6 +1253,49 @@ function updateStats(filteredData, totals) {
   });
 }
 
+
+// Update header KPIs (desktop and mobile)
+function updateHeaderStats(totalProducts, totals) {
+  // Update desktop header KPIs
+  const headerTotalProducts = document.getElementById('headerTotalProducts');
+  const headerStockTeorico = document.getElementById('headerStockTeorico');
+  const headerStockTransito = document.getElementById('headerStockTransito');
+
+  if (headerTotalProducts) {
+    const numberEl = headerTotalProducts.querySelector('.header-stat-number');
+    if (numberEl) numberEl.textContent = totalProducts.toLocaleString();
+  }
+
+  if (headerStockTeorico) {
+    const numberEl = headerStockTeorico.querySelector('.header-stat-number');
+    if (numberEl) numberEl.textContent = (totals.teorico || 0).toLocaleString();
+  }
+
+  if (headerStockTransito) {
+    const numberEl = headerStockTransito.querySelector('.header-stat-number');
+    if (numberEl) numberEl.textContent = (totals.transito || 0).toLocaleString();
+  }
+
+  // Update mobile KPIs
+  const mobileHeaderTotalProducts = document.getElementById('mobileHeaderTotalProducts');
+  const mobileHeaderStockTeorico = document.getElementById('mobileHeaderStockTeorico');
+  const mobileHeaderStockTransito = document.getElementById('mobileHeaderStockTransito');
+
+  if (mobileHeaderTotalProducts) {
+    const numberEl = mobileHeaderTotalProducts.querySelector('.header-stat-number');
+    if (numberEl) numberEl.textContent = totalProducts.toLocaleString();
+  }
+
+  if (mobileHeaderStockTeorico) {
+    const numberEl = mobileHeaderStockTeorico.querySelector('.header-stat-number');
+    if (numberEl) numberEl.textContent = (totals.teorico || 0).toLocaleString();
+  }
+
+  if (mobileHeaderStockTransito) {
+    const numberEl = mobileHeaderStockTransito.querySelector('.header-stat-number');
+    if (numberEl) numberEl.textContent = (totals.transito || 0).toLocaleString();
+  }
+}
 
 // Fixed updateStats function using compatible syntax
 function updateStatsFixed(filteredData, totals) {
