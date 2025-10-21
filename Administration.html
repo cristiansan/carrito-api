@@ -1803,6 +1803,11 @@
         </div>
 
         <div class="form-group">
+          <label for="sellerPhone2">Teléfono 2</label>
+          <input type="tel" id="sellerPhone2" name="phone2">
+        </div>
+
+        <div class="form-group">
           <label for="sellerTerritory">Territorio</label>
           <input type="text" id="sellerTerritory" name="territory" placeholder="Ej: Zona Norte, Centro, etc.">
         </div>
@@ -2119,7 +2124,7 @@
           <div class="seller-info">
             <div class="seller-name">${seller.name}</div>
             <div class="seller-details">
-              ${seller.email}${seller.phone ? ' • ' + seller.phone : ''}
+              ${seller.email}${seller.phone ? ' • ' + seller.phone : ''}${seller.phone2 ? ' • ' + seller.phone2 : ''}
               ${seller.territory ? ' • ' + seller.territory : ''}
               ${seller.commission ? ' • ' + seller.commission + '% comisión' : ''}
             </div>
@@ -4474,6 +4479,7 @@
       document.getElementById('sellerName').value = seller.name || '';
       document.getElementById('sellerEmail').value = seller.email || '';
       document.getElementById('sellerPhone').value = seller.phone || '';
+      document.getElementById('sellerPhone2').value = seller.phone2 || '';
       document.getElementById('sellerTerritory').value = seller.territory || '';
       document.getElementById('sellerCommission').value = seller.commission || '';
       document.getElementById('sellerStatus').value = seller.status || 'active';
@@ -4967,6 +4973,7 @@
             name: formData.get('name'),
             email: formData.get('email'),
             phone: formData.get('phone'),
+            phone2: formData.get('phone2'),
             territory: formData.get('territory'),
             commission: formData.get('commission') ? parseFloat(formData.get('commission')) : null,
             status: formData.get('status'),
