@@ -1016,8 +1016,15 @@
         let clienteEmail = window.currentUser.email;
         let vendedorId = null;
 
+        // Si estamos editando, usar los datos de la orden existente primero
+        if (isEditing && existingOrderData) {
+          clienteNombre = existingOrderData.clienteNombre || window.currentUser.email;
+          clienteEmail = existingOrderData.clienteEmail || window.currentUser.email;
+          vendedorId = existingOrderData.vendedorId;
+          console.log('📋 Usando datos de orden existente - Vendedor:', vendedorId);
+        }
         // Si es admin y seleccionó un cliente, usar ese cliente
-        if (window.isUserAdmin && window.selectedClienteData) {
+        else if (window.isUserAdmin && window.selectedClienteData) {
           console.log('👤 Admin cargando orden para cliente:', window.selectedClienteData.nombre);
           clienteNombre = window.selectedClienteData.nombre;
           clienteEmail = window.selectedClienteData.email;
@@ -1099,7 +1106,10 @@
 
         // Enviar WhatsApp al vendedor
         if (vendedorId) {
+          console.log('📱 Preparando WhatsApp para vendedor:', vendedorId);
           await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
+        } else {
+          console.log('⚠️ No se envió WhatsApp - No hay vendedor asignado');
         }
 
         // Mostrar modal de éxito
