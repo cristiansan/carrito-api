@@ -5690,6 +5690,8 @@
 
         // Save cart to localStorage
         localStorage.setItem('cart', JSON.stringify(itemsToAdd));
+        // Limpiar editingOrderId porque estamos creando una orden nueva
+        localStorage.removeItem('editingOrderId');
         console.log('Cart saved with', itemsToAdd.length, 'items, redirecting to cart.html');
 
         // Redirect to cart page
