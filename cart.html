@@ -1146,14 +1146,20 @@
         }
 
         const vendedorData = vendedorDoc.data();
-        let vendedorPhone = vendedorData.phone || vendedorData.telefono;
 
-        if (!vendedorPhone) {
+        // Obtener ambos teléfonos del vendedor
+        const phones = [];
+        if (vendedorData.phone || vendedorData.telefono) {
+          phones.push((vendedorData.phone || vendedorData.telefono).replace(/\D/g, ''));
+        }
+        if (vendedorData.phone2) {
+          phones.push(vendedorData.phone2.replace(/\D/g, ''));
+        }
+
+        if (phones.length === 0) {
           console.log('⚠️ Vendedor sin teléfono');
           return;
         }
-
-        vendedorPhone = vendedorPhone.replace(/\D/g, '');
 
         // Construir mensaje
         let mensaje = `🛒 *NUEVA ORDEN #${orderNumber}*\n\n`;
@@ -1172,10 +1178,18 @@
 
         mensaje += `\n💰 *TOTAL: ${formatNumber(orderData.total)}*\n\n`;
 
-        const whatsappUrl = `https://wa.me/${vendedorPhone}?text=${encodeURIComponent(mensaje)}`;
-        window.open(whatsappUrl, '_blank');
+        // Enviar WhatsApp a todos los teléfonos del vendedor
+        phones.forEach((phone, index) => {
+          const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
 
-        console.log('✅ WhatsApp enviado');
+          // Pequeño delay entre aperturas para evitar que se bloqueen
+          setTimeout(() => {
+            window.open(whatsappUrl, '_blank');
+            console.log(`✅ WhatsApp ${index + 1}/${phones.length} enviado a ${phone}`);
+          }, index * 500);
+        });
+
+        console.log(`✅ WhatsApp enviado a ${phones.length} teléfono(s)`);
 
       } catch (error) {
         console.error('❌ Error enviando WhatsApp:', error);
