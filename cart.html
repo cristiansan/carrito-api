@@ -980,9 +980,9 @@
         }
 
         const editingOrderId = localStorage.getItem('editingOrderId');
-        const isEditing = !!editingOrderId;
+        let isEditing = !!editingOrderId;
 
-        console.log(isEditing ? '📝 Actualizando orden existente...' : '📦 Confirmando orden nueva...');
+        console.log(isEditing ? '📝 Verificando orden existente...' : '📦 Confirmando orden nueva...');
 
         // Obtener número de orden (solo si es nueva, si se está editando usar el existente)
         let orderNumber;
@@ -1000,8 +1000,12 @@
             orderNumber = existingOrderData.numeroOrden;
             console.log('📋 Actualizando orden existente #', orderNumber);
           } else {
-            alert('No se encontró la orden a editar');
-            return;
+            console.warn('⚠️ La orden a editar no existe. Limpiando editingOrderId y creando nueva orden.');
+            localStorage.removeItem('editingOrderId');
+            // Cambiar a modo crear nueva orden
+            isEditing = false;
+            orderNumber = await getNextOrderNumber();
+            console.log('📋 Número de orden nueva:', orderNumber);
           }
         } else {
           orderNumber = await getNextOrderNumber();
