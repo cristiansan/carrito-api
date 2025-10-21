@@ -435,7 +435,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
@@ -456,7 +456,7 @@
       auth: () => auth,
       firestore: () => db,
       firestoreHelpers: {
-        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit
+        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction
       }
     };
 
@@ -893,22 +893,68 @@
 
     async function getNextOrderNumber() {
       try {
-        const { collection, query, orderBy, limit, getDocs } = window.firebase.firestoreHelpers;
+        const { doc, runTransaction, collection, query, orderBy, limit, getDocs } = window.firebase.firestoreHelpers;
         const db = window.firebase.firestore();
 
-        const pedidosRef = collection(db, 'pedidos');
-        const q = query(pedidosRef, orderBy('numeroOrden', 'desc'), limit(1));
-        const querySnapshot = await getDocs(q);
+        // Usar un documento contador para generar números secuenciales únicos
+        const counterRef = doc(db, 'counters', 'orderNumber');
 
-        if (querySnapshot.empty) {
-          return 10000;
-        } else {
-          const lastOrder = querySnapshot.docs[0].data();
-          return (lastOrder.numeroOrden || 10000) + 1;
-        }
+        const newOrderNumber = await runTransaction(db, async (transaction) => {
+          const counterDoc = await transaction.get(counterRef);
+
+          let nextNumber;
+          if (!counterDoc.exists()) {
+            // Primera vez: buscar el último número en la BD
+            console.log('🔄 Inicializando contador de órdenes...');
+            const pedidosRef = collection(db, 'pedidos');
+            const q = query(pedidosRef, orderBy('numeroOrden', 'desc'), limit(1));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+              nextNumber = 10000;
+            } else {
+              const lastOrder = querySnapshot.docs[0].data();
+              nextNumber = (lastOrder.numeroOrden || 10000) + 1;
+            }
+
+            // Crear el contador
+            transaction.set(counterRef, { value: nextNumber });
+          } else {
+            // Incrementar el contador existente
+            const currentValue = counterDoc.data().value || 10000;
+            nextNumber = currentValue + 1;
+            transaction.update(counterRef, { value: nextNumber });
+          }
+
+          return nextNumber;
+        });
+
+        console.log('✅ Nuevo número de orden generado:', newOrderNumber);
+        return newOrderNumber;
+
       } catch (error) {
-        console.error('Error obteniendo siguiente número de orden:', error);
-        return 10000 + Math.floor(Math.random() * 1000);
+        console.error('❌ Error obteniendo siguiente número de orden:', error);
+
+        // Fallback: intentar obtener de la BD directamente (sin transacción)
+        try {
+          const { collection, query, orderBy, limit, getDocs } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+
+          const pedidosRef = collection(db, 'pedidos');
+          const q = query(pedidosRef, orderBy('numeroOrden', 'desc'), limit(1));
+          const querySnapshot = await getDocs(q);
+
+          if (querySnapshot.empty) {
+            return 10000;
+          } else {
+            const lastOrder = querySnapshot.docs[0].data();
+            return (lastOrder.numeroOrden || 10000) + 1;
+          }
+        } catch (fallbackError) {
+          console.error('❌ Error en fallback:', fallbackError);
+          // Último recurso: usar timestamp para minimizar colisiones
+          return 10000 + (Date.now() % 90000);
+        }
       }
     }
 
