@@ -2109,7 +2109,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.22
+          v0.23
         </div>
       </div>
       
@@ -5847,7 +5847,31 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.21 - Actual</h3>
+          <h3>v0.23 - Actual</h3>
+          <ul>
+            <li>📱 <strong>WhatsApp multi-teléfono:</strong> Envío automático a ambos teléfonos del vendedor (phone y phone2)</li>
+            <li>📞 <strong>Segundo teléfono para vendedores:</strong> Campo phone2 agregado en datos de vendedor</li>
+            <li>🔄 <strong>WhatsApp en edición de órdenes:</strong> Notificación automática al modificar órdenes existentes</li>
+            <li>🔧 <strong>Fix vendedorId:</strong> Se preserva el vendedor al editar órdenes para correcto envío de WhatsApp</li>
+            <li>🗑️ <strong>Limpieza automática editingOrderId:</strong> Se limpia al agregar productos nuevos al carrito</li>
+            <li>⚡ <strong>Validación de órdenes:</strong> Si la orden a editar no existe, se limpia automáticamente y se crea una nueva</li>
+            <li>📝 <strong>Logs detallados WhatsApp:</strong> Sistema de debugging completo para rastrear envíos</li>
+            <li>🔍 <strong>Búsqueda en MASTER:</strong> Buscar órdenes por número, cliente o código con debounce (300ms)</li>
+            <li>📊 <strong>Contador de resultados:</strong> Muestra cantidad de órdenes filtradas vs total</li>
+            <li>❌ <strong>Botón limpiar búsqueda:</strong> Resetea el filtro y muestra todas las órdenes</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.22</h3>
+          <ul>
+            <li>📊 <strong>KPIs mejorados:</strong> Ocultar valores en cero para mejor visualización</li>
+            <li>🎨 <strong>Interfaz optimizada:</strong> Mejor presentación de métricas</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.21</h3>
           <ul>
             <li>🛒 <strong>Cart.html mejorado:</strong> Cantidades editables directamente en el carrito</li>
             <li>✏️ <strong>Input numérico:</strong> Cambiar cantidades sin recargar página</li>
