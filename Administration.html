@@ -575,6 +575,46 @@
       background: #d32f2f;
     }
 
+    /* Column toggle buttons */
+    .column-toggle-btn {
+      background: none;
+      border: none;
+      color: #4CAF50;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0 4px;
+      margin-left: 4px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      vertical-align: middle;
+    }
+
+    .column-toggle-btn:hover {
+      color: #45a049;
+      transform: scale(1.2);
+    }
+
+    .clientes-table th.column-collapsed {
+      max-width: 40px;
+      width: 40px;
+      padding: 10px 4px;
+    }
+
+    .clientes-table td.column-collapsed {
+      max-width: 40px;
+      width: 40px;
+      padding: 8px 4px;
+      text-align: center;
+    }
+
+    .column-label {
+      display: inline;
+    }
+
+    .column-collapsed .column-label {
+      display: none;
+    }
+
     /* Form specific styles for clients */
     .form-row {
       display: grid;
@@ -1509,21 +1549,21 @@
           <table class="clientes-table">
             <thead>
               <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Nombre Comercial</th>
-                <th>Grupo</th>
-                <th>Departamento</th>
-                <th>Inscripción</th>
-                <th>Nro Documento</th>
-                <th>Dirección</th>
-                <th>Ciudad</th>
-                <th>Provincia</th>
-                <th>País</th>
-                <th>Teléfono</th>
-                <th>Email</th>
-                <th>Vendedor</th>
-                <th>Saldo Crédito</th>
+                <th data-column="codigo"><span class="column-label">Código</span><button class="column-toggle-btn" data-column="codigo" title="Ocultar columna">−</button></th>
+                <th data-column="nombre"><span class="column-label">Nombre</span><button class="column-toggle-btn" data-column="nombre" title="Ocultar columna">−</button></th>
+                <th data-column="nombreComercial"><span class="column-label">Nombre Comercial</span><button class="column-toggle-btn" data-column="nombreComercial" title="Ocultar columna">−</button></th>
+                <th data-column="grupo"><span class="column-label">Grupo</span><button class="column-toggle-btn" data-column="grupo" title="Ocultar columna">−</button></th>
+                <th data-column="departamento"><span class="column-label">Departamento</span><button class="column-toggle-btn" data-column="departamento" title="Ocultar columna">−</button></th>
+                <th data-column="inscripcion"><span class="column-label">Inscripción</span><button class="column-toggle-btn" data-column="inscripcion" title="Ocultar columna">−</button></th>
+                <th data-column="nroDocumento"><span class="column-label">Nro Documento</span><button class="column-toggle-btn" data-column="nroDocumento" title="Ocultar columna">−</button></th>
+                <th data-column="direccion"><span class="column-label">Dirección</span><button class="column-toggle-btn" data-column="direccion" title="Ocultar columna">−</button></th>
+                <th data-column="ciudad"><span class="column-label">Ciudad</span><button class="column-toggle-btn" data-column="ciudad" title="Ocultar columna">−</button></th>
+                <th data-column="provincia"><span class="column-label">Provincia</span><button class="column-toggle-btn" data-column="provincia" title="Ocultar columna">−</button></th>
+                <th data-column="pais"><span class="column-label">País</span><button class="column-toggle-btn" data-column="pais" title="Ocultar columna">−</button></th>
+                <th data-column="telefono"><span class="column-label">Teléfono</span><button class="column-toggle-btn" data-column="telefono" title="Ocultar columna">−</button></th>
+                <th data-column="email"><span class="column-label">Email</span><button class="column-toggle-btn" data-column="email" title="Ocultar columna">−</button></th>
+                <th data-column="vendedor"><span class="column-label">Vendedor</span><button class="column-toggle-btn" data-column="vendedor" title="Ocultar columna">−</button></th>
+                <th data-column="saldoCredito"><span class="column-label">Saldo Crédito</span><button class="column-toggle-btn" data-column="saldoCredito" title="Ocultar columna">−</button></th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -3658,20 +3698,20 @@
 
       tableBody.innerHTML = clientes.map(cliente => `
         <tr>
-          <td>${cliente.codigo || ''}</td>
-          <td>${cliente.nombre || ''}</td>
-          <td>${cliente.nombreComercial || ''}</td>
-          <td>${cliente.grupo || ''}</td>
-          <td>${cliente.departamento || ''}</td>
-          <td>${cliente.inscripcion || ''}</td>
-          <td>${cliente.nroDocumento || ''}</td>
-          <td>${cliente.direccion || ''}</td>
-          <td>${cliente.ciudad || ''}</td>
-          <td>${cliente.provincia || ''}</td>
-          <td>${cliente.pais || ''}</td>
-          <td>${cliente.telefono || ''}</td>
-          <td>${cliente.email || ''}</td>
-          <td>
+          <td data-column="codigo">${cliente.codigo || ''}</td>
+          <td data-column="nombre">${cliente.nombre || ''}</td>
+          <td data-column="nombreComercial">${cliente.nombreComercial || ''}</td>
+          <td data-column="grupo">${cliente.grupo || ''}</td>
+          <td data-column="departamento">${cliente.departamento || ''}</td>
+          <td data-column="inscripcion">${cliente.inscripcion || ''}</td>
+          <td data-column="nroDocumento">${cliente.nroDocumento || ''}</td>
+          <td data-column="direccion">${cliente.direccion || ''}</td>
+          <td data-column="ciudad">${cliente.ciudad || ''}</td>
+          <td data-column="provincia">${cliente.provincia || ''}</td>
+          <td data-column="pais">${cliente.pais || ''}</td>
+          <td data-column="telefono">${cliente.telefono || ''}</td>
+          <td data-column="email">${cliente.email || ''}</td>
+          <td data-column="vendedor">
             <select class="client-seller-select"
                     data-client-id="${cliente.id}"
                     onchange="updateClientSeller('${cliente.id}', this.value)"
@@ -3684,13 +3724,110 @@
               `).join('')}
             </select>
           </td>
-          <td style="text-align: right;">${cliente.saldoCredito ? parseFloat(cliente.saldoCredito).toFixed(2) : '0.00'}</td>
+          <td data-column="saldoCredito" style="text-align: right;">${cliente.saldoCredito ? parseFloat(cliente.saldoCredito).toFixed(2) : '0.00'}</td>
           <td>
             <button class="edit-client-btn" onclick="editClient('${cliente.id}')">✏️</button>
             <button class="delete-client-btn" onclick="deleteCliente('${cliente.id}')">🗑️</button>
           </td>
         </tr>
       `).join('');
+
+      // Aplicar preferencias de columnas guardadas
+      applyColumnPreferences();
+    }
+
+    // Column toggle functionality
+    function getColumnPreferencesKey() {
+      const currentUser = firebase.auth().currentUser;
+      if (!currentUser) return null;
+      return `clientColumns_${currentUser.uid}`;
+    }
+
+    function loadColumnPreferences() {
+      const key = getColumnPreferencesKey();
+      if (!key) return {};
+
+      try {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        console.error('Error loading column preferences:', e);
+        return {};
+      }
+    }
+
+    function saveColumnPreferences(preferences) {
+      const key = getColumnPreferencesKey();
+      if (!key) return;
+
+      try {
+        localStorage.setItem(key, JSON.stringify(preferences));
+      } catch (e) {
+        console.error('Error saving column preferences:', e);
+      }
+    }
+
+    function toggleColumn(columnName) {
+      const table = document.querySelector('.clientes-table');
+      if (!table) return;
+
+      // Get all TH and TD elements for this column
+      const headers = table.querySelectorAll(`th[data-column="${columnName}"]`);
+      const cells = table.querySelectorAll(`td[data-column="${columnName}"]`);
+      const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
+
+      if (!headers.length) return;
+
+      const isCollapsed = headers[0].classList.contains('column-collapsed');
+
+      headers.forEach(header => {
+        if (isCollapsed) {
+          header.classList.remove('column-collapsed');
+        } else {
+          header.classList.add('column-collapsed');
+        }
+      });
+
+      cells.forEach(cell => {
+        if (isCollapsed) {
+          cell.classList.remove('column-collapsed');
+        } else {
+          cell.classList.add('column-collapsed');
+        }
+      });
+
+      if (toggleBtn) {
+        toggleBtn.textContent = isCollapsed ? '−' : '+';
+        toggleBtn.title = isCollapsed ? 'Ocultar columna' : 'Mostrar columna';
+      }
+
+      // Save preference
+      const preferences = loadColumnPreferences();
+      preferences[columnName] = !isCollapsed; // true = collapsed, false = expanded
+      saveColumnPreferences(preferences);
+    }
+
+    function applyColumnPreferences() {
+      const preferences = loadColumnPreferences();
+
+      Object.keys(preferences).forEach(columnName => {
+        if (preferences[columnName]) { // if collapsed
+          const table = document.querySelector('.clientes-table');
+          if (!table) return;
+
+          const headers = table.querySelectorAll(`th[data-column="${columnName}"]`);
+          const cells = table.querySelectorAll(`td[data-column="${columnName}"]`);
+          const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
+
+          headers.forEach(header => header.classList.add('column-collapsed'));
+          cells.forEach(cell => cell.classList.add('column-collapsed'));
+
+          if (toggleBtn) {
+            toggleBtn.textContent = '+';
+            toggleBtn.title = 'Mostrar columna';
+          }
+        }
+      });
     }
 
     // Search/filter clients
@@ -4442,6 +4579,16 @@
       }
 
       // === CLIENT MANAGEMENT EVENT LISTENERS ===
+
+      // Column toggle buttons
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('column-toggle-btn')) {
+          const columnName = e.target.getAttribute('data-column');
+          if (columnName) {
+            toggleColumn(columnName);
+          }
+        }
+      });
 
       // Add Client button
       const addClientBtn = document.getElementById('addClientBtn');
