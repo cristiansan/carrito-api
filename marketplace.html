@@ -5742,11 +5742,17 @@
 
               // Find the product in the mapped stock data
               const product = window.mappedStockData.find(p => {
-                const match = p.articulo === cartItem.item ||
-                              p.articulo.trim() === cartItem.item.trim() ||
-                              p.articulo.toLowerCase() === cartItem.item.toLowerCase();
+                // Check if both articulo and item exist and are strings
+                if (!p.articulo || !cartItem.item) return false;
+
+                const articulo = String(p.articulo);
+                const item = String(cartItem.item);
+
+                const match = articulo === item ||
+                              articulo.trim() === item.trim() ||
+                              articulo.toLowerCase() === item.toLowerCase();
                 if (match) {
-                  console.log(`✅ Producto encontrado: ${p.articulo}`);
+                  console.log(`✅ Producto encontrado: ${articulo}`);
                 }
                 return match;
               });
