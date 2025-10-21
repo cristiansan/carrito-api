@@ -5738,10 +5738,19 @@
             console.log('📊 Total productos disponibles:', window.mappedStockData.length);
             console.log('📊 Primeros 3 productos:', window.mappedStockData.slice(0, 3).map(p => p.articulo));
 
-            let loadedCount = 0;
-            cartItems.forEach(cartItem => {
-              console.log(`🔍 Buscando producto: "${cartItem.item}"`);
+            // Filter out invalid items (undefined, null, empty)
+            const validCartItems = cartItems.filter(item => {
+              if (!item.item || item.item === 'undefined' || item.item.trim() === '') {
+                console.warn('⚠️ Item inválido en carrito, ignorando:', item);
+                return false;
+              }
+              return true;
+            });
 
+            console.log(`📦 Items válidos en carrito: ${validCartItems.length} de ${cartItems.length}`);
+
+            let loadedCount = 0;
+            validCartItems.forEach(cartItem => {
               // Find the product in the mapped stock data
               const product = window.mappedStockData.find(p => {
                 // Check if both articulo and item exist and are strings
@@ -5753,9 +5762,6 @@
                 const match = articulo === item ||
                               articulo.trim() === item.trim() ||
                               articulo.toLowerCase() === item.toLowerCase();
-                if (match) {
-                  console.log(`✅ Producto encontrado: ${articulo}`);
-                }
                 return match;
               });
 
@@ -5765,21 +5771,18 @@
                   product: product,
                   quantity: cartItem.quantity
                 });
-
-                console.log(`✅ Producto cargado en carrito: ${cartItem.item} x${cartItem.quantity}`);
-                console.log(`✅ selectedItems ahora tiene:`, window.selectedItems.get(cartItem.item));
                 loadedCount++;
               } else {
-                console.warn(`⚠️ Producto NO encontrado en mappedStockData: "${cartItem.item}"`);
-                console.warn(`⚠️ Intentando buscar con búsqueda parcial...`);
+                console.warn(`⚠️ Producto NO encontrado: "${cartItem.item}"`);
 
-                // Try partial match
+                // Try partial match with safety check
                 const partialMatch = window.mappedStockData.find(p =>
-                  p.articulo.includes(cartItem.item) || cartItem.item.includes(p.articulo)
+                  p.articulo && cartItem.item && (
+                    p.articulo.includes(cartItem.item) || cartItem.item.includes(p.articulo)
+                  )
                 );
 
                 if (partialMatch) {
-                  console.log(`✅ Producto encontrado con búsqueda parcial: ${partialMatch.articulo}`);
                   window.selectedItems.set(partialMatch.articulo, {
                     product: partialMatch,
                     quantity: cartItem.quantity
@@ -5789,16 +5792,11 @@
               }
             });
 
-            console.log(`✅ Carrito cargado: ${loadedCount}/${cartItems.length} productos en selectedItems`);
-            console.log('✅ selectedItems.size:', window.selectedItems.size);
-            console.log('✅ Contenido de selectedItems:', Array.from(window.selectedItems.entries()));
+            console.log(`✅ Carrito cargado: ${loadedCount} productos válidos`);
 
             // Forzar re-render de la tabla para mostrar las cantidades
             if (window.renderRows) {
-              console.log('🔄 Re-renderizando tabla para mostrar cantidades...');
               window.renderRows();
-            } else {
-              console.warn('⚠️ window.renderRows no está disponible');
             }
 
             // Actualizar badge del carrito
