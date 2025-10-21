@@ -60,7 +60,15 @@
       "Bash(start http://localhost:3002/importar-clientes-inicial.html)",
       "Bash(start http://localhost:3002/marketplace.html)",
       "Bash(start http://localhost:3002/Administration.html)",
-      "Bash(start http://localhost:3002/cart.html)"
+      "Bash(start http://localhost:3002/cart.html)",
+      "Bash(vercel whoami:*)",
+      "Bash(vercel logout:*)",
+      "Bash(vercel login:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(vercel --prod)"
     ],
     "deny": [],
     "ask": []

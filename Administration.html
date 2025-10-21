@@ -1644,11 +1644,6 @@
             <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
             <span class="mdc-button__label">Exportar Excel</span>
           </button>
-          <button class="mdc-button mdc-button--outlined" id="fixDuplicatesBtn" style="background-color: #FF9800; color: white;">
-            <span class="mdc-button__ripple"></span>
-            <i class="material-icons mdc-button__icon" aria-hidden="true">build</i>
-            <span class="mdc-button__label">Corregir Duplicados</span>
-          </button>
         </div>
       </div>
 
@@ -3702,128 +3697,9 @@
       }
     }
 
-    // Fix duplicate order numbers
-    async function fixDuplicateOrders() {
-      if (!isUserAdmin) {
-        alert('⚠️ Solo administradores pueden ejecutar esta función');
-        return;
-      }
-
-      if (!confirm('¿Quieres buscar y corregir números de orden duplicados?\n\nEsto actualizará automáticamente las órdenes más recientes con números duplicados.')) {
-        return;
-      }
-
-      try {
-        console.log('🔍 Buscando órdenes duplicadas...');
-
-        const { collection, query, getDocs, doc, updateDoc, orderBy, limit } = firebase.firestoreHelpers;
-        const db = firebase.firestore();
-
-        // Agrupar órdenes por número
-        const ordersByNumber = {};
-        window.orders.forEach(order => {
-          const num = order.numeroOrden;
-          if (!ordersByNumber[num]) {
-            ordersByNumber[num] = [];
-          }
-          ordersByNumber[num].push(order);
-        });
-
-        // Encontrar duplicados
-        const duplicates = {};
-        Object.keys(ordersByNumber).forEach(num => {
-          if (ordersByNumber[num].length > 1) {
-            duplicates[num] = ordersByNumber[num];
-          }
-        });
-
-        const duplicateCount = Object.keys(duplicates).length;
-
-        if (duplicateCount === 0) {
-          alert('✅ No se encontraron números de orden duplicados');
-          console.log('✅ No hay duplicados');
-          return;
-        }
-
-        // Mostrar duplicados encontrados
-        let message = `Se encontraron ${duplicateCount} números duplicados:\n\n`;
-        Object.keys(duplicates).forEach(num => {
-          const orders = duplicates[num];
-          message += `Número ${num}: ${orders.length} órdenes\n`;
-          orders.forEach((order, idx) => {
-            message += `  ${idx + 1}. ${order.fechaLocal || order.fecha} - ${order.clienteNombre || order.usuarioEmail} (${order.logisticsState})\n`;
-          });
-        });
-
-        console.log(message);
-        alert(message);
-
-        if (!confirm('¿Deseas corregir estos duplicados?\n\nLas órdenes más recientes recibirán nuevos números.')) {
-          return;
-        }
-
-        // Buscar el último número de orden
-        const pedidosRef = collection(db, 'pedidos');
-        const q = query(pedidosRef, orderBy('numeroOrden', 'desc'), limit(1));
-        const querySnapshot = await getDocs(q);
-
-        let maxOrderNumber = 10000;
-        if (!querySnapshot.empty) {
-          maxOrderNumber = querySnapshot.docs[0].data().numeroOrden || 10000;
-        }
-
-        console.log(`🔢 Último número de orden: ${maxOrderNumber}`);
-
-        let nextNumber = maxOrderNumber + 1;
-        let updatedCount = 0;
-
-        // Corregir cada grupo de duplicados
-        for (const num of Object.keys(duplicates)) {
-          const orders = duplicates[num];
-
-          // Ordenar por timestamp (la más antigua primero)
-          orders.sort((a, b) => {
-            const timeA = a.timestamp?.toMillis?.() || 0;
-            const timeB = b.timestamp?.toMillis?.() || 0;
-            return timeA - timeB;
-          });
-
-          // Mantener el número original para la primera (más antigua)
-          // Cambiar el número de las demás
-          for (let i = 1; i < orders.length; i++) {
-            const order = orders[i];
-            console.log(`🔄 Cambiando orden ${order.id}: ${num} → ${nextNumber}`);
-
-            const orderRef = doc(db, 'pedidos', order.id);
-            await updateDoc(orderRef, {
-              numeroOrden: nextNumber
-            });
-
-            updatedCount++;
-            nextNumber++;
-          }
-        }
-
-        // Actualizar el contador
-        const counterRef = doc(db, 'counters', 'orderNumber');
-        await updateDoc(counterRef, { value: nextNumber - 1 });
-
-        console.log(`✅ ${updatedCount} órdenes corregidas`);
-        alert(`✅ Se corrigieron ${updatedCount} órdenes duplicadas.\n\nNuevo contador: ${nextNumber - 1}`);
-
-        // Recargar órdenes
-        await loadOrders();
-
-      } catch (error) {
-        console.error('❌ Error corrigiendo duplicados:', error);
-        alert('❌ Error: ' + error.message);
-      }
-    }
-
     // Expose functions globally
     window.loadOrders = loadOrders;
     window.exportOrders = exportOrders;
-    window.fixDuplicateOrders = fixDuplicateOrders;
 
     // === CLIENT MANAGEMENT FUNCTIONS ===
 
@@ -4811,16 +4687,6 @@
         exportOrdersBtn.addEventListener('click', function() {
           if (window.exportOrders) {
             window.exportOrders();
-          }
-        });
-      }
-
-      // Fix Duplicates button
-      const fixDuplicatesBtn = document.getElementById('fixDuplicatesBtn');
-      if (fixDuplicatesBtn) {
-        fixDuplicatesBtn.addEventListener('click', function() {
-          if (window.fixDuplicateOrders) {
-            window.fixDuplicateOrders();
           }
         });
       }

@@ -12,6 +12,8 @@ CarritoAPI.postman_collection.json
 # Scripts de carga de datos (no necesarios en producción)
 cargar-clientes.js
 cargar-clientes-consola.js
+fix-duplicate-order.js
+fix-duplicates-once.html
 
 # Development files
 .git
