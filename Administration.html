@@ -1144,6 +1144,26 @@
       transform: translateY(-2px);
     }
 
+    .move-order-btn-up {
+      background: #FF9800;
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .move-order-btn-up:hover {
+      background: #F57C00;
+      transform: translateY(-2px);
+    }
+
     .cancel-order-btn {
       background: #F44336;
       border: none;
@@ -2929,17 +2949,17 @@
 
       console.log('✅ [MASTER] Todos los contenedores encontrados');
 
-      // Define state flow: current state -> next state (null = final state)
+      // Define state flow: bidirectional movement with prev and next
       const stateFlow = {
-        borrador: 'revision',
-        revision: 'aprobada',
-        aprobada: 'preparacion',
-        preparacion: 'listo',
-        listo: 'despachada',
-        despachada: 'entregada',
-        entregada: 'cerrada',
-        cerrada: null,
-        cancelada: null
+        borrador: { next: 'revision', prev: null },
+        revision: { next: 'aprobada', prev: 'borrador' },
+        aprobada: { next: 'preparacion', prev: 'revision' },
+        preparacion: { next: 'listo', prev: 'aprobada' },
+        listo: { next: 'despachada', prev: 'preparacion' },
+        despachada: { next: 'entregada', prev: 'listo' },
+        entregada: { next: 'cerrada', prev: 'despachada' },
+        cerrada: { next: null, prev: 'entregada' },
+        cancelada: { next: null, prev: null }
       };
 
       // Separate orders by state
@@ -2970,12 +2990,12 @@
       // Display orders in each section
       Object.entries(ordersByState).forEach(([state, stateOrders]) => {
         const container = containers[state];
-        const nextState = stateFlow[state];
+        const currentFlow = stateFlow[state];
 
         console.log(`🎨 [MASTER] Renderizando ${stateOrders.length} órdenes para estado "${state}"`);
 
         if (stateOrders.length > 0) {
-          const html = stateOrders.map(order => createAdminOrderHTML(order, nextState, state)).join('');
+          const html = stateOrders.map(order => createAdminOrderHTML(order, currentFlow, state)).join('');
           console.log(`📝 [MASTER] HTML generado para ${state}:`, html.substring(0, 100) + '...');
           container.innerHTML = html;
         } else {
@@ -2998,9 +3018,10 @@
     }
 
     // Create HTML for an order item (admin version with edit capabilities)
-    function createAdminOrderHTML(order, nextState, currentState) {
+    function createAdminOrderHTML(order, currentFlow, currentState) {
       const canEdit = isUserAdmin;
-      const canMove = nextState !== null && canEdit;
+      const hasNext = currentFlow && currentFlow.next !== null;
+      const hasPrev = currentFlow && currentFlow.prev !== null;
       let buttonHtml = '';
 
       const stateLabels = {
@@ -3016,13 +3037,22 @@
       };
 
       // Admin can move orders and has additional controls
-      if (canMove) {
-        const nextStateLabel = stateLabels[nextState] || nextState;
-        buttonHtml = `
-          <button class="move-order-btn" onclick="adminMoveOrder('${order.id}', '${nextState}')" title="Mover a ${nextStateLabel}">
-            ↓ ${nextStateLabel}
-          </button>
-        `;
+      if (canEdit) {
+        // Flecha hacia arriba (volver al estado anterior)
+        if (hasPrev) {
+          const prevStateLabel = stateLabels[currentFlow.prev] || currentFlow.prev;
+          buttonHtml += `<button class="move-order-btn-up" onclick="adminMoveOrder('${order.id}', '${currentFlow.prev}')" title="Volver a ${prevStateLabel}">↑</button>`;
+        }
+
+        // Flecha hacia abajo (avanzar al siguiente estado)
+        if (hasNext) {
+          const nextStateLabel = stateLabels[currentFlow.next] || currentFlow.next;
+          buttonHtml += `
+            <button class="move-order-btn" onclick="adminMoveOrder('${order.id}', '${currentFlow.next}')" title="Mover a ${nextStateLabel}">
+              ↓ ${nextStateLabel}
+            </button>
+          `;
+        }
 
         // Add cancel button for non-cancelled orders
         if (currentState !== 'cancelada' && currentState !== 'cerrada') {
@@ -3032,7 +3062,10 @@
             </button>
           `;
         }
-      } else {
+      }
+
+      // Final states display
+      if (!hasNext && !hasPrev) {
         // Final states (cerrada, cancelada)
         if (currentState === 'entregada') {
           buttonHtml = `<span class="delivered-status">✓ Entregada</span>`;
