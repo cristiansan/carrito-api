@@ -1583,11 +1583,6 @@
             <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
             <span class="mdc-button__label">Actualizar</span>
           </button>
-          <button class="mdc-button mdc-button--outlined" id="deleteAllOrdersBtn" style="background-color: #F44336; color: white;">
-            <span class="mdc-button__ripple"></span>
-            <i class="material-icons mdc-button__icon" aria-hidden="true">delete_forever</i>
-            <span class="mdc-button__label">Borrar Todas las Órdenes</span>
-          </button>
         </div>
       </div>
 
@@ -3508,56 +3503,6 @@
     window.adminMoveOrder = adminMoveOrder;
     window.adminEditOrder = adminEditOrder;
 
-    // Delete all orders from Firebase
-    async function deleteAllOrders() {
-      if (!isUserAdmin) {
-        alert('⚠️ No tienes permisos para eliminar órdenes');
-        return;
-      }
-
-      const confirmMsg = '⚠️ ¿ESTÁS SEGURO?\n\nEsto eliminará TODAS las órdenes de la base de datos de forma PERMANENTE.\n\nEsta acción NO se puede deshacer.\n\nEscribe "BORRAR TODO" para confirmar:';
-      const userInput = prompt(confirmMsg);
-
-      if (userInput !== 'BORRAR TODO') {
-        alert('❌ Operación cancelada');
-        return;
-      }
-
-      try {
-        console.log('🗑️ [MASTER] Eliminando todas las órdenes...');
-
-        const { collection, getDocs, deleteDoc, doc } = firebase.firestoreHelpers;
-        const db = firebase.firestore();
-
-        // Get all orders
-        const pedidosCollection = collection(db, 'pedidos');
-        const querySnapshot = await getDocs(pedidosCollection);
-
-        console.log(`📦 [MASTER] Encontradas ${querySnapshot.size} órdenes para eliminar`);
-
-        const deletePromises = [];
-        querySnapshot.forEach((docSnapshot) => {
-          const orderRef = doc(db, 'pedidos', docSnapshot.id);
-          deletePromises.push(deleteDoc(orderRef));
-        });
-
-        await Promise.all(deletePromises);
-
-        console.log(`✅ [MASTER] ${querySnapshot.size} órdenes eliminadas`);
-        alert(`✅ ${querySnapshot.size} órdenes eliminadas correctamente`);
-
-        // Clear local data and reload
-        window.orders = [];
-        await loadOrders();
-
-      } catch (error) {
-        console.error('❌ [MASTER] Error eliminando órdenes:', error);
-        alert('❌ Error: ' + error.message);
-      }
-    }
-
-    window.deleteAllOrders = deleteAllOrders;
-
     // Update order statistics
     function updateOrderStats() {
       if (!window.orders) return;
@@ -4480,16 +4425,6 @@
           }
 
           console.log('✅ Órdenes actualizadas');
-        });
-      }
-
-      // Delete All Orders button
-      const deleteAllOrdersBtn = document.getElementById('deleteAllOrdersBtn');
-      if (deleteAllOrdersBtn) {
-        deleteAllOrdersBtn.addEventListener('click', function() {
-          if (window.deleteAllOrders) {
-            window.deleteAllOrders();
-          }
         });
       }
 
