@@ -3830,6 +3830,12 @@
       });
     }
 
+    // Make column functions globally accessible
+    window.toggleColumn = toggleColumn;
+    window.loadColumnPreferences = loadColumnPreferences;
+    window.saveColumnPreferences = saveColumnPreferences;
+    window.applyColumnPreferences = applyColumnPreferences;
+
     // Search/filter clients
     function searchClients(searchTerm) {
       if (!window.allClients) {
