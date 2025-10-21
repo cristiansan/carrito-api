@@ -3775,12 +3775,13 @@
 
         // Load profile data from Firebase
         if (user) {
+          const { doc, getDoc, collection } = firebase.firestoreHelpers;
           const db = firebase.firestore();
-          const profileRef = db.collection('userProfiles').doc(user.uid);
-          const doc = await profileRef.get();
+          const profileRef = doc(db, 'userProfiles', user.uid);
+          const docSnap = await getDoc(profileRef);
 
-          if (doc.exists) {
-            const profileData = doc.data();
+          if (docSnap.exists()) {
+            const profileData = docSnap.data();
             document.getElementById('profileName').value = profileData.name || '';
             document.getElementById('profileAddress').value = profileData.address || '';
             document.getElementById('profilePhone').value = profileData.phone || '';
@@ -3817,10 +3818,11 @@
           return;
         }
 
+        const { doc, setDoc } = firebase.firestoreHelpers;
         const db = firebase.firestore();
-        const profileRef = db.collection('userProfiles').doc(user.uid);
+        const profileRef = doc(db, 'userProfiles', user.uid);
 
-        await profileRef.set(profileData, { merge: true });
+        await setDoc(profileRef, profileData, { merge: true });
 
         console.log('✅ Profile saved successfully');
         alert('Perfil guardado exitosamente!');
