@@ -595,16 +595,32 @@
     }
 
     .clientes-table th.column-collapsed {
-      max-width: 40px;
-      width: 40px;
-      padding: 10px 4px;
+      max-width: 30px;
+      width: 30px;
+      min-width: 30px;
+      padding: 4px 2px;
+      text-align: center;
     }
 
     .clientes-table td.column-collapsed {
-      max-width: 40px;
-      width: 40px;
-      padding: 8px 4px;
+      max-width: 30px;
+      width: 30px;
+      min-width: 30px;
+      padding: 4px 2px;
       text-align: center;
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: clip;
+      white-space: nowrap;
+    }
+
+    .clientes-table td.column-collapsed::before {
+      content: attr(data-first-letter);
+      display: inline-block;
+    }
+
+    .clientes-table td.column-collapsed > * {
+      display: none;
     }
 
     .column-label {
@@ -3791,8 +3807,13 @@
       cells.forEach(cell => {
         if (isCollapsed) {
           cell.classList.remove('column-collapsed');
+          cell.removeAttribute('data-first-letter');
         } else {
           cell.classList.add('column-collapsed');
+          // Obtener la primera letra del contenido de la celda
+          const text = cell.textContent.trim();
+          const firstLetter = text.charAt(0) || '';
+          cell.setAttribute('data-first-letter', firstLetter);
         }
       });
 
@@ -3820,7 +3841,13 @@
           const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
 
           headers.forEach(header => header.classList.add('column-collapsed'));
-          cells.forEach(cell => cell.classList.add('column-collapsed'));
+          cells.forEach(cell => {
+            cell.classList.add('column-collapsed');
+            // Obtener la primera letra del contenido de la celda
+            const text = cell.textContent.trim();
+            const firstLetter = text.charAt(0) || '';
+            cell.setAttribute('data-first-letter', firstLetter);
+          });
 
           if (toggleBtn) {
             toggleBtn.textContent = '+';
