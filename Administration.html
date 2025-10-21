@@ -1639,6 +1639,11 @@
             <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
             <span class="mdc-button__label">Actualizar</span>
           </button>
+          <button class="mdc-button mdc-button--outlined" id="exportOrdersBtn" style="background-color: #4CAF50; color: white;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+            <span class="mdc-button__label">Exportar Excel</span>
+          </button>
         </div>
       </div>
 
@@ -3615,8 +3620,86 @@
       console.log('✅ [MASTER] Estadísticas KPI actualizadas');
     }
 
+    // Export orders to Excel
+    async function exportOrders() {
+      if (!window.orders || window.orders.length === 0) {
+        alert('⚠️ No hay órdenes para exportar');
+        return;
+      }
+
+      try {
+        console.log('📤 Exportando órdenes a Excel...');
+
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Preparar datos para Excel
+        const ordersData = window.orders.map(order => {
+          // Calcular cantidad total de items
+          const totalItems = order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
+
+          return {
+            'Número de Orden': order.numeroOrden || order.id.slice(-6),
+            'Fecha': order.fechaLocal || order.fecha || '',
+            'Cliente': order.clienteNombre || order.usuarioEmail || '',
+            'Email': order.clienteEmail || order.usuarioEmail || '',
+            'Estado': stateLabels[order.logisticsState] || order.logisticsState || '',
+            'Cantidad Items': order.cantidadItems || totalItems,
+            'Total': order.total || order.montoTotal || 0,
+            'Creada por Admin': order.creadoPorAdmin ? 'Sí' : 'No',
+            'Vendedor': order.usuarioEmail || '',
+            'Editada por': order.editadaPorNombre || '',
+            'Fecha Edición': order.fechaEdicionLocal || ''
+          };
+        });
+
+        // Crear libro de Excel
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(ordersData);
+
+        // Ajustar ancho de columnas
+        const colWidths = [
+          { wch: 15 }, // Número de Orden
+          { wch: 20 }, // Fecha
+          { wch: 30 }, // Cliente
+          { wch: 30 }, // Email
+          { wch: 25 }, // Estado
+          { wch: 12 }, // Cantidad Items
+          { wch: 15 }, // Total
+          { wch: 15 }, // Creada por Admin
+          { wch: 30 }, // Vendedor
+          { wch: 25 }, // Editada por
+          { wch: 20 }  // Fecha Edición
+        ];
+        ws['!cols'] = colWidths;
+
+        XLSX.utils.book_append_sheet(wb, ws, 'Órdenes');
+
+        // Generar nombre de archivo con fecha
+        const fecha = new Date().toISOString().split('T')[0];
+        XLSX.writeFile(wb, `Ordenes_${fecha}.xlsx`);
+
+        console.log(`✅ Exportadas ${ordersData.length} órdenes a Excel`);
+        alert(`✅ Exportadas ${ordersData.length} órdenes correctamente`);
+
+      } catch (error) {
+        console.error('❌ Error exportando órdenes:', error);
+        alert('❌ Error exportando órdenes: ' + error.message);
+      }
+    }
+
     // Expose functions globally
     window.loadOrders = loadOrders;
+    window.exportOrders = exportOrders;
 
     // === CLIENT MANAGEMENT FUNCTIONS ===
 
@@ -4595,6 +4678,16 @@
           }
 
           console.log('✅ Órdenes actualizadas');
+        });
+      }
+
+      // Export Orders button
+      const exportOrdersBtn = document.getElementById('exportOrdersBtn');
+      if (exportOrdersBtn) {
+        exportOrdersBtn.addEventListener('click', function() {
+          if (window.exportOrders) {
+            window.exportOrders();
+          }
         });
       }
 
