@@ -1647,6 +1647,29 @@
         </div>
       </div>
 
+      <!-- Search Box -->
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; align-items: center; background: #2a2a32; padding: 15px; border-radius: 8px;">
+          <i class="material-icons" style="color: #4CAF50;">search</i>
+          <input
+            type="text"
+            id="orderSearchInput"
+            placeholder="Buscar por número de orden, número de cliente o nombre de cliente..."
+            style="flex: 1; background: #1e1e24; border: 1px solid #3a3a42; color: #fff; padding: 12px; border-radius: 4px; font-size: 14px; outline: none;"
+          />
+          <button
+            id="clearSearchBtn"
+            class="mdc-button mdc-button--outlined"
+            style="display: none; min-width: auto; padding: 8px 16px;"
+          >
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">clear</i>
+            <span class="mdc-button__label">Limpiar</span>
+          </button>
+        </div>
+        <div id="searchResultsCount" style="margin-top: 8px; color: #888; font-size: 13px; display: none;"></div>
+      </div>
+
       <div class="stats-grid" style="margin-bottom: 24px;">
         <div class="stat-item">
           <span class="stat-number" id="totalOrders">0</span>
@@ -3111,8 +3134,8 @@
     }
 
     // Display orders in their respective sections (same as SEGUIMIENTO)
-    function displayOrders() {
-      console.log('🎨 [MASTER] displayOrders() called with', window.orders?.length || 0, 'orders');
+    function displayOrders(searchTerm = '') {
+      console.log('🎨 [MASTER] displayOrders() called with', window.orders?.length || 0, 'orders', searchTerm ? `(searching: "${searchTerm}")` : '');
 
       const containers = {
         borrador: document.getElementById('admin-borradorOrders'),
@@ -3148,17 +3171,64 @@
         cancelada: { next: null, prev: null }
       };
 
+      // Filter orders by search term if provided
+      let filteredOrders = window.orders;
+      if (searchTerm && searchTerm.trim()) {
+        const search = searchTerm.trim().toLowerCase();
+        filteredOrders = window.orders.filter(order => {
+          // Search by order number
+          const orderNumber = String(order.numeroOrden || '').toLowerCase();
+          if (orderNumber.includes(search)) return true;
+
+          // Search by client name
+          const clientName = String(order.clienteNombre || '').toLowerCase();
+          if (clientName.includes(search)) return true;
+
+          // Search by client email (could contain client number)
+          const clientEmail = String(order.clienteEmail || '').toLowerCase();
+          if (clientEmail.includes(search)) return true;
+
+          // Search by user email
+          const userEmail = String(order.usuarioEmail || '').toLowerCase();
+          if (userEmail.includes(search)) return true;
+
+          // Search by client code (assuming it's in clienteData)
+          const clientCode = String(order.clienteData?.codigo || order.codigo || '').toLowerCase();
+          if (clientCode.includes(search)) return true;
+
+          return false;
+        });
+
+        // Update search results count
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        if (searchResultsCount) {
+          searchResultsCount.style.display = 'block';
+          searchResultsCount.textContent = `📊 Mostrando ${filteredOrders.length} de ${window.orders.length} órdenes`;
+        }
+
+        // Show clear button
+        const clearBtn = document.getElementById('clearSearchBtn');
+        if (clearBtn) clearBtn.style.display = 'flex';
+      } else {
+        // Hide search results count and clear button
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        if (searchResultsCount) searchResultsCount.style.display = 'none';
+
+        const clearBtn = document.getElementById('clearSearchBtn');
+        if (clearBtn) clearBtn.style.display = 'none';
+      }
+
       // Separate orders by state
       const ordersByState = {
-        borrador: window.orders.filter(order => order.logisticsState === 'borrador'),
-        revision: window.orders.filter(order => order.logisticsState === 'revision'),
-        aprobada: window.orders.filter(order => order.logisticsState === 'aprobada'),
-        preparacion: window.orders.filter(order => order.logisticsState === 'preparacion'),
-        listo: window.orders.filter(order => order.logisticsState === 'listo'),
-        despachada: window.orders.filter(order => order.logisticsState === 'despachada'),
-        entregada: window.orders.filter(order => order.logisticsState === 'entregada'),
-        cerrada: window.orders.filter(order => order.logisticsState === 'cerrada'),
-        cancelada: window.orders.filter(order => order.logisticsState === 'cancelada')
+        borrador: filteredOrders.filter(order => order.logisticsState === 'borrador'),
+        revision: filteredOrders.filter(order => order.logisticsState === 'revision'),
+        aprobada: filteredOrders.filter(order => order.logisticsState === 'aprobada'),
+        preparacion: filteredOrders.filter(order => order.logisticsState === 'preparacion'),
+        listo: filteredOrders.filter(order => order.logisticsState === 'listo'),
+        despachada: filteredOrders.filter(order => order.logisticsState === 'despachada'),
+        entregada: filteredOrders.filter(order => order.logisticsState === 'entregada'),
+        cerrada: filteredOrders.filter(order => order.logisticsState === 'cerrada'),
+        cancelada: filteredOrders.filter(order => order.logisticsState === 'cancelada')
       };
 
       console.log('📊 [MASTER] Órdenes por estado:', {
@@ -4687,6 +4757,47 @@
         exportOrdersBtn.addEventListener('click', function() {
           if (window.exportOrders) {
             window.exportOrders();
+          }
+        });
+      }
+
+      // Search Orders
+      const orderSearchInput = document.getElementById('orderSearchInput');
+      if (orderSearchInput) {
+        // Search as user types (with debounce)
+        let searchTimeout;
+        orderSearchInput.addEventListener('input', function(e) {
+          clearTimeout(searchTimeout);
+          const searchTerm = e.target.value;
+
+          searchTimeout = setTimeout(() => {
+            if (window.displayOrders) {
+              window.displayOrders(searchTerm);
+            }
+          }, 300); // Wait 300ms after user stops typing
+        });
+
+        // Also search on Enter key
+        orderSearchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            if (window.displayOrders) {
+              window.displayOrders(e.target.value);
+            }
+          }
+        });
+      }
+
+      // Clear Search button
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', function() {
+          const searchInput = document.getElementById('orderSearchInput');
+          if (searchInput) {
+            searchInput.value = '';
+            if (window.displayOrders) {
+              window.displayOrders('');
+            }
           }
         });
       }
