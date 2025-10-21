@@ -1211,6 +1211,136 @@
       font-size: 12px;
       font-weight: bold;
     }
+
+    /* Order Details Modal */
+    .order-details-modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      overflow-y: auto;
+    }
+
+    .order-details-modal-content {
+      background-color: #1e1e24;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 700px;
+      border: 2px solid #4CAF50;
+      position: relative;
+    }
+
+    .order-details-close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 20px;
+    }
+
+    .order-details-close:hover,
+    .order-details-close:focus {
+      color: #f1f1f1;
+    }
+
+    .order-details-header {
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .order-details-title {
+      font-size: 24px;
+      color: #4CAF50;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .order-details-section {
+      margin-bottom: 20px;
+    }
+
+    .order-details-section h3 {
+      color: #4CAF50;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 5px;
+    }
+
+    .order-details-info {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .order-details-label {
+      color: #b5b5b5;
+      font-weight: 500;
+    }
+
+    .order-details-value {
+      color: #f1f1f1;
+    }
+
+    .order-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .order-items-table th {
+      background: #2a2a33;
+      color: #ffffff;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .order-items-table td {
+      padding: 10px;
+      border-bottom: 1px solid #2a2a2a;
+      color: #f1f1f1;
+    }
+
+    .order-items-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .order-total {
+      text-align: right;
+      font-size: 20px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #4CAF50;
+    }
+
+    /* Editable quantity input in modal */
+    .editable-quantity {
+      width: 60px;
+      padding: 4px 8px;
+      border: 1px solid #444;
+      background: #2a2a34;
+      color: white;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .editable-quantity:focus {
+      outline: none;
+      border-color: #00BCD4;
+    }
   </style>
 </head>
 <body>
@@ -3139,7 +3269,7 @@
       }
     }
 
-    // Admin edit order function - redirect to marketplace with order items
+    // Show admin order details in modal with editable quantities
     async function adminEditOrder(orderId) {
       if (!isUserAdmin) {
         alert('⚠️ No tienes permisos para editar órdenes');
@@ -3147,6 +3277,8 @@
       }
 
       try {
+        console.log('📋 Mostrando detalles de orden:', orderId);
+
         const { doc, getDoc } = firebase.firestoreHelpers;
         const db = firebase.firestore();
 
@@ -3158,32 +3290,218 @@
           return;
         }
 
-        const order = orderDoc.data();
+        const order = { id: orderDoc.id, ...orderDoc.data() };
 
-        // Save order items to localStorage for marketplace to load
+        // Mapeo de estados
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Llenar información general
+        let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
+        if (order.editadaPor && order.editadaPorNombre) {
+          orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
+        }
+        document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+        document.getElementById('detailClientName').textContent = order.clienteNombre || order.usuarioEmail || '-';
+        document.getElementById('detailClientEmail').textContent = order.clienteEmail || order.usuarioEmail || '-';
+        document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
+        document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
+
+        // Mostrar si fue creada por admin
+        if (order.creadoPorAdmin) {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'grid';
+          document.getElementById('detailAdminCreated').textContent = order.usuarioEmail || '-';
+        } else {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'none';
+        }
+
+        // Llenar tabla de items con campos editables
+        const itemsTableBody = document.getElementById('detailOrderItems');
+        itemsTableBody.innerHTML = '';
+
+        let hasChanges = false;
+
         if (order.items && order.items.length > 0) {
+          order.items.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-item-index', index);
+            row.innerHTML = `
+              <td>${item.articulo || '-'}</td>
+              <td>${item.description || '-'}</td>
+              <td style="text-align: center;">
+                <input type="number"
+                       class="editable-quantity"
+                       value="${item.quantity || 0}"
+                       min="0"
+                       data-item-index="${index}"
+                       data-price="${item.price || 0}">
+              </td>
+              <td style="text-align: right;">$${(item.price || 0).toFixed(2)}</td>
+              <td class="item-subtotal" style="text-align: right;">$${(item.subtotal || 0).toFixed(2)}</td>
+            `;
+            itemsTableBody.appendChild(row);
+          });
+
+          // Agregar event listeners para actualizar subtotales y detectar cambios
+          const quantityInputs = itemsTableBody.querySelectorAll('.editable-quantity');
+          quantityInputs.forEach(input => {
+            input.addEventListener('change', function() {
+              const index = parseInt(this.getAttribute('data-item-index'));
+              const price = parseFloat(this.getAttribute('data-price'));
+              const quantity = parseInt(this.value) || 0;
+              const subtotal = price * quantity;
+
+              // Actualizar el item en el array
+              order.items[index].quantity = quantity;
+              order.items[index].subtotal = subtotal;
+
+              // Actualizar subtotal en la fila
+              const row = this.closest('tr');
+              const subtotalCell = row.querySelector('.item-subtotal');
+              subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+
+              // Recalcular total
+              const newTotal = order.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+              order.total = newTotal;
+              document.getElementById('detailOrderTotal').textContent = `$${newTotal.toFixed(2)}`;
+
+              // Detectar si hubo cambios
+              hasChanges = true;
+              const saveContainer = document.getElementById('detailSaveOrderContainer');
+              if (saveContainer) {
+                saveContainer.style.display = 'block';
+              }
+            });
+          });
+        } else {
+          itemsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay items</td></tr>';
+        }
+
+        // Mostrar total
+        document.getElementById('detailOrderTotal').textContent = `$${(order.total || 0).toFixed(2)}`;
+
+        // Configurar botón Guardar
+        const saveOrderContainer = document.getElementById('detailSaveOrderContainer');
+        const saveOrderBtn = document.getElementById('detailSaveOrderBtn');
+
+        // Ocultar botón Guardar inicialmente
+        if (saveOrderContainer) {
+          saveOrderContainer.style.display = 'none';
+        }
+
+        // Remover event listeners previos del botón Guardar
+        if (saveOrderBtn) {
+          const newSaveBtn = saveOrderBtn.cloneNode(true);
+          saveOrderBtn.parentNode.replaceChild(newSaveBtn, saveOrderBtn);
+
+          // Agregar nuevo event listener para Guardar
+          newSaveBtn.addEventListener('click', async () => {
+            try {
+              console.log('💾 Guardando cambios en la orden...');
+
+              const currentUser = firebase.auth().currentUser;
+              if (!currentUser) {
+                alert('❌ Debes estar autenticado para guardar cambios');
+                return;
+              }
+
+              // Obtener email y nombre del usuario actual
+              const userEmail = currentUser.email;
+              let userName = userEmail;
+
+              // Intentar obtener el nombre del vendedor desde Firestore
+              try {
+                const { doc, getDoc } = firebase.firestoreHelpers;
+                const db = firebase.firestore();
+                const userRef = doc(db, 'usuarios', currentUser.uid);
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = userData.nombre || userData.email || userEmail;
+                }
+              } catch (e) {
+                console.warn('⚠️ No se pudo obtener nombre de usuario:', e);
+              }
+
+              // Actualizar orden en Firebase con información de quién editó
+              const { doc, updateDoc } = firebase.firestoreHelpers;
+              const db = firebase.firestore();
+              const orderRef = doc(db, 'pedidos', order.id);
+
+              await updateDoc(orderRef, {
+                items: order.items,
+                total: order.total,
+                editadaPor: currentUser.uid,
+                editadaPorEmail: userEmail,
+                editadaPorNombre: userName,
+                fechaEdicion: new Date().toISOString(),
+                fechaEdicionLocal: new Date().toLocaleString('es-AR')
+              });
+
+              console.log('✅ Orden guardada exitosamente');
+
+              // Actualizar el número de orden con el indicador de edición
+              let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
+              orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${userName})</span>`;
+              document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+
+              // Ocultar botón Guardar
+              saveOrderContainer.style.display = 'none';
+              hasChanges = false;
+
+              // Recargar órdenes para reflejar cambios
+              await loadOrders();
+
+              alert('✅ Cambios guardados exitosamente');
+            } catch (error) {
+              console.error('❌ Error guardando cambios:', error);
+              alert('❌ Error al guardar cambios. Por favor intenta nuevamente.');
+            }
+          });
+        }
+
+        // Configurar botón "Seguir Comprando / Editar Orden"
+        const editOrderContainer = document.getElementById('detailEditOrderContainer');
+        const editOrderBtn = document.getElementById('detailEditOrderBtn');
+
+        // Siempre mostrar el botón
+        editOrderContainer.style.display = 'block';
+
+        // Remover event listeners previos
+        const newEditBtn = editOrderBtn.cloneNode(true);
+        editOrderBtn.parentNode.replaceChild(newEditBtn, editOrderBtn);
+
+        // Agregar nuevo event listener
+        newEditBtn.addEventListener('click', () => {
+          // Guardar orden en localStorage y redirigir a marketplace
           const cartItems = order.items.map(item => ({
-            item: item.articulo || item.item,
+            item: item.articulo,
             description: item.description,
             price: item.price,
             quantity: item.quantity
           }));
-
           localStorage.setItem('cart', JSON.stringify(cartItems));
-          localStorage.setItem('editingOrderId', orderId);
-
+          localStorage.setItem('editingOrderId', order.id);
           console.log('📦 Orden guardada en localStorage, redirigiendo a marketplace...');
-          console.log('📦 Items:', cartItems);
-
-          // Redirect to marketplace
           window.location.href = 'marketplace.html';
-        } else {
-          alert('⚠️ Esta orden no tiene productos para editar');
-        }
+        });
+
+        // Mostrar modal
+        document.getElementById('orderDetailsModal').style.display = 'block';
 
       } catch (error) {
-        console.error('❌ Error loading order:', error);
-        alert('❌ Error al cargar la orden');
+        console.error('❌ Error mostrando detalles de orden:', error);
+        alert('Error al cargar detalles de la orden');
       }
     }
 
@@ -4494,6 +4812,101 @@
         }
       }, 2000); // Give everything time to initialize
     });
+
+    // Close modal when clicking on X or outside
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    const orderDetailsClose = document.querySelector('.order-details-close');
+
+    if (orderDetailsClose) {
+      orderDetailsClose.addEventListener('click', () => {
+        orderDetailsModal.style.display = 'none';
+      });
+    }
+
+    window.addEventListener('click', (event) => {
+      if (event.target === orderDetailsModal) {
+        orderDetailsModal.style.display = 'none';
+      }
+    });
   </script>
+
+  <!-- Order Details Modal -->
+  <div id="orderDetailsModal" class="order-details-modal">
+    <div class="order-details-modal-content">
+      <span class="order-details-close">&times;</span>
+
+      <div class="order-details-header">
+        <h2 class="order-details-title" id="orderDetailsTitle">Detalles de la Orden</h2>
+      </div>
+
+      <div class="order-details-section">
+        <h3>📋 Información General</h3>
+        <div class="order-details-info">
+          <span class="order-details-label">Número de Orden:</span>
+          <span class="order-details-value" id="detailOrderNumber">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Cliente:</span>
+          <span class="order-details-value" id="detailClientName">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Email:</span>
+          <span class="order-details-value" id="detailClientEmail">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Fecha:</span>
+          <span class="order-details-value" id="detailOrderDate">-</span>
+        </div>
+        <div class="order-details-info">
+          <span class="order-details-label">Estado:</span>
+          <span class="order-details-value" id="detailOrderState">-</span>
+        </div>
+        <div class="order-details-info" id="detailAdminCreatedContainer" style="display: none;">
+          <span class="order-details-label">Creada por (Admin):</span>
+          <span class="order-details-value" id="detailAdminCreated">-</span>
+        </div>
+      </div>
+
+      <div class="order-details-section">
+        <h3>🛒 Productos</h3>
+        <table class="order-items-table" id="detailOrderTable">
+          <thead>
+            <tr>
+              <th>Artículo</th>
+              <th>Descripción</th>
+              <th style="text-align: center;">Cantidad</th>
+              <th style="text-align: right;">Precio Unit.</th>
+              <th style="text-align: right;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="detailOrderItems">
+            <tr>
+              <td colspan="5" style="text-align: center;">No hay items</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="order-total">
+          <span>TOTAL: </span>
+          <span id="detailOrderTotal">$0.00</span>
+        </div>
+      </div>
+
+      <div class="order-details-section" id="detailSaveOrderContainer" style="display: none;">
+        <button class="mdc-button mdc-button--raised" id="detailSaveOrderBtn" style="width: 100%; background-color: #FF9800 !important;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+          <span class="mdc-button__label">Guardar Cambios</span>
+        </button>
+      </div>
+
+      <div class="order-details-section" id="detailEditOrderContainer" style="display: none;">
+        <button class="mdc-button mdc-button--raised" id="detailEditOrderBtn" style="width: 100%; background-color: #4CAF50 !important;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">shopping_cart</i>
+          <span class="mdc-button__label">Seguir Comprando / Editar Orden</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
