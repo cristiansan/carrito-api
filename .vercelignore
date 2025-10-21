@@ -1,3 +1,33 @@
-node_modules
-package-lock.json
-server.js
+# Documentation
+*.md
+README.md
+ADMIN-INSTRUCTIONS.md
+
+# Testing files
+*.py
+test.api.py
+testapi.py
+CarritoAPI.postman_collection.json
+
+# Scripts de carga de datos (no necesarios en producción)
+cargar-clientes.js
+cargar-clientes-consola.js
+
+# Development files
+.git
+.gitignore
+.vscode
+.idea
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache
+__pycache__/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
