@@ -5019,22 +5019,22 @@
           }
         }
       }, 2000); // Give everything time to initialize
-    });
 
-    // Close modal when clicking on X or outside
-    const orderDetailsModal = document.getElementById('orderDetailsModal');
-    const orderDetailsClose = document.querySelector('.order-details-close');
+      // Close order details modal when clicking on X or outside
+      const orderDetailsModal = document.getElementById('orderDetailsModal');
+      const orderDetailsClose = document.querySelector('.order-details-close');
 
-    if (orderDetailsClose) {
-      orderDetailsClose.addEventListener('click', () => {
-        orderDetailsModal.style.display = 'none';
-      });
-    }
-
-    window.addEventListener('click', (event) => {
-      if (event.target === orderDetailsModal) {
-        orderDetailsModal.style.display = 'none';
+      if (orderDetailsClose) {
+        orderDetailsClose.addEventListener('click', () => {
+          orderDetailsModal.style.display = 'none';
+        });
       }
+
+      window.addEventListener('click', (event) => {
+        if (event.target === orderDetailsModal) {
+          orderDetailsModal.style.display = 'none';
+        }
+      });
     });
   </script>
 
