@@ -3773,19 +3773,19 @@
           document.getElementById('profileUserEmail').textContent = user.email;
         }
 
-        // Load profile data from Firebase
+        // Load profile data from Firebase usuarios collection
         if (user) {
-          const { doc, getDoc, collection } = firebase.firestoreHelpers;
+          const { doc, getDoc } = firebase.firestoreHelpers;
           const db = firebase.firestore();
-          const profileRef = doc(db, 'userProfiles', user.uid);
-          const docSnap = await getDoc(profileRef);
+          const userRef = doc(db, 'usuarios', user.uid);
+          const docSnap = await getDoc(userRef);
 
           if (docSnap.exists()) {
-            const profileData = docSnap.data();
-            document.getElementById('profileName').value = profileData.name || '';
-            document.getElementById('profileAddress').value = profileData.address || '';
-            document.getElementById('profilePhone').value = profileData.phone || '';
-            document.getElementById('profileContactPhone').value = profileData.contactPhone || '';
+            const userData = docSnap.data();
+            document.getElementById('profileName').value = userData.name || userData.displayName || '';
+            document.getElementById('profileAddress').value = userData.address || '';
+            document.getElementById('profilePhone').value = userData.phone || '';
+            document.getElementById('profileContactPhone').value = userData.contactPhone || '';
           } else {
             // Initialize empty profile
             clearProfileFields();
@@ -3820,9 +3820,9 @@
 
         const { doc, setDoc } = firebase.firestoreHelpers;
         const db = firebase.firestore();
-        const profileRef = doc(db, 'userProfiles', user.uid);
+        const userRef = doc(db, 'usuarios', user.uid);
 
-        await setDoc(profileRef, profileData, { merge: true });
+        await setDoc(userRef, profileData, { merge: true });
 
         console.log('✅ Profile saved successfully');
         alert('Perfil guardado exitosamente!');
