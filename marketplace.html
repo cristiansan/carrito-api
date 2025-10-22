@@ -2724,18 +2724,45 @@
 
       try {
         console.log('📋 Cargando historial desde Firebase en marketplace.html...');
+        console.log('👤 Usuario actual:', currentUser.uid, currentUser.email);
 
         // Usar la API modular v10 correctamente
         const { collection, query, where, limit, getDocs } = firebase.firestoreHelpers;
         const db = firebase.firestore();
 
+        // Primero verificar cuántas órdenes hay en total para este usuario
         const pedidosCollection = collection(db, 'pedidos');
+
+        // Cargar todas las órdenes sin límite para debug
+        const allOrdersQuery = query(pedidosCollection);
+        const allOrdersSnapshot = await getDocs(allOrdersQuery);
+
+        console.log('📊 Total de órdenes en la base de datos:', allOrdersSnapshot.size);
+
+        // Verificar todas las órdenes y sus userId
+        allOrdersSnapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.usuarioEmail === currentUser.email || data.userId === currentUser.uid) {
+            console.log('✅ Orden que debería aparecer:', {
+              id: doc.id,
+              numeroOrden: data.numeroOrden,
+              userId: data.userId,
+              usuarioEmail: data.usuarioEmail,
+              currentUserUid: currentUser.uid,
+              matchByUserId: data.userId === currentUser.uid,
+              matchByEmail: data.usuarioEmail === currentUser.email
+            });
+          }
+        });
+
         const q = query(
           pedidosCollection,
           where('userId', '==', currentUser.uid),
           limit(50)
         );
         const querySnapshot = await getDocs(q);
+
+        console.log('📋 Órdenes encontradas con userId filter:', querySnapshot.size);
 
         if (querySnapshot.empty) {
           historialList.innerHTML = `
@@ -2750,6 +2777,12 @@
         const pedidos = [];
         querySnapshot.forEach(doc => {
           const data = doc.data();
+          console.log('📦 Orden cargada:', {
+            id: doc.id,
+            numeroOrden: data.numeroOrden,
+            userId: data.userId,
+            usuarioEmail: data.usuarioEmail
+          });
           pedidos.push({
             id: doc.id,
             ...data
