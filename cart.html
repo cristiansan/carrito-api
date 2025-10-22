@@ -1150,18 +1150,18 @@
 
         // Si no hay vendedor asignado, buscar a Santiago como vendedor por defecto
         if (!vendedorId) {
-          console.log('⚠️ [WhatsApp] No hay vendedor asignado, buscando a Santiago...');
+          console.log('⚠️ [WhatsApp] No hay vendedor asignado, buscando a Santiago Fernandez...');
           const vendedoresRef = collection(db, 'vendedores');
-          const q = query(vendedoresRef, where('name', '==', 'Santiago'));
+          const q = query(vendedoresRef, where('email', '==', 'santifn.axp@gmail.com'));
           const querySnapshot = await getDocs(q);
 
           if (!querySnapshot.empty) {
             const santiagoDoc = querySnapshot.docs[0];
             vendedorId = santiagoDoc.id;
             vendedorData = santiagoDoc.data();
-            console.log('✅ [WhatsApp] Santiago encontrado como vendedor por defecto:', vendedorId);
+            console.log('✅ [WhatsApp] Santiago Fernandez encontrado como vendedor por defecto:', vendedorId);
           } else {
-            console.log('❌ [WhatsApp] No se encontró a Santiago en la BD');
+            console.log('❌ [WhatsApp] No se encontró a Santiago Fernandez (santifn.axp@gmail.com) en la BD');
             return;
           }
         } else {
