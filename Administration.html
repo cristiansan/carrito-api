@@ -1447,6 +1447,15 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="admisiones">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Admisiones</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -1775,6 +1784,22 @@
           <div class="logistics-orders" id="admin-canceladaOrders">
             <p class="no-orders">No hay pedidos cancelados</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admisiones Content -->
+  <div id="admisiones-content" class="tab-content" style="display: none;">
+    <h2>👥 Gestión de Admisiones</h2>
+    <div class="admin-section">
+      <p style="color: #888; margin-bottom: 20px;">Usuarios pendientes de aprobación. Aprueba usuarios y asigna roles.</p>
+
+      <div id="pendingUsersContainer">
+        <div id="pendingUsersList"></div>
+        <div id="noPendingUsers" style="display: none; text-align: center; padding: 40px; color: #666;">
+          <i class="material-icons" style="font-size: 64px; opacity: 0.3;">check_circle</i>
+          <p>No hay usuarios pendientes de aprobación</p>
         </div>
       </div>
     </div>
@@ -4722,6 +4747,134 @@
       const buttons = document.querySelectorAll('.mdc-button');
       buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
 
+      // === ADMISIONES FUNCTIONS ===
+
+      // Load pending users from Firestore
+      async function loadPendingUsers() {
+        console.log('👥 Loading pending users...');
+
+        try {
+          const { collection, query, where, getDocs, orderBy } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+
+          const usuariosRef = collection(db, 'usuarios');
+          const q = query(
+            usuariosRef,
+            where('approved', '==', false),
+            orderBy('createdAt', 'desc')
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          const pendingUsersList = document.getElementById('pendingUsersList');
+          const noPendingUsers = document.getElementById('noPendingUsers');
+
+          if (querySnapshot.empty) {
+            pendingUsersList.innerHTML = '';
+            noPendingUsers.style.display = 'block';
+            console.log('✅ No hay usuarios pendientes');
+            return;
+          }
+
+          noPendingUsers.style.display = 'none';
+
+          let html = '';
+          querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            const userId = doc.id;
+            const createdAt = user.createdAt?.toDate?.() || new Date();
+            const formattedDate = createdAt.toLocaleDateString('es-AR', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            html += `
+              <div class="admin-section" style="margin-bottom: 20px; border-left: 4px solid #FF9800;">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px;">
+                  <div style="flex: 1;">
+                    <h3 style="margin: 0 0 10px 0;">
+                      <i class="material-icons" style="vertical-align: middle; color: #666;">person</i>
+                      ${user.displayName || 'Usuario sin nombre'}
+                    </h3>
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">email</i>
+                      <strong>Email:</strong> ${user.email}
+                    </p>
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">access_time</i>
+                      <strong>Fecha registro:</strong> ${formattedDate}
+                    </p>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 10px; min-width: 200px;">
+                    <select id="role-${userId}" class="mdc-text-field__input" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                      <option value="">Seleccionar rol...</option>
+                      <option value="usuario">👤 Usuario</option>
+                      <option value="vendedor">🤝 Vendedor</option>
+                      <option value="admin">👑 Administrador</option>
+                    </select>
+                    <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important;">
+                      <span class="mdc-button__ripple"></span>
+                      <i class="material-icons mdc-button__icon" aria-hidden="true">check_circle</i>
+                      <span class="mdc-button__label">Aprobar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          pendingUsersList.innerHTML = html;
+          console.log(`✅ ${querySnapshot.size} usuarios pendientes cargados`);
+
+        } catch (error) {
+          console.error('❌ Error loading pending users:', error);
+          alert('Error al cargar usuarios pendientes: ' + error.message);
+        }
+      }
+
+      // Approve user and assign role
+      async function approveUser(userId) {
+        console.log('✅ Approving user:', userId);
+
+        try {
+          const roleSelect = document.getElementById(`role-${userId}`);
+          const selectedRole = roleSelect.value;
+
+          if (!selectedRole) {
+            alert('⚠️ Por favor selecciona un rol antes de aprobar');
+            return;
+          }
+
+          const { doc, updateDoc } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+
+          const userRef = doc(db, 'usuarios', userId);
+
+          await updateDoc(userRef, {
+            approved: true,
+            role: selectedRole,
+            admin: selectedRole === 'admin'
+          });
+
+          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}`);
+          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}`);
+
+          // Reload pending users list
+          await loadPendingUsers();
+
+        } catch (error) {
+          console.error('❌ Error approving user:', error);
+          alert('❌ Error al aprobar usuario: ' + error.message);
+        }
+      }
+
+      // Make functions globally accessible
+      window.loadPendingUsers = loadPendingUsers;
+      window.approveUser = approveUser;
+
       // Initialize tab bar
       const tabBar = document.querySelector('.mdc-tab-bar');
       if (tabBar) {
@@ -4797,6 +4950,12 @@
                 window.loadSellers().then(() => {
                   window.loadOrders();
                 });
+              }
+            }, 100);
+          } else if (tabId === 'admisiones') {
+            setTimeout(() => {
+              if (window.loadPendingUsers) {
+                window.loadPendingUsers();
               }
             }, 100);
           }
