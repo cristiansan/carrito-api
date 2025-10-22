@@ -4307,24 +4307,41 @@
         console.log('📱 [WhatsApp] orderNumber:', orderNumber);
         console.log('📱 [WhatsApp] clienteNombre:', clienteNombre);
 
-        if (!orderData.vendedorId) {
-          console.log('⚠️ [WhatsApp] No hay vendedor asignado en orderData');
-          return;
-        }
-
-        const { doc, getDoc } = window.firebase.firestoreHelpers;
+        const { doc, getDoc, collection, query, where, getDocs } = window.firebase.firestoreHelpers;
         const db = window.firebase.firestore();
 
-        console.log('📱 [WhatsApp] Buscando vendedor:', orderData.vendedorId);
-        const vendedorRef = doc(db, 'vendedores', orderData.vendedorId);
-        const vendedorDoc = await getDoc(vendedorRef);
+        let vendedorData = null;
+        let vendedorId = orderData.vendedorId;
 
-        if (!vendedorDoc.exists()) {
-          console.log('⚠️ [WhatsApp] Vendedor no encontrado en BD');
-          return;
+        // Si no hay vendedor asignado, buscar a Santiago como vendedor por defecto
+        if (!vendedorId) {
+          console.log('⚠️ [WhatsApp] No hay vendedor asignado, buscando a Santiago...');
+          const vendedoresRef = collection(db, 'vendedores');
+          const q = query(vendedoresRef, where('name', '==', 'Santiago'));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const santiagoDoc = querySnapshot.docs[0];
+            vendedorId = santiagoDoc.id;
+            vendedorData = santiagoDoc.data();
+            console.log('✅ [WhatsApp] Santiago encontrado como vendedor por defecto:', vendedorId);
+          } else {
+            console.log('❌ [WhatsApp] No se encontró a Santiago en la BD');
+            return;
+          }
+        } else {
+          console.log('📱 [WhatsApp] Buscando vendedor:', vendedorId);
+          const vendedorRef = doc(db, 'vendedores', vendedorId);
+          const vendedorDoc = await getDoc(vendedorRef);
+
+          if (!vendedorDoc.exists()) {
+            console.log('⚠️ [WhatsApp] Vendedor no encontrado en BD');
+            return;
+          }
+
+          vendedorData = vendedorDoc.data();
         }
 
-        const vendedorData = vendedorDoc.data();
         console.log('📱 [WhatsApp] Vendedor encontrado:', vendedorData.name);
         console.log('📱 [WhatsApp] Teléfonos:', { phone: vendedorData.phone, phone2: vendedorData.phone2 });
 
@@ -4856,22 +4873,15 @@
               });
 
               console.log('✅ Orden guardada exitosamente');
-              console.log('📋 [Debug] order.vendedorId:', order.vendedorId);
-              console.log('📋 [Debug] order completo:', order);
 
-              // Enviar WhatsApp al vendedor
-              if (order.vendedorId) {
-                console.log('📱 Preparando WhatsApp para vendedor:', order.vendedorId);
-                const updatedOrderData = {
-                  ...order,
-                  editadaPorNombre: userName,
-                  cantidadItems: order.items?.length || 0
-                };
-                await sendOrderToSellerWhatsApp(updatedOrderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
-              } else {
-                console.log('⚠️ No se envió WhatsApp - No hay vendedor asignado a esta orden');
-                console.log('💡 Sugerencia: Asignar vendedor al cliente en la sección de administración');
-              }
+              // Enviar WhatsApp al vendedor (si no hay vendedor, se usa Santiago por defecto)
+              console.log('📱 Preparando WhatsApp para vendedor:', order.vendedorId || 'Santiago (por defecto)');
+              const updatedOrderData = {
+                ...order,
+                editadaPorNombre: userName,
+                cantidadItems: order.items?.length || 0
+              };
+              await sendOrderToSellerWhatsApp(updatedOrderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
 
               // Actualizar el número de orden con el indicador de edición
               let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
@@ -4917,30 +4927,25 @@
           editOrderInCart(order);
         });
 
-        // Mostrar botón "Enviar WhatsApp" si la orden tiene vendedor asignado
+        // Mostrar botón "Enviar WhatsApp" (siempre visible, usa Santiago si no hay vendedor)
         const whatsAppContainer = document.getElementById('detailSendWhatsAppContainer');
         const whatsAppBtn = document.getElementById('detailSendWhatsAppBtn');
 
-        if (order.vendedorId) {
-          whatsAppContainer.style.display = 'block';
+        whatsAppContainer.style.display = 'block';
 
-          // Remover event listeners previos
-          const newWhatsAppBtn = whatsAppBtn.cloneNode(true);
-          whatsAppBtn.parentNode.replaceChild(newWhatsAppBtn, whatsAppBtn);
+        // Remover event listeners previos
+        const newWhatsAppBtn = whatsAppBtn.cloneNode(true);
+        whatsAppBtn.parentNode.replaceChild(newWhatsAppBtn, whatsAppBtn);
 
-          // Agregar event listener para enviar WhatsApp
-          newWhatsAppBtn.addEventListener('click', async () => {
-            console.log('📱 [Manual] Enviando WhatsApp...');
-            const orderData = {
-              ...order,
-              cantidadItems: order.items?.length || 0
-            };
-            await sendOrderToSellerWhatsApp(orderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
-          });
-        } else {
-          whatsAppContainer.style.display = 'none';
-          console.log('ℹ️ Botón WhatsApp oculto - No hay vendedor asignado a esta orden');
-        }
+        // Agregar event listener para enviar WhatsApp
+        newWhatsAppBtn.addEventListener('click', async () => {
+          console.log('📱 [Manual] Enviando WhatsApp...');
+          const orderData = {
+            ...order,
+            cantidadItems: order.items?.length || 0
+          };
+          await sendOrderToSellerWhatsApp(orderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+        });
 
         // Agregar funcionalidad de ordenamiento a las columnas
         const sortableHeaders = document.querySelectorAll('#detailOrderTable .sortable-header');

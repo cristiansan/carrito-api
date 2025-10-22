@@ -1108,13 +1108,9 @@
           console.log('✅ Orden guardada en Firebase');
         }
 
-        // Enviar WhatsApp al vendedor
-        if (vendedorId) {
-          console.log('📱 Preparando WhatsApp para vendedor:', vendedorId);
-          await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
-        } else {
-          console.log('⚠️ No se envió WhatsApp - No hay vendedor asignado');
-        }
+        // Enviar WhatsApp al vendedor (si no hay vendedor, se usa Santiago por defecto)
+        console.log('📱 Preparando WhatsApp para vendedor:', vendedorId || 'Santiago (por defecto)');
+        await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
 
         // Mostrar modal de éxito
         document.getElementById('orderNumberDisplay').textContent = `Orden #${orderNumber}`;
@@ -1146,24 +1142,41 @@
         console.log('📱 [WhatsApp] orderNumber:', orderNumber);
         console.log('📱 [WhatsApp] clienteNombre:', clienteNombre);
 
-        if (!orderData.vendedorId) {
-          console.log('⚠️ [WhatsApp] No hay vendedor asignado en orderData');
-          return;
-        }
-
-        const { doc, getDoc } = window.firebase.firestoreHelpers;
+        const { doc, getDoc, collection, query, where, getDocs } = window.firebase.firestoreHelpers;
         const db = window.firebase.firestore();
 
-        console.log('📱 [WhatsApp] Buscando vendedor:', orderData.vendedorId);
-        const vendedorRef = doc(db, 'vendedores', orderData.vendedorId);
-        const vendedorDoc = await getDoc(vendedorRef);
+        let vendedorData = null;
+        let vendedorId = orderData.vendedorId;
 
-        if (!vendedorDoc.exists()) {
-          console.log('⚠️ [WhatsApp] Vendedor no encontrado en BD');
-          return;
+        // Si no hay vendedor asignado, buscar a Santiago como vendedor por defecto
+        if (!vendedorId) {
+          console.log('⚠️ [WhatsApp] No hay vendedor asignado, buscando a Santiago...');
+          const vendedoresRef = collection(db, 'vendedores');
+          const q = query(vendedoresRef, where('name', '==', 'Santiago'));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const santiagoDoc = querySnapshot.docs[0];
+            vendedorId = santiagoDoc.id;
+            vendedorData = santiagoDoc.data();
+            console.log('✅ [WhatsApp] Santiago encontrado como vendedor por defecto:', vendedorId);
+          } else {
+            console.log('❌ [WhatsApp] No se encontró a Santiago en la BD');
+            return;
+          }
+        } else {
+          console.log('📱 [WhatsApp] Buscando vendedor:', vendedorId);
+          const vendedorRef = doc(db, 'vendedores', vendedorId);
+          const vendedorDoc = await getDoc(vendedorRef);
+
+          if (!vendedorDoc.exists()) {
+            console.log('⚠️ [WhatsApp] Vendedor no encontrado en BD');
+            return;
+          }
+
+          vendedorData = vendedorDoc.data();
         }
 
-        const vendedorData = vendedorDoc.data();
         console.log('📱 [WhatsApp] Vendedor encontrado:', vendedorData.name);
         console.log('📱 [WhatsApp] Teléfonos:', { phone: vendedorData.phone, phone2: vendedorData.phone2 });
 
