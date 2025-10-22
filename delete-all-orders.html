@@ -65,24 +65,6 @@
       color: #1565c0;
     }
 
-    .login-btn {
-      background: #4CAF50;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 15px;
-      transition: all 0.3s ease;
-    }
-
-    .login-btn:hover {
-      background: #45a049;
-      transform: translateY(-2px);
-    }
-
     .button-container {
       display: flex;
       gap: 15px;
@@ -205,23 +187,8 @@
     </div>
 
     <div class="info" id="authInfo">
-      <strong>📋 Estado:</strong> Esperando autenticación...
-    </div>
-
-    <div id="loginContainer" style="display: none; margin: 20px 0;">
-      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-        <h3 style="color: #495057; margin-bottom: 15px;">🔐 Iniciar Sesión</h3>
-        <form id="loginForm" style="display: flex; flex-direction: column; gap: 12px;">
-          <input type="email" id="loginEmail" placeholder="Email" required
-                 style="padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
-          <input type="password" id="loginPassword" placeholder="Contraseña" required
-                 style="padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
-          <button type="submit" class="login-btn" style="margin-top: 5px;">
-            🔑 Iniciar Sesión
-          </button>
-        </form>
-        <p id="loginError" style="color: #e74c3c; margin-top: 10px; font-size: 14px; display: none;"></p>
-      </div>
+      <strong>✅ Listo para usar</strong><br>
+      <small>Herramienta local - No requiere autenticación</small>
     </div>
 
     <div class="stats" id="statsContainer" style="display: none;">
@@ -240,8 +207,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, collection, getDocs, deleteDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     // Firebase config (mismo que en tus otros archivos)
     const firebaseConfig = {
@@ -255,127 +221,44 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
-
-    // Set persistence to LOCAL
-    setPersistence(auth, browserLocalPersistence).then(() => {
-      console.log('✅ Firebase persistence set to LOCAL');
-    }).catch((error) => {
-      console.error('❌ Error setting persistence:', error);
-    });
 
     const infoDiv = document.getElementById('authInfo');
     const deleteBtn = document.getElementById('deleteBtn');
     const statusMessage = document.getElementById('statusMessage');
     const statsContainer = document.getElementById('statsContainer');
     const orderCount = document.getElementById('orderCount');
-    const loginContainer = document.getElementById('loginContainer');
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
 
-    console.log('🔍 Verificando autenticación...');
+    console.log('🔄 Cargando herramienta...');
 
-    // Handle login form
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-      loginError.style.display = 'none';
-      const submitBtn = loginForm.querySelector('button');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ Iniciando sesión...';
-
+    // Load order count on page load
+    async function loadOrderCount() {
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log('✅ Login exitoso:', userCredential.user.email);
-        // onAuthStateChanged will handle the rest
-      } catch (error) {
-        console.error('❌ Error en login:', error);
-        loginError.textContent = `Error: ${error.message}`;
-        loginError.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.textContent = '🔑 Iniciar Sesión';
-      }
-    });
+        console.log('📊 Contando pedidos...');
+        const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
+        const count = ordersSnapshot.size;
 
-    // Check authentication
-    async function checkAuth(user) {
-      console.log('👤 Usuario detectado:', user ? user.email : 'ninguno');
+        console.log('📦 Total de pedidos:', count);
 
-      if (user) {
-        loginContainer.style.display = 'none';
+        orderCount.textContent = count;
+        statsContainer.style.display = 'block';
 
-        // Verify user is admin
-        console.log('🔍 Verificando si es admin...');
-
-        try {
-          const userDocRef = doc(db, 'usuarios', user.uid);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (!userDocSnap.exists()) {
-            console.log('❌ Usuario no encontrado en colección usuarios');
-            infoDiv.innerHTML = `<strong>❌ Error:</strong> Usuario no encontrado en la base de datos`;
-            infoDiv.style.background = '#f8d7da';
-            infoDiv.style.borderColor = '#f5c6cb';
-            infoDiv.style.color = '#721c24';
-            return;
-          }
-
-          const userData = userDocSnap.data();
-          const isAdmin = userData.admin === true;
-
-          console.log('📄 Datos del usuario:', userData);
-          console.log('👑 Es admin:', isAdmin);
-
-          if (isAdmin) {
-            infoDiv.innerHTML = `<strong>✅ Autenticado como:</strong> ${user.email} (Admin)`;
-            infoDiv.style.background = '#d4edda';
-            infoDiv.style.borderColor = '#c3e6cb';
-            infoDiv.style.color = '#155724';
-
-            // Count orders
-            console.log('📊 Contando pedidos...');
-            const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
-            const count = ordersSnapshot.size;
-
-            console.log('📦 Total de pedidos:', count);
-
-            orderCount.textContent = count;
-            statsContainer.style.display = 'block';
-
-            if (count > 0) {
-              deleteBtn.disabled = false;
-            } else {
-              infoDiv.innerHTML = `<strong>ℹ️ No hay pedidos para borrar</strong>`;
-            }
-          } else {
-            console.log('❌ Usuario no es admin');
-            infoDiv.innerHTML = `<strong>❌ Error:</strong> Solo administradores pueden usar esta herramienta<br><small>Usuario: ${user.email}</small>`;
-            infoDiv.style.background = '#f8d7da';
-            infoDiv.style.borderColor = '#f5c6cb';
-            infoDiv.style.color = '#721c24';
-          }
-        } catch (error) {
-          console.error('❌ Error verificando admin:', error);
-          infoDiv.innerHTML = `<strong>❌ Error:</strong> No se pudo verificar permisos: ${error.message}`;
-          infoDiv.style.background = '#f8d7da';
-          infoDiv.style.borderColor = '#f5c6cb';
-          infoDiv.style.color = '#721c24';
+        if (count > 0) {
+          deleteBtn.disabled = false;
+        } else {
+          infoDiv.innerHTML = `<strong>ℹ️ No hay pedidos para borrar</strong>`;
         }
-      } else {
-        console.log('❌ No hay usuario autenticado');
-        infoDiv.innerHTML = `<strong>❌ No autenticado</strong><br><small>Inicia sesión abajo</small>`;
+      } catch (error) {
+        console.error('❌ Error contando pedidos:', error);
+        infoDiv.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
         infoDiv.style.background = '#f8d7da';
         infoDiv.style.borderColor = '#f5c6cb';
         infoDiv.style.color = '#721c24';
-        loginContainer.style.display = 'block';
       }
     }
 
-    onAuthStateChanged(auth, checkAuth);
+    // Load count immediately
+    loadOrderCount();
 
     // Delete all orders
     deleteBtn.addEventListener('click', async () => {
