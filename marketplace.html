@@ -2656,6 +2656,14 @@
         </button>
       </div>
 
+      <div class="order-details-section" id="detailSendWhatsAppContainer" style="display: none;">
+        <button class="mdc-button mdc-button--raised" id="detailSendWhatsAppBtn" style="width: 100%; background-color: #25D366 !important;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">send</i>
+          <span class="mdc-button__label">Enviar WhatsApp al Vendedor</span>
+        </button>
+      </div>
+
       <div class="order-details-section" id="detailEditOrderContainer" style="display: none;">
         <button class="mdc-button mdc-button--raised" id="detailEditOrderBtn" style="width: 100%; background-color: #4CAF50 !important;">
           <span class="mdc-button__ripple"></span>
@@ -4848,6 +4856,8 @@
               });
 
               console.log('✅ Orden guardada exitosamente');
+              console.log('📋 [Debug] order.vendedorId:', order.vendedorId);
+              console.log('📋 [Debug] order completo:', order);
 
               // Enviar WhatsApp al vendedor
               if (order.vendedorId) {
@@ -4859,7 +4869,8 @@
                 };
                 await sendOrderToSellerWhatsApp(updatedOrderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
               } else {
-                console.log('⚠️ No se envió WhatsApp - No hay vendedor asignado');
+                console.log('⚠️ No se envió WhatsApp - No hay vendedor asignado a esta orden');
+                console.log('💡 Sugerencia: Asignar vendedor al cliente en la sección de administración');
               }
 
               // Actualizar el número de orden con el indicador de edición
@@ -4905,6 +4916,31 @@
         newEditBtn.addEventListener('click', () => {
           editOrderInCart(order);
         });
+
+        // Mostrar botón "Enviar WhatsApp" si la orden tiene vendedor asignado
+        const whatsAppContainer = document.getElementById('detailSendWhatsAppContainer');
+        const whatsAppBtn = document.getElementById('detailSendWhatsAppBtn');
+
+        if (order.vendedorId) {
+          whatsAppContainer.style.display = 'block';
+
+          // Remover event listeners previos
+          const newWhatsAppBtn = whatsAppBtn.cloneNode(true);
+          whatsAppBtn.parentNode.replaceChild(newWhatsAppBtn, whatsAppBtn);
+
+          // Agregar event listener para enviar WhatsApp
+          newWhatsAppBtn.addEventListener('click', async () => {
+            console.log('📱 [Manual] Enviando WhatsApp...');
+            const orderData = {
+              ...order,
+              cantidadItems: order.items?.length || 0
+            };
+            await sendOrderToSellerWhatsApp(orderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+          });
+        } else {
+          whatsAppContainer.style.display = 'none';
+          console.log('ℹ️ Botón WhatsApp oculto - No hay vendedor asignado a esta orden');
+        }
 
         // Agregar funcionalidad de ordenamiento a las columnas
         const sortableHeaders = document.querySelectorAll('#detailOrderTable .sortable-header');
