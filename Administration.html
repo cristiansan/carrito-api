@@ -1588,13 +1588,14 @@
                 <th data-column="telefono"><span class="column-label">Teléfono</span><button class="column-toggle-btn" data-column="telefono" title="Ocultar columna">−</button></th>
                 <th data-column="email"><span class="column-label">Email</span><button class="column-toggle-btn" data-column="email" title="Ocultar columna">−</button></th>
                 <th data-column="vendedor"><span class="column-label">Vendedor</span><button class="column-toggle-btn" data-column="vendedor" title="Ocultar columna">−</button></th>
+                <th data-column="listaPrecio"><span class="column-label">Lista</span><button class="column-toggle-btn" data-column="listaPrecio" title="Ocultar columna">−</button></th>
                 <th data-column="saldoCredito"><span class="column-label">Saldo Crédito</span><button class="column-toggle-btn" data-column="saldoCredito" title="Ocultar columna">−</button></th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="clientesTableBody">
               <tr>
-                <td colspan="16" style="text-align: center; padding: 20px;">
+                <td colspan="17" style="text-align: center; padding: 20px;">
                   Cargando clientes...
                 </td>
               </tr>
@@ -1946,6 +1947,17 @@
             <label for="clientSaldoCredito">Saldo Crédito</label>
             <input type="number" id="clientSaldoCredito" step="0.01" placeholder="0.00">
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clientListaPrecio">Lista de Precios</label>
+          <select id="clientListaPrecio" style="padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0; width: 100%; font-size: 14px;">
+            <option value="precios1">Precios 1 (Por defecto)</option>
+            <option value="precios2">Precios 2</option>
+            <option value="precios3">Precios 3</option>
+            <option value="precios4">Precios 4</option>
+            <option value="precios5">Precios 5</option>
+          </select>
         </div>
 
         <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
@@ -3946,7 +3958,7 @@
       if (!firebase || !firebase.firestore) {
         tableBody.innerHTML = `
           <tr>
-            <td colspan="16" style="text-align: center; padding: 20px;">
+            <td colspan="17" style="text-align: center; padding: 20px;">
               ❌ Firebase no está disponible
             </td>
           </tr>
@@ -3967,7 +3979,7 @@
         if (querySnapshot.empty) {
           tableBody.innerHTML = `
             <tr>
-              <td colspan="16" style="text-align: center; padding: 20px;">
+              <td colspan="17" style="text-align: center; padding: 20px;">
                 📝 No hay clientes registrados
               </td>
             </tr>
@@ -4018,7 +4030,7 @@
       if (!clientes || clientes.length === 0) {
         tableBody.innerHTML = `
           <tr>
-            <td colspan="16" style="text-align: center; padding: 20px;">
+            <td colspan="17" style="text-align: center; padding: 20px;">
               📝 No se encontraron clientes
             </td>
           </tr>
@@ -4052,6 +4064,18 @@
                   ${seller.name}
                 </option>
               `).join('')}
+            </select>
+          </td>
+          <td data-column="listaPrecio">
+            <select class="client-price-list-select"
+                    data-client-id="${cliente.id}"
+                    onchange="updateClientPriceList('${cliente.id}', this.value)"
+                    style="padding: 4px 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0; min-width: 100px;">
+              <option value="precios1" ${(cliente.listaPrecio || 'precios1') === 'precios1' ? 'selected' : ''}>Precios 1</option>
+              <option value="precios2" ${cliente.listaPrecio === 'precios2' ? 'selected' : ''}>Precios 2</option>
+              <option value="precios3" ${cliente.listaPrecio === 'precios3' ? 'selected' : ''}>Precios 3</option>
+              <option value="precios4" ${cliente.listaPrecio === 'precios4' ? 'selected' : ''}>Precios 4</option>
+              <option value="precios5" ${cliente.listaPrecio === 'precios5' ? 'selected' : ''}>Precios 5</option>
             </select>
           </td>
           <td data-column="saldoCredito" style="text-align: right;">${cliente.saldoCredito ? parseFloat(cliente.saldoCredito).toFixed(2) : '0.00'}</td>
@@ -4426,6 +4450,44 @@
             cliente.vendedorId = sellerId;
           }
         }
+      } catch (error) {
+        console.error('❌ Error actualizando vendedor:', error);
+        alert('❌ Error actualizando vendedor: ' + error.message);
+      }
+    }
+
+    // Update client price list
+    async function updateClientPriceList(clienteId, listaPrecio) {
+      if (!firebase || !firebase.firestore) {
+        alert('❌ Firebase no está disponible');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const clienteRef = doc(db, 'clientes', clienteId);
+        await updateDoc(clienteRef, {
+          listaPrecio: listaPrecio
+        });
+
+        console.log(`✅ Lista de precios actualizada para cliente ${clienteId}: ${listaPrecio}`);
+
+        // Actualizar en la copia local
+        if (window.allClients) {
+          const cliente = window.allClients.find(c => c.id === clienteId);
+          if (cliente) {
+            cliente.listaPrecio = listaPrecio;
+          }
+        }
+
+        if (window.clients) {
+          const cliente = window.clients.find(c => c.id === clienteId);
+          if (cliente) {
+            cliente.listaPrecio = listaPrecio;
+          }
+        }
 
       } catch (error) {
         console.error('❌ Error actualizando vendedor:', error);
@@ -4581,6 +4643,7 @@
     window.displayClients = displayClients;
     window.searchClients = searchClients;
     window.updateClientSeller = updateClientSeller;
+    window.updateClientPriceList = updateClientPriceList;
     window.assignDefaultSellerToAllClients = assignDefaultSellerToAllClients;
     window.importClientes = importClientes;
     window.handleExcelImport = handleExcelImport;
@@ -4704,6 +4767,7 @@
         document.getElementById('clientTelefono').value = cliente.telefono || '';
         document.getElementById('clientEmail').value = cliente.email || '';
         document.getElementById('clientSaldoCredito').value = cliente.saldoCredito || 0;
+        document.getElementById('clientListaPrecio').value = cliente.listaPrecio || 'precios1';
 
         window.openClientModal();
 
@@ -5359,7 +5423,8 @@
               pais: document.getElementById('clientPais').value.trim(),
               telefono: document.getElementById('clientTelefono').value.trim(),
               email: document.getElementById('clientEmail').value.trim(),
-              saldoCredito: saldoCreditoValue ? parseFloat(saldoCreditoValue) : 0
+              saldoCredito: saldoCreditoValue ? parseFloat(saldoCreditoValue) : 0,
+              listaPrecio: document.getElementById('clientListaPrecio').value || 'precios1'
             };
 
             if (!clienteData.codigo) {
