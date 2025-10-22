@@ -386,11 +386,13 @@
         };
         
         if (!userDoc.exists()) {
-          // Usuario nuevo - crear documento con admin: false por defecto
+          // Usuario nuevo - crear documento pendiente de aprobación
           userData.admin = false;
+          userData.approved = false;  // Pendiente de aprobación por admin
+          userData.role = 'pending';  // pending, usuario, vendedor, admin
           userData.createdAt = serverTimestamp();
           await setDoc(userRef, userData);
-          console.log('New user document created:', user.uid, user.email);
+          console.log('New user document created (pending approval):', user.uid, user.email);
         } else {
           // Usuario existente - solo actualizar datos básicos, preservar admin
           await updateDoc(userRef, {
@@ -449,14 +451,30 @@
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log('Usuario autenticado:', userCredential.user);
-        
+
         // Crear o actualizar documento en Firestore
         await createOrUpdateUserDocument(userCredential.user);
-        
+
+        // Verificar si el usuario está aprobado
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const userRef = doc(db, 'usuarios', userCredential.user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.approved === false || userData.role === 'pending') {
+            await auth.signOut();
+            showError('⏳ Tu cuenta está pendiente de aprobación por un administrador.\n\nRecibirás un email cuando sea aprobada.');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'INGRESAR';
+            return;
+          }
+        }
+
         // Guardar estado de autenticación
         localStorage.setItem('userAuthenticated', 'true');
         localStorage.setItem('userEmail', email);
-        
+
         // Redirigir al marketplace
         window.location.href = 'marketplace.html';
         
@@ -570,17 +588,22 @@
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         console.log('Usuario registrado:', userCredential.user);
-        
+
         // Crear documento en Firestore para el nuevo usuario
         await createOrUpdateUserDocument(userCredential.user);
-        
+
         // Guardar estado de autenticación
         localStorage.setItem('userAuthenticated', 'true');
         localStorage.setItem('userEmail', email);
-        
-        // Cerrar modal y redirigir
+
+        // Cerrar modal y mostrar mensaje de pendiente
         registerModal.classList.remove('show');
-        window.location.href = 'marketplace.html';
+        alert('✅ Cuenta creada exitosamente!\n\n⏳ Tu cuenta está pendiente de aprobación por un administrador.\n\nRecibirás un email cuando tu cuenta sea aprobada.');
+
+        // Cerrar sesión hasta que sea aprobado
+        await auth.signOut();
+        localStorage.removeItem('userAuthenticated');
+        localStorage.removeItem('userEmail');
         
       } catch (error) {
         console.error('Error en registro:', error);
@@ -698,14 +721,30 @@
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log('Usuario autenticado:', user);
-        
+
         await createOrUpdateUserDocument(user);
-        
+
+        // Verificar si el usuario está aprobado
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const userRef = doc(db, 'usuarios', user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.approved === false || userData.role === 'pending') {
+            await auth.signOut();
+            showError('⏳ Tu cuenta está pendiente de aprobación por un administrador.\n\nRecibirás un email cuando sea aprobada.');
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'INGRESAR';
+            return;
+          }
+        }
+
         localStorage.setItem('userAuthenticated', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userDisplayName', user.displayName || user.email.split('@')[0]);
         localStorage.setItem('userPhotoURL', user.photoURL || '');
-        
+
         window.location.href = 'marketplace.html';
         
       } catch (error) {
@@ -743,14 +782,30 @@
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         console.log('Usuario autenticado con Google:', user);
-        
+
         await createOrUpdateUserDocument(user);
-        
+
+        // Verificar si el usuario está aprobado
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const userRef = doc(db, 'usuarios', user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.approved === false || userData.role === 'pending') {
+            await auth.signOut();
+            showError('⏳ Tu cuenta está pendiente de aprobación por un administrador.\n\nRecibirás un email cuando sea aprobada.');
+            googleBtn.disabled = false;
+            googleBtn.textContent = 'Continuar con Google';
+            return;
+          }
+        }
+
         localStorage.setItem('userAuthenticated', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userDisplayName', user.displayName);
         localStorage.setItem('userPhotoURL', user.photoURL);
-        
+
         window.location.href = 'marketplace.html';
         
       } catch (error) {
