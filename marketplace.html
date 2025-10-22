@@ -2726,43 +2726,40 @@
         console.log('📋 Cargando historial desde Firebase en marketplace.html...');
         console.log('👤 Usuario actual:', currentUser.uid, currentUser.email);
 
-        // Usar la API modular v10 correctamente
-        const { collection, query, where, limit, getDocs } = firebase.firestoreHelpers;
+        // Verificar si el usuario es admin
+        const { collection, query, where, limit, getDocs, doc, getDoc, orderBy } = firebase.firestoreHelpers;
         const db = firebase.firestore();
 
-        // Primero verificar cuántas órdenes hay en total para este usuario
+        const userRef = doc(db, 'usuarios', currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        const isAdmin = userDoc.exists() && userDoc.data().admin === true;
+
+        console.log('👑 Es admin:', isAdmin);
+
         const pedidosCollection = collection(db, 'pedidos');
 
-        // Cargar todas las órdenes sin límite para debug
-        const allOrdersQuery = query(pedidosCollection);
-        const allOrdersSnapshot = await getDocs(allOrdersQuery);
+        let q;
+        if (isAdmin) {
+          // Admin ve todas las órdenes
+          console.log('👑 Usuario admin - cargando todas las órdenes');
+          q = query(
+            pedidosCollection,
+            orderBy('timestamp', 'desc'),
+            limit(100)
+          );
+        } else {
+          // Usuario normal solo ve sus propias órdenes
+          console.log('👤 Usuario normal - cargando solo sus órdenes');
+          q = query(
+            pedidosCollection,
+            where('userId', '==', currentUser.uid),
+            limit(50)
+          );
+        }
 
-        console.log('📊 Total de órdenes en la base de datos:', allOrdersSnapshot.size);
-
-        // Verificar todas las órdenes y sus userId
-        allOrdersSnapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.usuarioEmail === currentUser.email || data.userId === currentUser.uid) {
-            console.log('✅ Orden que debería aparecer:', {
-              id: doc.id,
-              numeroOrden: data.numeroOrden,
-              userId: data.userId,
-              usuarioEmail: data.usuarioEmail,
-              currentUserUid: currentUser.uid,
-              matchByUserId: data.userId === currentUser.uid,
-              matchByEmail: data.usuarioEmail === currentUser.email
-            });
-          }
-        });
-
-        const q = query(
-          pedidosCollection,
-          where('userId', '==', currentUser.uid),
-          limit(50)
-        );
         const querySnapshot = await getDocs(q);
 
-        console.log('📋 Órdenes encontradas con userId filter:', querySnapshot.size);
+        console.log('📋 Órdenes encontradas:', querySnapshot.size);
 
         if (querySnapshot.empty) {
           historialList.innerHTML = `
@@ -2777,12 +2774,6 @@
         const pedidos = [];
         querySnapshot.forEach(doc => {
           const data = doc.data();
-          console.log('📦 Orden cargada:', {
-            id: doc.id,
-            numeroOrden: data.numeroOrden,
-            userId: data.userId,
-            usuarioEmail: data.usuarioEmail
-          });
           pedidos.push({
             id: doc.id,
             ...data
@@ -2801,14 +2792,30 @@
 
         console.log(`✅ Cargados ${pedidos.length} pedidos desde Firebase en marketplace`);
 
-        historialList.innerHTML = pedidos.map(pedido => `
+        // Agregar banner para admins
+        let adminBanner = '';
+        if (isAdmin) {
+          adminBanner = `
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+              <i class="material-icons" style="color: white;">admin_panel_settings</i>
+              <div style="color: white;">
+                <strong>Vista Administrador</strong>
+                <div style="font-size: 12px; opacity: 0.9;">Mostrando todas las órdenes de todos los usuarios</div>
+              </div>
+            </div>
+          `;
+        }
+
+        historialList.innerHTML = adminBanner + pedidos.map(pedido => `
           <div class="historial-item" data-order-id="${pedido.id}">
             <div class="historial-item-header">
               <div class="historial-date">${pedido.fechaLocal}</div>
               <div class="historial-method">${pedido.numeroOrden ? `#${pedido.numeroOrden}` : (pedido.estado || 'Confirmada')}</div>
             </div>
             <div class="historial-summary">${pedido.resumen}</div>
-            ${pedido.userDisplayName || pedido.userEmail ? `<div class="historial-user">👤 ${pedido.userDisplayName || pedido.userEmail}</div>` : ''}
+            ${isAdmin && (pedido.userDisplayName || pedido.usuarioEmail || pedido.userEmail) ?
+              `<div class="historial-user">👤 ${pedido.userDisplayName || pedido.usuarioEmail || pedido.userEmail}</div>` :
+              ''}
             <div class="historial-items-preview">
               ${pedido.items.slice(0, 2).map(item => `<small>${item.description}</small>`).join(' • ')}
               ${pedido.items.length > 2 ? `<small>... +${pedido.items.length - 2} más</small>` : ''}
