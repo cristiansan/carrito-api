@@ -705,6 +705,20 @@
       font-size: 14px;
     }
 
+    .products-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .products-table th.sortable:hover {
+      background-color: #2a2a33;
+    }
+
+    .products-table th.sorted {
+      background-color: #3a3a44;
+      color: #4a9eff;
+    }
+
     .products-table td {
       padding: 12px 16px;
       border-bottom: 1px solid #3a3a44;
@@ -2028,6 +2042,12 @@
     // Variable global para almacenar el estado de admin
     let isUserAdmin = false;
 
+    // === PRICE TABLE SORTING STATE ===
+    let priceTableSort = {
+      column: 'articulo',
+      direction: 'asc'
+    };
+
     async function checkAdminAccess(user) {
       try {
         console.log('🔐 Verificando acceso admin para:', user.email);
@@ -2471,6 +2491,40 @@
         return;
       }
 
+      // Sort products based on current sort state
+      const sortedProducts = [...window.products].sort((a, b) => {
+        const col = priceTableSort.column;
+        const dir = priceTableSort.direction === 'asc' ? 1 : -1;
+        let aVal = a[col];
+        let bVal = b[col];
+
+        // Handle null/undefined values - push them to the end
+        if (aVal === null || aVal === undefined) return 1;
+        if (bVal === null || bVal === undefined) return -1;
+
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          return aVal.localeCompare(bVal, 'es', { numeric: true, sensitivity: 'base' }) * dir;
+        }
+
+        // Numeric comparison
+        const aNum = Number(aVal);
+        const bNum = Number(bVal);
+        return (aNum - bNum) * dir;
+      });
+
+      // Helper function to generate sort indicator
+      const getSortIndicator = (columnId) => {
+        if (priceTableSort.column === columnId) {
+          return priceTableSort.direction === 'asc' ? ' ▲' : ' ▼';
+        }
+        return ' ⇅';
+      };
+
+      // Helper function to get sorted class
+      const getSortedClass = (columnId) => {
+        return priceTableSort.column === columnId ? 'sorted' : '';
+      };
+
       const productsHTML = `
         <div class="price-stats">
           <div class="price-stat">
@@ -2484,16 +2538,16 @@
         <table class="products-table">
           <thead>
             <tr>
-              <th>Artículo</th>
-              <th>Descripción</th>
-              <th>Precio 1</th>
-              <th>Precio 2</th>
-              <th>Precio 3</th>
-              <th>Precio 4</th>
+              <th class="sortable ${getSortedClass('articulo')}" data-sort="articulo">Artículo${getSortIndicator('articulo')}</th>
+              <th class="sortable ${getSortedClass('description')}" data-sort="description">Descripción${getSortIndicator('description')}</th>
+              <th class="sortable ${getSortedClass('precio1')}" data-sort="precio1">Precio 1${getSortIndicator('precio1')}</th>
+              <th class="sortable ${getSortedClass('precio2')}" data-sort="precio2">Precio 2${getSortIndicator('precio2')}</th>
+              <th class="sortable ${getSortedClass('precio3')}" data-sort="precio3">Precio 3${getSortIndicator('precio3')}</th>
+              <th class="sortable ${getSortedClass('precio4')}" data-sort="precio4">Precio 4${getSortIndicator('precio4')}</th>
             </tr>
           </thead>
           <tbody>
-            ${window.products.map(product => `
+            ${sortedProducts.map(product => `
               <tr data-articulo="${product.articulo}">
                 <td>
                   <span class="product-code">${product.articulo}</span>
@@ -2557,6 +2611,31 @@
 
       // Add event listeners to price inputs
       setupPriceInputListeners();
+
+      // Add event listeners to sortable headers
+      setupSortableHeaders();
+    }
+
+    // Setup event listeners for sortable table headers
+    function setupSortableHeaders() {
+      const sortableHeaders = document.querySelectorAll('.products-table th.sortable');
+      sortableHeaders.forEach(th => {
+        th.addEventListener('click', function() {
+          const column = this.dataset.sort;
+
+          if (priceTableSort.column === column) {
+            // Toggle direction if same column clicked
+            priceTableSort.direction = priceTableSort.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            // Set new column and default to ascending
+            priceTableSort.column = column;
+            priceTableSort.direction = 'asc';
+          }
+
+          // Re-render the table with new sort
+          displayProducts();
+        });
+      });
     }
 
     // Setup event listeners for price inputs
