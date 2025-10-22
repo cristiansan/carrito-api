@@ -32,8 +32,8 @@ service cloud.firestore {
       // Permitir crear documento al registrarse
       allow create: if request.auth != null && request.auth.uid == userId;
 
-      // Permitir actualización solo a admins (para aprobar usuarios)
-      allow update: if isAdmin();
+      // Permitir actualización a usuarios de su propio perfil Y a admins de cualquier usuario
+      allow update: if (request.auth != null && request.auth.uid == userId) || isAdmin();
 
       // Permitir eliminar solo a admins
       allow delete: if isAdmin();
