@@ -585,7 +585,14 @@ function renderRows() {
     if (col.sortable) {
       th.classList.add('sortable');
       th.setAttribute('data-sort', col.id);
-      th.textContent += ' ▾';
+
+      // Add sort indicator based on current sort state
+      if (currentSort.column === col.id) {
+        th.classList.add('sorted');
+        th.textContent += currentSort.direction === 'asc' ? ' ▲' : ' ▼';
+      } else {
+        th.textContent += ' ⇅';
+      }
     }
     if (col.class) {
       th.classList.add(col.class);
@@ -611,13 +618,21 @@ function renderRows() {
   filtered.sort((a, b) => {
     const col = currentSort.column;
     const dir = currentSort.direction === 'asc' ? 1 : -1;
-    const aVal = a[col];
-    const bVal = b[col];
+    let aVal = a[col];
+    let bVal = b[col];
 
-    if (typeof aVal === 'string') {
-      return aVal.localeCompare(bVal) * dir;
+    // Handle null/undefined values - push them to the end
+    if (aVal === null || aVal === undefined) return 1;
+    if (bVal === null || bVal === undefined) return -1;
+
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      return aVal.localeCompare(bVal, 'es', { numeric: true, sensitivity: 'base' }) * dir;
     }
-    return (aVal - bVal) * dir;
+
+    // Numeric comparison
+    const aNum = Number(aVal);
+    const bNum = Number(bVal);
+    return (aNum - bNum) * dir;
   });
 
   // Initialize totals object for dynamic calculation
