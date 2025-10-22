@@ -2304,7 +2304,6 @@
       
       <div class="historial-content">
         <div class="historial-header">
-          <button class="clear-historial-btn" id="clearHistorialBtn">🗑️ Limpiar Historial</button>
           <button class="export-historial-btn" id="exportHistorialBtn">📤 Exportar</button>
         </div>
         
@@ -2851,50 +2850,6 @@
       }
     }
 
-    // Mostrar detalles de un pedido
-    // Limpiar historial (Firebase + localStorage)
-    async function clearHistorial() {
-      if (!confirm('¿Estás seguro de que quieres eliminar todo el historial de pedidos?')) {
-        return;
-      }
-
-      try {
-        const currentUser = firebase.auth().currentUser;
-
-        // Limpiar Firebase si el usuario está autenticado
-        if (currentUser && firebase.firestore) {
-          console.log('🗑️ Eliminando pedidos de Firebase...');
-
-          const { collection, query, where, getDocs, deleteDoc, doc: docRef } = firebase.firestoreHelpers;
-          const db = firebase.firestore();
-
-          const pedidosCollection = collection(db, 'pedidos');
-          const q = query(pedidosCollection, where('userId', '==', currentUser.uid));
-          const querySnapshot = await getDocs(q);
-
-          // Eliminar todos los documentos
-          const deletePromises = [];
-          querySnapshot.forEach(doc => {
-            deletePromises.push(deleteDoc(doc.ref));
-          });
-
-          await Promise.all(deletePromises);
-          console.log(`✅ Eliminados ${querySnapshot.size} pedidos de Firebase`);
-        }
-
-        // Limpiar localStorage como fallback
-        localStorage.removeItem('pedidosHistorial');
-
-        // Recargar historial
-        loadHistorial();
-        alert('🗑️ Historial eliminado completamente');
-
-      } catch (error) {
-        console.error('❌ Error eliminando historial:', error);
-        alert('❌ Error eliminando historial. Intenta de nuevo.');
-      }
-    }
-
     // Exportar historial (desde Firebase)
     async function exportHistorial() {
       try {
@@ -3264,12 +3219,6 @@
                 console.log('🚫 ADMIN ocultado para usuario no-admin');
               }
 
-              // Ocultar botón de limpiar historial para usuarios no-admin
-              const clearHistorialBtn = document.getElementById('clearHistorialBtn');
-              if (clearHistorialBtn) {
-                clearHistorialBtn.style.display = 'none';
-                console.log('🚫 Botón "Limpiar Historial" ocultado para usuario no-admin');
-              }
               
             } else {
               console.log('✅ Usuario ADMIN: mostrando todos los controles');
@@ -3321,12 +3270,6 @@
                 console.log('✅ ADMIN visible para usuario admin');
               }
 
-              // Mostrar botón de limpiar historial para usuarios admin
-              const clearHistorialBtn = document.getElementById('clearHistorialBtn');
-              if (clearHistorialBtn) {
-                clearHistorialBtn.style.display = 'block';
-                console.log('✅ Botón "Limpiar Historial" visible para usuario admin');
-              }
             }
           };
           
@@ -4163,12 +4106,6 @@
         console.log('✅ Admin button handler added');
       }
 
-      // Event listeners para botones del historial
-      const clearHistorialBtn = document.getElementById('clearHistorialBtn');
-      if (clearHistorialBtn) {
-        clearHistorialBtn.addEventListener('click', clearHistorial);
-        console.log('✅ Clear historial button handler added');
-      }
 
       const exportHistorialBtn = document.getElementById('exportHistorialBtn');
       if (exportHistorialBtn) {
