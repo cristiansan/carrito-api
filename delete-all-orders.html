@@ -208,12 +208,20 @@
       <strong>📋 Estado:</strong> Esperando autenticación...
     </div>
 
-    <div id="loginContainer" style="display: none; text-align: center; margin: 20px 0;">
-      <p style="margin-bottom: 15px; color: #7f8c8d;">Necesitas estar autenticado como administrador</p>
-      <button class="login-btn" onclick="window.open('./login.html', '_blank')">
-        🔐 Abrir Login en nueva pestaña
-      </button>
-      <p style="margin-top: 10px; font-size: 14px; color: #95a5a6;">Después de iniciar sesión, recarga esta página</p>
+    <div id="loginContainer" style="display: none; margin: 20px 0;">
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #495057; margin-bottom: 15px;">🔐 Iniciar Sesión</h3>
+        <form id="loginForm" style="display: flex; flex-direction: column; gap: 12px;">
+          <input type="email" id="loginEmail" placeholder="Email" required
+                 style="padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
+          <input type="password" id="loginPassword" placeholder="Contraseña" required
+                 style="padding: 12px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
+          <button type="submit" class="login-btn" style="margin-top: 5px;">
+            🔑 Iniciar Sesión
+          </button>
+        </form>
+        <p id="loginError" style="color: #e74c3c; margin-top: 10px; font-size: 14px; display: none;"></p>
+      </div>
     </div>
 
     <div class="stats" id="statsContainer" style="display: none;">
@@ -232,8 +240,8 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, deleteDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     // Firebase config (mismo que en tus otros archivos)
     const firebaseConfig = {
@@ -250,17 +258,51 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Set persistence to LOCAL
+    setPersistence(auth, browserLocalPersistence).then(() => {
+      console.log('✅ Firebase persistence set to LOCAL');
+    }).catch((error) => {
+      console.error('❌ Error setting persistence:', error);
+    });
+
     const infoDiv = document.getElementById('authInfo');
     const deleteBtn = document.getElementById('deleteBtn');
     const statusMessage = document.getElementById('statusMessage');
     const statsContainer = document.getElementById('statsContainer');
     const orderCount = document.getElementById('orderCount');
     const loginContainer = document.getElementById('loginContainer');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
 
     console.log('🔍 Verificando autenticación...');
 
+    // Handle login form
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      loginError.style.display = 'none';
+      const submitBtn = loginForm.querySelector('button');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Iniciando sesión...';
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('✅ Login exitoso:', userCredential.user.email);
+        // onAuthStateChanged will handle the rest
+      } catch (error) {
+        console.error('❌ Error en login:', error);
+        loginError.textContent = `Error: ${error.message}`;
+        loginError.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🔑 Iniciar Sesión';
+      }
+    });
+
     // Check authentication
-    onAuthStateChanged(auth, async (user) => {
+    async function checkAuth(user) {
       console.log('👤 Usuario detectado:', user ? user.email : 'ninguno');
 
       if (user) {
@@ -270,18 +312,22 @@
         console.log('🔍 Verificando si es admin...');
 
         try {
-          const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
-          let isAdmin = false;
-          let userData = null;
+          const userDocRef = doc(db, 'usuarios', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
 
-          usuariosSnapshot.forEach(docSnap => {
-            if (docSnap.id === user.uid) {
-              userData = docSnap.data();
-              isAdmin = userData.admin === true;
-              console.log('📄 Datos del usuario:', userData);
-            }
-          });
+          if (!userDocSnap.exists()) {
+            console.log('❌ Usuario no encontrado en colección usuarios');
+            infoDiv.innerHTML = `<strong>❌ Error:</strong> Usuario no encontrado en la base de datos`;
+            infoDiv.style.background = '#f8d7da';
+            infoDiv.style.borderColor = '#f5c6cb';
+            infoDiv.style.color = '#721c24';
+            return;
+          }
 
+          const userData = userDocSnap.data();
+          const isAdmin = userData.admin === true;
+
+          console.log('📄 Datos del usuario:', userData);
           console.log('👑 Es admin:', isAdmin);
 
           if (isAdmin) {
@@ -321,13 +367,15 @@
         }
       } else {
         console.log('❌ No hay usuario autenticado');
-        infoDiv.innerHTML = `<strong>❌ No autenticado</strong><br><small>Inicia sesión y recarga esta página</small>`;
+        infoDiv.innerHTML = `<strong>❌ No autenticado</strong><br><small>Inicia sesión abajo</small>`;
         infoDiv.style.background = '#f8d7da';
         infoDiv.style.borderColor = '#f5c6cb';
         infoDiv.style.color = '#721c24';
         loginContainer.style.display = 'block';
       }
-    });
+    }
+
+    onAuthStateChanged(auth, checkAuth);
 
     // Delete all orders
     deleteBtn.addEventListener('click', async () => {
