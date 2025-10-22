@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función helper para verificar si el usuario es admin
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.admin == true;
+    }
+
+    // Permitir lectura de precios para todos (autenticados y no autenticados)
+    match /precios/{document=**} {
+      allow read: if true;  // Permitir lectura pública
+      allow write: if isAdmin();
+    }
+
+    // Otras colecciones requieren autenticación
+    match /stock/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // REGLAS ACTUALIZADAS PARA USUARIOS - Permitir que admins lean todos los usuarios
+    match /usuarios/{userId} {
+      // Permitir lectura a usuarios autenticados de su propio documento
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Permitir lectura a admins de todos los usuarios (para sección ADMISIONES)
+      allow read: if isAdmin();
+
+      // Permitir crear documento al registrarse
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Permitir actualización solo a admins (para aprobar usuarios)
+      allow update: if isAdmin();
+
+      // Permitir eliminar solo a admins
+      allow delete: if isAdmin();
+    }
+
+    match /pedidos/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    match /clientes/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    match /vendedores/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    match /ordenes/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    match /config/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+  }
+}
