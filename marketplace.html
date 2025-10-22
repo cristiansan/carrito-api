@@ -4281,6 +4281,102 @@
     
     console.log('✅ Firebase disponible globalmente');
 
+    // === HELPER FUNCTIONS ===
+
+    // Formatear números con separadores de miles
+    function formatNumber(num) {
+      return new Intl.NumberFormat('es-AR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+
+    // Enviar orden al vendedor por WhatsApp
+    async function sendOrderToSellerWhatsApp(orderData, orderNumber, clienteNombre) {
+      try {
+        console.log('📱 [WhatsApp] Iniciando envío...');
+        console.log('📱 [WhatsApp] orderData.vendedorId:', orderData.vendedorId);
+        console.log('📱 [WhatsApp] orderNumber:', orderNumber);
+        console.log('📱 [WhatsApp] clienteNombre:', clienteNombre);
+
+        if (!orderData.vendedorId) {
+          console.log('⚠️ [WhatsApp] No hay vendedor asignado en orderData');
+          return;
+        }
+
+        const { doc, getDoc } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+
+        console.log('📱 [WhatsApp] Buscando vendedor:', orderData.vendedorId);
+        const vendedorRef = doc(db, 'vendedores', orderData.vendedorId);
+        const vendedorDoc = await getDoc(vendedorRef);
+
+        if (!vendedorDoc.exists()) {
+          console.log('⚠️ [WhatsApp] Vendedor no encontrado en BD');
+          return;
+        }
+
+        const vendedorData = vendedorDoc.data();
+        console.log('📱 [WhatsApp] Vendedor encontrado:', vendedorData.name);
+        console.log('📱 [WhatsApp] Teléfonos:', { phone: vendedorData.phone, phone2: vendedorData.phone2 });
+
+        // Obtener ambos teléfonos del vendedor
+        const phones = [];
+        if (vendedorData.phone || vendedorData.telefono) {
+          phones.push((vendedorData.phone || vendedorData.telefono).replace(/\D/g, ''));
+        }
+        if (vendedorData.phone2) {
+          phones.push(vendedorData.phone2.replace(/\D/g, ''));
+        }
+
+        console.log('📱 [WhatsApp] Teléfonos procesados:', phones);
+
+        if (phones.length === 0) {
+          console.log('⚠️ [WhatsApp] Vendedor sin teléfono válido');
+          return;
+        }
+
+        // Construir mensaje
+        let mensaje = `🔄 *ORDEN MODIFICADA #${orderNumber}*\n\n`;
+        mensaje += `👤 *Cliente:* ${clienteNombre}\n`;
+        mensaje += `📧 *Email:* ${orderData.clienteEmail || orderData.usuarioEmail}\n`;
+        if (orderData.editadaPorNombre) {
+          mensaje += `✏️ *Modificada por:* ${orderData.editadaPorNombre}\n`;
+        }
+        mensaje += `📅 *Fecha:* ${orderData.fechaLocal || new Date().toLocaleString('es-AR')}\n\n`;
+        mensaje += `📦 *Productos (${orderData.cantidadItems || orderData.items?.length || 0}):*\n`;
+
+        if (orderData.items && orderData.items.length > 0) {
+          orderData.items.forEach((item, index) => {
+            mensaje += `${index + 1}. ${item.description || item.articulo}\n`;
+            mensaje += `   Cantidad: ${item.quantity} x ${formatNumber(item.price)}\n`;
+          });
+        }
+
+        mensaje += `\n💰 *TOTAL: ${formatNumber(orderData.total)}*\n\n`;
+
+        // Enviar WhatsApp a todos los teléfonos del vendedor
+        console.log('📱 [WhatsApp] Preparando para enviar a', phones.length, 'teléfono(s)');
+
+        phones.forEach((phone, index) => {
+          const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+          console.log(`📱 [WhatsApp] URL ${index + 1}:`, whatsappUrl.substring(0, 100) + '...');
+
+          // Pequeño delay entre aperturas para evitar que se bloqueen
+          setTimeout(() => {
+            console.log(`📱 [WhatsApp] Abriendo ventana ${index + 1}/${phones.length} para ${phone}`);
+            window.open(whatsappUrl, '_blank');
+            console.log(`✅ [WhatsApp] Ventana ${index + 1}/${phones.length} abierta para ${phone}`);
+          }, index * 500);
+        });
+
+        console.log(`✅ [WhatsApp] Proceso completado - ${phones.length} teléfono(s)`);
+
+      } catch (error) {
+        console.error('❌ Error enviando WhatsApp:', error);
+      }
+    }
+
     // === LOGISTICS FUNCTIONALITY ===
 
     // Load logistics orders from Firebase
@@ -4752,6 +4848,19 @@
               });
 
               console.log('✅ Orden guardada exitosamente');
+
+              // Enviar WhatsApp al vendedor
+              if (order.vendedorId) {
+                console.log('📱 Preparando WhatsApp para vendedor:', order.vendedorId);
+                const updatedOrderData = {
+                  ...order,
+                  editadaPorNombre: userName,
+                  cantidadItems: order.items?.length || 0
+                };
+                await sendOrderToSellerWhatsApp(updatedOrderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+              } else {
+                console.log('⚠️ No se envió WhatsApp - No hay vendedor asignado');
+              }
 
               // Actualizar el número de orden con el indicador de edición
               let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
