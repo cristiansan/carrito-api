@@ -65,6 +65,24 @@
       color: #1565c0;
     }
 
+    .login-btn {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+
     .button-container {
       display: flex;
       gap: 15px;
@@ -186,8 +204,16 @@
       </ul>
     </div>
 
-    <div class="info">
+    <div class="info" id="authInfo">
       <strong>📋 Estado:</strong> Esperando autenticación...
+    </div>
+
+    <div id="loginContainer" style="display: none; text-align: center; margin: 20px 0;">
+      <p style="margin-bottom: 15px; color: #7f8c8d;">Necesitas estar autenticado como administrador</p>
+      <button class="login-btn" onclick="window.open('./login.html', '_blank')">
+        🔐 Abrir Login en nueva pestaña
+      </button>
+      <p style="margin-top: 10px; font-size: 14px; color: #95a5a6;">Después de iniciar sesión, recarga esta página</p>
     </div>
 
     <div class="stats" id="statsContainer" style="display: none;">
@@ -224,52 +250,82 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const infoDiv = document.querySelector('.info');
+    const infoDiv = document.getElementById('authInfo');
     const deleteBtn = document.getElementById('deleteBtn');
     const statusMessage = document.getElementById('statusMessage');
     const statsContainer = document.getElementById('statsContainer');
     const orderCount = document.getElementById('orderCount');
+    const loginContainer = document.getElementById('loginContainer');
+
+    console.log('🔍 Verificando autenticación...');
 
     // Check authentication
     onAuthStateChanged(auth, async (user) => {
+      console.log('👤 Usuario detectado:', user ? user.email : 'ninguno');
+
       if (user) {
+        loginContainer.style.display = 'none';
+
         // Verify user is admin
-        const userDoc = await getDocs(collection(db, 'usuarios'));
-        let isAdmin = false;
+        console.log('🔍 Verificando si es admin...');
 
-        userDoc.forEach(docSnap => {
-          if (docSnap.id === user.uid) {
-            const userData = docSnap.data();
-            isAdmin = userData.admin === true;
-          }
-        });
+        try {
+          const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
+          let isAdmin = false;
+          let userData = null;
 
-        if (isAdmin) {
-          infoDiv.innerHTML = `<strong>✅ Autenticado como:</strong> ${user.email} (Admin)`;
+          usuariosSnapshot.forEach(docSnap => {
+            if (docSnap.id === user.uid) {
+              userData = docSnap.data();
+              isAdmin = userData.admin === true;
+              console.log('📄 Datos del usuario:', userData);
+            }
+          });
 
-          // Count orders
-          const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
-          const count = ordersSnapshot.size;
+          console.log('👑 Es admin:', isAdmin);
 
-          orderCount.textContent = count;
-          statsContainer.style.display = 'block';
+          if (isAdmin) {
+            infoDiv.innerHTML = `<strong>✅ Autenticado como:</strong> ${user.email} (Admin)`;
+            infoDiv.style.background = '#d4edda';
+            infoDiv.style.borderColor = '#c3e6cb';
+            infoDiv.style.color = '#155724';
 
-          if (count > 0) {
-            deleteBtn.disabled = false;
+            // Count orders
+            console.log('📊 Contando pedidos...');
+            const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
+            const count = ordersSnapshot.size;
+
+            console.log('📦 Total de pedidos:', count);
+
+            orderCount.textContent = count;
+            statsContainer.style.display = 'block';
+
+            if (count > 0) {
+              deleteBtn.disabled = false;
+            } else {
+              infoDiv.innerHTML = `<strong>ℹ️ No hay pedidos para borrar</strong>`;
+            }
           } else {
-            infoDiv.innerHTML = `<strong>ℹ️ No hay pedidos para borrar</strong>`;
+            console.log('❌ Usuario no es admin');
+            infoDiv.innerHTML = `<strong>❌ Error:</strong> Solo administradores pueden usar esta herramienta<br><small>Usuario: ${user.email}</small>`;
+            infoDiv.style.background = '#f8d7da';
+            infoDiv.style.borderColor = '#f5c6cb';
+            infoDiv.style.color = '#721c24';
           }
-        } else {
-          infoDiv.innerHTML = `<strong>❌ Error:</strong> Solo administradores pueden usar esta herramienta`;
+        } catch (error) {
+          console.error('❌ Error verificando admin:', error);
+          infoDiv.innerHTML = `<strong>❌ Error:</strong> No se pudo verificar permisos: ${error.message}`;
           infoDiv.style.background = '#f8d7da';
           infoDiv.style.borderColor = '#f5c6cb';
           infoDiv.style.color = '#721c24';
         }
       } else {
-        infoDiv.innerHTML = `<strong>❌ No autenticado:</strong> Por favor inicia sesión primero en <a href="./login.html">login.html</a>`;
+        console.log('❌ No hay usuario autenticado');
+        infoDiv.innerHTML = `<strong>❌ No autenticado</strong><br><small>Inicia sesión y recarga esta página</small>`;
         infoDiv.style.background = '#f8d7da';
         infoDiv.style.borderColor = '#f5c6cb';
         infoDiv.style.color = '#721c24';
+        loginContainer.style.display = 'block';
       }
     });
 
