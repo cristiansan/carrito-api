@@ -849,7 +849,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.23</span>
+    <span id="versionBtn" class="version-btn">v0.24</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -872,7 +872,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.23</button>
+      <button id="mobileVersionBtn">v0.24</button>
     </div>
   </div>
 
@@ -1088,7 +1088,23 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.23 - Actual</h3>
+          <h3>v0.24 - Actual</h3>
+          <ul>
+            <li>👥 <strong>Sistema de aprobación de usuarios:</strong> Nuevos usuarios requieren aprobación de admin</li>
+            <li>🔐 <strong>Sección ADMISIONES:</strong> Panel en Administration.html para aprobar usuarios y asignar roles</li>
+            <li>👑 <strong>Roles de usuario:</strong> Sistema de permisos (usuario, vendedor, admin)</li>
+            <li>📋 <strong>Columna LISTA en clientes:</strong> Asignación de lista de precios (precios1-5) por cliente</li>
+            <li>📊 <strong>Historial mejorado:</strong> Admins ven todas las órdenes, usuarios solo las suyas</li>
+            <li>🗑️ <strong>Banner admin en historial:</strong> Indicador visual cuando admin ve todas las órdenes</li>
+            <li>👤 <strong>Email de usuario en órdenes:</strong> Mostrado en historial para admins</li>
+            <li>✏️ <strong>Edición de perfil para todos:</strong> Usuarios no-admin pueden actualizar su nombre y datos</li>
+            <li>🔧 <strong>Reglas Firestore actualizadas:</strong> Permisos correctos para edición de perfil propio</li>
+            <li>🗑️ <strong>Herramienta de limpieza:</strong> delete-all-orders.html para borrar pedidos en testing (solo local)</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.23</h3>
           <ul>
             <li>📱 <strong>WhatsApp multi-teléfono:</strong> Envío automático a ambos teléfonos del vendedor (phone y phone2)</li>
             <li>📞 <strong>Segundo teléfono para vendedores:</strong> Campo phone2 agregado en datos de vendedor</li>
