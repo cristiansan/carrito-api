@@ -4754,22 +4754,32 @@
         console.log('👥 Loading pending users...');
 
         try {
-          const { collection, query, where, getDocs, orderBy } = firebase.firestoreHelpers;
+          const { collection, getDocs } = firebase.firestoreHelpers;
           const db = firebase.firestore();
 
           const usuariosRef = collection(db, 'usuarios');
-          const q = query(
-            usuariosRef,
-            where('approved', '==', false),
-            orderBy('createdAt', 'desc')
-          );
-
-          const querySnapshot = await getDocs(q);
+          const querySnapshot = await getDocs(usuariosRef);
 
           const pendingUsersList = document.getElementById('pendingUsersList');
           const noPendingUsers = document.getElementById('noPendingUsers');
 
-          if (querySnapshot.empty) {
+          // Filter pending users on client side
+          const pendingUsers = [];
+          querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            if (user.approved === false || user.role === 'pending') {
+              pendingUsers.push({ id: doc.id, ...user });
+            }
+          });
+
+          // Sort by creation date (newest first)
+          pendingUsers.sort((a, b) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(0);
+            const dateB = b.createdAt?.toDate?.() || new Date(0);
+            return dateB - dateA;
+          });
+
+          if (pendingUsers.length === 0) {
             pendingUsersList.innerHTML = '';
             noPendingUsers.style.display = 'block';
             console.log('✅ No hay usuarios pendientes');
@@ -4779,9 +4789,8 @@
           noPendingUsers.style.display = 'none';
 
           let html = '';
-          querySnapshot.forEach((doc) => {
-            const user = doc.data();
-            const userId = doc.id;
+          pendingUsers.forEach((user) => {
+            const userId = user.id;
             const createdAt = user.createdAt?.toDate?.() || new Date();
             const formattedDate = createdAt.toLocaleDateString('es-AR', {
               year: 'numeric',
@@ -4827,7 +4836,7 @@
           });
 
           pendingUsersList.innerHTML = html;
-          console.log(`✅ ${querySnapshot.size} usuarios pendientes cargados`);
+          console.log(`✅ ${pendingUsers.length} usuarios pendientes cargados`);
 
         } catch (error) {
           console.error('❌ Error loading pending users:', error);
