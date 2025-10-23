@@ -1165,7 +1165,7 @@
         // Logo (cargar desde la URL del sitio)
         try {
           const logoUrl = window.location.origin + '/logo.png';
-          doc.addImage(logoUrl, 'PNG', 14, 8, 30, 25); // x, y, width, height
+          doc.addImage(logoUrl, 'PNG', 14, 12, 15, 12.5); // x, y, width, height (50% más pequeño)
         } catch (error) {
           console.warn('⚠️ No se pudo cargar el logo:', error);
         }
@@ -1358,10 +1358,35 @@
           phones.push(vendedorData.phone2.replace(/\D/g, ''));
         }
 
-        console.log('📱 [WhatsApp] Teléfonos procesados:', phones);
+        console.log('📱 [WhatsApp] Teléfonos del vendedor procesados:', phones);
+
+        // Buscar teléfono del cliente si existe
+        let clientePhone = null;
+        if (window.selectedClienteData && window.selectedClienteData.id) {
+          console.log('📱 [WhatsApp] Buscando teléfono del cliente...');
+          try {
+            const clienteRef = doc(db, 'clientes', window.selectedClienteData.id);
+            const clienteDoc = await getDoc(clienteRef);
+            if (clienteDoc.exists()) {
+              const clienteData = clienteDoc.data();
+              if (clienteData.telefono || clienteData.phone) {
+                clientePhone = (clienteData.telefono || clienteData.phone).replace(/\D/g, '');
+                console.log('✅ [WhatsApp] Teléfono del cliente encontrado:', clientePhone);
+              }
+            }
+          } catch (error) {
+            console.warn('⚠️ [WhatsApp] Error buscando teléfono del cliente:', error);
+          }
+        }
+
+        // Agregar teléfono del cliente a la lista si existe
+        if (clientePhone && !phones.includes(clientePhone)) {
+          phones.push(clientePhone);
+          console.log('📱 [WhatsApp] Teléfono del cliente agregado a la lista');
+        }
 
         if (phones.length === 0) {
-          console.log('⚠️ [WhatsApp] Vendedor sin teléfono válido');
+          console.log('⚠️ [WhatsApp] No hay teléfonos válidos (ni vendedor ni cliente)');
           return;
         }
 
@@ -1387,22 +1412,26 @@
         mensaje += `💰 *TOTAL: $${formatNumber(orderData.total)}*\n\n`;
         mensaje += `✅ Descargá el PDF para ver el detalle completo`;
 
-        // Enviar WhatsApp a todos los teléfonos del vendedor
-        console.log('📱 [WhatsApp] Preparando para enviar a', phones.length, 'teléfono(s)');
+        // Enviar WhatsApp a todos los teléfonos (vendedor + cliente)
+        const totalVendedor = clientePhone ? phones.length - 1 : phones.length;
+        console.log(`📱 [WhatsApp] Preparando para enviar a ${phones.length} teléfono(s) (${totalVendedor} vendedor, ${clientePhone ? '1 cliente' : '0 cliente'})`);
 
         phones.forEach((phone, index) => {
           const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
-          console.log(`📱 [WhatsApp] URL ${index + 1}:`, whatsappUrl.substring(0, 100) + '...');
+          const isCliente = phone === clientePhone;
+          const label = isCliente ? 'cliente' : 'vendedor';
+
+          console.log(`📱 [WhatsApp] URL ${index + 1} (${label}):`, whatsappUrl.substring(0, 100) + '...');
 
           // Pequeño delay entre aperturas para evitar que se bloqueen
           setTimeout(() => {
-            console.log(`📱 [WhatsApp] Abriendo ventana ${index + 1}/${phones.length} para ${phone}`);
+            console.log(`📱 [WhatsApp] Abriendo ventana ${index + 1}/${phones.length} para ${phone} (${label})`);
             window.open(whatsappUrl, '_blank');
-            console.log(`✅ [WhatsApp] Ventana ${index + 1}/${phones.length} abierta para ${phone}`);
+            console.log(`✅ [WhatsApp] Ventana ${index + 1}/${phones.length} abierta para ${phone} (${label})`);
           }, index * 500);
         });
 
-        console.log(`✅ [WhatsApp] Proceso completado - ${phones.length} teléfono(s)`);
+        console.log(`✅ [WhatsApp] Proceso completado - ${phones.length} teléfono(s) (vendedor + cliente)`);
 
       } catch (error) {
         console.error('❌ Error enviando WhatsApp:', error);
