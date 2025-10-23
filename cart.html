@@ -319,6 +319,19 @@
       color: #4CAF50;
       margin-bottom: 20px;
     }
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #3a3a44;
+      border-top: 6px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     .success-title {
       font-size: 28px;
       color: #4CAF50;
@@ -417,6 +430,15 @@
   </div>
 
   <!-- Modal de éxito -->
+  <!-- Loading Modal -->
+  <div id="loadingModal" class="success-modal" style="display: none;">
+    <div class="success-modal-content">
+      <div class="loading-spinner"></div>
+      <h2 class="success-title">Procesando orden...</h2>
+      <p class="success-message" id="loadingMessage">Generando PDF y enviando WhatsApp</p>
+    </div>
+  </div>
+
   <div id="successModal" class="success-modal">
     <div class="success-modal-content">
       <div class="success-icon">✓</div>
@@ -1118,9 +1140,16 @@
           console.log('✅ Orden guardada en Firebase');
         }
 
+        // Mostrar loading modal
+        document.getElementById('loadingModal').style.display = 'block';
+        document.getElementById('loadingMessage').textContent = 'Generando PDF y enviando WhatsApp...';
+
         // Enviar WhatsApp al vendedor (si no hay vendedor, se usa Santiago por defecto)
         console.log('📱 Preparando WhatsApp para vendedor:', vendedorId || 'Santiago (por defecto)');
         await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
+
+        // Ocultar loading modal
+        document.getElementById('loadingModal').style.display = 'none';
 
         // Mostrar modal de éxito
         document.getElementById('orderNumberDisplay').textContent = `Orden #${orderNumber}`;
@@ -1347,48 +1376,20 @@
         }
 
         console.log('📱 [WhatsApp] Vendedor encontrado:', vendedorData.name);
-        console.log('📱 [WhatsApp] Teléfonos:', { phone: vendedorData.phone, phone2: vendedorData.phone2 });
+        console.log('📱 [WhatsApp] Teléfono principal:', vendedorData.phone || vendedorData.telefono);
 
-        // Obtener ambos teléfonos del vendedor
-        const phones = [];
+        // Obtener solo el teléfono principal del vendedor
+        let vendedorPhone = null;
         if (vendedorData.phone || vendedorData.telefono) {
-          phones.push((vendedorData.phone || vendedorData.telefono).replace(/\D/g, ''));
-        }
-        if (vendedorData.phone2) {
-          phones.push(vendedorData.phone2.replace(/\D/g, ''));
+          vendedorPhone = (vendedorData.phone || vendedorData.telefono).replace(/\D/g, '');
         }
 
-        console.log('📱 [WhatsApp] Teléfonos del vendedor procesados:', phones);
-
-        // Buscar teléfono del cliente si existe
-        let clientePhone = null;
-        if (window.selectedClienteData && window.selectedClienteData.id) {
-          console.log('📱 [WhatsApp] Buscando teléfono del cliente...');
-          try {
-            const clienteRef = doc(db, 'clientes', window.selectedClienteData.id);
-            const clienteDoc = await getDoc(clienteRef);
-            if (clienteDoc.exists()) {
-              const clienteData = clienteDoc.data();
-              if (clienteData.telefono || clienteData.phone) {
-                clientePhone = (clienteData.telefono || clienteData.phone).replace(/\D/g, '');
-                console.log('✅ [WhatsApp] Teléfono del cliente encontrado:', clientePhone);
-              }
-            }
-          } catch (error) {
-            console.warn('⚠️ [WhatsApp] Error buscando teléfono del cliente:', error);
-          }
-        }
-
-        // Agregar teléfono del cliente a la lista si existe
-        if (clientePhone && !phones.includes(clientePhone)) {
-          phones.push(clientePhone);
-          console.log('📱 [WhatsApp] Teléfono del cliente agregado a la lista');
-        }
-
-        if (phones.length === 0) {
-          console.log('⚠️ [WhatsApp] No hay teléfonos válidos (ni vendedor ni cliente)');
+        if (!vendedorPhone) {
+          console.log('⚠️ [WhatsApp] Vendedor sin teléfono válido');
           return;
         }
+
+        console.log('📱 [WhatsApp] Teléfono del vendedor procesado:', vendedorPhone);
 
         // Generar PDF
         console.log('📄 [WhatsApp] Generando PDF de la orden...');
@@ -1412,26 +1413,14 @@
         mensaje += `💰 *TOTAL: $${formatNumber(orderData.total)}*\n\n`;
         mensaje += `✅ Descargá el PDF para ver el detalle completo`;
 
-        // Enviar WhatsApp a todos los teléfonos (vendedor + cliente)
-        const totalVendedor = clientePhone ? phones.length - 1 : phones.length;
-        console.log(`📱 [WhatsApp] Preparando para enviar a ${phones.length} teléfono(s) (${totalVendedor} vendedor, ${clientePhone ? '1 cliente' : '0 cliente'})`);
+        // Enviar WhatsApp solo al vendedor
+        const whatsappUrl = `https://wa.me/${vendedorPhone}?text=${encodeURIComponent(mensaje)}`;
+        console.log('📱 [WhatsApp] URL generada:', whatsappUrl.substring(0, 100) + '...');
 
-        phones.forEach((phone, index) => {
-          const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
-          const isCliente = phone === clientePhone;
-          const label = isCliente ? 'cliente' : 'vendedor';
-
-          console.log(`📱 [WhatsApp] URL ${index + 1} (${label}):`, whatsappUrl.substring(0, 100) + '...');
-
-          // Pequeño delay entre aperturas para evitar que se bloqueen
-          setTimeout(() => {
-            console.log(`📱 [WhatsApp] Abriendo ventana ${index + 1}/${phones.length} para ${phone} (${label})`);
-            window.open(whatsappUrl, '_blank');
-            console.log(`✅ [WhatsApp] Ventana ${index + 1}/${phones.length} abierta para ${phone} (${label})`);
-          }, index * 500);
-        });
-
-        console.log(`✅ [WhatsApp] Proceso completado - ${phones.length} teléfono(s) (vendedor + cliente)`);
+        // Abrir WhatsApp
+        console.log('📱 [WhatsApp] Abriendo WhatsApp para vendedor:', vendedorPhone);
+        window.open(whatsappUrl, '_blank');
+        console.log('✅ [WhatsApp] Proceso completado - WhatsApp enviado al vendedor');
 
       } catch (error) {
         console.error('❌ Error enviando WhatsApp:', error);
