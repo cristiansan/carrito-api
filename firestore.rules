@@ -2,66 +2,82 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Función helper para verificar si el usuario es admin
+    // Helper function to check if user is admin
     function isAdmin() {
       return request.auth != null &&
-             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
              get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.admin == true;
     }
 
-    // Permitir lectura de precios para todos (autenticados y no autenticados)
-    match /precios/{document=**} {
-      allow read: if true;  // Permitir lectura pública
-      allow write: if isAdmin();
+    // Helper function to check if user is authenticated and approved
+    function isApprovedUser() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.approved == true;
     }
 
-    // Otras colecciones requieren autenticación
-    match /stock/{document=**} {
-      allow read: if request.auth != null;
-      allow write: if isAdmin();
+    // Helper function to check if user is vendedor
+    function isVendedor() {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.role == 'vendedor';
     }
 
-    // REGLAS ACTUALIZADAS PARA USUARIOS - Permitir que admins lean todos los usuarios
+    // Counters collection - for order numbers
+    match /counters/{counterId} {
+      // Allow authenticated users to read and write counters
+      allow read, write: if request.auth != null;
+    }
+
+    // Usuarios collection
     match /usuarios/{userId} {
-      // Permitir lectura a usuarios autenticados de su propio documento
-      allow read: if request.auth != null && request.auth.uid == userId;
-
-      // Permitir lectura a admins de todos los usuarios (para sección ADMISIONES)
-      allow read: if isAdmin();
-
-      // Permitir crear documento al registrarse
+      // Anyone authenticated can create their own user document during registration
       allow create: if request.auth != null && request.auth.uid == userId;
 
-      // Permitir actualización a usuarios de su propio perfil Y a admins de cualquier usuario
+      // Users can read their own profile, admins can read all
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+
+      // Users can update their own profile (name, address, phone), admins can update any profile
       allow update: if (request.auth != null && request.auth.uid == userId) || isAdmin();
 
-      // Permitir eliminar solo a admins
+      // Only admins can delete
       allow delete: if isAdmin();
     }
 
-    match /pedidos/{document=**} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-
-    match /clientes/{document=**} {
-      allow read: if request.auth != null;
+    // Clientes collection
+    match /clientes/{clienteId} {
+      // Approved users can read, only admins can write
+      allow read: if isApprovedUser() || isAdmin();
       allow write: if isAdmin();
     }
 
-    match /vendedores/{document=**} {
-      allow read: if request.auth != null;
+    // Vendedores collection
+    match /vendedores/{vendedorId} {
+      // Approved users can read, only admins can write
+      allow read: if isApprovedUser() || isAdmin();
       allow write: if isAdmin();
     }
 
-    match /ordenes/{document=**} {
-      allow read: if request.auth != null;
+    // Precios collection
+    match /precios/{precioId} {
+      // Approved users can read prices, only admins can write
+      allow read: if isApprovedUser() || isAdmin();
       allow write: if isAdmin();
     }
 
-    match /config/{document=**} {
-      allow read: if request.auth != null;
-      allow write: if isAdmin();
+    // Pedidos (orders) collection
+    match /pedidos/{pedidoId} {
+      // Authenticated approved users can create orders
+      allow create: if isApprovedUser() || isAdmin();
+
+      // Users can read their own orders, admins can read all
+      allow read: if request.auth != null &&
+                     (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Users can update their own orders, admins can update any order
+      allow update: if request.auth != null &&
+                       (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Only admins can delete orders
+      allow delete: if isAdmin();
     }
   }
 }
