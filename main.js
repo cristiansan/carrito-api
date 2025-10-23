@@ -33,7 +33,7 @@ window.selectedItems = selectedItems;
 window.mappedStockData = mappedStockData;
 
 // Version control for column visibility defaults
-const COLUMN_VISIBILITY_VERSION = 3; // Increment this when changing defaults
+const COLUMN_VISIBILITY_VERSION = 4; // Increment this when changing defaults
 
 // Default column visibility
 const defaultColumnVisibility = {
@@ -52,6 +52,8 @@ const defaultColumnVisibility = {
   totalCostoContable: false,
   monedaCostoContable: false,
   costoContableUnidadAlternativa: false,
+  price: true, // Precio - enabled by default
+  quantity: true, // Cantidad - enabled by default
   add: true,
   addToCart: true
 };
@@ -571,10 +573,16 @@ function renderRows() {
     }
   }
 
-  // Solo en marketplace agregamos la columna Price y Quantity
+  // En marketplace redefinimos las columnas con orden específico
   if (isMarketplace) {
-    columns.push({ id: 'price', label: 'Price', sortable: true, class: 'right', width: '12%' });
-    columns.push({ id: 'quantity', label: 'Quantity', sortable: false, class: '', width: '15%' });
+    columns = [
+      { id: 'articulo', label: 'Artículo', sortable: true, class: '', width: '15%' },
+      { id: 'description', label: 'Descripción', sortable: true, class: '', width: '30%' },
+      { id: 'quantity', label: 'Cantidad', sortable: false, class: '', width: '15%' },
+      { id: 'price', label: 'Precio', sortable: true, class: 'right', width: '12%' },
+      { id: 'teorico', label: 'Stock', sortable: true, class: 'right', width: '12%' },
+      { id: 'transito', label: 'Tránsito', sortable: true, class: 'right', width: '12%' }
+    ];
   }
 
   let columnsToRender = columns.filter(col => columnVisibility[col.id] !== false);
@@ -676,7 +684,7 @@ function renderRows() {
             td.style.fontWeight = 'bold';
             td.style.color = '#ff9800'; // Orange color for unknown price
           } else {
-            td.textContent = formatNumber(value);
+            td.textContent = '$' + formatNumber(value);
           }
         } else {
           td.textContent = value;
