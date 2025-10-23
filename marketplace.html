@@ -4191,17 +4191,9 @@
                   console.log('⚠️ loadPricesFromFirebase no disponible aún');
                 }
               } else {
-                // Even without login, marketplace should load prices
-                console.log('👤 Usuario no autenticado, cargando precios de Firebase...');
-                if (window.loadPricesFromFirebase) {
-                  await window.loadPricesFromFirebase();
-                  console.log('✅ Precios cargados en marketplace (sin login)');
-
-                  if (window.renderRows) {
-                    window.renderRows();
-                    console.log('🔄 Vista actualizada con precios de Firebase');
-                  }
-                }
+                // Redirect to login if not authenticated
+                console.log('🔒 Usuario no autenticado, redirigiendo a login...');
+                window.location.href = 'login.html';
               }
             });
           }

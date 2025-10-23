@@ -210,13 +210,13 @@ async function loadPricesFromFirebase() {
     return;
   }
 
-  // Determine if we're in marketplace (always load) or index (only if logged in)
+  // Determine if we're in marketplace or index
   const isMarketplace = window.location.pathname.includes('marketplace.html');
   const isIndex = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
 
-  // For index.html, require login. For marketplace, always load.
-  if (isIndex && !isUserLoggedIn) {
-    console.log('⚠️ Not loading prices: user not logged in on index.html');
+  // Require login for both index and marketplace
+  if (!isUserLoggedIn) {
+    console.log('⚠️ Not loading prices: user not logged in');
     return;
   }
 
@@ -259,10 +259,8 @@ async function loadPricesFromFirebase() {
 
 // Function to get price for an articulo
 function getPriceForArticulo(articulo) {
-  // In marketplace, allow getting prices even without login
-  const isMarketplace = window.location.pathname.includes('marketplace.html');
-
-  if (!isUserLoggedIn && !isMarketplace) return null;
+  // Require login for all pages
+  if (!isUserLoggedIn) return null;
 
   // Try exact match first
   let price = pricesData.get(articulo);
