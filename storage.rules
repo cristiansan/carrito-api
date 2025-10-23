@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Orders PDF files
+    match /orders/{fileName} {
+      // Allow authenticated users to create/write order PDFs
+      allow create, write: if request.auth != null;
+
+      // Allow anyone to read order PDFs (via URL)
+      allow read: if true;
+    }
+
+    // Default: deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
