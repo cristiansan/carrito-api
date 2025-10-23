@@ -1158,20 +1158,29 @@
         const textColor = [51, 51, 51]; // Gris oscuro
         const lightGray = [240, 240, 240];
 
-        // Header
+        // Header con fondo verde
         doc.setFillColor(...primaryColor);
-        doc.rect(0, 0, 210, 35, 'F');
+        doc.rect(0, 0, 210, 40, 'F');
 
+        // Logo (cargar desde la URL del sitio)
+        try {
+          const logoUrl = window.location.origin + '/logo.png';
+          doc.addImage(logoUrl, 'PNG', 14, 8, 30, 25); // x, y, width, height
+        } catch (error) {
+          console.warn('⚠️ No se pudo cargar el logo:', error);
+        }
+
+        // Título a la derecha del logo
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(24);
         doc.setFont(undefined, 'bold');
-        doc.text('ORDEN DE COMPRA', 105, 15, { align: 'center' });
+        doc.text('ORDEN DE COMPRA', 105, 18, { align: 'center' });
 
         doc.setFontSize(18);
-        doc.text(`#${orderNumber}`, 105, 25, { align: 'center' });
+        doc.text(`#${orderNumber}`, 105, 28, { align: 'center' });
 
         // Información del cliente
-        let yPos = 45;
+        let yPos = 50;
         doc.setTextColor(...textColor);
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
@@ -1235,11 +1244,12 @@
         yPos = finalY + 10;
 
         doc.setFillColor(...lightGray);
-        doc.rect(140, yPos - 5, 56, 12, 'F');
+        doc.rect(125, yPos - 5, 71, 12, 'F');
 
         doc.setFont(undefined, 'bold');
         doc.setFontSize(14);
-        doc.text('TOTAL:', 145, yPos + 2);
+        doc.setTextColor(...textColor);
+        doc.text('TOTAL:', 130, yPos + 2);
         doc.setFontSize(16);
         doc.setTextColor(...primaryColor);
         doc.text('$' + formatNumber(orderData.total), 191, yPos + 2, { align: 'right' });
