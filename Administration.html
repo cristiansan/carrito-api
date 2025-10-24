@@ -4985,12 +4985,13 @@
                       </select>
                     </div>
                     <div>
-                      <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Cliente Asignado (Opcional)</label>
+                      <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Cliente Asignado *</label>
                       <select id="client-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; width: 100%; color: #333; background-color: #fff;">
-                        <option value="" style="color: #999;">-- Sin cliente asignado --</option>
-                        ${window.allClients ? window.allClients.map(c =>
-                          `<option value="${c.numero}" style="color: #333;">${c.numero} - ${c.nombre}</option>`
-                        ).join('') : ''}
+                        <option value="" style="color: #999;">-- Seleccionar cliente --</option>
+                        ${window.allClients ? window.allClients
+                          .filter((c, index, self) => index === self.findIndex(t => t.codigo === c.codigo))
+                          .map(c => `<option value="${c.codigo}" style="color: #333;">${c.codigo} - ${c.nombre}</option>`)
+                          .join('') : ''}
                       </select>
                     </div>
                     <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important; margin-top: 5px;">
@@ -5023,43 +5024,92 @@
           const clientSelect = document.getElementById(`client-${userId}`);
           const selectedRole = roleSelect.value;
           const selectedPriceList = priceListSelect.value;
-          const selectedClient = clientSelect.value;
+          const selectedClientCode = clientSelect.value;
 
           if (!selectedRole) {
             alert('⚠️ Por favor selecciona un rol antes de aprobar');
             return;
           }
 
-          const { doc, updateDoc } = firebase.firestoreHelpers;
+          if (!selectedClientCode) {
+            alert('⚠️ Por favor selecciona un cliente antes de aprobar');
+            return;
+          }
+
+          const { doc, updateDoc, setDoc, collection, getDocs, query, where } = firebase.firestoreHelpers;
           const db = firebase.firestore();
 
-          const userRef = doc(db, 'usuarios', userId);
+          // Buscar el cliente original
+          const clienteOriginal = window.allClients?.find(c => c.codigo === selectedClientCode || c.numero === selectedClientCode);
+          if (!clienteOriginal) {
+            alert('⚠️ Error: Cliente no encontrado');
+            return;
+          }
 
-          const updateData = {
+          // Obtener datos del usuario
+          const usuariosRef = collection(db, 'usuarios');
+          const userQuery = query(usuariosRef, where('__name__', '==', userId));
+          const userSnapshot = await getDocs(userQuery);
+
+          let userData = null;
+          userSnapshot.forEach(doc => {
+            userData = doc.data();
+          });
+
+          if (!userData) {
+            alert('⚠️ Error: Usuario no encontrado');
+            return;
+          }
+
+          // Actualizar el usuario
+          const userRef = doc(db, 'usuarios', userId);
+          await updateDoc(userRef, {
             approved: true,
             role: selectedRole,
             admin: selectedRole === 'admin',
-            listaPrecio: selectedPriceList
+            listaPrecio: selectedPriceList,
+            clienteCodigo: clienteOriginal.codigo,
+            clienteNombre: clienteOriginal.nombre
+          });
+
+          // Crear un nuevo cliente en la colección de clientes con el mismo código
+          // pero con datos del usuario aprobado
+          const nuevoClienteId = `${clienteOriginal.codigo}_${userId.substring(0, 8)}`;
+          const nuevoClienteRef = doc(db, 'clientes', nuevoClienteId);
+
+          const nuevoClienteData = {
+            codigo: clienteOriginal.codigo, // Mismo código que el cliente original
+            nombre: userData.displayName || userData.email,
+            nombreComercial: clienteOriginal.nombreComercial || '',
+            grupo: clienteOriginal.grupo || '',
+            departamento: clienteOriginal.departamento || '',
+            inscripcion: clienteOriginal.inscripcion || '',
+            nroDocumento: clienteOriginal.nroDocumento || '',
+            direccion: clienteOriginal.direccion || '',
+            ciudad: clienteOriginal.ciudad || '',
+            provincia: clienteOriginal.provincia || '',
+            pais: clienteOriginal.pais || '',
+            telefono: clienteOriginal.telefono || '',
+            email: userData.email,
+            saldoCredito: 0,
+            listaPrecio: selectedPriceList,
+            usuarioId: userId,
+            creadoDesdeAdmision: true,
+            fechaCreacion: new Date()
           };
 
-          // Solo agregar cliente si se seleccionó uno
-          if (selectedClient) {
-            updateData.clienteNumero = selectedClient;
-            // Buscar el nombre del cliente
-            const cliente = window.allClients?.find(c => c.numero === selectedClient);
-            if (cliente) {
-              updateData.clienteNombre = cliente.nombre;
-            }
-          }
+          await setDoc(nuevoClienteRef, nuevoClienteData);
 
-          await updateDoc(userRef, updateData);
+          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}, cliente: ${clienteOriginal.codigo}`);
+          console.log(`✅ Nuevo cliente creado en listado: ${nuevoClienteId}`);
 
-          const clienteMsg = selectedClient ? `, cliente: ${selectedClient}` : '';
-          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}${clienteMsg}`);
-          alert(`✅ Usuario aprobado exitosamente como ${selectedRole} con ${selectedPriceList}${clienteMsg}`);
+          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}\n✅ Cliente agregado al listado con código ${clienteOriginal.codigo}`);
 
-          // Reload pending users list
+          // Reload pending users list and clients
           await loadPendingUsers();
+          if (window.loadClients) {
+            await window.loadClients();
+          }
 
         } catch (error) {
           console.error('❌ Error approving user:', error);
