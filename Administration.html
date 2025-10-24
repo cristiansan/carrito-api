@@ -4904,6 +4904,12 @@
         console.log('👥 Loading pending users...');
 
         try {
+          // Asegurarse de que los clientes estén cargados primero
+          if (!window.allClients) {
+            console.log('📋 Cargando clientes primero...');
+            await loadClients();
+          }
+
           const { collection, getDocs } = firebase.firestoreHelpers;
           const db = firebase.firestore();
 
