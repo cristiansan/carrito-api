@@ -3422,8 +3422,8 @@
 
       // Admin can move orders and has additional controls
       if (canEdit) {
-        // Flecha hacia arriba (volver al estado anterior)
-        if (hasPrev) {
+        // Flecha hacia arriba (volver al estado anterior) - solo permitido en estado "revision"
+        if (hasPrev && currentState === 'revision') {
           const prevStateLabel = stateLabels[currentFlow.prev] || currentFlow.prev;
           buttonHtml += `<button class="move-order-btn-up" onclick="adminMoveOrder('${order.id}', '${currentFlow.prev}')" title="Volver a ${prevStateLabel}">↑</button>`;
         }

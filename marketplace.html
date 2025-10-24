@@ -4562,8 +4562,8 @@
 
       // Solo mostrar botones de cambio de estado si el usuario es admin
       if (isAdmin) {
-        // Flecha hacia arriba (volver al estado anterior)
-        if (hasPrev) {
+        // Flecha hacia arriba (volver al estado anterior) - solo permitido en estado "revision"
+        if (hasPrev && currentState === 'revision') {
           const prevStateLabel = stateLabels[currentFlow.prev] || currentFlow.prev;
           buttonHtml += `<button class="move-order-btn-up" onclick="moveOrder('${order.id}', '${currentFlow.prev}')" title="Volver a ${prevStateLabel}">↑</button>`;
         }
