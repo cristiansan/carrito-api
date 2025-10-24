@@ -1420,18 +1420,35 @@
     }
 
     /* Estilos para selects de Admisiones - asegurar texto visible */
-    select.mdc-text-field__input {
+    /* Sobrescribir herencia de color para selects específicamente */
+    select.mdc-text-field__input,
+    select.mdc-text-field__input:focus,
+    select.mdc-text-field__input:active,
+    select.mdc-text-field__input:hover {
       color: #333 !important;
       background-color: #fff !important;
+      -webkit-text-fill-color: #333 !important; /* Para Safari/Chrome */
     }
 
     select.mdc-text-field__input option {
       color: #333 !important;
       background-color: #fff !important;
+      -webkit-text-fill-color: #333 !important;
     }
 
     select.mdc-text-field__input option[value=""] {
       color: #999 !important;
+      -webkit-text-fill-color: #999 !important;
+    }
+
+    /* Asegurar que el texto seleccionado sea visible en todos los estados */
+    #pendingUsersList select.mdc-text-field__input {
+      color: #333 !important;
+      background-color: #fff !important;
+      -webkit-text-fill-color: #333 !important;
+      -webkit-appearance: menulist;
+      -moz-appearance: menulist;
+      appearance: menulist;
     }
   </style>
 </head>
