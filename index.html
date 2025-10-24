@@ -862,7 +862,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.24</span>
+    <span id="versionBtn" class="version-btn">v0.25</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -885,7 +885,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.24</button>
+      <button id="mobileVersionBtn">v0.25</button>
     </div>
   </div>
 
@@ -1101,7 +1101,23 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.24 - Actual</h3>
+          <h3>v0.25 - Actual</h3>
+          <ul>
+            <li>🔒 <strong>Seguridad marketplace:</strong> Requiere autenticación para ver precios</li>
+            <li>📱 <strong>Logo oculto en móvil:</strong> Logo South Traders oculto en dispositivos móviles</li>
+            <li>⬆️ <strong>Control de estados de órdenes:</strong> Solo órdenes en Revisión pueden retroceder de estado</li>
+            <li>👥 <strong>Admisiones mejoradas:</strong> Cliente obligatorio, sin rol Usuario, con selector de lista de precios</li>
+            <li>📋 <strong>Clientes duplicados:</strong> Al aprobar usuario se crea registro en clientes con mismo código</li>
+            <li>🎨 <strong>UI Admisiones:</strong> Labels descriptivos, mejor contraste, texto visible en selectores</li>
+            <li>📄 <strong>PDF en WhatsApp:</strong> Órdenes se envían como PDF adjunto vía Firebase Storage</li>
+            <li>🔧 <strong>CORS configurado:</strong> Firebase Storage permite acceso web a PDFs</li>
+            <li>⏳ <strong>Loading en órdenes:</strong> Animación durante generación de PDF y envío WhatsApp</li>
+            <li>📊 <strong>Columnas marketplace:</strong> Nuevo orden: Artículo, Descripción, Cantidad, Precio, Stock, Tránsito</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.24</h3>
           <ul>
             <li>👥 <strong>Sistema de aprobación de usuarios:</strong> Nuevos usuarios requieren aprobación de admin</li>
             <li>🔐 <strong>Sección ADMISIONES:</strong> Panel en Administration.html para aprobar usuarios y asignar roles</li>
