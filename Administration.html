@@ -4967,21 +4967,36 @@
                       <strong>Fecha registro:</strong> ${formattedDate}
                     </p>
                   </div>
-                  <div style="display: flex; flex-direction: column; gap: 10px; min-width: 250px;">
-                    <select id="role-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; min-width: 250px; color: #333;">
-                      <option value="">Seleccionar rol...</option>
-                      <option value="vendedor">🤝 Vendedor</option>
-                      <option value="admin">👑 Administrador</option>
-                    </select>
-                    <select id="priceList-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; min-width: 250px; color: #333;">
-                      <option value="precios1" selected>💰 Lista de Precios 1</option>
-                      <option value="precios2">💰 Lista de Precios 2</option>
-                      <option value="precios3">💰 Lista de Precios 3</option>
-                    </select>
-                    <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important;">
+                  <div style="display: flex; flex-direction: column; gap: 15px; min-width: 300px;">
+                    <div>
+                      <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Seleccionar Rol *</label>
+                      <select id="role-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; width: 100%; color: #333; background-color: #fff;">
+                        <option value="" style="color: #999;">-- Seleccionar rol --</option>
+                        <option value="vendedor" style="color: #333;">🤝 Vendedor</option>
+                        <option value="admin" style="color: #333;">👑 Administrador</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Lista de Precios *</label>
+                      <select id="priceList-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; width: 100%; color: #333; background-color: #fff;">
+                        <option value="precios1" selected style="color: #333;">💰 Lista de Precios 1</option>
+                        <option value="precios2" style="color: #333;">💰 Lista de Precios 2</option>
+                        <option value="precios3" style="color: #333;">💰 Lista de Precios 3</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Cliente Asignado (Opcional)</label>
+                      <select id="client-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; width: 100%; color: #333; background-color: #fff;">
+                        <option value="" style="color: #999;">-- Sin cliente asignado --</option>
+                        ${window.allClients ? window.allClients.map(c =>
+                          `<option value="${c.numero}" style="color: #333;">${c.numero} - ${c.nombre}</option>`
+                        ).join('') : ''}
+                      </select>
+                    </div>
+                    <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important; margin-top: 5px;">
                       <span class="mdc-button__ripple"></span>
                       <i class="material-icons mdc-button__icon" aria-hidden="true">check_circle</i>
-                      <span class="mdc-button__label">Aprobar</span>
+                      <span class="mdc-button__label">Aprobar Usuario</span>
                     </button>
                   </div>
                 </div>
@@ -5005,8 +5020,10 @@
         try {
           const roleSelect = document.getElementById(`role-${userId}`);
           const priceListSelect = document.getElementById(`priceList-${userId}`);
+          const clientSelect = document.getElementById(`client-${userId}`);
           const selectedRole = roleSelect.value;
           const selectedPriceList = priceListSelect.value;
+          const selectedClient = clientSelect.value;
 
           if (!selectedRole) {
             alert('⚠️ Por favor selecciona un rol antes de aprobar');
@@ -5018,15 +5035,28 @@
 
           const userRef = doc(db, 'usuarios', userId);
 
-          await updateDoc(userRef, {
+          const updateData = {
             approved: true,
             role: selectedRole,
             admin: selectedRole === 'admin',
             listaPrecio: selectedPriceList
-          });
+          };
 
-          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}`);
-          alert(`✅ Usuario aprobado exitosamente como ${selectedRole} con ${selectedPriceList}`);
+          // Solo agregar cliente si se seleccionó uno
+          if (selectedClient) {
+            updateData.clienteNumero = selectedClient;
+            // Buscar el nombre del cliente
+            const cliente = window.allClients?.find(c => c.numero === selectedClient);
+            if (cliente) {
+              updateData.clienteNombre = cliente.nombre;
+            }
+          }
+
+          await updateDoc(userRef, updateData);
+
+          const clienteMsg = selectedClient ? `, cliente: ${selectedClient}` : '';
+          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}${clienteMsg}`);
+          alert(`✅ Usuario aprobado exitosamente como ${selectedRole} con ${selectedPriceList}${clienteMsg}`);
 
           // Reload pending users list
           await loadPendingUsers();
