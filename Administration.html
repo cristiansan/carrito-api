@@ -4989,8 +4989,14 @@
                       <select id="client-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; width: 100%; color: #333; background-color: #fff;">
                         <option value="" style="color: #999;">-- Seleccionar cliente --</option>
                         ${window.allClients ? window.allClients
-                          .filter((c, index, self) => index === self.findIndex(t => t.codigo === c.codigo))
-                          .map(c => `<option value="${c.codigo}" style="color: #333;">${c.codigo} - ${c.nombre}</option>`)
+                          .filter((c, index, self) => {
+                            const cod = c.codigo || c.numero;
+                            return cod && index === self.findIndex(t => (t.codigo || t.numero) === cod);
+                          })
+                          .map(c => {
+                            const cod = c.codigo || c.numero || 'SIN-CODIGO';
+                            return `<option value="${cod}" style="color: #333;">${cod} - ${c.nombre || 'Sin nombre'}</option>`;
+                          })
                           .join('') : ''}
                       </select>
                     </div>
@@ -5040,11 +5046,18 @@
           const db = firebase.firestore();
 
           // Buscar el cliente original
-          const clienteOriginal = window.allClients?.find(c => c.codigo === selectedClientCode || c.numero === selectedClientCode);
+          const clienteOriginal = window.allClients?.find(c => {
+            const cod = c.codigo || c.numero;
+            return cod === selectedClientCode;
+          });
+
           if (!clienteOriginal) {
             alert('⚠️ Error: Cliente no encontrado');
             return;
           }
+
+          // Determinar el código a usar (priorizar codigo, sino usar numero)
+          const codigoCliente = clienteOriginal.codigo || clienteOriginal.numero;
 
           // Obtener datos del usuario
           const usuariosRef = collection(db, 'usuarios');
@@ -5068,17 +5081,17 @@
             role: selectedRole,
             admin: selectedRole === 'admin',
             listaPrecio: selectedPriceList,
-            clienteCodigo: clienteOriginal.codigo,
+            clienteCodigo: codigoCliente,
             clienteNombre: clienteOriginal.nombre
           });
 
           // Crear un nuevo cliente en la colección de clientes con el mismo código
           // pero con datos del usuario aprobado
-          const nuevoClienteId = `${clienteOriginal.codigo}_${userId.substring(0, 8)}`;
+          const nuevoClienteId = `${codigoCliente}_${userId.substring(0, 8)}`;
           const nuevoClienteRef = doc(db, 'clientes', nuevoClienteId);
 
           const nuevoClienteData = {
-            codigo: clienteOriginal.codigo, // Mismo código que el cliente original
+            codigo: codigoCliente, // Mismo código que el cliente original
             nombre: userData.displayName || userData.email,
             nombreComercial: clienteOriginal.nombreComercial || '',
             grupo: clienteOriginal.grupo || '',
@@ -5100,10 +5113,10 @@
 
           await setDoc(nuevoClienteRef, nuevoClienteData);
 
-          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}, cliente: ${clienteOriginal.codigo}`);
+          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}, cliente: ${codigoCliente}`);
           console.log(`✅ Nuevo cliente creado en listado: ${nuevoClienteId}`);
 
-          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}\n✅ Cliente agregado al listado con código ${clienteOriginal.codigo}`);
+          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}\n✅ Cliente agregado al listado con código ${codigoCliente}`);
 
           // Reload pending users list and clients
           await loadPendingUsers();
