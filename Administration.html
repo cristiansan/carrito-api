@@ -4968,11 +4968,15 @@
                     </p>
                   </div>
                   <div style="display: flex; flex-direction: column; gap: 10px; min-width: 250px;">
-                    <select id="role-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; min-width: 250px;">
+                    <select id="role-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; min-width: 250px; color: #333;">
                       <option value="">Seleccionar rol...</option>
-                      <option value="usuario">👤 Usuario</option>
                       <option value="vendedor">🤝 Vendedor</option>
                       <option value="admin">👑 Administrador</option>
+                    </select>
+                    <select id="priceList-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; min-width: 250px; color: #333;">
+                      <option value="precios1" selected>💰 Lista de Precios 1</option>
+                      <option value="precios2">💰 Lista de Precios 2</option>
+                      <option value="precios3">💰 Lista de Precios 3</option>
                     </select>
                     <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important;">
                       <span class="mdc-button__ripple"></span>
@@ -5000,7 +5004,9 @@
 
         try {
           const roleSelect = document.getElementById(`role-${userId}`);
+          const priceListSelect = document.getElementById(`priceList-${userId}`);
           const selectedRole = roleSelect.value;
+          const selectedPriceList = priceListSelect.value;
 
           if (!selectedRole) {
             alert('⚠️ Por favor selecciona un rol antes de aprobar');
@@ -5015,11 +5021,12 @@
           await updateDoc(userRef, {
             approved: true,
             role: selectedRole,
-            admin: selectedRole === 'admin'
+            admin: selectedRole === 'admin',
+            listaPrecio: selectedPriceList
           });
 
-          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}`);
-          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}`);
+          console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}`);
+          alert(`✅ Usuario aprobado exitosamente como ${selectedRole} con ${selectedPriceList}`);
 
           // Reload pending users list
           await loadPendingUsers();
