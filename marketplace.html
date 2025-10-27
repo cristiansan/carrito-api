@@ -2116,7 +2116,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.30
+          v0.31
         </div>
       </div>
       
@@ -4721,8 +4721,12 @@
           orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
         }
         document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
-        document.getElementById('detailClientName').textContent = order.clienteNombre || order.usuarioEmail || '-';
-        document.getElementById('detailClientEmail').textContent = order.clienteEmail || order.usuarioEmail || '-';
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const emailUsuario = order.creadoPorAdmin ? order.usuarioEmail : (order.clienteEmail || order.usuarioEmail);
+        const infoCliente = order.clienteNombre || order.usuarioEmail || '-';
+        const codigoCliente = order.clienteCodigo ? `, CODIGO ${order.clienteCodigo}` : '';
+        document.getElementById('detailClientName').textContent = `${infoCliente}${codigoCliente}`;
+        document.getElementById('detailClientEmail').textContent = emailUsuario || '-';
         document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
         document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
 
@@ -5986,7 +5990,18 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.30 - Actual</h3>
+          <h3>v0.31 - Actual</h3>
+          <ul>
+            <li>🎨 <strong>Usuarios asignados destacados:</strong> Usuarios asignados a clientes se ven con fondo verde en tabla CLIENTES</li>
+            <li>📋 <strong>Info completa en órdenes:</strong> Mostrar Cliente + Código + Email en todas las vistas (SEGUIMIENTO, ADMIN, MASTER)</li>
+            <li>📄 <strong>PDFs actualizados:</strong> PDFs de órdenes incluyen código del cliente principal</li>
+            <li>📱 <strong>WhatsApp mejorado:</strong> Mensajes muestran cliente principal, código y email del usuario</li>
+            <li>🔧 <strong>Campo clienteCodigo:</strong> Agregado a estructura de órdenes para trazabilidad</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.30</h3>
           <ul>
             <li>🏷️ <strong>Fix floating label:</strong> Label "Buscar cliente" desaparece al escribir en Administration.html</li>
             <li>✨ <strong>UX mejorada:</strong> Campo de búsqueda más intuitivo con label animado</li>

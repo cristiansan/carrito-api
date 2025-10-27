@@ -580,6 +580,16 @@
       background: #2f2f3a;
     }
 
+    /* Usuario asignado - color diferenciado */
+    .clientes-table tr.usuario-asignado-row {
+      background: rgba(76, 175, 80, 0.12);
+      border-left: 3px solid #4CAF50;
+    }
+
+    .clientes-table tr.usuario-asignado-row:hover {
+      background: rgba(76, 175, 80, 0.18);
+    }
+
     .edit-client-btn, .delete-client-btn {
       background: none;
       border: none;
@@ -3592,9 +3602,13 @@
         yPos += 8;
         doc.setFont(undefined, 'normal');
         doc.setFontSize(10);
-        doc.text(`Cliente: ${clienteNombre}`, 14, yPos);
+        // Formato: Cliente NOMBRE, CODIGO XXX
+        const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
+        doc.text(`Cliente: ${clienteTexto}`, 14, yPos);
         yPos += 6;
-        doc.text(`Email: ${orderData.clienteEmail || orderData.usuarioEmail}`, 14, yPos);
+        // Mostrar email del usuario que hizo la orden
+        const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
+        doc.text(`Email: ${emailUsuario}`, 14, yPos);
         yPos += 6;
         doc.text(`Fecha: ${orderData.fechaLocal || orderData.fechaEdicionLocal || new Date().toLocaleString('es-AR')}`, 14, yPos);
 
@@ -3788,8 +3802,11 @@
         let mensaje = `🔄 *ORDEN MODIFICADA #${orderNumber}*\n\n`;
         mensaje += `📋 *Ver detalle completo en PDF:*\n`;
         mensaje += `${pdfUrl}\n\n`;
-        mensaje += `👤 *Cliente:* ${clienteNombre}\n`;
-        mensaje += `📧 *Email:* ${orderData.clienteEmail || orderData.usuarioEmail}\n`;
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
+        const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
+        mensaje += `👤 *Cliente:* ${clienteTexto}\n`;
+        mensaje += `📧 *Email:* ${emailUsuario}\n`;
         if (orderData.editadaPorNombre) {
           mensaje += `✏️ *Modificada por:* ${orderData.editadaPorNombre}\n`;
         }
@@ -3895,8 +3912,12 @@
           orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
         }
         document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
-        document.getElementById('detailClientName').textContent = order.clienteNombre || order.usuarioEmail || '-';
-        document.getElementById('detailClientEmail').textContent = order.clienteEmail || order.usuarioEmail || '-';
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const emailUsuario = order.creadoPorAdmin ? order.usuarioEmail : (order.clienteEmail || order.usuarioEmail);
+        const infoCliente = order.clienteNombre || order.usuarioEmail || '-';
+        const codigoCliente = order.clienteCodigo ? `, CODIGO ${order.clienteCodigo}` : '';
+        document.getElementById('detailClientName').textContent = `${infoCliente}${codigoCliente}`;
+        document.getElementById('detailClientEmail').textContent = emailUsuario || '-';
         document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
         document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
 
@@ -4351,8 +4372,13 @@
         return;
       }
 
-      tableBody.innerHTML = clientes.map(cliente => `
-        <tr>
+      tableBody.innerHTML = clientes.map(cliente => {
+        // Identificar si es un usuario asignado (creado desde admisiones)
+        const esUsuarioAsignado = cliente.creadoDesdeAdmision === true;
+        const rowClass = esUsuarioAsignado ? 'usuario-asignado-row' : '';
+
+        return `
+        <tr class="${rowClass}">
           <td data-column="codigo">${cliente.codigo || ''}</td>
           <td data-column="nombre">${cliente.nombre || ''}</td>
           <td data-column="nombreComercial">${cliente.nombreComercial || ''}</td>
@@ -4397,7 +4423,8 @@
             <button class="delete-client-btn" onclick="deleteCliente('${cliente.id}')">🗑️</button>
           </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
 
       // Aplicar preferencias de columnas guardadas
       applyColumnPreferences();

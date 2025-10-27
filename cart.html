@@ -1057,12 +1057,14 @@
 
         let clienteNombre = window.currentUser.email;
         let clienteEmail = window.currentUser.email;
+        let clienteCodigo = '';
         let vendedorId = null;
 
         // Si estamos editando, usar los datos de la orden existente primero
         if (isEditing && existingOrderData) {
           clienteNombre = existingOrderData.clienteNombre || window.currentUser.email;
           clienteEmail = existingOrderData.clienteEmail || window.currentUser.email;
+          clienteCodigo = existingOrderData.clienteCodigo || '';
           vendedorId = existingOrderData.vendedorId;
           console.log('📋 Usando datos de orden existente - Vendedor:', vendedorId);
         }
@@ -1071,6 +1073,7 @@
           console.log('👤 Admin cargando orden para cliente:', window.selectedClienteData.nombre);
           clienteNombre = window.selectedClienteData.nombre;
           clienteEmail = window.selectedClienteData.email;
+          clienteCodigo = window.selectedClienteData.codigo || window.selectedClienteData.numero || '';
           vendedorId = window.selectedClienteData.vendedorId;
         } else {
           // Usuario normal o admin sin cliente seleccionado: usar su propio email
@@ -1081,6 +1084,7 @@
           if (!clientesSnapshot.empty) {
             const clienteData = clientesSnapshot.docs[0].data();
             clienteNombre = clienteData.nombre || clienteData.name || window.currentUser.email;
+            clienteCodigo = clienteData.codigo || clienteData.numero || '';
             vendedorId = clienteData.vendedorId || clienteData.vendedor;
           }
         }
@@ -1116,6 +1120,7 @@
           usuarioUid: window.currentUser.uid,
           clienteEmail: clienteEmail, // Email del cliente (puede ser diferente si admin carga para otro)
           clienteNombre: clienteNombre,
+          clienteCodigo: clienteCodigo, // Código del cliente
           vendedorId: vendedorId,
           items: items,
           total: total,
@@ -1225,9 +1230,13 @@
         yPos += 8;
         doc.setFont(undefined, 'normal');
         doc.setFontSize(10);
-        doc.text(`Cliente: ${clienteNombre}`, 14, yPos);
+        // Formato: Cliente NOMBRE, CODIGO XXX
+        const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
+        doc.text(`Cliente: ${clienteTexto}`, 14, yPos);
         yPos += 6;
-        doc.text(`Email: ${orderData.clienteEmail || orderData.usuarioEmail}`, 14, yPos);
+        // Mostrar email del usuario que hizo la orden
+        const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
+        doc.text(`Email: ${emailUsuario}`, 14, yPos);
         yPos += 6;
         doc.text(`Fecha: ${orderData.fechaLocal}`, 14, yPos);
 
@@ -1410,8 +1419,11 @@
         let mensaje = `🛒 *NUEVA ORDEN #${orderNumber}*\n\n`;
         mensaje += `📋 *Ver detalle completo en PDF:*\n`;
         mensaje += `${pdfUrl}\n\n`;
-        mensaje += `👤 *Cliente:* ${clienteNombre}\n`;
-        mensaje += `📧 *Email:* ${orderData.clienteEmail || orderData.usuarioEmail}\n`;
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
+        const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
+        mensaje += `👤 *Cliente:* ${clienteTexto}\n`;
+        mensaje += `📧 *Email:* ${emailUsuario}\n`;
         if (orderData.creadoPorAdmin) {
           mensaje += `👨‍💼 *Creada por:* ${orderData.usuarioEmail} (Admin)\n`;
         }
