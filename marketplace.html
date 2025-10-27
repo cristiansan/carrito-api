@@ -2116,7 +2116,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.28
+          v0.29
         </div>
       </div>
       
@@ -3265,8 +3265,8 @@
                 console.log('✅ STATS visible');
               }
               if (logisticsModalBtn) {
-                logisticsModalBtn.style.display = 'block';
-                console.log('✅ LOGISTICS visible');
+                logisticsModalBtn.style.display = 'none';
+                console.log('🚫 SEGUIMIENTO ocultado para admin (disponible en ADMIN/MASTER)');
               }
               if (historialModalBtn) {
                 historialModalBtn.style.display = 'block';
@@ -5986,7 +5986,15 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.28 - Actual</h3>
+          <h3>v0.29 - Actual</h3>
+          <ul>
+            <li>🚫 <strong>SEGUIMIENTO oculto para admins:</strong> Admins no ven SEGUIMIENTO en menú (disponible en ADMIN/MASTER)</li>
+            <li>🎯 <strong>UX mejorada:</strong> Menú más limpio para administradores</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.28</h3>
           <ul>
             <li>📄 <strong>PDF en edición de órdenes:</strong> Enviar PDF al modificar órdenes desde ADMIN/MASTER</li>
             <li>🔄 <strong>Mecanismo estandarizado:</strong> Mismo sistema de PDF para crear y editar órdenes</li>
