@@ -5216,7 +5216,32 @@
           console.log(`✅ Usuario ${userId} aprobado con rol: ${selectedRole}, lista de precios: ${selectedPriceList}, cliente: ${codigoCliente}`);
           console.log(`✅ Nuevo cliente creado en listado: ${nuevoClienteId}`);
 
-          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}\n✅ Cliente agregado al listado con código ${codigoCliente}`);
+          // Enviar email de bienvenida
+          try {
+            const emailResponse = await fetch('/api/send-welcome-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                email: userData.email,
+                nombre: userData.displayName || userData.email.split('@')[0],
+                rol: selectedRole,
+                clienteNombre: clienteOriginal.nombre
+              })
+            });
+
+            if (emailResponse.ok) {
+              console.log(`✅ Email de bienvenida enviado a: ${userData.email}`);
+            } else {
+              console.warn(`⚠️ No se pudo enviar email de bienvenida a: ${userData.email}`);
+            }
+          } catch (emailError) {
+            console.error('⚠️ Error enviando email de bienvenida:', emailError);
+            // No mostramos error al usuario, el email es secundario
+          }
+
+          alert(`✅ Usuario aprobado exitosamente como ${selectedRole}\n✅ Cliente agregado al listado con código ${codigoCliente}\n📧 Email de bienvenida enviado`);
 
           // Reload pending users list and clients
           await loadPendingUsers();
