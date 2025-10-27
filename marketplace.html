@@ -4179,6 +4179,13 @@
             firebase.auth().onAuthStateChanged(async function(user) {
               if (user) {
                 console.log('👤 Usuario autenticado, verificando permisos...');
+
+                // IMPORTANTE: Marcar usuario como logueado ANTES de cargar precios
+                if (typeof window.isUserLoggedIn !== 'undefined') {
+                  window.isUserLoggedIn = true;
+                  console.log('✅ Usuario marcado como logueado (window.isUserLoggedIn = true)');
+                }
+
                 await checkUserPermissions(user);
                 console.log('👤 Usuario autenticado, cargando configuración...');
                 loadConfig();
@@ -4198,6 +4205,12 @@
                   console.log('⚠️ loadPricesFromFirebase no disponible aún');
                 }
               } else {
+                // Usuario no autenticado - marcar como NO logueado
+                if (typeof window.isUserLoggedIn !== 'undefined') {
+                  window.isUserLoggedIn = false;
+                  console.log('🔒 Usuario marcado como NO logueado');
+                }
+
                 // Redirect to login if not authenticated
                 console.log('🔒 Usuario no autenticado, redirigiendo a login...');
                 window.location.href = 'login.html';

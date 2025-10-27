@@ -32,6 +32,17 @@ window.selectedItems = selectedItems;
 // Expose mappedStockData globally for cart loading functionality
 window.mappedStockData = mappedStockData;
 
+// Expose isUserLoggedIn globally so marketplace.html can set it
+Object.defineProperty(window, 'isUserLoggedIn', {
+  get() { return isUserLoggedIn; },
+  set(value) {
+    isUserLoggedIn = value;
+    console.log(`🔐 isUserLoggedIn changed to: ${value}`);
+  },
+  enumerable: true,
+  configurable: true
+});
+
 // Version control for column visibility defaults
 const COLUMN_VISIBILITY_VERSION = 4; // Increment this when changing defaults
 
@@ -260,7 +271,16 @@ async function loadPricesFromFirebase() {
 // Function to get price for an articulo
 function getPriceForArticulo(articulo) {
   // Require login for all pages
-  if (!isUserLoggedIn) return null;
+  if (!isUserLoggedIn) {
+    console.log(`⚠️ getPriceForArticulo: Usuario no logueado`);
+    return null;
+  }
+
+  // Check if prices are loaded
+  if (pricesData.size === 0) {
+    console.log(`⚠️ getPriceForArticulo: pricesData está vacío - no se han cargado precios desde Firebase`);
+    return null;
+  }
 
   // Try exact match first
   let price = pricesData.get(articulo);
@@ -280,6 +300,10 @@ function getPriceForArticulo(articulo) {
         }
       }
     }
+  }
+
+  if (price === undefined) {
+    console.log(`⚠️ No se encontró precio para artículo: "${articulo}" (total precios cargados: ${pricesData.size})`);
   }
 
   return price !== undefined ? price : null;
@@ -398,21 +422,8 @@ function mapRow(raw) {
     price = getPriceForArticulo(articulo);
   }
 
-  // For marketplace, always set a price (default if not found in Firebase)
-  // For index with logged in user, only set price from Firebase (no defaults)
-  if (isMarketplace) {
-    if (price === null) {
-      // Use default price logic for marketplace
-      price = 1000; // Default price
-      if (/iphone/i.test(description || articulo || '')) {
-        price = 800;
-      } else if (/macbook/i.test(description || articulo || '')) {
-        price = 1200;
-      } else if (/samsung/i.test(description || articulo || '')) {
-        price = 500;
-      }
-    }
-  }
+  // Los precios vienen desde Firebase (colección 'precios')
+  // Se usa precio1 por defecto (en el futuro se usará precio1/2/3/4 según el cliente)
 
   const baseData = {
     articulo: String(articulo),
