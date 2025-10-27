@@ -5693,10 +5693,21 @@
 
       // Client search input
       const clientSearchInput = document.getElementById('clientSearchInput');
+      const clientSearchLabel = document.getElementById('clientSearchLabel');
       if (clientSearchInput) {
+        // Controlar la visibilidad del floating label
+        const updateLabelVisibility = () => {
+          if (clientSearchInput.value.trim().length > 0) {
+            clientSearchLabel.classList.add('mdc-floating-label--float-above');
+          } else {
+            clientSearchLabel.classList.remove('mdc-floating-label--float-above');
+          }
+        };
+
         // Búsqueda en tiempo real con debounce
         let searchTimeout;
         clientSearchInput.addEventListener('input', function(e) {
+          updateLabelVisibility();
           clearTimeout(searchTimeout);
           searchTimeout = setTimeout(() => {
             searchClients(e.target.value);
@@ -5710,6 +5721,10 @@
             searchClients(e.target.value);
           }
         });
+
+        // Manejar foco y blur
+        clientSearchInput.addEventListener('focus', updateLabelVisibility);
+        clientSearchInput.addEventListener('blur', updateLabelVisibility);
       }
 
       // Import/Export clients buttons
