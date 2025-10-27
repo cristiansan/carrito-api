@@ -2068,6 +2068,9 @@
   <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
   <!-- SheetJS library for Excel file support -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script type="module">
     // === FIREBASE CONFIGURATION ===
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -3545,6 +3548,172 @@
       return Number(num).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
+    // Generar PDF de la orden
+    async function generateOrderPDF(orderData, orderNumber, clienteNombre) {
+      try {
+        console.log('📄 [PDF] Generando PDF para orden #', orderNumber);
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Colores
+        const primaryColor = [76, 175, 80]; // Verde
+        const textColor = [51, 51, 51]; // Gris oscuro
+        const lightGray = [240, 240, 240];
+
+        // Header con fondo verde
+        doc.setFillColor(...primaryColor);
+        doc.rect(0, 0, 210, 40, 'F');
+
+        // Logo (cargar desde la URL del sitio)
+        try {
+          const logoUrl = window.location.origin + '/logo.png';
+          doc.addImage(logoUrl, 'PNG', 14, 12, 15, 12.5);
+        } catch (error) {
+          console.warn('⚠️ No se pudo cargar el logo:', error);
+        }
+
+        // Título
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text('ORDEN DE COMPRA', 105, 18, { align: 'center' });
+
+        doc.setFontSize(18);
+        doc.text(`#${orderNumber}`, 105, 28, { align: 'center' });
+
+        // Información del cliente
+        let yPos = 50;
+        doc.setTextColor(...textColor);
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text('INFORMACIÓN DEL CLIENTE', 14, yPos);
+
+        yPos += 8;
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(10);
+        doc.text(`Cliente: ${clienteNombre}`, 14, yPos);
+        yPos += 6;
+        doc.text(`Email: ${orderData.clienteEmail || orderData.usuarioEmail}`, 14, yPos);
+        yPos += 6;
+        doc.text(`Fecha: ${orderData.fechaLocal || orderData.fechaEdicionLocal || new Date().toLocaleString('es-AR')}`, 14, yPos);
+
+        if (orderData.creadoPorAdmin) {
+          yPos += 6;
+          doc.setTextColor(255, 152, 0); // Naranja
+          doc.text(`Creada por: ${orderData.usuarioEmail} (Admin)`, 14, yPos);
+          doc.setTextColor(...textColor);
+        }
+
+        if (orderData.editadaPorNombre) {
+          yPos += 6;
+          doc.setTextColor(255, 152, 0); // Naranja
+          doc.text(`Modificada por: ${orderData.editadaPorNombre}`, 14, yPos);
+          doc.setTextColor(...textColor);
+        }
+
+        // Tabla de productos
+        yPos += 12;
+
+        const tableData = orderData.items.map((item, index) => [
+          index + 1,
+          item.articulo || '',
+          item.description || '',
+          item.quantity,
+          '$' + formatNumber(item.price),
+          '$' + formatNumber(item.quantity * item.price)
+        ]);
+
+        doc.autoTable({
+          startY: yPos,
+          head: [['#', 'Código', 'Descripción', 'Cant.', 'Precio Unit.', 'Subtotal']],
+          body: tableData,
+          theme: 'grid',
+          headStyles: {
+            fillColor: primaryColor,
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            halign: 'center'
+          },
+          columnStyles: {
+            0: { halign: 'center', cellWidth: 10 },
+            1: { halign: 'left', cellWidth: 25 },
+            2: { halign: 'left', cellWidth: 80 },
+            3: { halign: 'center', cellWidth: 20 },
+            4: { halign: 'right', cellWidth: 30 },
+            5: { halign: 'right', cellWidth: 30 }
+          },
+          styles: {
+            fontSize: 9,
+            cellPadding: 3
+          }
+        });
+
+        // Total
+        const finalY = doc.lastAutoTable.finalY || yPos;
+        yPos = finalY + 10;
+
+        doc.setFillColor(...lightGray);
+        doc.rect(125, yPos - 5, 71, 12, 'F');
+
+        doc.setFont(undefined, 'bold');
+        doc.setFontSize(14);
+        doc.setTextColor(...textColor);
+        doc.text('TOTAL:', 130, yPos + 2);
+        doc.setFontSize(16);
+        doc.setTextColor(...primaryColor);
+        doc.text('$' + formatNumber(orderData.total), 191, yPos + 2, { align: 'right' });
+
+        // Footer
+        doc.setTextColor(150, 150, 150);
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        doc.text('Generado automáticamente por el sistema', 105, 285, { align: 'center' });
+        doc.text(new Date().toLocaleString('es-AR'), 105, 290, { align: 'center' });
+
+        console.log('✅ [PDF] PDF generado exitosamente');
+        return doc;
+
+      } catch (error) {
+        console.error('❌ [PDF] Error generando PDF:', error);
+        throw error;
+      }
+    }
+
+    // Subir PDF a Firebase Storage y obtener URL
+    async function uploadOrderPDF(pdfDoc, orderNumber) {
+      try {
+        console.log('☁️ [Storage] Subiendo PDF a Firebase Storage...');
+
+        const { ref, uploadBytes, getDownloadURL } = window.firebase.storageHelpers;
+        const storage = window.firebase.storage();
+
+        // Convertir PDF a blob
+        const pdfBlob = pdfDoc.output('blob');
+
+        // Crear referencia en Storage
+        const fileName = `orders/orden-${orderNumber}-${Date.now()}.pdf`;
+        const storageRef = ref(storage, fileName);
+
+        // Subir archivo
+        const snapshot = await uploadBytes(storageRef, pdfBlob, {
+          contentType: 'application/pdf'
+        });
+
+        console.log('✅ [Storage] PDF subido exitosamente');
+
+        // Obtener URL de descarga
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        console.log('✅ [Storage] URL de descarga obtenida:', downloadURL);
+
+        return downloadURL;
+
+      } catch (error) {
+        console.error('❌ [Storage] Error subiendo PDF:', error);
+        throw error;
+      }
+    }
+
     // Enviar orden al vendedor por WhatsApp
     async function sendOrderToSellerWhatsApp(orderData, orderNumber, clienteNombre) {
       try {
@@ -3607,24 +3776,27 @@
           return;
         }
 
-        // Construir mensaje
+        // Generar PDF
+        console.log('📄 [WhatsApp] Generando PDF de la orden...');
+        const pdfDoc = await generateOrderPDF(orderData, orderNumber, clienteNombre);
+
+        // Subir PDF a Firebase Storage
+        console.log('☁️ [WhatsApp] Subiendo PDF a Firebase Storage...');
+        const pdfUrl = await uploadOrderPDF(pdfDoc, orderNumber);
+
+        // Construir mensaje con enlace al PDF
         let mensaje = `🔄 *ORDEN MODIFICADA #${orderNumber}*\n\n`;
+        mensaje += `📋 *Ver detalle completo en PDF:*\n`;
+        mensaje += `${pdfUrl}\n\n`;
         mensaje += `👤 *Cliente:* ${clienteNombre}\n`;
         mensaje += `📧 *Email:* ${orderData.clienteEmail || orderData.usuarioEmail}\n`;
         if (orderData.editadaPorNombre) {
           mensaje += `✏️ *Modificada por:* ${orderData.editadaPorNombre}\n`;
         }
         mensaje += `📅 *Fecha:* ${orderData.fechaLocal || new Date().toLocaleString('es-AR')}\n\n`;
-        mensaje += `📦 *Productos (${orderData.cantidadItems || orderData.items?.length || 0}):*\n`;
-
-        if (orderData.items && orderData.items.length > 0) {
-          orderData.items.forEach((item, index) => {
-            mensaje += `${index + 1}. ${item.description || item.articulo}\n`;
-            mensaje += `   Cantidad: ${item.quantity} x ${formatNumber(item.price)}\n`;
-          });
-        }
-
-        mensaje += `\n💰 *TOTAL: ${formatNumber(orderData.total)}*\n\n`;
+        mensaje += `📦 *Productos:* ${orderData.cantidadItems || orderData.items?.length || 0} items\n`;
+        mensaje += `💰 *TOTAL: $${formatNumber(orderData.total)}*\n\n`;
+        mensaje += `✅ Descargá el PDF para ver el detalle completo`;
 
         // Enviar WhatsApp a todos los teléfonos del vendedor
         console.log('📱 [WhatsApp] Preparando para enviar a', phones.length, 'teléfono(s)');
