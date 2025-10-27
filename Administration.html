@@ -4377,6 +4377,46 @@
         const esUsuarioAsignado = cliente.creadoDesdeAdmision === true;
         const rowClass = esUsuarioAsignado ? 'usuario-asignado-row' : '';
 
+        // Si es usuario asignado, solo mostrar email y lista de precios
+        if (esUsuarioAsignado) {
+          return `
+          <tr class="${rowClass}">
+            <td data-column="codigo">-</td>
+            <td data-column="nombre">-</td>
+            <td data-column="nombreComercial">-</td>
+            <td data-column="grupo">-</td>
+            <td data-column="departamento">-</td>
+            <td data-column="inscripcion">-</td>
+            <td data-column="nroDocumento">-</td>
+            <td data-column="direccion">-</td>
+            <td data-column="ciudad">-</td>
+            <td data-column="provincia">-</td>
+            <td data-column="pais">-</td>
+            <td data-column="telefono">-</td>
+            <td data-column="email">${cliente.email || ''}</td>
+            <td data-column="vendedor">-</td>
+            <td data-column="listaPrecio">
+              <select class="client-price-list-select"
+                      data-client-id="${cliente.id}"
+                      onchange="updateClientPriceList('${cliente.id}', this.value)"
+                      style="padding: 4px 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0; min-width: 100px;">
+                <option value="precios1" ${(cliente.listaPrecio || 'precios1') === 'precios1' ? 'selected' : ''}>Precios 1</option>
+                <option value="precios2" ${cliente.listaPrecio === 'precios2' ? 'selected' : ''}>Precios 2</option>
+                <option value="precios3" ${cliente.listaPrecio === 'precios3' ? 'selected' : ''}>Precios 3</option>
+                <option value="precios4" ${cliente.listaPrecio === 'precios4' ? 'selected' : ''}>Precios 4</option>
+                <option value="precios5" ${cliente.listaPrecio === 'precios5' ? 'selected' : ''}>Precios 5</option>
+              </select>
+            </td>
+            <td data-column="saldoCredito" style="text-align: right;">-</td>
+            <td>
+              <button class="edit-client-btn" onclick="editClient('${cliente.id}')">✏️</button>
+              <button class="delete-client-btn" onclick="deleteCliente('${cliente.id}')">🗑️</button>
+            </td>
+          </tr>
+        `;
+        }
+
+        // Cliente principal: mostrar todos los datos
         return `
         <tr class="${rowClass}">
           <td data-column="codigo">${cliente.codigo || ''}</td>
