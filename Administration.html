@@ -381,20 +381,21 @@
       color: inherit !important;
     }
 
-    /* Asegurar que los selects en admisiones siempre muestren el texto */
+    /* Estilos finales para dropdowns de admisiones */
     #admisiones-content select {
       -webkit-text-fill-color: #000 !important;
       color: #000 !important;
       opacity: 1 !important;
-      background-color: #f5f5f5 !important;
+      background: #f0f0f0 !important;
       font-weight: 600 !important;
+      font-size: 16px !important;
     }
 
     #admisiones-content select option {
       -webkit-text-fill-color: #000 !important;
       color: #000 !important;
       opacity: 1 !important;
-      background-color: #f5f5f5 !important;
+      background: #f0f0f0 !important;
     }
 
     /* Client-specific styles */
@@ -5030,25 +5031,25 @@
                   <div style="display: flex; flex-direction: column; gap: 15px; min-width: 300px;">
                     <div>
                       <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Seleccionar Rol *</label>
-                      <select id="role-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 2px solid #333; border-radius: 4px; font-size: 16px; width: 100%; color: #000 !important; background-color: #f5f5f5 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600;">
-                        <option value="" style="color: #666; background-color: #f5f5f5;">-- Seleccionar rol --</option>
-                        <option value="vendedor" style="color: #000; background-color: #f5f5f5;">🤝 Vendedor</option>
-                        <option value="cliente" style="color: #000; background-color: #f5f5f5;">👤 Cliente</option>
-                        <option value="admin" style="color: #000; background-color: #f5f5f5;">👑 Administrador</option>
+                      <select id="role-${userId}" style="padding: 14px 12px; border: 2px solid #999 !important; border-radius: 4px; font-size: 16px !important; width: 100%; color: #000 !important; background: #f0f0f0 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600 !important; z-index: 1; -webkit-appearance: none; appearance: none;">
+                        <option value="" style="color: #666 !important; background: #f0f0f0 !important;">-- Seleccionar rol --</option>
+                        <option value="vendedor" style="color: #000 !important; background: #f0f0f0 !important;">🤝 Vendedor</option>
+                        <option value="cliente" style="color: #000 !important; background: #f0f0f0 !important;">👤 Cliente</option>
+                        <option value="admin" style="color: #000 !important; background: #f0f0f0 !important;">👑 Administrador</option>
                       </select>
                     </div>
                     <div>
                       <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Lista de Precios *</label>
-                      <select id="priceList-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 2px solid #333; border-radius: 4px; font-size: 16px; width: 100%; color: #000 !important; background-color: #f5f5f5 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600;">
-                        <option value="precios1" selected style="color: #000; background-color: #f5f5f5;">💰 Lista de Precios 1</option>
-                        <option value="precios2" style="color: #000; background-color: #f5f5f5;">💰 Lista de Precios 2</option>
-                        <option value="precios3" style="color: #000; background-color: #f5f5f5;">💰 Lista de Precios 3</option>
+                      <select id="priceList-${userId}" style="padding: 14px 12px; border: 2px solid #999 !important; border-radius: 4px; font-size: 16px !important; width: 100%; color: #000 !important; background: #f0f0f0 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600 !important; z-index: 1; -webkit-appearance: none; appearance: none;">
+                        <option value="precios1" selected style="color: #000 !important; background: #f0f0f0 !important;">💰 Lista de Precios 1</option>
+                        <option value="precios2" style="color: #000 !important; background: #f0f0f0 !important;">💰 Lista de Precios 2</option>
+                        <option value="precios3" style="color: #000 !important; background: #f0f0f0 !important;">💰 Lista de Precios 3</option>
                       </select>
                     </div>
                     <div>
                       <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Cliente Asignado *</label>
-                      <select id="client-${userId}" class="mdc-text-field__input" style="padding: 14px 12px; border: 2px solid #333; border-radius: 4px; font-size: 16px; width: 100%; color: #000 !important; background-color: #f5f5f5 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600;">
-                        <option value="" style="color: #666; background-color: #f5f5f5;">-- Seleccionar cliente --</option>
+                      <select id="client-${userId}" style="padding: 14px 12px; border: 2px solid #999 !important; border-radius: 4px; font-size: 16px !important; width: 100%; color: #000 !important; background: #f0f0f0 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600 !important; z-index: 1; -webkit-appearance: none; appearance: none;">
+                        <option value="" style="color: #666 !important; background: #f0f0f0 !important;">-- Seleccionar cliente --</option>
                         ${window.allClients ? window.allClients
                           .filter((c, index, self) => {
                             const cod = c.codigo || c.numero;
@@ -5056,7 +5057,7 @@
                           })
                           .map(c => {
                             const cod = c.codigo || c.numero || 'SIN-CODIGO';
-                            return `<option value="${cod}" style="color: #000; background-color: #f5f5f5;">${cod} - ${c.nombre || 'Sin nombre'}</option>`;
+                            return `<option value="${cod}" style="color: #000 !important; background: #f0f0f0 !important;">${cod} - ${c.nombre || 'Sin nombre'}</option>`;
                           })
                           .join('') : ''}
                       </select>
@@ -5086,22 +5087,24 @@
             const forceTextVisibility = (select) => {
               if (select) {
                 select.addEventListener('change', function() {
-                  // Forzar el color del texto a negro puro y fondo gris
-                  this.style.color = '#000';
-                  this.style.webkitTextFillColor = '#000';
-                  this.style.opacity = '1';
-                  this.style.backgroundColor = '#f5f5f5';
-                  this.style.fontWeight = '600';
-                  console.log(`✅ Dropdown ${this.id} cambiado a: ${this.value} - Texto negro sobre fondo gris`);
+                  // Usar setProperty con !important para sobrescribir TODO
+                  this.style.setProperty('color', '#000', 'important');
+                  this.style.setProperty('-webkit-text-fill-color', '#000', 'important');
+                  this.style.setProperty('opacity', '1', 'important');
+                  this.style.setProperty('background', '#f0f0f0', 'important');
+                  this.style.setProperty('font-weight', '600', 'important');
+                  this.style.setProperty('font-size', '16px', 'important');
+                  console.log(`✅ Dropdown ${this.id} cambiado a: ${this.value}`);
                 });
 
                 // También aplicar al cargar si ya tiene un valor
                 if (select.value) {
-                  select.style.color = '#000';
-                  select.style.webkitTextFillColor = '#000';
-                  select.style.opacity = '1';
-                  select.style.backgroundColor = '#f5f5f5';
-                  select.style.fontWeight = '600';
+                  select.style.setProperty('color', '#000', 'important');
+                  select.style.setProperty('-webkit-text-fill-color', '#000', 'important');
+                  select.style.setProperty('opacity', '1', 'important');
+                  select.style.setProperty('background', '#f0f0f0', 'important');
+                  select.style.setProperty('font-weight', '600', 'important');
+                  select.style.setProperty('font-size', '16px', 'important');
                 }
               }
             };
