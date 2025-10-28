@@ -605,6 +605,23 @@
         return;
       }
 
+      // Validar si el email está bloqueado (v0.38)
+      try {
+        const { doc, getDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+        const blockedEmailRef = doc(db, 'blockedEmails', email);
+        const blockedEmailDoc = await getDoc(blockedEmailRef);
+
+        if (blockedEmailDoc.exists()) {
+          console.log('🚫 Intento de registro con email bloqueado:', email);
+          showRegisterError('❌ Este email ha sido bloqueado y no puede registrarse.\n\nSi crees que esto es un error, por favor contacta al administrador.');
+          return;
+        }
+      } catch (error) {
+        console.error('Error al verificar email bloqueado:', error);
+        // Continuamos con el registro si hay error en la verificación
+      }
+
       registerBtn.disabled = true;
       registerBtn.textContent = 'Creando cuenta...';
 

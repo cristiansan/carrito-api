@@ -5549,6 +5549,11 @@
                       <i class="material-icons mdc-button__icon" aria-hidden="true">check_circle</i>
                       <span class="mdc-button__label">Aprobar Usuario</span>
                     </button>
+                    <button class="mdc-button mdc-button--raised" onclick="ignoreUser('${userId}', '${user.email}')" style="background-color: #757575 !important; margin-top: 5px; margin-left: 10px;">
+                      <span class="mdc-button__ripple"></span>
+                      <i class="material-icons mdc-button__icon" aria-hidden="true">block</i>
+                      <span class="mdc-button__label">Ignorar y Bloquear</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -5737,9 +5742,71 @@
         }
       }
 
+      /**
+       * Ignora un usuario y bloquea su email permanentemente
+       * @param {string} userId - ID del usuario en Firestore
+       * @param {string} email - Email del usuario a bloquear
+       * @version 0.38
+       */
+      async function ignoreUser(userId, email) {
+        // Confirmación con el usuario
+        const confirmed = confirm(
+          `⚠️ ¿Estás seguro de que deseas IGNORAR y BLOQUEAR este usuario?\n\n` +
+          `Email: ${email}\n\n` +
+          `Esta acción:\n` +
+          `- Eliminará al usuario de admisiones\n` +
+          `- Bloqueará permanentemente este email\n` +
+          `- No se podrá deshacer\n\n` +
+          `¿Deseas continuar?`
+        );
+
+        if (!confirmed) {
+          console.log('🚫 Ignorar usuario cancelado por el administrador');
+          return;
+        }
+
+        try {
+          const { doc, setDoc, deleteDoc, serverTimestamp } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+          const currentUser = firebase.auth().currentUser;
+
+          // 1. Agregar email a la colección blockedEmails
+          console.log(`🚫 Bloqueando email: ${email}`);
+          const blockedEmailRef = doc(db, 'blockedEmails', email);
+          await setDoc(blockedEmailRef, {
+            email: email,
+            blockedAt: serverTimestamp(),
+            blockedBy: currentUser?.uid || 'admin',
+            blockedByEmail: currentUser?.email || 'admin',
+            userId: userId,
+            reason: 'Ignorado desde panel de admisiones'
+          });
+
+          // 2. Eliminar usuario de la colección usuarios
+          console.log(`🗑️ Eliminando usuario: ${userId}`);
+          const userRef = doc(db, 'usuarios', userId);
+          await deleteDoc(userRef);
+
+          console.log(`✅ Usuario ${userId} (${email}) ignorado y bloqueado exitosamente`);
+          alert(
+            `✅ Usuario ignorado exitosamente\n\n` +
+            `🚫 Email ${email} bloqueado permanentemente\n\n` +
+            `Este email no podrá registrarse nuevamente.`
+          );
+
+          // 3. Recargar lista de usuarios pendientes
+          await loadPendingUsers();
+
+        } catch (error) {
+          console.error('❌ Error al ignorar usuario:', error);
+          alert('❌ Error al ignorar usuario: ' + error.message);
+        }
+      }
+
       // Make functions globally accessible
       window.loadPendingUsers = loadPendingUsers;
       window.approveUser = approveUser;
+      window.ignoreUser = ignoreUser;
 
       // Initialize tab bar
       const tabBar = document.querySelector('.mdc-tab-bar');
