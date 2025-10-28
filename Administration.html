@@ -3763,6 +3763,19 @@
     // Subir PDF a Firebase Storage y obtener URL
     async function uploadOrderPDF(pdfDoc, orderNumber) {
       try {
+        // Detectar si estamos en localhost
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+        if (isLocalhost) {
+          console.log('⚠️ [Storage] Detectado localhost - Descargando PDF localmente (CORS bloqueado)');
+
+          // Descargar PDF directamente
+          pdfDoc.save(`orden-${orderNumber}.pdf`);
+
+          // Retornar URL placeholder
+          return `[PDF descargado localmente - orden-${orderNumber}.pdf]`;
+        }
+
         console.log('☁️ [Storage] Subiendo PDF a Firebase Storage...');
 
         const { ref, uploadBytes, getDownloadURL } = window.firebase.storageHelpers;
@@ -3864,10 +3877,20 @@
         console.log('☁️ [WhatsApp] Subiendo PDF a Firebase Storage...');
         const pdfUrl = await uploadOrderPDF(pdfDoc, orderNumber);
 
+        // Detectar si estamos en localhost
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
         // Construir mensaje con enlace al PDF
         let mensaje = `🔄 *ORDEN MODIFICADA #${orderNumber}*\n\n`;
-        mensaje += `📋 *Ver detalle completo en PDF:*\n`;
-        mensaje += `${pdfUrl}\n\n`;
+
+        if (isLocalhost) {
+          mensaje += `⚠️ *MODO DESARROLLO (localhost)*\n`;
+          mensaje += `📋 PDF descargado localmente: ${pdfUrl}\n`;
+          mensaje += `ℹ️ En producción se enviará el enlace al PDF\n\n`;
+        } else {
+          mensaje += `📋 *Ver detalle completo en PDF:*\n`;
+          mensaje += `${pdfUrl}\n\n`;
+        }
         // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
         const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
         const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
