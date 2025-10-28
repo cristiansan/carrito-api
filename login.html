@@ -310,9 +310,14 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Crear Cuenta</h2>
-      <input type="email" id="registerEmail" placeholder="Email">
-      <input type="password" id="registerPassword" placeholder="Contraseña (mínimo 6 caracteres)">
-      <input type="password" id="confirmPassword" placeholder="Confirmar Contraseña">
+      <input type="text" id="registerName" placeholder="Nombre completo *">
+      <input type="text" id="registerCompany" placeholder="Empresa *">
+      <input type="text" id="registerCountry" placeholder="País *">
+      <input type="tel" id="registerPhone" placeholder="Número de celular (con código de país, ej: +54 11 1234-5678) *">
+      <input type="email" id="registerEmail" placeholder="Email *">
+      <input type="password" id="registerPassword" placeholder="Contraseña (mínimo 6 caracteres) *">
+      <input type="password" id="confirmPassword" placeholder="Confirmar Contraseña *">
+      <small style="display: block; margin: 10px 0; color: #888; font-size: 12px;">* Todos los campos son obligatorios</small>
       <button id="registerBtn">Crear Cuenta</button>
       <div id="registerError"></div>
     </div>
@@ -370,21 +375,27 @@
     const db = getFirestore(app);
 
     // Función para crear o actualizar documento del usuario en Firestore
-    async function createOrUpdateUserDocument(user) {
+    async function createOrUpdateUserDocument(user, additionalData = {}) {
       try {
         const { doc, getDoc, setDoc, updateDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-        
+
         const userRef = doc(db, 'usuarios', user.uid);
         const userDoc = await getDoc(userRef);
-        
+
         const userData = {
           email: user.email,
-          displayName: user.displayName || user.email.split('@')[0],
+          displayName: user.displayName || additionalData.name || user.email.split('@')[0],
           photoURL: user.photoURL || null,
           lastLogin: serverTimestamp(),
           provider: user.providerData.length > 0 ? user.providerData[0].providerId : 'email'
         };
-        
+
+        // Agregar datos adicionales del registro si existen
+        if (additionalData.name) userData.name = additionalData.name;
+        if (additionalData.company) userData.company = additionalData.company;
+        if (additionalData.country) userData.country = additionalData.country;
+        if (additionalData.phone) userData.phone = additionalData.phone;
+
         if (!userDoc.exists()) {
           // Usuario nuevo - crear documento pendiente de aprobación
           userData.admin = false;
@@ -429,6 +440,10 @@
     const registerLink = document.getElementById('registerLink');
     const registerModal = document.getElementById('registerModal');
     const closeModal = document.querySelector('.close');
+    const registerNameInput = document.getElementById('registerName');
+    const registerCompanyInput = document.getElementById('registerCompany');
+    const registerCountryInput = document.getElementById('registerCountry');
+    const registerPhoneInput = document.getElementById('registerPhone');
     const registerEmailInput = document.getElementById('registerEmail');
     const registerPasswordInput = document.getElementById('registerPassword');
     const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -549,6 +564,10 @@
     });
 
     function clearRegisterForm() {
+      registerNameInput.value = '';
+      registerCompanyInput.value = '';
+      registerCountryInput.value = '';
+      registerPhoneInput.value = '';
       registerEmailInput.value = '';
       registerPasswordInput.value = '';
       confirmPasswordInput.value = '';
@@ -557,12 +576,16 @@
 
     // Función de registro
     registerBtn.addEventListener('click', async () => {
+      const name = registerNameInput.value.trim();
+      const company = registerCompanyInput.value.trim();
+      const country = registerCountryInput.value.trim();
+      const phone = registerPhoneInput.value.trim();
       const email = registerEmailInput.value.trim();
       const password = registerPasswordInput.value;
       const confirmPassword = confirmPasswordInput.value;
 
       // Validaciones
-      if (!email || !password || !confirmPassword) {
+      if (!name || !company || !country || !phone || !email || !password || !confirmPassword) {
         showRegisterError('Por favor completa todos los campos');
         return;
       }
@@ -589,8 +612,13 @@
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         console.log('Usuario registrado:', userCredential.user);
 
-        // Crear documento en Firestore para el nuevo usuario
-        await createOrUpdateUserDocument(userCredential.user);
+        // Crear documento en Firestore para el nuevo usuario con datos adicionales
+        await createOrUpdateUserDocument(userCredential.user, {
+          name,
+          company,
+          country,
+          phone
+        });
 
         // Guardar estado de autenticación
         localStorage.setItem('userAuthenticated', 'true');
