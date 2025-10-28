@@ -647,6 +647,11 @@
       transform: scale(1.2);
     }
 
+    /* Botones de control global de columnas (v0.35)
+     * collapse-all-btn: Botón "−" minimiza todas las columnas de una vez
+     * expand-all-btn: Botón "+" maximiza todas las columnas de una vez
+     * Ubicados en columna "Acciones" junto a botones de edición/eliminación
+     */
     .collapse-all-btn,
     .expand-all-btn {
       background: none;
@@ -662,6 +667,7 @@
       vertical-align: middle;
     }
 
+    /* Hover effect: Fondo verde con texto oscuro y leve agrandamiento */
     .collapse-all-btn:hover,
     .expand-all-btn:hover {
       background: #4CAF50;
@@ -1718,9 +1724,12 @@
                 <th data-column="vendedor" class="sortable" data-sort="vendedor"><span class="column-label">Vendedor<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="vendedor" title="Ocultar columna">−</button></th>
                 <th data-column="listaPrecio" class="sortable" data-sort="listaPrecio"><span class="column-label">Lista<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="listaPrecio" title="Ocultar columna">−</button></th>
                 <th data-column="saldoCredito" class="sortable" data-sort="saldoCredito"><span class="column-label">Saldo Crédito<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="saldoCredito" title="Ocultar columna">−</button></th>
+                <!-- Columna Acciones: Botones de edición/eliminación + controles globales de columnas (v0.35) -->
                 <th>
                   Acciones
+                  <!-- Botón '−': Minimiza TODAS las columnas de una vez. Útil para crear vista personalizada -->
                   <button class="collapse-all-btn" id="collapseAllColumnsBtn" title="Minimizar todas las columnas">−</button>
+                  <!-- Botón '+': Maximiza TODAS las columnas de una vez. Restaura vista completa -->
                   <button class="expand-all-btn" id="expandAllColumnsBtn" title="Maximizar todas las columnas">+</button>
                 </th>
               </tr>
@@ -4698,12 +4707,26 @@
       });
     }
 
-    // Collapse all columns
+    /**
+     * Collapse all columns at once
+     *
+     * Minimiza todas las columnas de la tabla de clientes con un solo click.
+     * Útil para crear una vista personalizada: minimizar todo y luego expandir
+     * solo las columnas necesarias usando los botones individuales (+).
+     *
+     * Funcionalidad:
+     * - Aplica clase 'column-collapsed' a headers y cells
+     * - Muestra solo la primera letra en cada celda
+     * - Cambia botones individuales de − a +
+     * - Guarda preferencias en localStorage para persistencia
+     *
+     * @version 0.35
+     */
     function collapseAllColumns() {
       const table = document.querySelector('.clientes-table');
       if (!table) return;
 
-      // Get all columns with data-column attribute
+      // Lista de todas las columnas con data-column attribute (16 columnas totales)
       const allColumns = ['codigo', 'nombre', 'nombreComercial', 'grupo', 'departamento',
                           'inscripcion', 'nroDocumento', 'direccion', 'ciudad', 'provincia',
                           'pais', 'telefono', 'email', 'vendedor', 'listaPrecio', 'saldoCredito'];
@@ -4713,10 +4736,13 @@
         const cells = table.querySelectorAll(`td[data-column="${columnName}"]`);
         const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
 
-        // Only collapse if not already collapsed
+        // Solo colapsar si no está ya colapsada (evita trabajo innecesario)
         const isCollapsed = headers[0]?.classList.contains('column-collapsed');
         if (!isCollapsed) {
+          // Colapsar headers
           headers.forEach(header => header.classList.add('column-collapsed'));
+
+          // Colapsar cells y extraer primera letra para mostrar
           cells.forEach(cell => {
             cell.classList.add('column-collapsed');
             const text = cell.textContent.trim();
@@ -4724,6 +4750,7 @@
             cell.setAttribute('data-first-letter', firstLetter);
           });
 
+          // Actualizar botón individual para reflejar estado colapsado
           if (toggleBtn) {
             toggleBtn.textContent = '+';
             toggleBtn.title = 'Mostrar columna';
@@ -4731,18 +4758,31 @@
         }
       });
 
-      // Save all columns as collapsed
+      // Guardar todas las columnas como colapsadas en localStorage
       const preferences = {};
       allColumns.forEach(col => preferences[col] = true);
       saveColumnPreferences(preferences);
     }
 
-    // Expand all columns
+    /**
+     * Expand all columns at once
+     *
+     * Maximiza todas las columnas de la tabla de clientes con un solo click.
+     * Restaura la vista completa de la tabla mostrando todos los datos.
+     *
+     * Funcionalidad:
+     * - Remueve clase 'column-collapsed' de headers y cells
+     * - Muestra contenido completo en cada celda
+     * - Cambia botones individuales de + a −
+     * - Limpia preferencias en localStorage (estado por defecto = expandido)
+     *
+     * @version 0.35
+     */
     function expandAllColumns() {
       const table = document.querySelector('.clientes-table');
       if (!table) return;
 
-      // Get all columns with data-column attribute
+      // Lista de todas las columnas con data-column attribute (16 columnas totales)
       const allColumns = ['codigo', 'nombre', 'nombreComercial', 'grupo', 'departamento',
                           'inscripcion', 'nroDocumento', 'direccion', 'ciudad', 'provincia',
                           'pais', 'telefono', 'email', 'vendedor', 'listaPrecio', 'saldoCredito'];
@@ -4752,15 +4792,19 @@
         const cells = table.querySelectorAll(`td[data-column="${columnName}"]`);
         const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
 
-        // Only expand if currently collapsed
+        // Solo expandir si está actualmente colapsada (evita trabajo innecesario)
         const isCollapsed = headers[0]?.classList.contains('column-collapsed');
         if (isCollapsed) {
+          // Expandir headers
           headers.forEach(header => header.classList.remove('column-collapsed'));
+
+          // Expandir cells y remover atributo de primera letra
           cells.forEach(cell => {
             cell.classList.remove('column-collapsed');
             cell.removeAttribute('data-first-letter');
           });
 
+          // Actualizar botón individual para reflejar estado expandido
           if (toggleBtn) {
             toggleBtn.textContent = '−';
             toggleBtn.title = 'Ocultar columna';
@@ -4768,7 +4812,7 @@
         }
       });
 
-      // Clear all column preferences (all expanded)
+      // Limpiar todas las preferencias de columnas (estado por defecto = todas expandidas)
       saveColumnPreferences({});
     }
 
@@ -5945,11 +5989,19 @@
         }
       });
 
-      // Collapse/Expand all columns buttons
+      /**
+       * Event listeners para botones de control global de columnas (v0.35)
+       *
+       * Botón "−" (Collapse All): Minimiza todas las columnas simultáneamente
+       * Botón "+" (Expand All): Maximiza todas las columnas simultáneamente
+       *
+       * Nota: e.stopPropagation() previene que se active el ordenamiento de la columna
+       * ya que estos botones están dentro del <th> de "Acciones"
+       */
       const collapseAllBtn = document.getElementById('collapseAllColumnsBtn');
       if (collapseAllBtn) {
         collapseAllBtn.addEventListener('click', function(e) {
-          e.stopPropagation(); // Prevent sorting when clicking this button
+          e.stopPropagation(); // Evitar que se active el sorting de la columna
           collapseAllColumns();
         });
       }
@@ -5957,7 +6009,7 @@
       const expandAllBtn = document.getElementById('expandAllColumnsBtn');
       if (expandAllBtn) {
         expandAllBtn.addEventListener('click', function(e) {
-          e.stopPropagation(); // Prevent sorting when clicking this button
+          e.stopPropagation(); // Evitar que se active el sorting de la columna
           expandAllColumns();
         });
       }
