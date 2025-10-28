@@ -1,8 +1,12 @@
 [
   {
-    "origin": ["*"],
+    "origin": [
+      "http://localhost:3002",
+      "https://stock.south-traders.com",
+      "https://*.vercel.app"
+    ],
     "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
     "maxAgeSeconds": 3600,
-    "responseHeader": ["Content-Type"]
+    "responseHeader": ["Content-Type", "Access-Control-Allow-Origin"]
   }
 ]
