@@ -647,6 +647,28 @@
       transform: scale(1.2);
     }
 
+    .collapse-all-btn,
+    .expand-all-btn {
+      background: none;
+      border: 1px solid #4CAF50;
+      color: #4CAF50;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 6px;
+      margin-left: 6px;
+      font-weight: bold;
+      border-radius: 3px;
+      transition: all 0.2s ease;
+      vertical-align: middle;
+    }
+
+    .collapse-all-btn:hover,
+    .expand-all-btn:hover {
+      background: #4CAF50;
+      color: #1e1e1e;
+      transform: scale(1.05);
+    }
+
     .clientes-table th.column-collapsed {
       max-width: 30px;
       width: 30px;
@@ -1696,7 +1718,11 @@
                 <th data-column="vendedor" class="sortable" data-sort="vendedor"><span class="column-label">Vendedor<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="vendedor" title="Ocultar columna">−</button></th>
                 <th data-column="listaPrecio" class="sortable" data-sort="listaPrecio"><span class="column-label">Lista<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="listaPrecio" title="Ocultar columna">−</button></th>
                 <th data-column="saldoCredito" class="sortable" data-sort="saldoCredito"><span class="column-label">Saldo Crédito<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="saldoCredito" title="Ocultar columna">−</button></th>
-                <th>Acciones</th>
+                <th>
+                  Acciones
+                  <button class="collapse-all-btn" id="collapseAllColumnsBtn" title="Minimizar todas las columnas">−</button>
+                  <button class="expand-all-btn" id="expandAllColumnsBtn" title="Maximizar todas las columnas">+</button>
+                </th>
               </tr>
             </thead>
             <tbody id="clientesTableBody">
@@ -4672,8 +4698,84 @@
       });
     }
 
+    // Collapse all columns
+    function collapseAllColumns() {
+      const table = document.querySelector('.clientes-table');
+      if (!table) return;
+
+      // Get all columns with data-column attribute
+      const allColumns = ['codigo', 'nombre', 'nombreComercial', 'grupo', 'departamento',
+                          'inscripcion', 'nroDocumento', 'direccion', 'ciudad', 'provincia',
+                          'pais', 'telefono', 'email', 'vendedor', 'listaPrecio', 'saldoCredito'];
+
+      allColumns.forEach(columnName => {
+        const headers = table.querySelectorAll(`th[data-column="${columnName}"]`);
+        const cells = table.querySelectorAll(`td[data-column="${columnName}"]`);
+        const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
+
+        // Only collapse if not already collapsed
+        const isCollapsed = headers[0]?.classList.contains('column-collapsed');
+        if (!isCollapsed) {
+          headers.forEach(header => header.classList.add('column-collapsed'));
+          cells.forEach(cell => {
+            cell.classList.add('column-collapsed');
+            const text = cell.textContent.trim();
+            const firstLetter = text.charAt(0) || '';
+            cell.setAttribute('data-first-letter', firstLetter);
+          });
+
+          if (toggleBtn) {
+            toggleBtn.textContent = '+';
+            toggleBtn.title = 'Mostrar columna';
+          }
+        }
+      });
+
+      // Save all columns as collapsed
+      const preferences = {};
+      allColumns.forEach(col => preferences[col] = true);
+      saveColumnPreferences(preferences);
+    }
+
+    // Expand all columns
+    function expandAllColumns() {
+      const table = document.querySelector('.clientes-table');
+      if (!table) return;
+
+      // Get all columns with data-column attribute
+      const allColumns = ['codigo', 'nombre', 'nombreComercial', 'grupo', 'departamento',
+                          'inscripcion', 'nroDocumento', 'direccion', 'ciudad', 'provincia',
+                          'pais', 'telefono', 'email', 'vendedor', 'listaPrecio', 'saldoCredito'];
+
+      allColumns.forEach(columnName => {
+        const headers = table.querySelectorAll(`th[data-column="${columnName}"]`);
+        const cells = table.querySelectorAll(`td[data-column="${columnName}"]`);
+        const toggleBtn = table.querySelector(`.column-toggle-btn[data-column="${columnName}"]`);
+
+        // Only expand if currently collapsed
+        const isCollapsed = headers[0]?.classList.contains('column-collapsed');
+        if (isCollapsed) {
+          headers.forEach(header => header.classList.remove('column-collapsed'));
+          cells.forEach(cell => {
+            cell.classList.remove('column-collapsed');
+            cell.removeAttribute('data-first-letter');
+          });
+
+          if (toggleBtn) {
+            toggleBtn.textContent = '−';
+            toggleBtn.title = 'Ocultar columna';
+          }
+        }
+      });
+
+      // Clear all column preferences (all expanded)
+      saveColumnPreferences({});
+    }
+
     // Make column functions globally accessible
     window.toggleColumn = toggleColumn;
+    window.collapseAllColumns = collapseAllColumns;
+    window.expandAllColumns = expandAllColumns;
     window.loadColumnPreferences = loadColumnPreferences;
     window.saveColumnPreferences = saveColumnPreferences;
     window.applyColumnPreferences = applyColumnPreferences;
@@ -5842,6 +5944,23 @@
           }
         }
       });
+
+      // Collapse/Expand all columns buttons
+      const collapseAllBtn = document.getElementById('collapseAllColumnsBtn');
+      if (collapseAllBtn) {
+        collapseAllBtn.addEventListener('click', function(e) {
+          e.stopPropagation(); // Prevent sorting when clicking this button
+          collapseAllColumns();
+        });
+      }
+
+      const expandAllBtn = document.getElementById('expandAllColumnsBtn');
+      if (expandAllBtn) {
+        expandAllBtn.addEventListener('click', function(e) {
+          e.stopPropagation(); // Prevent sorting when clicking this button
+          expandAllColumns();
+        });
+      }
 
       // Add Client button
       const addClientBtn = document.getElementById('addClientBtn');
