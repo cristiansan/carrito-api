@@ -3888,8 +3888,9 @@
           mensaje += `📋 PDF descargado localmente: ${pdfUrl}\n`;
           mensaje += `ℹ️ En producción se enviará el enlace al PDF\n\n`;
         } else {
-          mensaje += `📋 *Ver detalle completo en PDF:*\n`;
-          mensaje += `${pdfUrl}\n\n`;
+          mensaje += `📄 *ORDEN COMPLETA EN PDF - CLICK AQUÍ:*\n`;
+          mensaje += `${pdfUrl}\n`;
+          mensaje += `👆 _Hace clic en el enlace para ver/descargar el PDF completo_\n\n`;
         }
         // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
         const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
