@@ -5544,16 +5544,18 @@
                           .join('') : ''}
                       </select>
                     </div>
-                    <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important; margin-top: 5px;">
-                      <span class="mdc-button__ripple"></span>
-                      <i class="material-icons mdc-button__icon" aria-hidden="true">check_circle</i>
-                      <span class="mdc-button__label">Aprobar Usuario</span>
-                    </button>
-                    <button class="mdc-button mdc-button--raised" onclick="ignoreUser('${userId}', '${user.email}')" style="background-color: #757575 !important; margin-top: 5px; margin-left: 10px;">
-                      <span class="mdc-button__ripple"></span>
-                      <i class="material-icons mdc-button__icon" aria-hidden="true">block</i>
-                      <span class="mdc-button__label">Ignorar y Bloquear</span>
-                    </button>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                      <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important; flex: 1;">
+                        <span class="mdc-button__ripple"></span>
+                        <i class="material-icons mdc-button__icon" aria-hidden="true">check_circle</i>
+                        <span class="mdc-button__label">Aprobar Usuario</span>
+                      </button>
+                      <button class="mdc-button mdc-button--raised" onclick="ignoreUser('${userId}', '${user.email}')" style="background-color: #757575 !important; flex: 1;">
+                        <span class="mdc-button__ripple"></span>
+                        <i class="material-icons mdc-button__icon" aria-hidden="true">block</i>
+                        <span class="mdc-button__label">Ignorar y Bloquear</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
