@@ -590,6 +590,26 @@
       background: rgba(76, 175, 80, 0.18);
     }
 
+    /* Sortable columns */
+    .clientes-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .clientes-table th.sortable:hover {
+      background-color: #353545;
+    }
+
+    .clientes-table th.sortable .sort-indicator {
+      margin-left: 4px;
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .clientes-table th.sortable.sorted .sort-indicator {
+      color: #4CAF50;
+    }
+
     .edit-client-btn, .delete-client-btn {
       background: none;
       border: none;
@@ -1660,22 +1680,22 @@
           <table class="clientes-table">
             <thead>
               <tr>
-                <th data-column="codigo"><span class="column-label">Código</span><button class="column-toggle-btn" data-column="codigo" title="Ocultar columna">−</button></th>
-                <th data-column="nombre"><span class="column-label">Nombre</span><button class="column-toggle-btn" data-column="nombre" title="Ocultar columna">−</button></th>
-                <th data-column="nombreComercial"><span class="column-label">Nombre Comercial</span><button class="column-toggle-btn" data-column="nombreComercial" title="Ocultar columna">−</button></th>
-                <th data-column="grupo"><span class="column-label">Grupo</span><button class="column-toggle-btn" data-column="grupo" title="Ocultar columna">−</button></th>
-                <th data-column="departamento"><span class="column-label">Departamento</span><button class="column-toggle-btn" data-column="departamento" title="Ocultar columna">−</button></th>
-                <th data-column="inscripcion"><span class="column-label">Inscripción</span><button class="column-toggle-btn" data-column="inscripcion" title="Ocultar columna">−</button></th>
-                <th data-column="nroDocumento"><span class="column-label">Nro Documento</span><button class="column-toggle-btn" data-column="nroDocumento" title="Ocultar columna">−</button></th>
-                <th data-column="direccion"><span class="column-label">Dirección</span><button class="column-toggle-btn" data-column="direccion" title="Ocultar columna">−</button></th>
-                <th data-column="ciudad"><span class="column-label">Ciudad</span><button class="column-toggle-btn" data-column="ciudad" title="Ocultar columna">−</button></th>
-                <th data-column="provincia"><span class="column-label">Provincia</span><button class="column-toggle-btn" data-column="provincia" title="Ocultar columna">−</button></th>
-                <th data-column="pais"><span class="column-label">País</span><button class="column-toggle-btn" data-column="pais" title="Ocultar columna">−</button></th>
-                <th data-column="telefono"><span class="column-label">Teléfono</span><button class="column-toggle-btn" data-column="telefono" title="Ocultar columna">−</button></th>
-                <th data-column="email"><span class="column-label">Email</span><button class="column-toggle-btn" data-column="email" title="Ocultar columna">−</button></th>
-                <th data-column="vendedor"><span class="column-label">Vendedor</span><button class="column-toggle-btn" data-column="vendedor" title="Ocultar columna">−</button></th>
-                <th data-column="listaPrecio"><span class="column-label">Lista</span><button class="column-toggle-btn" data-column="listaPrecio" title="Ocultar columna">−</button></th>
-                <th data-column="saldoCredito"><span class="column-label">Saldo Crédito</span><button class="column-toggle-btn" data-column="saldoCredito" title="Ocultar columna">−</button></th>
+                <th data-column="codigo" class="sortable" data-sort="codigo"><span class="column-label">Código<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="codigo" title="Ocultar columna">−</button></th>
+                <th data-column="nombre" class="sortable" data-sort="nombre"><span class="column-label">Nombre<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="nombre" title="Ocultar columna">−</button></th>
+                <th data-column="nombreComercial" class="sortable" data-sort="nombreComercial"><span class="column-label">Nombre Comercial<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="nombreComercial" title="Ocultar columna">−</button></th>
+                <th data-column="grupo" class="sortable" data-sort="grupo"><span class="column-label">Grupo<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="grupo" title="Ocultar columna">−</button></th>
+                <th data-column="departamento" class="sortable" data-sort="departamento"><span class="column-label">Departamento<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="departamento" title="Ocultar columna">−</button></th>
+                <th data-column="inscripcion" class="sortable" data-sort="inscripcion"><span class="column-label">Inscripción<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="inscripcion" title="Ocultar columna">−</button></th>
+                <th data-column="nroDocumento" class="sortable" data-sort="nroDocumento"><span class="column-label">Nro Documento<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="nroDocumento" title="Ocultar columna">−</button></th>
+                <th data-column="direccion" class="sortable" data-sort="direccion"><span class="column-label">Dirección<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="direccion" title="Ocultar columna">−</button></th>
+                <th data-column="ciudad" class="sortable" data-sort="ciudad"><span class="column-label">Ciudad<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="ciudad" title="Ocultar columna">−</button></th>
+                <th data-column="provincia" class="sortable" data-sort="provincia"><span class="column-label">Provincia<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="provincia" title="Ocultar columna">−</button></th>
+                <th data-column="pais" class="sortable" data-sort="pais"><span class="column-label">País<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="pais" title="Ocultar columna">−</button></th>
+                <th data-column="telefono" class="sortable" data-sort="telefono"><span class="column-label">Teléfono<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="telefono" title="Ocultar columna">−</button></th>
+                <th data-column="email" class="sortable" data-sort="email"><span class="column-label">Email<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="email" title="Ocultar columna">−</button></th>
+                <th data-column="vendedor" class="sortable" data-sort="vendedor"><span class="column-label">Vendedor<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="vendedor" title="Ocultar columna">−</button></th>
+                <th data-column="listaPrecio" class="sortable" data-sort="listaPrecio"><span class="column-label">Lista<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="listaPrecio" title="Ocultar columna">−</button></th>
+                <th data-column="saldoCredito" class="sortable" data-sort="saldoCredito"><span class="column-label">Saldo Crédito<span class="sort-indicator"></span></span><button class="column-toggle-btn" data-column="saldoCredito" title="Ocultar columna">−</button></th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -2120,6 +2140,11 @@
     // === PRICE TABLE SORTING STATE ===
     let priceTableSort = {
       column: 'articulo',
+      direction: 'asc'
+    };
+
+    let clientTableSort = {
+      column: 'codigo',
       direction: 'asc'
     };
 
@@ -4352,6 +4377,18 @@
       }
     }
 
+    // Helper functions for client table sorting
+    const getClientSortIndicator = (columnId) => {
+      if (clientTableSort.column === columnId) {
+        return clientTableSort.direction === 'asc' ? ' ▲' : ' ▼';
+      }
+      return ' ⇅';
+    };
+
+    const getClientSortedClass = (columnId) => {
+      return clientTableSort.column === columnId ? 'sorted' : '';
+    };
+
     // Display clients in the table
     function displayClients(clientes) {
       const tableBody = document.getElementById('clientesTableBody');
@@ -4372,7 +4409,27 @@
         return;
       }
 
-      tableBody.innerHTML = clientes.map(cliente => {
+      // Sort clients based on current sort state
+      const sortedClientes = [...clientes].sort((a, b) => {
+        const col = clientTableSort.column;
+        const dir = clientTableSort.direction === 'asc' ? 1 : -1;
+        let aVal = a[col];
+        let bVal = b[col];
+
+        // Handle null/undefined values - push them to the end
+        if (aVal === null || aVal === undefined || aVal === '-') return 1;
+        if (bVal === null || bVal === undefined || bVal === '-') return -1;
+
+        // Convert to string for comparison if needed
+        if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+        if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+
+        if (aVal < bVal) return -1 * dir;
+        if (aVal > bVal) return 1 * dir;
+        return 0;
+      });
+
+      tableBody.innerHTML = sortedClientes.map(cliente => {
         // Identificar si es un usuario asignado (creado desde admisiones)
         const esUsuarioAsignado = cliente.creadoDesdeAdmision === true;
         const rowClass = esUsuarioAsignado ? 'usuario-asignado-row' : '';
@@ -4466,8 +4523,48 @@
       `;
       }).join('');
 
+      // Update sort indicators in headers
+      document.querySelectorAll('.clientes-table th.sortable').forEach(th => {
+        const column = th.dataset.sort;
+        const indicator = th.querySelector('.sort-indicator');
+        if (indicator) {
+          indicator.textContent = getClientSortIndicator(column);
+        }
+        // Add/remove sorted class
+        if (getClientSortedClass(column)) {
+          th.classList.add('sorted');
+        } else {
+          th.classList.remove('sorted');
+        }
+      });
+
       // Aplicar preferencias de columnas guardadas
       applyColumnPreferences();
+
+      // Setup sortable headers
+      setupClientSortableHeaders();
+    }
+
+    // Setup event listeners for sortable table headers
+    function setupClientSortableHeaders() {
+      const sortableHeaders = document.querySelectorAll('.clientes-table th.sortable');
+      sortableHeaders.forEach(th => {
+        th.addEventListener('click', function() {
+          const column = this.dataset.sort;
+
+          if (clientTableSort.column === column) {
+            // Toggle direction if same column clicked
+            clientTableSort.direction = clientTableSort.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            // Set new column and default to ascending
+            clientTableSort.column = column;
+            clientTableSort.direction = 'asc';
+          }
+
+          // Re-render the table with new sort
+          displayClients(window.allClients);
+        });
+      });
     }
 
     // Column toggle functionality
