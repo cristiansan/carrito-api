@@ -564,6 +564,12 @@
         clientesSnapshot.forEach(doc => {
           const data = doc.data();
 
+          // Filtrar clientes creados desde admisiones (solo mostrar clientes principales)
+          if (data.creadoDesdeAdmision === true) {
+            console.log(`⏭️ Ignorando cliente creado desde admisión: ${doc.id}`);
+            return;
+          }
+
           // Prioridad: nombreComercial > nombre > name > email
           let displayName = data.nombreComercial || data.nombre || data.name || data.email || 'Sin nombre';
 
