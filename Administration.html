@@ -4365,6 +4365,9 @@
         displayClients(clientes);
         updateClientStats();
 
+        // Setup sortable headers - solo una vez después de la primera carga
+        setupClientSortableHeaders();
+
       } catch (error) {
         console.error('❌ Error cargando clientes:', error);
         tableBody.innerHTML = `
@@ -4540,9 +4543,6 @@
 
       // Aplicar preferencias de columnas guardadas
       applyColumnPreferences();
-
-      // Setup sortable headers
-      setupClientSortableHeaders();
     }
 
     // Setup event listeners for sortable table headers
