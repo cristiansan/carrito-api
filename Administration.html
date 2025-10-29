@@ -482,6 +482,11 @@
       background: white;
     }
 
+    /* Ocultar botón toggle en desktop */
+    .mobile-articulo-toggle {
+      display: none;
+    }
+
     /* Client-specific styles */
     .clients-header {
       display: flex;
@@ -1040,8 +1045,16 @@
         font-size: 11px;
       }
 
+      /* Ocultar columna Artículo por defecto en móvil */
       .products-table th:first-child,
       .products-table td:first-child {
+        display: none;
+      }
+
+      /* Mostrar columna Artículo cuando está activa */
+      .products-table.show-articulo th:first-child,
+      .products-table.show-articulo td:first-child {
+        display: table-cell;
         max-width: 80px;
         font-size: 10px;
         padding: 6px 4px;
@@ -1050,6 +1063,34 @@
       .products-table th,
       .products-table td {
         padding: 8px 6px;
+      }
+
+      /* Botón toggle para columna Artículo */
+      .mobile-articulo-toggle {
+        display: flex;
+        margin-bottom: 12px;
+        padding: 8px;
+        background: #1b1b1f;
+        border-radius: 6px;
+        justify-content: center;
+      }
+
+      .articulo-toggle-btn {
+        padding: 6px 12px;
+        border: 1px solid #3a3a44;
+        background: #2a2a33;
+        color: #f0f0f0;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .articulo-toggle-btn.active {
+        background: #4CAF50;
+        border-color: #4CAF50;
       }
 
       .price-actions {
@@ -1777,6 +1818,13 @@
             </button>
           </div>
           <input type="file" id="pricesFileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+        </div>
+
+        <!-- Botón toggle para columna Artículo en móvil -->
+        <div class="mobile-articulo-toggle">
+          <button class="articulo-toggle-btn" id="articuloToggleBtn">
+            <span>+</span> Artículo
+          </button>
         </div>
 
         <div id="productsContainer">
@@ -5826,6 +5874,33 @@
       // Initialize all buttons
       const buttons = document.querySelectorAll('.mdc-button');
       buttons.forEach(button => mdc.ripple.MDCRipple.attachTo(button));
+
+      // === MOBILE ARTICULO TOGGLE ===
+      const articuloToggleBtn = document.getElementById('articuloToggleBtn');
+      const productsTable = document.querySelector('.products-table');
+
+      if (articuloToggleBtn && productsTable) {
+        articuloToggleBtn.addEventListener('click', function() {
+          const span = this.querySelector('span');
+
+          // Toggle active class on button
+          this.classList.toggle('active');
+
+          // Toggle show class on table
+          productsTable.classList.toggle('show-articulo');
+
+          // Toggle icon between + and -
+          if (this.classList.contains('active')) {
+            span.textContent = '-';
+          } else {
+            span.textContent = '+';
+          }
+
+          console.log(`🔄 Columna Artículo ${this.classList.contains('active') ? 'visible' : 'oculta'}`);
+        });
+
+        console.log('✅ Toggle button para columna Artículo inicializado');
+      }
 
       // === ADMISIONES FUNCTIONS ===
 
