@@ -2140,7 +2140,7 @@
     // === FIREBASE CONFIGURATION ===
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
     const firebaseConfig = {
@@ -2164,7 +2164,7 @@
       firestore: () => db,
       storage: () => storage,
       firestoreHelpers: {
-        doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch
+        doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch, serverTimestamp
       },
       storageHelpers: {
         ref, uploadBytes, getDownloadURL
@@ -3603,6 +3603,35 @@
         `;
       }
 
+      // Add photo and weight buttons for preparacion state (v0.40)
+      let preparacionButtonsHtml = '';
+      if (currentState === 'preparacion' && canEdit) {
+        const photoUrl = order.fotoPreparacion || '';
+        const peso = order.pesoPreparacion || '';
+
+        // Botón de foto: si ya hay foto, muestra ✓ y permite ver o actualizar
+        const photoButtonLabel = photoUrl ? '📸 ✓' : '📸 Foto';
+        const photoButtonAction = `handleFotoButton('${order.id}', '${photoUrl}')`;
+
+        preparacionButtonsHtml = `
+          <input type="file"
+                 id="photo-input-${order.id}"
+                 accept="image/*"
+                 onchange="handlePreparacionPhoto('${order.id}', this)"
+                 style="display: none;">
+          <button class="edit-order-btn"
+                  onclick="${photoButtonAction}"
+                  title="${photoUrl ? 'Foto subida - Click para ver o actualizar' : 'Subir foto de preparación'}">
+            ${photoButtonLabel}
+          </button>
+          <button class="edit-order-btn"
+                  onclick="promptPesoPreparacion('${order.id}', '${peso}')"
+                  title="Ingresar peso de preparación">
+            ⚖️ ${peso ? peso + ' kg' : 'Peso'}
+          </button>
+        `;
+      }
+
       return `
         <div class="order-item" data-order-id="${order.id}">
           <div class="order-info">
@@ -3613,6 +3642,7 @@
             </div>
           </div>
           <div class="order-actions">
+            ${preparacionButtonsHtml}
             ${buttonHtml}
           </div>
         </div>
@@ -3936,6 +3966,179 @@
 
       } catch (error) {
         console.error('❌ Error enviando WhatsApp:', error);
+      }
+    }
+
+    /**
+     * Maneja el click en el botón de foto (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {string} photoUrl - URL de la foto actual (vacío si no hay)
+     */
+    window.handleFotoButton = function(orderId, photoUrl) {
+      if (!photoUrl) {
+        // No hay foto, abrir file picker directamente
+        document.getElementById('photo-input-' + orderId).click();
+      } else {
+        // Ya hay foto, preguntar si quiere ver o actualizar
+        const accion = confirm('Ya hay una foto subida.\n\n✅ OK = Subir nueva foto\n❌ Cancelar = Ver foto actual');
+
+        if (accion) {
+          // Usuario eligió OK: subir nueva foto
+          document.getElementById('photo-input-' + orderId).click();
+        } else {
+          // Usuario eligió Cancelar: ver foto actual
+          window.open(photoUrl, '_blank');
+        }
+      }
+    }
+
+    /**
+     * Maneja la subida de foto para orden en preparación (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {HTMLInputElement} inputElement - Elemento input[type=file]
+     */
+    window.handlePreparacionPhoto = async function(orderId, inputElement) {
+      if (!isUserAdmin) {
+        alert('⚠️ No tienes permisos para actualizar fotos');
+        return;
+      }
+
+      const file = inputElement.files[0];
+      if (!file) return;
+
+      // Validar que sea una imagen
+      if (!file.type.startsWith('image/')) {
+        alert('❌ Por favor selecciona un archivo de imagen válido');
+        inputElement.value = '';
+        return;
+      }
+
+      // Validar tamaño (máximo 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert('❌ La imagen es muy grande. Máximo 5MB permitido.');
+        inputElement.value = '';
+        return;
+      }
+
+      try {
+        console.log('📸 [Preparación] Subiendo foto para orden:', orderId);
+
+        // Mostrar indicador de carga
+        const loadingMsg = document.createElement('div');
+        loadingMsg.textContent = '⏳ Subiendo foto...';
+        loadingMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 4px; z-index: 10000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);';
+        document.body.appendChild(loadingMsg);
+
+        const { ref, uploadBytes, getDownloadURL } = window.firebase.storageHelpers;
+        const storage = window.firebase.storage();
+
+        // Subir foto a Storage
+        const fileName = `preparacion/orden-${orderId}-${Date.now()}.${file.name.split('.').pop()}`;
+        const storageRef = ref(storage, fileName);
+
+        const snapshot = await uploadBytes(storageRef, file, {
+          contentType: file.type
+        });
+
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // Actualizar Firestore
+        const { doc, updateDoc, serverTimestamp } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+        const orderRef = doc(db, 'pedidos', orderId);
+
+        await updateDoc(orderRef, {
+          fotoPreparacion: downloadURL,
+          fotoPreparacionUpdatedAt: serverTimestamp(),
+          fotoPreparacionUpdatedBy: window.firebase.auth().currentUser?.email || 'admin'
+        });
+
+        console.log('✅ [Preparación] Foto subida exitosamente:', downloadURL);
+
+        // Remover mensaje de carga
+        loadingMsg.textContent = '✅ Foto guardada';
+        setTimeout(() => loadingMsg.remove(), 2000);
+
+        // Recargar órdenes para mostrar la foto
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ [Preparación] Error al subir foto:', error);
+        alert('❌ Error al subir la foto: ' + error.message);
+        inputElement.value = '';
+
+        // Remover mensaje de carga si existe
+        const loadingMsg = document.querySelector('div[style*="fixed"]');
+        if (loadingMsg) loadingMsg.remove();
+      }
+    }
+
+    /**
+     * Muestra prompt para ingresar peso de preparación (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {string} pesoActual - Peso actual (puede estar vacío)
+     */
+    window.promptPesoPreparacion = function(orderId, pesoActual) {
+      const mensaje = pesoActual
+        ? `Peso actual: ${pesoActual} kg\n\nIngresa el nuevo peso en kg (o deja vacío para borrar):`
+        : 'Ingresa el peso en kg:';
+
+      const peso = prompt(mensaje, pesoActual || '');
+
+      // Si el usuario cancela, no hacer nada
+      if (peso === null) return;
+
+      // Llamar a la función que guarda el peso
+      window.handlePreparacionPeso(orderId, peso);
+    }
+
+    /**
+     * Maneja la actualización del peso para orden en preparación (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {string} peso - Peso en kg
+     */
+    window.handlePreparacionPeso = async function(orderId, peso) {
+      if (!isUserAdmin) {
+        alert('⚠️ No tienes permisos para actualizar el peso');
+        return;
+      }
+
+      // Validar que sea un número válido
+      const pesoNum = parseFloat(peso);
+      if (peso && (isNaN(pesoNum) || pesoNum < 0)) {
+        alert('❌ Por favor ingresa un peso válido (número positivo)');
+        return;
+      }
+
+      try {
+        console.log('⚖️ [Preparación] Actualizando peso para orden:', orderId, '→', peso, 'kg');
+
+        const { doc, updateDoc, serverTimestamp } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+        const orderRef = doc(db, 'pedidos', orderId);
+
+        await updateDoc(orderRef, {
+          pesoPreparacion: peso ? pesoNum : null,
+          pesoPreparacionUpdatedAt: serverTimestamp(),
+          pesoPreparacionUpdatedBy: window.firebase.auth().currentUser?.email || 'admin'
+        });
+
+        console.log('✅ [Preparación] Peso actualizado exitosamente');
+
+        // Mostrar confirmación breve
+        const successMsg = document.createElement('div');
+        successMsg.textContent = '✅ Peso guardado';
+        successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 10px 15px; border-radius: 4px; z-index: 10000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);';
+        document.body.appendChild(successMsg);
+        setTimeout(() => successMsg.remove(), 1500);
+
+        // Recargar órdenes para mostrar el peso actualizado
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ [Preparación] Error al actualizar peso:', error);
+        alert('❌ Error al guardar el peso: ' + error.message);
       }
     }
 
