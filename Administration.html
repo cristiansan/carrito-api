@@ -1399,6 +1399,43 @@
         width: 100%;
         justify-content: center;
       }
+
+      /* Admisiones responsive - apilar datos y filtros verticalmente */
+      #admisiones-content .admin-section > div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 20px !important;
+      }
+
+      #admisiones-content .admin-section > div[style*="display: flex"] > div {
+        min-width: 100% !important;
+        width: 100% !important;
+      }
+
+      /* Botones de admisiones en vertical */
+      #admisiones-content .admin-section > div > div[style*="flex-direction: column"] > div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+
+      #admisiones-content .mdc-button {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* Mejorar legibilidad de selects en admisiones */
+      #admisiones-content select,
+      #admisiones-content .searchable-select-input {
+        font-size: 14px !important;
+        padding: 12px 10px !important;
+      }
+
+      #admisiones-content h3 {
+        font-size: 16px !important;
+      }
+
+      #admisiones-content p {
+        font-size: 12px !important;
+      }
     }
 
     /* Logistics/Orders Section Styles */
