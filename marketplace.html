@@ -2780,9 +2780,19 @@
         const pedidos = [];
         querySnapshot.forEach(doc => {
           const data = doc.data();
+
+          // Generar resumen correcto desde los datos de Firestore
+          const clienteNombre = data.clienteNombre || 'Cliente';
+          const clienteCodigo = data.clienteCodigo || '';
+          const total = data.total || 0;
+          const cantidadItems = data.cantidadItems || (data.items ? data.items.length : 0);
+
+          const resumen = `Cliente ${clienteNombre}${clienteCodigo ? ', CODIGO ' + clienteCodigo : ''} • ${cantidadItems} items • $${total.toFixed(2)}`;
+
           pedidos.push({
             id: doc.id,
-            ...data
+            ...data,
+            resumen: resumen
           });
         });
 
@@ -2867,23 +2877,56 @@
         if (currentUser && firebase.firestore) {
           console.log('📊 Exportando desde Firebase...');
 
-          const { collection, query, where, getDocs } = firebase.firestoreHelpers;
+          const { collection, query, where, getDocs, doc, getDoc, orderBy, limit } = firebase.firestoreHelpers;
           const db = firebase.firestore();
 
+          // Verificar si el usuario es admin
+          const userRef = doc(db, 'usuarios', currentUser.uid);
+          const userDoc = await getDoc(userRef);
+          const isAdmin = userDoc.exists() && userDoc.data().admin === true;
+
+          console.log('👑 Es admin:', isAdmin);
+
           const pedidosCollection = collection(db, 'pedidos');
-          const q = query(pedidosCollection, where('userId', '==', currentUser.uid));
+          let q;
+
+          if (isAdmin) {
+            // Admin exporta todas las órdenes
+            console.log('👑 Usuario admin - exportando todas las órdenes');
+            q = query(
+              pedidosCollection,
+              orderBy('timestamp', 'desc'),
+              limit(100)
+            );
+          } else {
+            // Usuario normal exporta solo sus órdenes
+            console.log('👤 Usuario normal - exportando solo sus órdenes');
+            q = query(
+              pedidosCollection,
+              where('userId', '==', currentUser.uid)
+            );
+          }
+
           const querySnapshot = await getDocs(q);
 
           querySnapshot.forEach(doc => {
             const data = doc.data();
+
+            // Generar resumen correcto para exportación
+            const clienteNombre = data.clienteNombre || 'Cliente';
+            const clienteCodigo = data.clienteCodigo || '';
+            const total = data.total || 0;
+            const cantidadItems = data.cantidadItems || (data.items ? data.items.length : 0);
+            const resumen = `Cliente ${clienteNombre}${clienteCodigo ? ', CODIGO ' + clienteCodigo : ''} • ${cantidadItems} items • $${total.toFixed(2)}`;
+
             pedidos.push({
               fecha: data.fechaLocal,
               numeroOrden: data.numeroOrden || '',
               estado: data.estado || 'Confirmada',
-              resumen: data.resumen,
-              total: data.total,
-              items: data.cantidadItems,
-              usuario: data.userDisplayName || data.userEmail || '',
+              resumen: resumen,
+              total: data.total || 0,
+              items: data.cantidadItems || (data.items ? data.items.length : 0),
+              usuario: data.userDisplayName || data.usuarioEmail || data.userEmail || '',
               empresa: data.empresa || '',
               timestamp: data.timestamp,
               fechaFirestore: data.fecha
