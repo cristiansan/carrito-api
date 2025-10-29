@@ -398,6 +398,90 @@
       background: #f0f0f0 !important;
     }
 
+    /* Estilos para dropdown con búsqueda de clientes */
+    .searchable-select-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .searchable-select-input {
+      width: 100%;
+      padding: 14px 12px 14px 40px;
+      border: 2px solid #999 !important;
+      border-radius: 4px;
+      font-size: 16px !important;
+      color: #000 !important;
+      background: #f0f0f0 !important;
+      cursor: pointer;
+      font-weight: 600 !important;
+      -webkit-text-fill-color: #000 !important;
+      opacity: 1 !important;
+      box-sizing: border-box;
+    }
+
+    .searchable-select-input:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    .searchable-select-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      pointer-events: none;
+      font-size: 20px;
+    }
+
+    .searchable-select-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border: 2px solid #4CAF50;
+      border-radius: 4px;
+      margin-top: 4px;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .searchable-select-dropdown.active {
+      display: block;
+    }
+
+    .searchable-select-option {
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      color: #000 !important;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .searchable-select-option:hover {
+      background: #e8f5e9;
+    }
+
+    .searchable-select-option:last-child {
+      border-bottom: none;
+    }
+
+    .searchable-select-option.no-results {
+      color: #666 !important;
+      text-align: center;
+      cursor: default;
+      font-weight: normal;
+    }
+
+    .searchable-select-option.no-results:hover {
+      background: white;
+    }
+
     /* Client-specific styles */
     .clients-header {
       display: flex;
@@ -5775,19 +5859,31 @@
                     </div>
                     <div>
                       <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Cliente Asignado *</label>
-                      <select id="client-${userId}" style="padding: 14px 12px; border: 2px solid #999 !important; border-radius: 4px; font-size: 16px !important; width: 100%; color: #000 !important; background: #f0f0f0 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600 !important; z-index: 1; -webkit-appearance: none; appearance: none;">
-                        <option value="" style="color: #666 !important; background: #f0f0f0 !important;">-- Seleccionar cliente --</option>
-                        ${window.allClients ? window.allClients
-                          .filter((c, index, self) => {
-                            const cod = c.codigo || c.numero;
-                            return cod && index === self.findIndex(t => (t.codigo || t.numero) === cod);
-                          })
-                          .map(c => {
-                            const cod = c.codigo || c.numero || 'SIN-CODIGO';
-                            return `<option value="${cod}" style="color: #000 !important; background: #f0f0f0 !important;">${cod} - ${c.nombre || 'Sin nombre'}</option>`;
-                          })
-                          .join('') : ''}
-                      </select>
+                      <div class="searchable-select-container" id="client-container-${userId}">
+                        <i class="material-icons searchable-select-icon">search</i>
+                        <input
+                          type="text"
+                          class="searchable-select-input"
+                          id="client-search-${userId}"
+                          placeholder="Buscar cliente por código o nombre..."
+                          autocomplete="off"
+                          readonly
+                        />
+                        <input type="hidden" id="client-${userId}" value="" />
+                        <div class="searchable-select-dropdown" id="client-dropdown-${userId}">
+                          ${window.allClients ? window.allClients
+                            .filter((c, index, self) => {
+                              const cod = c.codigo || c.numero;
+                              return cod && index === self.findIndex(t => (t.codigo || t.numero) === cod);
+                            })
+                            .map(c => {
+                              const cod = c.codigo || c.numero || 'SIN-CODIGO';
+                              const nombre = c.nombre || 'Sin nombre';
+                              return `<div class="searchable-select-option" data-value="${cod}" data-text="${cod} - ${nombre}">${cod} - ${nombre}</div>`;
+                            })
+                            .join('') : '<div class="searchable-select-option no-results">No hay clientes disponibles</div>'}
+                        </div>
+                      </div>
                     </div>
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
                       <button class="mdc-button mdc-button--raised" onclick="approveUser('${userId}')" style="background-color: #4CAF50 !important; flex: 1;">
@@ -5815,7 +5911,6 @@
             const userId = user.id;
             const roleSelect = document.getElementById(`role-${userId}`);
             const priceListSelect = document.getElementById(`priceList-${userId}`);
-            const clientSelect = document.getElementById(`client-${userId}`);
 
             // Función para forzar la visualización del texto seleccionado
             const forceTextVisibility = (select) => {
@@ -5843,9 +5938,88 @@
               }
             };
 
+            // Inicializar searchable select para clientes
+            const searchInput = document.getElementById(`client-search-${userId}`);
+            const dropdown = document.getElementById(`client-dropdown-${userId}`);
+            const hiddenInput = document.getElementById(`client-${userId}`);
+            let allOptions = [];
+
+            if (searchInput && dropdown && hiddenInput) {
+              // Guardar todas las opciones originales
+              allOptions = Array.from(dropdown.querySelectorAll('.searchable-select-option:not(.no-results)'));
+
+              // Al hacer click en el input, mostrar/ocultar dropdown
+              searchInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+                if (dropdown.classList.contains('active')) {
+                  searchInput.removeAttribute('readonly');
+                  searchInput.focus();
+                  searchInput.select();
+                }
+              });
+
+              // Al escribir, filtrar opciones
+              searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                let visibleCount = 0;
+
+                allOptions.forEach(option => {
+                  const text = option.getAttribute('data-text').toLowerCase();
+                  if (text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                    visibleCount++;
+                  } else {
+                    option.style.display = 'none';
+                  }
+                });
+
+                // Mostrar mensaje si no hay resultados
+                let noResultsMsg = dropdown.querySelector('.no-results-message');
+                if (visibleCount === 0) {
+                  if (!noResultsMsg) {
+                    noResultsMsg = document.createElement('div');
+                    noResultsMsg.className = 'searchable-select-option no-results no-results-message';
+                    noResultsMsg.textContent = 'No se encontraron resultados';
+                    dropdown.appendChild(noResultsMsg);
+                  }
+                  noResultsMsg.style.display = 'block';
+                } else if (noResultsMsg) {
+                  noResultsMsg.style.display = 'none';
+                }
+              });
+
+              // Al seleccionar una opción
+              allOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  const value = option.getAttribute('data-value');
+                  const text = option.getAttribute('data-text');
+
+                  hiddenInput.value = value;
+                  searchInput.value = text;
+                  searchInput.setAttribute('readonly', 'true');
+                  dropdown.classList.remove('active');
+
+                  console.log(`✅ Cliente seleccionado para ${userId}: ${text}`);
+                });
+              });
+
+              // Cerrar dropdown al hacer click fuera
+              document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                  dropdown.classList.remove('active');
+                  searchInput.setAttribute('readonly', 'true');
+                  // Restaurar texto si no hay selección
+                  if (!hiddenInput.value) {
+                    searchInput.value = '';
+                  }
+                }
+              });
+            }
+
             forceTextVisibility(roleSelect);
             forceTextVisibility(priceListSelect);
-            forceTextVisibility(clientSelect);
           });
 
         } catch (error) {

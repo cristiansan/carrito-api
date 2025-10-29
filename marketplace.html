@@ -423,6 +423,11 @@
       text-align: right;
     }
 
+    /* Ocultar botones de toggle en desktop */
+    .mobile-column-toggles {
+      display: none;
+    }
+
     @media (max-width: 768px) {
       body {
         font-size: 14px;
@@ -435,6 +440,16 @@
       }
       .header {
         padding: 12px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .header-stats {
+        flex-direction: column;
+        width: 100%;
+      }
+      .header-stat-card {
+        width: 100%;
+        min-width: unset;
       }
       .tab {
         padding: 6px 8px;
@@ -445,6 +460,76 @@
       th, td {
         padding: 4px;
         font-size: 12px;
+      }
+
+      /* Ocultar columnas en móvil por defecto */
+      table thead th:first-child,
+      table tbody td:first-child {
+        display: none;
+      }
+
+      table thead th[data-column="stock"],
+      table thead th[data-column="stockTeorico"],
+      table thead th[data-column="teorico"],
+      table tbody td[data-column="stock"],
+      table tbody td[data-column="stockTeorico"],
+      table tbody td[data-column="teorico"] {
+        display: none;
+      }
+
+      table thead th[data-column="transito"],
+      table tbody td[data-column="transito"] {
+        display: none;
+      }
+
+      /* Mostrar columnas cuando están activas */
+      table.show-articulo thead th:first-child,
+      table.show-articulo tbody td:first-child {
+        display: table-cell;
+      }
+
+      table.show-stock thead th[data-column="stock"],
+      table.show-stock thead th[data-column="stockTeorico"],
+      table.show-stock thead th[data-column="teorico"],
+      table.show-stock tbody td[data-column="stock"],
+      table.show-stock tbody td[data-column="stockTeorico"],
+      table.show-stock tbody td[data-column="teorico"] {
+        display: table-cell;
+      }
+
+      table.show-transito thead th[data-column="transito"],
+      table.show-transito tbody td[data-column="transito"] {
+        display: table-cell;
+      }
+
+      /* Botones de toggle de columnas en móvil */
+      .mobile-column-toggles {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 8px;
+        background: #1b1b1f;
+        border-radius: 6px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .column-toggle-btn {
+        padding: 6px 12px;
+        border: 1px solid #3a3a44;
+        background: #2a2a33;
+        color: #f0f0f0;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .column-toggle-btn.active {
+        background: #4CAF50;
+        border-color: #4CAF50;
       }
 
       /* Tabs verticales en móviles */
@@ -2062,8 +2147,21 @@
       </button>
     </div>
 
+    <!-- Botones de toggle de columnas para móvil -->
+    <div class="mobile-column-toggles">
+      <button class="column-toggle-btn" data-toggle="articulo">
+        <span>+</span> Artículo
+      </button>
+      <button class="column-toggle-btn" data-toggle="stock">
+        <span>+</span> Stock
+      </button>
+      <button class="column-toggle-btn" data-toggle="transito">
+        <span>+</span> Tránsito
+      </button>
+    </div>
+
     <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
-      <table>
+      <table id="productsTable">
         <thead></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -4363,8 +4461,40 @@
       }
       
       // Old logout button removed - now in hamburger menu
-      
+
       console.log('✅ Menu setup complete');
+
+      // === MOBILE COLUMN TOGGLE FUNCTIONALITY ===
+      document.addEventListener('DOMContentLoaded', function() {
+        const table = document.getElementById('productsTable');
+        const toggleButtons = document.querySelectorAll('.column-toggle-btn');
+
+        if (table && toggleButtons.length > 0) {
+          toggleButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+              const column = this.getAttribute('data-toggle');
+              const span = this.querySelector('span');
+
+              // Toggle active class on button
+              this.classList.toggle('active');
+
+              // Toggle show class on table
+              table.classList.toggle(`show-${column}`);
+
+              // Toggle icon between + and -
+              if (this.classList.contains('active')) {
+                span.textContent = '-';
+              } else {
+                span.textContent = '+';
+              }
+
+              console.log(`🔄 Columna ${column} ${this.classList.contains('active') ? 'visible' : 'oculta'}`);
+            });
+          });
+
+          console.log('✅ Toggle buttons para columnas móviles inicializados');
+        }
+      });
     });
   </script>
 

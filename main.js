@@ -599,6 +599,10 @@ function renderRows() {
   columnsToRender.forEach(col => {
     const th = document.createElement('th');
     th.textContent = col.label;
+
+    // Add data-column attribute for mobile column toggling
+    th.setAttribute('data-column', col.id);
+
     if (col.sortable) {
       th.classList.add('sortable');
       th.setAttribute('data-sort', col.id);
@@ -670,6 +674,10 @@ function renderRows() {
     const tr = document.createElement('tr');
     columnsToRender.forEach(col => {
       const td = document.createElement('td');
+
+      // Add data-column attribute for mobile column toggling
+      td.setAttribute('data-column', col.id);
+
       if (col.class) {
         td.classList.add(col.class);
       }
@@ -713,6 +721,10 @@ function renderRows() {
   const trTotal = document.createElement('tr');
   columnsToRender.forEach((col, index) => {
     const td = document.createElement('td');
+
+    // Add data-column attribute for mobile column toggling
+    td.setAttribute('data-column', col.id);
+
     if (col.class) {
       td.classList.add(col.class);
     }
