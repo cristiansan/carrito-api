@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas - South Traders</title>
+
+  <!-- Material Design Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: #1a1a1a;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #4CAF50;
+    }
+
+    .header h1 {
+      color: #4CAF50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #45a049;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      border: 1px solid #333;
+      transition: border-color 0.3s;
+    }
+
+    .stat-card:hover {
+      border-color: #4CAF50;
+    }
+
+    .stat-card h3 {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .stat-card .subtitle {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .chart-card {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      border: 1px solid #333;
+    }
+
+    .chart-card h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-card canvas {
+      max-height: 300px;
+    }
+
+    .ranking-card {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
+      border: 1px solid #333;
+    }
+
+    .ranking-card h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ranking-list {
+      list-style: none;
+    }
+
+    .ranking-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      transition: background 0.2s;
+    }
+
+    .ranking-item:hover {
+      background: #333;
+    }
+
+    .ranking-item:last-child {
+      border-bottom: none;
+    }
+
+    .ranking-position {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+      min-width: 40px;
+    }
+
+    .ranking-position.first { color: #FFD700; }
+    .ranking-position.second { color: #C0C0C0; }
+    .ranking-position.third { color: #CD7F32; }
+
+    .ranking-info {
+      flex: 1;
+      margin: 0 20px;
+    }
+
+    .ranking-name {
+      font-weight: bold;
+      color: white;
+      margin-bottom: 3px;
+    }
+
+    .ranking-detail {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .ranking-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      text-align: right;
+    }
+
+    .ranking-value .unit {
+      font-size: 12px;
+      color: #888;
+      font-weight: normal;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: white;
+      font-size: 18px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>
+      <span class="material-icons">bar_chart</span>
+      Estadísticas del Sistema
+    </h1>
+    <button class="back-btn" onclick="window.location.href='marketplace.html'">
+      <span class="material-icons">arrow_back</span>
+      Volver
+    </button>
+  </div>
+
+  <div id="loadingIndicator" class="loading">
+    <span class="material-icons" style="font-size: 48px; animation: spin 2s linear infinite;">hourglass_empty</span>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <div id="statsContent" style="display: none;">
+    <!-- KPIs principales -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3><span class="material-icons">shopping_cart</span> Total Órdenes</h3>
+        <div class="value" id="totalOrders">0</div>
+        <div class="subtitle">Todas las órdenes del sistema</div>
+      </div>
+      <div class="stat-card">
+        <h3><span class="material-icons">attach_money</span> Revenue Total</h3>
+        <div class="value" id="totalRevenue">$0</div>
+        <div class="subtitle">Suma de todas las órdenes</div>
+      </div>
+      <div class="stat-card">
+        <h3><span class="material-icons">people</span> Clientes Totales</h3>
+        <div class="value" id="totalClients">0</div>
+        <div class="subtitle">Clientes en el sistema</div>
+      </div>
+      <div class="stat-card">
+        <h3><span class="material-icons">inventory</span> Productos Vendidos</h3>
+        <div class="value" id="totalProducts">0</div>
+        <div class="subtitle">Unidades totales vendidas</div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts-container">
+      <div class="chart-card">
+        <h2><span class="material-icons">pie_chart</span> Órdenes por Estado</h2>
+        <canvas id="statusChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2><span class="material-icons">show_chart</span> Ventas por Día (últimos 30 días)</h2>
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Rankings -->
+    <div class="ranking-card">
+      <h2><span class="material-icons">emoji_events</span> Top 10 Vendedores (por órdenes creadas)</h2>
+      <ul class="ranking-list" id="vendedoresRanking">
+        <li class="no-data">Cargando...</li>
+      </ul>
+    </div>
+
+    <div class="ranking-card">
+      <h2><span class="material-icons">trending_up</span> Top 10 Productos Más Vendidos</h2>
+      <ul class="ranking-list" id="productosRanking">
+        <li class="no-data">Cargando...</li>
+      </ul>
+    </div>
+
+    <div class="ranking-card">
+      <h2><span class="material-icons">person</span> Top 10 Clientes Más Activos</h2>
+      <ul class="ranking-list" id="clientesRanking">
+        <li class="no-data">Cargando...</li>
+      </ul>
+    </div>
+
+    <div class="ranking-card">
+      <h2><span class="material-icons">login</span> Top 10 Usuarios Más Conectados</h2>
+      <ul class="ranking-list" id="usuariosRanking">
+        <li class="no-data">Cargando...</li>
+      </ul>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script type="module">
+    // Firebase configuration
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, where, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
+      authDomain: "carrito-138c3.firebaseapp.com",
+      projectId: "carrito-138c3",
+      storageBucket: "carrito-138c3.firebasestorage.app",
+      messagingSenderId: "1002158386608",
+      appId: "1:1002158386608:web:5f4f9a3e876a0f44dfe7a4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Check if user is authenticated and is admin
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Check if user is admin
+      const userDoc = await getDocs(query(collection(db, 'usuarios'), where('email', '==', user.email)));
+      if (userDoc.empty || !userDoc.docs[0].data().admin) {
+        alert('⚠️ No tienes permisos para acceder a esta página');
+        window.location.href = 'marketplace.html';
+        return;
+      }
+
+      // Load statistics
+      await loadStatistics();
+    });
+
+    async function loadStatistics() {
+      try {
+        console.log('📊 Cargando estadísticas...');
+
+        // Get all orders
+        const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
+        const orders = [];
+        ordersSnapshot.forEach(doc => {
+          orders.push({ id: doc.id, ...doc.data() });
+        });
+
+        console.log(`✅ Órdenes cargadas: ${orders.length}`);
+
+        // Get all clients
+        const clientsSnapshot = await getDocs(collection(db, 'clientes'));
+        const clients = clientsSnapshot.size;
+
+        // Calculate KPIs
+        const totalOrders = orders.length;
+        const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+        const totalProducts = orders.reduce((sum, order) => {
+          if (order.items && Array.isArray(order.items)) {
+            return sum + order.items.reduce((itemSum, item) => itemSum + (item.quantity || 0), 0);
+          }
+          return sum;
+        }, 0);
+
+        // Update KPIs
+        document.getElementById('totalOrders').textContent = totalOrders;
+        document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+        document.getElementById('totalClients').textContent = clients;
+        document.getElementById('totalProducts').textContent = totalProducts;
+
+        // Generate charts
+        generateStatusChart(orders);
+        generateSalesChart(orders);
+
+        // Generate rankings
+        generateVendedoresRanking(orders);
+        generateProductosRanking(orders);
+        generateClientesRanking(orders);
+        await generateUsuariosRanking();
+
+        // Hide loading and show content
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('statsContent').style.display = 'block';
+
+        console.log('✅ Estadísticas cargadas completamente');
+
+      } catch (error) {
+        console.error('❌ Error cargando estadísticas:', error);
+        alert('Error cargando estadísticas: ' + error.message);
+      }
+    }
+
+    function generateStatusChart(orders) {
+      const statusCount = {};
+      orders.forEach(order => {
+        const status = order.logisticsState || 'sin estado';
+        statusCount[status] = (statusCount[status] || 0) + 1;
+      });
+
+      const ctx = document.getElementById('statusChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(statusCount),
+          datasets: [{
+            data: Object.values(statusCount),
+            backgroundColor: [
+              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+              '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: 'white',
+                font: {
+                  size: 12
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function generateSalesChart(orders) {
+      // Group orders by date (last 30 days)
+      const today = new Date();
+      const last30Days = new Date(today);
+      last30Days.setDate(today.getDate() - 30);
+
+      const salesByDate = {};
+
+      orders.forEach(order => {
+        if (order.timestamp) {
+          let orderDate;
+          if (order.timestamp.toDate) {
+            orderDate = order.timestamp.toDate();
+          } else if (order.timestamp instanceof Date) {
+            orderDate = order.timestamp;
+          } else {
+            orderDate = new Date(order.timestamp);
+          }
+
+          if (orderDate >= last30Days) {
+            const dateKey = orderDate.toISOString().split('T')[0];
+            salesByDate[dateKey] = (salesByDate[dateKey] || 0) + (order.total || 0);
+          }
+        }
+      });
+
+      // Sort dates and prepare data
+      const sortedDates = Object.keys(salesByDate).sort();
+      const salesData = sortedDates.map(date => salesByDate[date]);
+
+      const ctx = document.getElementById('salesChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: sortedDates,
+          datasets: [{
+            label: 'Ventas ($)',
+            data: salesData,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#4CAF50',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#4CAF50'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function generateVendedoresRanking(orders) {
+      const vendedoresStats = {};
+
+      orders.forEach(order => {
+        const vendedor = order.usuarioEmail || 'Sin vendedor';
+        if (!vendedoresStats[vendedor]) {
+          vendedoresStats[vendedor] = {
+            ordenes: 0,
+            revenue: 0
+          };
+        }
+        vendedoresStats[vendedor].ordenes += 1;
+        vendedoresStats[vendedor].revenue += (order.total || 0);
+      });
+
+      const ranking = Object.entries(vendedoresStats)
+        .map(([email, stats]) => ({ email, ...stats }))
+        .sort((a, b) => b.ordenes - a.ordenes)
+        .slice(0, 10);
+
+      const html = ranking.map((vendedor, index) => {
+        const positionClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+        return `
+          <li class="ranking-item">
+            <div class="ranking-position ${positionClass}">${index + 1}</div>
+            <div class="ranking-info">
+              <div class="ranking-name">${vendedor.email}</div>
+              <div class="ranking-detail">$${vendedor.revenue.toFixed(2)} en ventas</div>
+            </div>
+            <div class="ranking-value">
+              ${vendedor.ordenes} <span class="unit">órdenes</span>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      document.getElementById('vendedoresRanking').innerHTML = html || '<li class="no-data">No hay datos disponibles</li>';
+    }
+
+    function generateProductosRanking(orders) {
+      const productStats = {};
+
+      orders.forEach(order => {
+        if (order.items && Array.isArray(order.items)) {
+          order.items.forEach(item => {
+            const key = `${item.articulo || 'Sin código'} - ${item.description || 'Sin descripción'}`;
+            if (!productStats[key]) {
+              productStats[key] = {
+                cantidad: 0,
+                revenue: 0,
+                articulo: item.articulo || 'Sin código',
+                description: item.description || 'Sin descripción'
+              };
+            }
+            productStats[key].cantidad += (item.quantity || 0);
+            productStats[key].revenue += ((item.quantity || 0) * (item.price || 0));
+          });
+        }
+      });
+
+      const ranking = Object.values(productStats)
+        .sort((a, b) => b.cantidad - a.cantidad)
+        .slice(0, 10);
+
+      const html = ranking.map((product, index) => {
+        const positionClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+        return `
+          <li class="ranking-item">
+            <div class="ranking-position ${positionClass}">${index + 1}</div>
+            <div class="ranking-info">
+              <div class="ranking-name">${product.articulo}</div>
+              <div class="ranking-detail">${product.description} • $${product.revenue.toFixed(2)}</div>
+            </div>
+            <div class="ranking-value">
+              ${product.cantidad} <span class="unit">unidades</span>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      document.getElementById('productosRanking').innerHTML = html || '<li class="no-data">No hay datos disponibles</li>';
+    }
+
+    function generateClientesRanking(orders) {
+      const clientStats = {};
+
+      orders.forEach(order => {
+        const clientKey = order.clienteNombre || order.clienteEmail || 'Cliente sin nombre';
+        const clientCode = order.clienteCodigo || '';
+        const key = `${clientKey}${clientCode ? ' ('+clientCode+')' : ''}`;
+
+        if (!clientStats[key]) {
+          clientStats[key] = {
+            ordenes: 0,
+            revenue: 0
+          };
+        }
+        clientStats[key].ordenes += 1;
+        clientStats[key].revenue += (order.total || 0);
+      });
+
+      const ranking = Object.entries(clientStats)
+        .map(([name, stats]) => ({ name, ...stats }))
+        .sort((a, b) => b.ordenes - a.ordenes)
+        .slice(0, 10);
+
+      const html = ranking.map((client, index) => {
+        const positionClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+        return `
+          <li class="ranking-item">
+            <div class="ranking-position ${positionClass}">${index + 1}</div>
+            <div class="ranking-info">
+              <div class="ranking-name">${client.name}</div>
+              <div class="ranking-detail">$${client.revenue.toFixed(2)} en compras</div>
+            </div>
+            <div class="ranking-value">
+              ${client.ordenes} <span class="unit">órdenes</span>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      document.getElementById('clientesRanking').innerHTML = html || '<li class="no-data">No hay datos disponibles</li>';
+    }
+
+    async function generateUsuariosRanking() {
+      try {
+        const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
+        const usuarios = [];
+
+        usuariosSnapshot.forEach(doc => {
+          const data = doc.data();
+          usuarios.push({
+            email: data.email,
+            loginCount: data.loginCount || 0,
+            lastLogin: data.lastLogin
+          });
+        });
+
+        const ranking = usuarios
+          .sort((a, b) => b.loginCount - a.loginCount)
+          .slice(0, 10);
+
+        const html = ranking.map((user, index) => {
+          const positionClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+          let lastLoginText = 'Nunca';
+          if (user.lastLogin) {
+            const date = user.lastLogin.toDate ? user.lastLogin.toDate() : new Date(user.lastLogin);
+            lastLoginText = date.toLocaleDateString('es-AR');
+          }
+
+          return `
+            <li class="ranking-item">
+              <div class="ranking-position ${positionClass}">${index + 1}</div>
+              <div class="ranking-info">
+                <div class="ranking-name">${user.email}</div>
+                <div class="ranking-detail">Último login: ${lastLoginText}</div>
+              </div>
+              <div class="ranking-value">
+                ${user.loginCount} <span class="unit">logins</span>
+              </div>
+            </li>
+          `;
+        }).join('');
+
+        document.getElementById('usuariosRanking').innerHTML = html || '<li class="no-data">No hay datos disponibles</li>';
+      } catch (error) {
+        console.error('❌ Error cargando ranking de usuarios:', error);
+        document.getElementById('usuariosRanking').innerHTML = '<li class="no-data">Error cargando datos</li>';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -2109,6 +2109,9 @@
         <button class="menu-btn" id="adminBtn" style="display: none;">
           ADMIN
         </button>
+        <button class="menu-btn" id="estadisticasBtn" style="display: none;">
+          📊 ESTADISTICAS
+        </button>
       </div>
 
       <div class="menu-footer">
@@ -3401,6 +3404,11 @@
                 adminBtn.style.display = 'block';
                 console.log('✅ ADMIN visible para usuario admin');
               }
+              const estadisticasBtn = document.getElementById('estadisticasBtn');
+              if (estadisticasBtn) {
+                estadisticasBtn.style.display = 'block';
+                console.log('✅ ESTADISTICAS visible para usuario admin');
+              }
 
             }
           };
@@ -4236,6 +4244,15 @@
           window.location.href = 'Administration.html';
         });
         console.log('✅ Admin button handler added');
+      }
+
+      const estadisticasBtn = document.getElementById('estadisticasBtn');
+      if (estadisticasBtn) {
+        estadisticasBtn.addEventListener('click', function() {
+          closeMenu();
+          window.location.href = 'estadisticas.html';
+        });
+        console.log('✅ Estadisticas button handler added');
       }
 
 
