@@ -3760,19 +3760,31 @@
       }
     }
 
-    // Subir PDF a Firebase Storage y obtener URL
+    /**
+     * Subir PDF a Firebase Storage y obtener URL de descarga
+     * @param {jsPDF} pdfDoc - Documento PDF generado con jsPDF
+     * @param {string} orderNumber - Número de orden para nombrar el archivo
+     * @returns {Promise<string>} URL de descarga del PDF o placeholder en localhost
+     * @version 0.39
+     *
+     * Funcionalidad:
+     * - En localhost: Descarga el PDF directamente (evita CORS)
+     * - En producción: Sube el PDF a Firebase Storage y retorna URL pública
+     * - Usa bucket: carrito-138c3.firebasestorage.app
+     * - CORS configurado para: localhost:3002, stock.south-traders.com, *.vercel.app
+     */
     async function uploadOrderPDF(pdfDoc, orderNumber) {
       try {
-        // Detectar si estamos en localhost
+        // Detectar si estamos en localhost (evita errores CORS en desarrollo)
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
         if (isLocalhost) {
           console.log('⚠️ [Storage] Detectado localhost - Descargando PDF localmente (CORS bloqueado)');
 
-          // Descargar PDF directamente
+          // Descargar PDF directamente al dispositivo del usuario
           pdfDoc.save(`orden-${orderNumber}.pdf`);
 
-          // Retornar URL placeholder
+          // Retornar URL placeholder para mensaje WhatsApp
           return `[PDF descargado localmente - orden-${orderNumber}.pdf]`;
         }
 
