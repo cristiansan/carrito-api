@@ -532,46 +532,55 @@
         border-color: #4CAF50;
       }
 
-      /* Tabs verticales en móviles */
+      /* Ocultar tab ALL en móviles */
+      .mdc-tab[data-segment="all"] {
+        display: none !important;
+      }
+
+      /* Tabs horizontales en móviles - estirar a ancho completo */
       .mdc-tab-bar {
-        max-width: 200px !important;
+        max-width: 100% !important;
+        width: 100% !important;
       }
 
       .mdc-tab-scroller__scroll-area {
-        overflow-x: hidden !important;
+        overflow-x: auto !important;
       }
 
       .mdc-tab-scroller__scroll-content {
         display: flex !important;
-        flex-direction: column !important;
-        gap: 8px !important;
-        align-items: flex-start !important;
+        flex-direction: row !important;
+        gap: 0 !important;
+        width: 100% !important;
       }
 
       .mdc-tab {
-        border-radius: 6px !important;
+        border-radius: 6px 6px 0 0 !important;
         margin-right: 0 !important;
-        width: 200px !important;
-        min-width: 200px !important;
-        justify-content: flex-start !important;
-        text-align: left !important;
-        border-bottom: 1px solid #2a2a2a !important;
+        flex: 1 !important;
+        width: auto !important;
+        min-width: 0 !important;
+        justify-content: center !important;
+        text-align: center !important;
+        border-bottom: none !important;
       }
 
       .mdc-tab__content {
-        justify-content: flex-start !important;
+        justify-content: center !important;
       }
 
       .mdc-tab-indicator__content--underline {
-        border-left-width: 3px !important;
-        border-bottom-width: 0 !important;
+        border-left-width: 0 !important;
+        border-bottom-width: 3px !important;
       }
 
       .mdc-tab-indicator {
-        height: 100% !important;
-        width: 3px !important;
+        height: 3px !important;
+        width: 100% !important;
         left: 0 !important;
-        right: auto !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
       }
     }
 
