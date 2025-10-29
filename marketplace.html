@@ -2922,10 +2922,13 @@
             pedidos.push({
               fecha: data.fechaLocal,
               numeroOrden: data.numeroOrden || '',
+              clienteNombre: clienteNombre,
+              clienteCodigo: clienteCodigo,
               estado: data.estado || 'Confirmada',
               resumen: resumen,
               total: data.total || 0,
-              items: data.cantidadItems || (data.items ? data.items.length : 0),
+              cantidadItems: data.cantidadItems || (data.items ? data.items.length : 0),
+              items: data.items || [], // Array completo de items para exportación
               usuario: data.userDisplayName || data.usuarioEmail || data.userEmail || '',
               empresa: data.empresa || '',
               timestamp: data.timestamp,
@@ -2963,26 +2966,105 @@
           return;
         }
 
-        // Crear CSV
-        const csvContent = 'Fecha,Numero Orden,Estado,Resumen,Total,Items,Usuario,Empresa\\n' +
-          pedidos.map(pedido =>
-            `"${pedido.fecha}","${pedido.numeroOrden}","${pedido.estado}","${pedido.resumen.replace(/"/g, '""')}","${pedido.total}","${pedido.items}","${pedido.usuario}","${pedido.empresa}"`
-          ).join('\\n');
+        console.log(`📊 Preparando exportación de ${pedidos.length} pedidos con detalle de productos...`);
 
-        // Descargar archivo
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        if (link.download !== undefined) {
-          const url = URL.createObjectURL(blob);
-          link.setAttribute('href', url);
-          link.setAttribute('download', `historial_pedidos_${new Date().toISOString().split('T')[0]}.csv`);
-          link.style.visibility = 'hidden';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
+        // Crear array de filas para Excel con detalle de productos
+        const excelData = [];
 
-        console.log(`✅ Exportados ${pedidos.length} pedidos`);
+        // Agregar encabezados
+        excelData.push([
+          'Fecha',
+          'Número Orden',
+          'Cliente',
+          'Código Cliente',
+          'Estado',
+          'Total Orden',
+          'Usuario',
+          'Artículo',
+          'Descripción',
+          'Cantidad',
+          'Precio Unit.',
+          'Subtotal'
+        ]);
+
+        // Agregar datos de cada pedido con sus items
+        pedidos.forEach(pedido => {
+          const fecha = pedido.fecha || '';
+          const numeroOrden = pedido.numeroOrden || '';
+          const clienteNombre = pedido.clienteNombre || 'Cliente';
+          const clienteCodigo = pedido.clienteCodigo || '';
+          const estado = pedido.estado || 'Confirmada';
+          const totalOrden = pedido.total || 0;
+          const usuario = pedido.usuario || '';
+
+          // Si el pedido tiene items, crear una fila por cada item
+          if (pedido.items && Array.isArray(pedido.items) && pedido.items.length > 0) {
+            pedido.items.forEach((item, index) => {
+              excelData.push([
+                index === 0 ? fecha : '', // Solo mostrar en primera fila del pedido
+                index === 0 ? numeroOrden : '',
+                index === 0 ? clienteNombre : '',
+                index === 0 ? clienteCodigo : '',
+                index === 0 ? estado : '',
+                index === 0 ? totalOrden : '',
+                index === 0 ? usuario : '',
+                item.articulo || '',
+                item.description || '',
+                item.quantity || 0,
+                item.price || 0,
+                item.subtotal || 0
+              ]);
+            });
+          } else {
+            // Si no tiene items, agregar solo la fila del pedido
+            excelData.push([
+              fecha,
+              numeroOrden,
+              clienteNombre,
+              clienteCodigo,
+              estado,
+              totalOrden,
+              usuario,
+              '',
+              'Sin items',
+              0,
+              0,
+              0
+            ]);
+          }
+
+          // Agregar fila vacía entre pedidos para separar visualmente
+          excelData.push(['', '', '', '', '', '', '', '', '', '', '', '']);
+        });
+
+        // Crear workbook y worksheet
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+        // Configurar ancho de columnas
+        ws['!cols'] = [
+          { wch: 20 }, // Fecha
+          { wch: 12 }, // Número Orden
+          { wch: 25 }, // Cliente
+          { wch: 12 }, // Código Cliente
+          { wch: 12 }, // Estado
+          { wch: 12 }, // Total Orden
+          { wch: 25 }, // Usuario
+          { wch: 15 }, // Artículo
+          { wch: 40 }, // Descripción
+          { wch: 10 }, // Cantidad
+          { wch: 12 }, // Precio Unit.
+          { wch: 12 }  // Subtotal
+        ];
+
+        // Agregar worksheet al workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Pedidos');
+
+        // Generar archivo Excel
+        const fileName = `historial_pedidos_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        console.log(`✅ Exportados ${pedidos.length} pedidos con detalle de productos a Excel`);
 
       } catch (error) {
         console.error('❌ Error exportando historial:', error);
