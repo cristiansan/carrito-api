@@ -1021,10 +1021,35 @@
         align-items: stretch;
       }
 
+      .prices-actions-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .prices-actions-buttons .mdc-button {
+        width: 100%;
+        justify-content: center;
+      }
+
       .products-table {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
+        font-size: 11px;
+      }
+
+      .products-table th:first-child,
+      .products-table td:first-child {
+        max-width: 80px;
+        font-size: 10px;
+        padding: 6px 4px;
+      }
+
+      .products-table th,
+      .products-table td {
+        padding: 8px 6px;
       }
 
       .price-actions {
@@ -1293,6 +1318,45 @@
       }
       .tab-content {
         padding: 16px;
+      }
+
+      /* Botones de clientes en vertical */
+      .clientes-header {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .clientes-header .mdc-button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* Tabla de clientes responsive */
+      .clientes-table-container {
+        overflow-x: auto;
+      }
+
+      .clientes-table {
+        font-size: 11px;
+      }
+
+      .clientes-table th,
+      .clientes-table td {
+        padding: 6px 4px;
+        white-space: nowrap;
+      }
+
+      /* Orders actions buttons en vertical */
+      .orders-actions-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .orders-actions-buttons .mdc-button {
+        width: 100%;
+        justify-content: center;
       }
     }
 
