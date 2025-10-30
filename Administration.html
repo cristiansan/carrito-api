@@ -1499,6 +1499,22 @@
       color: #b5b5b5;
     }
 
+    .editable-client, .editable-seller {
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      color: #4CAF50;
+      font-weight: 500;
+    }
+
+    .editable-client:hover, .editable-seller:hover {
+      background-color: rgba(76, 175, 80, 0.1);
+      border-color: #4CAF50;
+      transform: scale(1.02);
+    }
+
     .order-actions {
       display: flex;
       gap: 8px;
@@ -3899,13 +3915,18 @@
         `;
       }
 
+      // Get cliente principal name and vendedor name
+      const clientePrincipal = getClientePrincipalName(order);
+      const vendedorName = getVendedorName(order);
+
       return `
         <div class="order-item" data-order-id="${order.id}">
           <div class="order-info">
             <div class="order-number">#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}</div>
             <div class="order-details">
               ${order.fechaLocal || order.fecha || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || order.montoTotal || 0)}
-              ${order.cliente ? '<br>' + order.cliente : ''}
+              <br><strong>Cliente:</strong> <span class="editable-client" onclick="editOrderClient('${order.id}')" title="Click para editar">${clientePrincipal}</span>
+              <br><strong>Vendedor:</strong> <span class="editable-seller" onclick="editOrderSeller('${order.id}')" title="Click para editar">${vendedorName}</span>
             </div>
           </div>
           <div class="order-actions">
@@ -3914,6 +3935,236 @@
           </div>
         </div>
       `;
+    }
+
+    // Helper function to get cliente principal name
+    function getClientePrincipalName(order) {
+      // Try to find cliente by clienteCodigo first (most reliable)
+      if (order.clienteCodigo && window.allClients) {
+        const cliente = window.allClients.find(c => c.codigo === order.clienteCodigo);
+        if (cliente) {
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // Fallback to clienteNombre or other fields
+      return order.clienteNombre || order.usuarioEmail || order.clienteEmail || 'Sin cliente';
+    }
+
+    // Helper function to get vendedor name
+    function getVendedorName(order) {
+      if (order.vendedorId && window.sellers) {
+        const vendedor = window.sellers.find(v => v.id === order.vendedorId);
+        if (vendedor) {
+          return vendedor.name || vendedor.nombre || 'Sin nombre';
+        }
+      }
+      return 'Sin vendedor';
+    }
+
+    // Edit order client
+    function editOrderClient(orderId) {
+      const order = window.orders?.find(o => o.id === orderId);
+      if (!order || !window.allClients) return;
+
+      // Create modal for client selection
+      const modalHTML = `
+        <div id="editClientModal" class="modal">
+          <div class="modal-content" style="max-width: 600px;">
+            <span class="close-button" onclick="closeEditClientModal()">&times;</span>
+            <h2>📋 Cambiar Cliente Principal</h2>
+            <p>Orden: <strong>#${order.manualOrderNumber || order.numeroOrden}</strong></p>
+
+            <div style="margin: 20px 0;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                Cliente Principal:
+              </label>
+              <select id="clientSelect" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px;">
+                <option value="">-- Seleccionar Cliente --</option>
+                ${window.allClients.map(cliente => `
+                  <option value="${cliente.codigo}" ${order.clienteCodigo === cliente.codigo ? 'selected' : ''}>
+                    ${cliente.nombre} (${cliente.codigo})
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+              <button type="button" class="mdc-button mdc-button--outlined" onclick="closeEditClientModal()">
+                <span class="mdc-button__label">Cancelar</span>
+              </button>
+              <button type="button" class="mdc-button mdc-button--raised" onclick="saveOrderClient('${orderId}')" style="background-color: #4CAF50;">
+                <span class="mdc-button__label">✅ Guardar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove existing modal if any
+      const existingModal = document.getElementById('editClientModal');
+      if (existingModal) existingModal.remove();
+
+      // Add modal to document
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      document.getElementById('editClientModal').classList.remove('hidden');
+    }
+
+    // Edit order seller
+    function editOrderSeller(orderId) {
+      const order = window.orders?.find(o => o.id === orderId);
+      if (!order || !window.sellers) return;
+
+      // Create modal for seller selection
+      const modalHTML = `
+        <div id="editSellerModal" class="modal">
+          <div class="modal-content" style="max-width: 600px;">
+            <span class="close-button" onclick="closeEditSellerModal()">&times;</span>
+            <h2>👤 Cambiar Vendedor</h2>
+            <p>Orden: <strong>#${order.manualOrderNumber || order.numeroOrden}</strong></p>
+
+            <div style="margin: 20px 0;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                Vendedor:
+              </label>
+              <select id="sellerSelect" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px;">
+                <option value="">-- Seleccionar Vendedor --</option>
+                ${window.sellers.map(vendedor => `
+                  <option value="${vendedor.id}" ${order.vendedorId === vendedor.id ? 'selected' : ''}>
+                    ${vendedor.name || vendedor.nombre}
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+              <button type="button" class="mdc-button mdc-button--outlined" onclick="closeEditSellerModal()">
+                <span class="mdc-button__label">Cancelar</span>
+              </button>
+              <button type="button" class="mdc-button mdc-button--raised" onclick="saveOrderSeller('${orderId}')" style="background-color: #4CAF50;">
+                <span class="mdc-button__label">✅ Guardar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove existing modal if any
+      const existingModal = document.getElementById('editSellerModal');
+      if (existingModal) existingModal.remove();
+
+      // Add modal to document
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      document.getElementById('editSellerModal').classList.remove('hidden');
+    }
+
+    // Close modals
+    function closeEditClientModal() {
+      const modal = document.getElementById('editClientModal');
+      if (modal) modal.remove();
+    }
+
+    function closeEditSellerModal() {
+      const modal = document.getElementById('editSellerModal');
+      if (modal) modal.remove();
+    }
+
+    // Save order client changes
+    async function saveOrderClient(orderId) {
+      const clientSelect = document.getElementById('clientSelect');
+      const selectedClientCode = clientSelect.value;
+
+      if (!selectedClientCode) {
+        alert('⚠️ Por favor selecciona un cliente');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        // Find the selected client
+        const selectedClient = window.allClients.find(c => c.codigo === selectedClientCode);
+        if (!selectedClient) {
+          alert('❌ Cliente no encontrado');
+          return;
+        }
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          clienteCodigo: selectedClientCode,
+          clienteNombre: selectedClient.nombre,
+          clienteUpdatedAt: new Date(),
+          clienteUpdatedBy: firebase.auth().currentUser?.uid
+        });
+
+        console.log(`✅ Cliente actualizado para orden ${orderId}: ${selectedClient.nombre} (${selectedClientCode})`);
+
+        // Update local order data
+        const order = window.orders.find(o => o.id === orderId);
+        if (order) {
+          order.clienteCodigo = selectedClientCode;
+          order.clienteNombre = selectedClient.nombre;
+        }
+
+        // Close modal and refresh display
+        closeEditClientModal();
+        await loadOrders();
+
+        alert(`✅ Cliente actualizado: ${selectedClient.nombre}`);
+
+      } catch (error) {
+        console.error('❌ Error updating order client:', error);
+        alert('Error al actualizar el cliente: ' + error.message);
+      }
+    }
+
+    // Save order seller changes
+    async function saveOrderSeller(orderId) {
+      const sellerSelect = document.getElementById('sellerSelect');
+      const selectedSellerId = sellerSelect.value;
+
+      if (!selectedSellerId) {
+        alert('⚠️ Por favor selecciona un vendedor');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        // Find the selected seller
+        const selectedSeller = window.sellers.find(s => s.id === selectedSellerId);
+        if (!selectedSeller) {
+          alert('❌ Vendedor no encontrado');
+          return;
+        }
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          vendedorId: selectedSellerId,
+          vendedorUpdatedAt: new Date(),
+          vendedorUpdatedBy: firebase.auth().currentUser?.uid
+        });
+
+        console.log(`✅ Vendedor actualizado para orden ${orderId}: ${selectedSeller.name || selectedSeller.nombre}`);
+
+        // Update local order data
+        const order = window.orders.find(o => o.id === orderId);
+        if (order) {
+          order.vendedorId = selectedSellerId;
+        }
+
+        // Close modal and refresh display
+        closeEditSellerModal();
+        await loadOrders();
+
+        alert(`✅ Vendedor actualizado: ${selectedSeller.name || selectedSeller.nombre}`);
+
+      } catch (error) {
+        console.error('❌ Error updating order seller:', error);
+        alert('Error al actualizar el vendedor: ' + error.message);
+      }
     }
 
     // Helper function to format numbers
