@@ -3789,7 +3789,7 @@
       });
 
       // Display orders in each section
-      Object.entries(ordersByState).forEach(([state, stateOrders]) => {
+      for (const [state, stateOrders] of Object.entries(ordersByState)) {
         const container = containers[state];
         const currentFlow = stateFlow[state];
 
@@ -3815,7 +3815,7 @@
           };
           container.innerHTML = `<p class="no-orders">${messages[state]}</p>`;
         }
-      });
+      }
 
       console.log('✅ [MASTER] displayOrders() completado');
     }
@@ -4760,12 +4760,6 @@
       console.log(`📋 Manual order number modal shown for order ${orderId}`);
     }
 
-    // Hide manual order number modal
-    function hideManualOrderNumberModal() {
-      const modal = document.getElementById('manualOrderNumberModal');
-      modal.classList.add('hidden');
-      delete modal.dataset.orderId;
-    }
 
     // Confirm manual order number and approve order
     async function confirmManualOrderNumber() {
@@ -4805,7 +4799,7 @@
         console.log(`✅ Order ${orderId} approved with manual number: ${manualNumber}`);
 
         // Hide modal and reload orders
-        hideManualOrderNumberModal();
+        window.hideManualOrderNumberModal();
         await loadOrders();
 
         // Show success message
@@ -6182,6 +6176,15 @@
         console.log('🗂️ Order details modal closed');
       }
     };
+
+    window.hideManualOrderNumberModal = function() {
+      const modal = document.getElementById('manualOrderNumberModal');
+      if (modal) {
+        modal.classList.add('hidden');
+        delete modal.dataset.orderId;
+        console.log('📋 Manual order number modal closed');
+      }
+    };
     window.sellerToDelete = null;
     window.clientToDelete = null;
 
@@ -7209,10 +7212,10 @@
       const manualOrderInput = document.getElementById('manualOrderNumber');
 
       if (closeOrderNumberModal) {
-        closeOrderNumberModal.addEventListener('click', hideManualOrderNumberModal);
+        closeOrderNumberModal.addEventListener('click', window.hideManualOrderNumberModal);
       }
       if (cancelOrderNumberBtn) {
-        cancelOrderNumberBtn.addEventListener('click', hideManualOrderNumberModal);
+        cancelOrderNumberBtn.addEventListener('click', window.hideManualOrderNumberModal);
       }
       if (confirmOrderNumberBtn) {
         confirmOrderNumberBtn.addEventListener('click', confirmManualOrderNumber);
@@ -7411,7 +7414,7 @@
           window.closeConfirmModal();
         }
         if (event.target === manualOrderNumberModal) {
-          hideManualOrderNumberModal();
+          window.hideManualOrderNumberModal();
         }
       });
 
