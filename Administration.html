@@ -3918,7 +3918,7 @@
       }
 
       // Get cliente principal name and vendedor name
-      const clientePrincipal = await getClientePrincipalName(order);
+      const clientePrincipal = getClientePrincipalName(order);
       const vendedorName = getVendedorName(order);
 
       return `
@@ -3940,24 +3940,13 @@
     }
 
     // Helper function to get cliente principal name
-    async function getClientePrincipalName(order) {
-      console.log('🔍 getClientePrincipalName called for order:', order.id, 'clienteCodigo:', order.clienteCodigo, 'usuarioEmail:', order.usuarioEmail);
-
+    function getClientePrincipalName(order) {
       // Try to find cliente by clienteCodigo first (most reliable)
       if (order.clienteCodigo && window.allClients) {
-        console.log('🔍 Looking for cliente with codigo:', order.clienteCodigo, 'in', window.allClients.length, 'clients');
         const cliente = window.allClients.find(c => c.codigo === order.clienteCodigo);
         if (cliente) {
-          console.log('✅ Found cliente:', cliente.nombre, `(${cliente.codigo})`);
           return `${cliente.nombre} (${cliente.codigo})`;
-        } else {
-          console.log('⚠️ No cliente found with codigo:', order.clienteCodigo);
         }
-      } else {
-        console.log('⚠️ Missing clienteCodigo or allClients:', {
-          clienteCodigo: order.clienteCodigo,
-          allClientsLength: window.allClients?.length
-        });
       }
 
       // Alternative: try to find by clienteNombre if it exists and is different from email
@@ -3968,30 +3957,6 @@
         );
         if (cliente) {
           return `${cliente.nombre} (${cliente.codigo})`;
-        }
-      }
-
-      // If no clienteCodigo, try to find usuario in Firestore to get clienteCodigo
-      if (order.usuarioEmail && firebase && firebase.firestore) {
-        try {
-          const { collection, query, where, getDocs } = firebase.firestoreHelpers;
-          const db = firebase.firestore();
-
-          const usuariosRef = collection(db, 'usuarios');
-          const q = query(usuariosRef, where('email', '==', order.usuarioEmail));
-          const querySnapshot = await getDocs(q);
-
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            if (userData.clienteCodigo && window.allClients) {
-              const cliente = window.allClients.find(c => c.codigo === userData.clienteCodigo);
-              if (cliente) {
-                return `${cliente.nombre} (${cliente.codigo})`;
-              }
-            }
-          }
-        } catch (error) {
-          console.log('⚠️ No se pudo buscar usuario en Firestore:', error);
         }
       }
 
@@ -4772,55 +4737,6 @@
     }
 
 
-    // Confirm manual order number and approve order
-    async function confirmManualOrderNumber() {
-      const modal = document.getElementById('manualOrderNumberModal');
-      const input = document.getElementById('manualOrderNumber');
-      const orderId = modal.dataset.orderId;
-      const manualNumber = input.value.trim();
-
-      // Validation
-      if (!manualNumber) {
-        input.style.borderColor = '#f44336';
-        input.focus();
-        alert('⚠️ El número de orden es obligatorio');
-        return;
-      }
-
-      if (manualNumber.length < 3) {
-        input.style.borderColor = '#f44336';
-        input.focus();
-        alert('⚠️ El número de orden debe tener al menos 3 caracteres');
-        return;
-      }
-
-      try {
-        const { doc, updateDoc } = firebase.firestoreHelpers;
-        const db = firebase.firestore();
-
-        const orderRef = doc(db, 'pedidos', orderId);
-        await updateDoc(orderRef, {
-          logisticsState: 'aprobada',
-          lastStateUpdate: new Date(),
-          manualOrderNumber: manualNumber,
-          orderNumberUpdatedAt: new Date(),
-          orderNumberUpdatedBy: firebase.auth().currentUser?.uid
-        });
-
-        console.log(`✅ Order ${orderId} approved with manual number: ${manualNumber}`);
-
-        // Hide modal and reload orders
-        window.hideManualOrderNumberModal();
-        await loadOrders();
-
-        // Show success message
-        alert(`✅ Orden aprobada con número: ${manualNumber}`);
-
-      } catch (error) {
-        console.error('❌ Error updating order with manual number:', error);
-        alert('Error al actualizar la orden: ' + error.message);
-      }
-    }
 
     // Show admin order details in modal with editable quantities
     async function adminEditOrder(orderId) {
@@ -6275,6 +6191,63 @@
         console.log('Client 407:', client407);
       }
     };
+
+    // === GLOBAL ORDER NUMBER MODAL FUNCTIONS ===
+    window.confirmManualOrderNumber = async function() {
+      const modal = document.getElementById('manualOrderNumberModal');
+      const input = document.getElementById('manualOrderNumber');
+      const orderId = modal?.dataset.orderId;
+      const manualNumber = input?.value.trim();
+
+      // Validation
+      if (!manualNumber) {
+        if (input) {
+          input.style.borderColor = '#f44336';
+          input.focus();
+        }
+        alert('⚠️ El número de orden es obligatorio');
+        return;
+      }
+
+      if (manualNumber.length < 3) {
+        if (input) {
+          input.style.borderColor = '#f44336';
+          input.focus();
+        }
+        alert('⚠️ El número de orden debe tener al menos 3 caracteres');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          logisticsState: 'aprobada',
+          lastStateUpdate: new Date(),
+          manualOrderNumber: manualNumber,
+          orderNumberUpdatedAt: new Date(),
+          orderNumberUpdatedBy: firebase.auth().currentUser?.uid
+        });
+
+        console.log(`✅ Order ${orderId} approved with manual number: ${manualNumber}`);
+
+        // Hide modal and reload orders
+        window.hideManualOrderNumberModal();
+        if (window.loadOrders) {
+          await window.loadOrders();
+        }
+
+        // Show success message
+        alert(`✅ Orden aprobada con número: ${manualNumber}`);
+
+      } catch (error) {
+        console.error('❌ Error updating order with manual number:', error);
+        alert('Error al actualizar la orden: ' + error.message);
+      }
+    };
+
     window.sellerToDelete = null;
     window.clientToDelete = null;
 
@@ -7308,12 +7281,12 @@
         cancelOrderNumberBtn.addEventListener('click', window.hideManualOrderNumberModal);
       }
       if (confirmOrderNumberBtn) {
-        confirmOrderNumberBtn.addEventListener('click', confirmManualOrderNumber);
+        confirmOrderNumberBtn.addEventListener('click', window.confirmManualOrderNumber);
       }
       if (manualOrderInput) {
         manualOrderInput.addEventListener('keypress', function(e) {
           if (e.key === 'Enter') {
-            confirmManualOrderNumber();
+            window.confirmManualOrderNumber();
           }
         });
       }
