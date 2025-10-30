@@ -3922,7 +3922,7 @@
       const vendedorName = getVendedorName(order);
 
       return `
-        <div class="order-item" data-order-id="${order.id}" onclick="showOrderDetails('${order.id}')" style="cursor: pointer;" title="Click para ver detalles">
+        <div class="order-item" data-order-id="${order.id}" onclick="isUserAdmin ? adminEditOrder('${order.id}') : showOrderDetails('${order.id}')" style="cursor: pointer;" title="Click para ver detalles">
           <div class="order-info">
             <div class="order-number">#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}</div>
             <div class="order-details">
