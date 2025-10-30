@@ -3500,8 +3500,15 @@
                 console.log('✅ STATS visible');
               }
               if (logisticsModalBtn) {
-                logisticsModalBtn.style.display = 'none';
-                console.log('🚫 SEGUIMIENTO ocultado para admin (disponible en ADMIN/MASTER)');
+                logisticsModalBtn.remove();
+                console.log('🗑️ SEGUIMIENTO botón eliminado del DOM para admin (disponible en ADMIN/MASTER)');
+              }
+
+              // También eliminar el modal SEGUIMIENTO para admins
+              const logisticsModal = document.getElementById('logisticsModal');
+              if (logisticsModal) {
+                logisticsModal.remove();
+                console.log('🗑️ SEGUIMIENTO modal eliminado del DOM para admin');
               }
               if (historialModalBtn) {
                 historialModalBtn.style.display = 'block';
