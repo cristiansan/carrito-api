@@ -2363,6 +2363,40 @@
     </div>
   </div>
 
+  <!-- Manual Order Number Modal -->
+  <div id="manualOrderNumberModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+      <span class="close-button" id="closeOrderNumberModal">&times;</span>
+      <h2>📋 Número de Orden Manual</h2>
+      <p>La orden está pasando a estado <strong>APROBADA</strong>. Ingresa el número de orden manual que se usará a partir de ahora:</p>
+
+      <div style="margin: 20px 0;">
+        <label for="manualOrderNumber" style="display: block; margin-bottom: 8px; font-weight: 500;">
+          Número de Orden *
+        </label>
+        <input
+          type="text"
+          id="manualOrderNumber"
+          placeholder="Ej: ORD-2024-001"
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px;"
+          maxlength="50"
+        />
+        <small style="color: #666; display: block; margin-top: 4px;">
+          Este número reemplazará el número automático y será el oficial de la orden
+        </small>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="mdc-button mdc-button--outlined" id="cancelOrderNumberBtn">
+          <span class="mdc-button__label">Cancelar</span>
+        </button>
+        <button type="button" class="mdc-button mdc-button--raised" id="confirmOrderNumberBtn" style="background-color: #4CAF50;">
+          <span class="mdc-button__label">✅ Confirmar y Aprobar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
   <!-- SheetJS library for Excel file support -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -3671,8 +3705,8 @@
       if (searchTerm && searchTerm.trim()) {
         const search = searchTerm.trim().toLowerCase();
         filteredOrders = window.orders.filter(order => {
-          // Search by order number
-          const orderNumber = String(order.numeroOrden || '').toLowerCase();
+          // Search by order number (manual or automatic)
+          const orderNumber = String(order.manualOrderNumber || order.numeroOrden || '').toLowerCase();
           if (orderNumber.includes(search)) return true;
 
           // Search by client name
@@ -3868,7 +3902,7 @@
       return `
         <div class="order-item" data-order-id="${order.id}">
           <div class="order-info">
-            <div class="order-number">#${order.numeroOrden || order.id.slice(-6)}</div>
+            <div class="order-number">#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}</div>
             <div class="order-details">
               ${order.fechaLocal || order.fecha || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || order.montoTotal || 0)}
               ${order.cliente ? '<br>' + order.cliente : ''}
@@ -4387,6 +4421,15 @@
         return;
       }
 
+      // Special case: moving from revision to aprobada requires manual order number
+      if (nextState === 'aprobada') {
+        const order = window.orders?.find(o => o.id === orderId);
+        if (order && order.logisticsState === 'revision') {
+          showManualOrderNumberModal(orderId);
+          return;
+        }
+      }
+
       try {
         const { doc, updateDoc } = firebase.firestoreHelpers;
         const db = firebase.firestore();
@@ -4405,6 +4448,84 @@
       } catch (error) {
         console.error('❌ Error moving order:', error);
         alert('Error al cambiar el estado de la orden');
+      }
+    }
+
+    // Show manual order number modal
+    function showManualOrderNumberModal(orderId) {
+      const modal = document.getElementById('manualOrderNumberModal');
+      const input = document.getElementById('manualOrderNumber');
+
+      // Clear previous input
+      input.value = '';
+      input.style.borderColor = '#ddd';
+
+      // Store orderId for later use
+      modal.dataset.orderId = orderId;
+
+      // Show modal
+      modal.classList.remove('hidden');
+
+      // Focus on input
+      setTimeout(() => input.focus(), 100);
+
+      console.log(`📋 Manual order number modal shown for order ${orderId}`);
+    }
+
+    // Hide manual order number modal
+    function hideManualOrderNumberModal() {
+      const modal = document.getElementById('manualOrderNumberModal');
+      modal.classList.add('hidden');
+      delete modal.dataset.orderId;
+    }
+
+    // Confirm manual order number and approve order
+    async function confirmManualOrderNumber() {
+      const modal = document.getElementById('manualOrderNumberModal');
+      const input = document.getElementById('manualOrderNumber');
+      const orderId = modal.dataset.orderId;
+      const manualNumber = input.value.trim();
+
+      // Validation
+      if (!manualNumber) {
+        input.style.borderColor = '#f44336';
+        input.focus();
+        alert('⚠️ El número de orden es obligatorio');
+        return;
+      }
+
+      if (manualNumber.length < 3) {
+        input.style.borderColor = '#f44336';
+        input.focus();
+        alert('⚠️ El número de orden debe tener al menos 3 caracteres');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          logisticsState: 'aprobada',
+          lastStateUpdate: new Date(),
+          manualOrderNumber: manualNumber,
+          orderNumberUpdatedAt: new Date(),
+          orderNumberUpdatedBy: firebase.auth().currentUser?.uid
+        });
+
+        console.log(`✅ Order ${orderId} approved with manual number: ${manualNumber}`);
+
+        // Hide modal and reload orders
+        hideManualOrderNumberModal();
+        await loadOrders();
+
+        // Show success message
+        alert(`✅ Orden aprobada con número: ${manualNumber}`);
+
+      } catch (error) {
+        console.error('❌ Error updating order with manual number:', error);
+        alert('Error al actualizar la orden: ' + error.message);
       }
     }
 
@@ -4445,7 +4566,7 @@
         };
 
         // Llenar información general
-        let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
+        let orderNumberText = `#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}`;
         if (order.editadaPor && order.editadaPorNombre) {
           orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
         }
@@ -4600,10 +4721,10 @@
                 editadaPorNombre: userName,
                 cantidadItems: order.items?.length || 0
               };
-              await sendOrderToSellerWhatsApp(updatedOrderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+              await sendOrderToSellerWhatsApp(updatedOrderData, order.manualOrderNumber || order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
 
               // Actualizar el número de orden con el indicador de edición
-              let orderNumberText = `#${order.numeroOrden || order.id.slice(-6)}`;
+              let orderNumberText = `#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}`;
               orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${userName})</span>`;
               document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
 
@@ -4664,7 +4785,7 @@
             ...order,
             cantidadItems: order.items?.length || 0
           };
-          await sendOrderToSellerWhatsApp(orderData, order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+          await sendOrderToSellerWhatsApp(orderData, order.manualOrderNumber || order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
         });
 
         // Mostrar modal
@@ -4763,7 +4884,7 @@
           const totalItems = order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
 
           return {
-            'Número de Orden': order.numeroOrden || order.id.slice(-6),
+            'Número de Orden': order.manualOrderNumber || order.numeroOrden || order.id.slice(-6),
             'Fecha': order.fechaLocal || order.fecha || '',
             'Cliente': order.clienteNombre || order.usuarioEmail || '',
             'Email': order.clienteEmail || order.usuarioEmail || '',
@@ -6784,6 +6905,29 @@
         cancelDeleteBtn.addEventListener('click', window.closeConfirmModal);
       }
 
+      // Manual order number modal buttons
+      const closeOrderNumberModal = document.getElementById('closeOrderNumberModal');
+      const cancelOrderNumberBtn = document.getElementById('cancelOrderNumberBtn');
+      const confirmOrderNumberBtn = document.getElementById('confirmOrderNumberBtn');
+      const manualOrderInput = document.getElementById('manualOrderNumber');
+
+      if (closeOrderNumberModal) {
+        closeOrderNumberModal.addEventListener('click', hideManualOrderNumberModal);
+      }
+      if (cancelOrderNumberBtn) {
+        cancelOrderNumberBtn.addEventListener('click', hideManualOrderNumberModal);
+      }
+      if (confirmOrderNumberBtn) {
+        confirmOrderNumberBtn.addEventListener('click', confirmManualOrderNumber);
+      }
+      if (manualOrderInput) {
+        manualOrderInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            confirmManualOrderNumber();
+          }
+        });
+      }
+
       // Confirm delete button
       const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
       if (confirmDeleteBtn) {
@@ -6958,6 +7102,7 @@
         const sellerModal = document.getElementById('sellerModal');
         const clientModal = document.getElementById('clientModal');
         const confirmModal = document.getElementById('confirmModal');
+        const manualOrderNumberModal = document.getElementById('manualOrderNumberModal');
 
         if (event.target === sellerModal) {
           window.closeSellerModal();
@@ -6967,6 +7112,9 @@
         }
         if (event.target === confirmModal) {
           window.closeConfirmModal();
+        }
+        if (event.target === manualOrderNumberModal) {
+          hideManualOrderNumberModal();
         }
       });
 
