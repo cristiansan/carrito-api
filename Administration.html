@@ -3660,7 +3660,7 @@
         });
 
         console.log('🎨 [MASTER] Llamando a displayOrders()...');
-        displayOrders();
+        await displayOrders();
 
         console.log('📊 [MASTER] Llamando a updateOrderStats()...');
         updateOrderStats();
@@ -3679,7 +3679,7 @@
     }
 
     // Display orders in their respective sections (same as SEGUIMIENTO)
-    function displayOrders(searchTerm = '') {
+    async function displayOrders(searchTerm = '') {
       console.log('🎨 [MASTER] displayOrders() called with', window.orders?.length || 0, 'orders', searchTerm ? `(searching: "${searchTerm}")` : '');
 
       const containers = {
@@ -3796,7 +3796,9 @@
         console.log(`🎨 [MASTER] Renderizando ${stateOrders.length} órdenes para estado "${state}"`);
 
         if (stateOrders.length > 0) {
-          const html = stateOrders.map(order => createAdminOrderHTML(order, currentFlow, state)).join('');
+          const htmlPromises = stateOrders.map(order => createAdminOrderHTML(order, currentFlow, state));
+          const htmlArray = await Promise.all(htmlPromises);
+          const html = htmlArray.join('');
           console.log(`📝 [MASTER] HTML generado para ${state}:`, html.substring(0, 100) + '...');
           container.innerHTML = html;
         } else {
@@ -3819,7 +3821,7 @@
     }
 
     // Create HTML for an order item (admin version with edit capabilities)
-    function createAdminOrderHTML(order, currentFlow, currentState) {
+    async function createAdminOrderHTML(order, currentFlow, currentState) {
       const canEdit = isUserAdmin;
       const hasNext = currentFlow && currentFlow.next !== null;
       const hasPrev = currentFlow && currentFlow.prev !== null;
@@ -3916,7 +3918,7 @@
       }
 
       // Get cliente principal name and vendedor name
-      const clientePrincipal = getClientePrincipalName(order);
+      const clientePrincipal = await getClientePrincipalName(order);
       const vendedorName = getVendedorName(order);
 
       return `
@@ -3938,7 +3940,7 @@
     }
 
     // Helper function to get cliente principal name
-    function getClientePrincipalName(order) {
+    async function getClientePrincipalName(order) {
       // Try to find cliente by clienteCodigo first (most reliable)
       if (order.clienteCodigo && window.allClients) {
         const cliente = window.allClients.find(c => c.codigo === order.clienteCodigo);
@@ -3947,8 +3949,43 @@
         }
       }
 
-      // Fallback to clienteNombre or other fields
-      return order.clienteNombre || order.usuarioEmail || order.clienteEmail || 'Sin cliente';
+      // Alternative: try to find by clienteNombre if it exists and is different from email
+      if (order.clienteNombre && order.clienteNombre !== order.usuarioEmail && window.allClients) {
+        const cliente = window.allClients.find(c =>
+          c.nombre.toLowerCase().includes(order.clienteNombre.toLowerCase()) ||
+          order.clienteNombre.toLowerCase().includes(c.nombre.toLowerCase())
+        );
+        if (cliente) {
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // If no clienteCodigo, try to find usuario in Firestore to get clienteCodigo
+      if (order.usuarioEmail && firebase && firebase.firestore) {
+        try {
+          const { collection, query, where, getDocs } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+
+          const usuariosRef = collection(db, 'usuarios');
+          const q = query(usuariosRef, where('email', '==', order.usuarioEmail));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            if (userData.clienteCodigo && window.allClients) {
+              const cliente = window.allClients.find(c => c.codigo === userData.clienteCodigo);
+              if (cliente) {
+                return `${cliente.nombre} (${cliente.codigo})`;
+              }
+            }
+          }
+        } catch (error) {
+          console.log('⚠️ No se pudo buscar usuario en Firestore:', error);
+        }
+      }
+
+      // Final fallback - show user email but indicate it needs client assignment
+      return `⚠️ ${order.usuarioEmail || order.clienteEmail || 'Sin cliente'} (click para asignar)`;
     }
 
     // Helper function to get vendedor name
@@ -6977,19 +7014,19 @@
           clearTimeout(searchTimeout);
           const searchTerm = e.target.value;
 
-          searchTimeout = setTimeout(() => {
+          searchTimeout = setTimeout(async () => {
             if (window.displayOrders) {
-              window.displayOrders(searchTerm);
+              await window.displayOrders(searchTerm);
             }
           }, 300); // Wait 300ms after user stops typing
         });
 
         // Also search on Enter key
-        orderSearchInput.addEventListener('keypress', function(e) {
+        orderSearchInput.addEventListener('keypress', async function(e) {
           if (e.key === 'Enter') {
             clearTimeout(searchTimeout);
             if (window.displayOrders) {
-              window.displayOrders(e.target.value);
+              await window.displayOrders(e.target.value);
             }
           }
         });
@@ -6998,12 +7035,12 @@
       // Clear Search button
       const clearSearchBtn = document.getElementById('clearSearchBtn');
       if (clearSearchBtn) {
-        clearSearchBtn.addEventListener('click', function() {
+        clearSearchBtn.addEventListener('click', async function() {
           const searchInput = document.getElementById('orderSearchInput');
           if (searchInput) {
             searchInput.value = '';
             if (window.displayOrders) {
-              window.displayOrders('');
+              await window.displayOrders('');
             }
           }
         });
