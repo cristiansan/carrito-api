@@ -4739,7 +4739,7 @@
 
 
     // Show order details in modal for all users (read-only for non-admins)
-    async function showOrderDetails(orderId) {
+    window.showOrderDetails = async function(orderId) {
       try {
         const order = window.currentOrders?.find(o => o.id === orderId);
         if (!order) {
@@ -4871,10 +4871,10 @@
         console.error('❌ Error showing order details:', error);
         alert('Error al cargar detalles de la orden');
       }
-    }
+    };
 
     // Show admin order details in modal with editable quantities
-    async function adminEditOrder(orderId) {
+    window.adminEditOrder = async function(orderId) {
       if (!isUserAdmin) {
         alert('⚠️ No tienes permisos para editar órdenes');
         return;
@@ -5187,10 +5187,9 @@
         console.error('❌ Error mostrando detalles de orden:', error);
         alert('Error al cargar detalles de la orden');
       }
-    }
+    };
 
     window.adminMoveOrder = adminMoveOrder;
-    window.adminEditOrder = adminEditOrder;
 
     // Update order statistics
     function updateOrderStats() {
