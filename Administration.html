@@ -3941,12 +3941,23 @@
 
     // Helper function to get cliente principal name
     async function getClientePrincipalName(order) {
+      console.log('🔍 getClientePrincipalName called for order:', order.id, 'clienteCodigo:', order.clienteCodigo, 'usuarioEmail:', order.usuarioEmail);
+
       // Try to find cliente by clienteCodigo first (most reliable)
       if (order.clienteCodigo && window.allClients) {
+        console.log('🔍 Looking for cliente with codigo:', order.clienteCodigo, 'in', window.allClients.length, 'clients');
         const cliente = window.allClients.find(c => c.codigo === order.clienteCodigo);
         if (cliente) {
+          console.log('✅ Found cliente:', cliente.nombre, `(${cliente.codigo})`);
           return `${cliente.nombre} (${cliente.codigo})`;
+        } else {
+          console.log('⚠️ No cliente found with codigo:', order.clienteCodigo);
         }
+      } else {
+        console.log('⚠️ Missing clienteCodigo or allClients:', {
+          clienteCodigo: order.clienteCodigo,
+          allClientsLength: window.allClients?.length
+        });
       }
 
       // Alternative: try to find by clienteNombre if it exists and is different from email
@@ -6224,14 +6235,44 @@
 
         alert(`✅ Actualizadas ${updated} órdenes. Cliente principal asignado: Trading Next USA Black (407)`);
 
-        // Reload orders to see changes
+        // Force reload of clients and orders to see changes
+        console.log('🔄 Reloading clients and orders...');
+        if (window.loadClients) {
+          await window.loadClients();
+        }
         if (window.loadOrders) {
           await window.loadOrders();
         }
+        console.log('✅ Reload completed');
 
       } catch (error) {
         console.error('❌ Error updating orders:', error);
         alert('Error al actualizar las órdenes: ' + error.message);
+      }
+    };
+
+    // === DEBUG FUNCTION ===
+    window.debugOrderData = function() {
+      console.log('🔍 DEBUG: Current state');
+      console.log('Orders loaded:', window.orders?.length || 0);
+      console.log('Clients loaded:', window.allClients?.length || 0);
+
+      if (window.orders && window.orders.length > 0) {
+        const cortizOrders = window.orders.filter(o => o.usuarioEmail === 'cortizjctech@gmail.com');
+        console.log('Cortiz orders:', cortizOrders.length);
+
+        cortizOrders.forEach(order => {
+          console.log(`Order ${order.id}:`, {
+            usuarioEmail: order.usuarioEmail,
+            clienteCodigo: order.clienteCodigo,
+            clienteNombre: order.clienteNombre
+          });
+        });
+      }
+
+      if (window.allClients && window.allClients.length > 0) {
+        const client407 = window.allClients.find(c => c.codigo === '407');
+        console.log('Client 407:', client407);
       }
     };
     window.sellerToDelete = null;
