@@ -4741,11 +4741,27 @@
     // Show order details in modal for all users (read-only for non-admins)
     window.showOrderDetails = async function(orderId) {
       try {
-        const order = window.currentOrders?.find(o => o.id === orderId);
+        console.log('🔍 [MODAL] Searching for order:', orderId);
+
+        // First try to find in current orders
+        let order = window.currentOrders?.find(o => o.id === orderId);
+
+        // If not found in cache, search in Firebase
         if (!order) {
-          console.error('❌ Order not found:', orderId);
-          alert('Error: Orden no encontrada');
-          return;
+          console.log('⚠️ Order not found in cache, searching in Firebase...');
+          const { doc, getDoc } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+          const orderRef = doc(db, 'pedidos', orderId);
+          const orderDoc = await getDoc(orderRef);
+
+          if (orderDoc.exists()) {
+            order = { id: orderDoc.id, ...orderDoc.data() };
+            console.log('✅ Order found in Firebase:', orderId);
+          } else {
+            console.error('❌ Order not found in Firebase:', orderId);
+            alert('Error: Orden no encontrada');
+            return;
+          }
         }
 
         console.log('🔍 [MODAL] Showing order details for:', orderId);
