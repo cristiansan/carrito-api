@@ -54,3 +54,12 @@ __pycache__/
 .Python
 env/
 venv/
+
+# Scripts de desarrollo y testing
+test.api.py
+testapi.py
+cargar-clientes*.js
+fix-*.js
+fix-*.html
+*.postman_collection.json
+auth.json
