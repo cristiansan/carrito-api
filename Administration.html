@@ -6185,6 +6185,55 @@
         console.log('📋 Manual order number modal closed');
       }
     };
+
+    // === TEMPORARY FIX FUNCTION ===
+    window.fixCortizOrders = async function() {
+      if (!confirm('¿Deseas actualizar todas las órdenes de cortizjctech@gmail.com para asignar Trading Next USA Black como cliente principal?')) {
+        return;
+      }
+
+      try {
+        const { collection, query, where, getDocs, doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        // Find orders with cortizjctech email
+        const ordersRef = collection(db, 'pedidos');
+        const q = query(ordersRef, where('usuarioEmail', '==', 'cortizjctech@gmail.com'));
+        const snapshot = await getDocs(q);
+
+        console.log(`🔍 Found ${snapshot.size} orders for cortizjctech`);
+
+        if (snapshot.empty) {
+          alert('No se encontraron órdenes para cortizjctech@gmail.com');
+          return;
+        }
+
+        // Update each order
+        let updated = 0;
+        for (const docSnapshot of snapshot.docs) {
+          const orderRef = doc(db, 'pedidos', docSnapshot.id);
+          await updateDoc(orderRef, {
+            clienteCodigo: '407',
+            clienteNombre: 'Trading Next USA Black',
+            clienteUpdatedAt: new Date(),
+            clienteUpdatedBy: firebase.auth().currentUser?.uid || 'admin'
+          });
+          updated++;
+          console.log(`✅ Updated order ${docSnapshot.id}`);
+        }
+
+        alert(`✅ Actualizadas ${updated} órdenes. Cliente principal asignado: Trading Next USA Black (407)`);
+
+        // Reload orders to see changes
+        if (window.loadOrders) {
+          await window.loadOrders();
+        }
+
+      } catch (error) {
+        console.error('❌ Error updating orders:', error);
+        alert('Error al actualizar las órdenes: ' + error.message);
+      }
+    };
     window.sellerToDelete = null;
     window.clientToDelete = null;
 
