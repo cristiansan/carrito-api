@@ -63,3 +63,6 @@ fix-*.js
 fix-*.html
 *.postman_collection.json
 auth.json
+
+# Claude Code
+.claude/
