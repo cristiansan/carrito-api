@@ -7822,6 +7822,69 @@
         }
       };
 
+      // Debug function specifically for photo visibility issues
+      window.debugPhotoIssues = function(orderId) {
+        console.log('🔍 DEBUGGING PHOTO ISSUES');
+
+        if (!orderId) {
+          if (window.currentOrders && window.currentOrders.length > 0) {
+            // Use first order in preparacion state if no orderId provided
+            const preparacionOrder = window.currentOrders.find(o => o.logisticsState === 'preparacion');
+            if (preparacionOrder) {
+              orderId = preparacionOrder.id;
+              console.log('- Using preparacion order:', orderId);
+            } else {
+              console.log('- No orders in preparacion state found');
+              console.log('- Available orders:', window.currentOrders.map(o => ({id: o.id, state: o.logisticsState})));
+              return;
+            }
+          } else {
+            console.log('- No orders available');
+            return;
+          }
+        }
+
+        const order = window.currentOrders?.find(o => o.id === orderId);
+        if (!order) {
+          console.log('- Order not found:', orderId);
+          return;
+        }
+
+        console.log('- Order found:', orderId);
+        console.log('- Order state:', order.logisticsState);
+        console.log('- fotoPreparacion field:', order.fotoPreparacion);
+        console.log('- fotoPreparacionUpdatedAt:', order.fotoPreparacionUpdatedAt);
+        console.log('- pesoPreparacion field:', order.pesoPreparacion);
+        console.log('- Complete order object:', order);
+
+        // Check modal elements
+        const photoWeightContainer = document.getElementById('detailPhotoWeightContainer');
+        const photoContainer = document.getElementById('detailPhotoContainer');
+        const photoImg = document.getElementById('detailPhotoImg');
+
+        console.log('- Photo weight container element:', photoWeightContainer);
+        console.log('- Photo container element:', photoContainer);
+        console.log('- Photo img element:', photoImg);
+
+        if (photoImg) {
+          console.log('- Photo img src:', photoImg.src);
+          console.log('- Photo img style display:', photoContainer?.style.display);
+        }
+
+        // Try to manually show the photo if it exists
+        if (order.fotoPreparacion && photoImg) {
+          console.log('- Attempting to manually set photo...');
+          photoImg.src = order.fotoPreparacion;
+          if (photoContainer) {
+            photoContainer.style.display = 'grid';
+          }
+          if (photoWeightContainer) {
+            photoWeightContainer.style.display = 'block';
+          }
+          console.log('- Manual photo setup complete');
+        }
+      };
+
     });
   </script>
 
