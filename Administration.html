@@ -6136,6 +6136,15 @@
     window.orders = [];
     window.currentEditingSellerId = null;
     window.currentEditingClientId = null;
+
+    // === GLOBAL MODAL FUNCTIONS ===
+    window.closeOrderDetailsModal = function() {
+      const modal = document.getElementById('orderDetailsModal');
+      if (modal) {
+        modal.style.display = 'none';
+        console.log('🗂️ Order details modal closed');
+      }
+    };
     window.sellerToDelete = null;
     window.clientToDelete = null;
 
@@ -7400,17 +7409,31 @@
 
       // Close order details modal when clicking on X or outside
       const orderDetailsModal = document.getElementById('orderDetailsModal');
-      const orderDetailsClose = document.querySelector('.order-details-close');
 
-      if (orderDetailsClose) {
-        orderDetailsClose.addEventListener('click', () => {
-          orderDetailsModal.style.display = 'none';
+      // Use event delegation for close button (works even if modal content changes)
+      if (orderDetailsModal) {
+        orderDetailsModal.addEventListener('click', (event) => {
+          // Close button click
+          if (event.target.classList.contains('order-details-close')) {
+            orderDetailsModal.style.display = 'none';
+            console.log('🗂️ Order details modal closed via X button');
+          }
+          // Click outside modal content
+          else if (event.target === orderDetailsModal) {
+            orderDetailsModal.style.display = 'none';
+            console.log('🗂️ Order details modal closed via outside click');
+          }
         });
       }
 
-      window.addEventListener('click', (event) => {
-        if (event.target === orderDetailsModal) {
-          orderDetailsModal.style.display = 'none';
+      // Add keyboard support for closing modal
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          const modal = document.getElementById('orderDetailsModal');
+          if (modal && modal.style.display === 'block') {
+            modal.style.display = 'none';
+            console.log('🗂️ Order details modal closed via Escape key');
+          }
         }
       });
     });
@@ -7419,7 +7442,7 @@
   <!-- Order Details Modal -->
   <div id="orderDetailsModal" class="order-details-modal">
     <div class="order-details-modal-content">
-      <span class="order-details-close">&times;</span>
+      <span class="order-details-close" onclick="closeOrderDetailsModal()" title="Cerrar">&times;</span>
 
       <div class="order-details-header">
         <h2 class="order-details-title" id="orderDetailsTitle">Detalles de la Orden</h2>
