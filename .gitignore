@@ -66,3 +66,6 @@ auth.json
 
 # Claude Code
 .claude/
+
+# Configuration files (keep local only)
+config/
