@@ -3941,26 +3941,66 @@
 
     // Helper function to get cliente principal name
     function getClientePrincipalName(order) {
-      // Try to find cliente by clienteCodigo first (most reliable)
+      console.log('🔍 [CLIENT DEBUG] Getting client name for order:', order.id);
+      console.log('🔍 [CLIENT DEBUG] Order clienteCodigo:', order.clienteCodigo);
+      console.log('🔍 [CLIENT DEBUG] Order clienteNombre:', order.clienteNombre);
+      console.log('🔍 [CLIENT DEBUG] Order usuarioEmail:', order.usuarioEmail);
+
+      if (!window.allClients) {
+        console.log('❌ [CLIENT DEBUG] No allClients available');
+        return `⚠️ ${order.usuarioEmail || order.clienteEmail || 'Sin cliente'} (datos no cargados)`;
+      }
+
+      // Strategy 1: Direct match by clienteCodigo
       if (order.clienteCodigo && window.allClients) {
         const cliente = window.allClients.find(c => c.codigo === order.clienteCodigo);
         if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by clienteCodigo:', cliente.nombre);
           return `${cliente.nombre} (${cliente.codigo})`;
         }
       }
 
-      // Alternative: try to find by clienteNombre if it exists and is different from email
+      // Strategy 2: Extract base code from vendedor codes like "407_rmpNpzeT" -> "407"
+      if (order.clienteCodigo && order.clienteCodigo.includes('_')) {
+        const baseCode = order.clienteCodigo.split('_')[0];
+        console.log('🔍 [CLIENT DEBUG] Extracted base code:', baseCode);
+
+        const cliente = window.allClients.find(c => c.codigo === baseCode);
+        if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by base code:', cliente.nombre);
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // Strategy 3: Search by email domain or partial match
+      if (order.usuarioEmail && window.allClients) {
+        // Try to find client by matching email or partial name
+        const emailDomain = order.usuarioEmail.split('@')[0];
+        const cliente = window.allClients.find(c =>
+          c.email && c.email.toLowerCase() === order.usuarioEmail.toLowerCase() ||
+          c.nombre.toLowerCase().includes(emailDomain.toLowerCase()) ||
+          emailDomain.toLowerCase().includes(c.nombre.toLowerCase().split(' ')[0])
+        );
+        if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by email/domain match:', cliente.nombre);
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // Strategy 4: try to find by clienteNombre if it exists and is different from email
       if (order.clienteNombre && order.clienteNombre !== order.usuarioEmail && window.allClients) {
         const cliente = window.allClients.find(c =>
           c.nombre.toLowerCase().includes(order.clienteNombre.toLowerCase()) ||
           order.clienteNombre.toLowerCase().includes(c.nombre.toLowerCase())
         );
         if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by clienteNombre:', cliente.nombre);
           return `${cliente.nombre} (${cliente.codigo})`;
         }
       }
 
       // Final fallback - show user email but indicate it needs client assignment
+      console.log('❌ [CLIENT DEBUG] No client match found, using fallback');
       return `⚠️ ${order.usuarioEmail || order.clienteEmail || 'Sin cliente'} (click para asignar)`;
     }
 
