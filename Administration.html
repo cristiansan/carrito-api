@@ -7539,6 +7539,99 @@
           }
         }
       });
+
+      // Advanced debugging functions to help diagnose client display and price loading issues
+      window.debugClientDisplay = function() {
+        console.log('🔍 DEBUGGING CLIENT DISPLAY');
+        console.log('- window.allClients:', window.allClients);
+
+        if (window.allClients) {
+          console.log('- Found clients:', window.allClients.length);
+          window.allClients.forEach(client => {
+            console.log(`  • ${client.nombre} (${client.codigo}) - Email: ${client.email}`);
+          });
+
+          // Look for Trading Next USA Black specifically
+          const tradingClient = window.allClients.find(c => c.nombre.includes('Trading Next USA Black'));
+          if (tradingClient) {
+            console.log('- Trading Next USA Black found:', tradingClient);
+          } else {
+            console.log('- Trading Next USA Black NOT found');
+          }
+        } else {
+          console.log('- window.allClients is null/undefined');
+        }
+
+        // Check current orders
+        if (window.currentOrders) {
+          console.log('- Current orders:', window.currentOrders.length);
+          window.currentOrders.forEach((order, index) => {
+            if (index < 3) { // Only first 3 to avoid spam
+              console.log(`  Order ${order.id}:`);
+              console.log(`    - userEmail: ${order.userEmail}`);
+              console.log(`    - clienteCodigo: ${order.clienteCodigo}`);
+              console.log(`    - clienteEmail: ${order.clienteEmail}`);
+              console.log(`    - vendedorEmail: ${order.vendedorEmail}`);
+              console.log(`    - getClientePrincipalName result: ${getClientePrincipalName(order)}`);
+            }
+          });
+        } else {
+          console.log('- window.currentOrders is null/undefined');
+        }
+      };
+
+      window.debugPriceLoading = function() {
+        console.log('🔍 DEBUGGING PRICE LOADING');
+        console.log('- window.allPrices:', window.allPrices);
+
+        if (window.allPrices) {
+          console.log('- Found prices:', window.allPrices.length);
+          console.log('- Sample prices:', window.allPrices.slice(0, 3));
+        } else {
+          console.log('- window.allPrices is null/undefined');
+        }
+
+        // Check if prices are being loaded
+        console.log('- Checking price loading function...');
+        if (typeof loadAllPrices === 'function') {
+          console.log('- loadAllPrices function exists');
+        } else {
+          console.log('- loadAllPrices function NOT found');
+        }
+      };
+
+      window.fixClientDisplayAndPrices = async function() {
+        console.log('🔧 FIXING CLIENT DISPLAY AND PRICES');
+
+        try {
+          // Force reload clients
+          console.log('- Reloading clients...');
+          await loadAllClients();
+
+          // Force reload prices
+          console.log('- Reloading prices...');
+          if (typeof loadAllPrices === 'function') {
+            await loadAllPrices();
+          }
+
+          // Re-render orders
+          console.log('- Re-rendering orders...');
+          await loadOrders();
+
+          console.log('✅ Fix attempt completed');
+
+        } catch (error) {
+          console.error('❌ Error during fix:', error);
+        }
+      };
+
+      // Auto-debug on page load
+      setTimeout(() => {
+        console.log('🚀 AUTO-DEBUG: Checking client display and price loading...');
+        window.debugClientDisplay();
+        window.debugPriceLoading();
+      }, 3000);
+
     });
   </script>
 
