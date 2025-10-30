@@ -3904,6 +3904,12 @@
                  accept="image/*"
                  onchange="handlePreparacionPhoto('${order.id}', this)"
                  style="display: none;">
+          <input type="file"
+                 id="camera-input-${order.id}"
+                 accept="image/*"
+                 capture="camera"
+                 onchange="handlePreparacionPhoto('${order.id}', this)"
+                 style="display: none;">
           <button class="edit-order-btn"
                   onclick="${photoButtonAction}"
                   title="${photoUrl ? 'Foto subida - Click para ver o actualizar' : 'Subir foto de preparación'}">
@@ -4553,26 +4559,114 @@
     }
 
     /**
-     * Maneja el click en el botón de foto (v0.40)
+     * Maneja el click en el botón de foto (v0.42)
      * @param {string} orderId - ID de la orden
      * @param {string} photoUrl - URL de la foto actual (vacío si no hay)
      */
     window.handleFotoButton = function(orderId, photoUrl) {
       if (!photoUrl) {
-        // No hay foto, abrir file picker directamente
-        document.getElementById('photo-input-' + orderId).click();
+        // No hay foto, mostrar opciones de galería o cámara
+        showPhotoOptionsModal(orderId);
       } else {
         // Ya hay foto, preguntar si quiere ver o actualizar
         const accion = confirm('Ya hay una foto subida.\n\n✅ OK = Subir nueva foto\n❌ Cancelar = Ver foto actual');
 
         if (accion) {
-          // Usuario eligió OK: subir nueva foto
-          document.getElementById('photo-input-' + orderId).click();
+          // Usuario eligió OK: mostrar opciones para nueva foto
+          showPhotoOptionsModal(orderId);
         } else {
           // Usuario eligió Cancelar: ver foto actual
           window.open(photoUrl, '_blank');
         }
       }
+    }
+
+    /**
+     * Muestra modal con opciones de galería o cámara
+     * @param {string} orderId - ID de la orden
+     */
+    function showPhotoOptionsModal(orderId) {
+      // Crear modal con opciones
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+      `;
+
+      const content = document.createElement('div');
+      content.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 350px;
+        width: 90%;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      `;
+
+      content.innerHTML = `
+        <h3 style="margin: 0 0 20px 0; color: #333;">📸 Seleccionar Foto</h3>
+        <p style="margin: 0 0 25px 0; color: #666;">¿Cómo quieres agregar la foto?</p>
+        <div style="display: flex; gap: 15px; flex-direction: column;">
+          <button onclick="selectFromGallery('${orderId}'); closePhotoModal()"
+                  style="padding: 15px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            🖼️ Seleccionar de Galería
+          </button>
+          <button onclick="captureWithCamera('${orderId}'); closePhotoModal()"
+                  style="padding: 15px; border: none; background: #2196F3; color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            📷 Tomar con Cámara
+          </button>
+          <button onclick="closePhotoModal()"
+                  style="padding: 10px; border: 1px solid #ddd; background: white; color: #666; border-radius: 8px; cursor: pointer;">
+            Cancelar
+          </button>
+        </div>
+      `;
+
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+      modal.photoModal = true;
+
+      // Cerrar modal al hacer click fuera
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closePhotoModal();
+        }
+      });
+    }
+
+    /**
+     * Cierra el modal de opciones de foto
+     */
+    window.closePhotoModal = function() {
+      const modal = document.querySelector('[style*="z-index: 10000"]');
+      if (modal && modal.photoModal) {
+        modal.remove();
+      }
+    }
+
+    /**
+     * Abre galería para seleccionar foto
+     * @param {string} orderId - ID de la orden
+     */
+    window.selectFromGallery = function(orderId) {
+      document.getElementById('photo-input-' + orderId).click();
+    }
+
+    /**
+     * Abre cámara para capturar foto
+     * @param {string} orderId - ID de la orden
+     */
+    window.captureWithCamera = function(orderId) {
+      document.getElementById('camera-input-' + orderId).click();
     }
 
     /**
