@@ -3922,16 +3922,16 @@
       const vendedorName = getVendedorName(order);
 
       return `
-        <div class="order-item" data-order-id="${order.id}">
+        <div class="order-item" data-order-id="${order.id}" onclick="showOrderDetails('${order.id}')" style="cursor: pointer;" title="Click para ver detalles">
           <div class="order-info">
             <div class="order-number">#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}</div>
             <div class="order-details">
               ${order.fechaLocal || order.fecha || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || order.montoTotal || 0)}
-              <br><strong>Cliente:</strong> <span class="editable-client" onclick="editOrderClient('${order.id}')" title="Click para editar">${clientePrincipal}</span>
-              <br><strong>Vendedor:</strong> <span class="editable-seller" onclick="editOrderSeller('${order.id}')" title="Click para editar">${vendedorName}</span>
+              <br><strong>Cliente:</strong> <span class="editable-client" onclick="event.stopPropagation(); editOrderClient('${order.id}')" title="Click para editar">${clientePrincipal}</span>
+              <br><strong>Vendedor:</strong> <span class="editable-seller" onclick="event.stopPropagation(); editOrderSeller('${order.id}')" title="Click para editar">${vendedorName}</span>
             </div>
           </div>
-          <div class="order-actions">
+          <div class="order-actions" onclick="event.stopPropagation();">
             ${preparacionButtonsHtml}
             ${buttonHtml}
           </div>
@@ -4738,6 +4738,141 @@
 
 
 
+    // Show order details in modal for all users (read-only for non-admins)
+    async function showOrderDetails(orderId) {
+      try {
+        const order = window.currentOrders?.find(o => o.id === orderId);
+        if (!order) {
+          console.error('❌ Order not found:', orderId);
+          alert('Error: Orden no encontrada');
+          return;
+        }
+
+        console.log('🔍 [MODAL] Showing order details for:', orderId);
+
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Llenar información general
+        let orderNumberText = `#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}`;
+        if (order.editadaPor && order.editadaPorNombre) {
+          orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
+        }
+        document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const emailUsuario = order.creadoPorAdmin ? order.usuarioEmail : (order.clienteEmail || order.usuarioEmail);
+        const infoCliente = order.clienteNombre || order.usuarioEmail || '-';
+        const codigoCliente = order.clienteCodigo ? `, CODIGO ${order.clienteCodigo}` : '';
+        document.getElementById('detailClientName').textContent = `${infoCliente}${codigoCliente}`;
+        document.getElementById('detailClientEmail').textContent = emailUsuario || '-';
+        document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
+        document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
+
+        // Mostrar si fue creada por admin
+        if (order.creadoPorAdmin) {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'grid';
+          document.getElementById('detailAdminCreated').textContent = order.usuarioEmail || '-';
+        } else {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'none';
+        }
+
+        // Mostrar foto y peso de preparación para todos los usuarios
+        const photoWeightContainer = document.getElementById('detailPhotoWeightContainer');
+        const photoContainer = document.getElementById('detailPhotoContainer');
+        const weightContainer = document.getElementById('detailWeightContainer');
+        const noPhotoWeight = document.getElementById('detailNoPhotoWeight');
+        const photoImg = document.getElementById('detailPhotoImg');
+        const photoDate = document.getElementById('detailPhotoDate');
+        const weightSpan = document.getElementById('detailWeight');
+
+        let hasPhotoOrWeight = false;
+
+        // Mostrar foto si existe
+        if (order.fotoPreparacion) {
+          photoImg.src = order.fotoPreparacion;
+
+          // Mostrar fecha de actualización si existe
+          if (order.fotoPreparacionUpdatedAt) {
+            const fecha = new Date(order.fotoPreparacionUpdatedAt.seconds * 1000);
+            photoDate.textContent = `Subida el: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+          } else {
+            photoDate.textContent = '';
+          }
+
+          photoContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          photoContainer.style.display = 'none';
+        }
+
+        // Mostrar peso si existe
+        if (order.pesoPreparacion) {
+          weightSpan.textContent = `${order.pesoPreparacion} kg`;
+          weightContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          weightContainer.style.display = 'none';
+        }
+
+        // Mostrar la sección completa si hay foto o peso
+        if (hasPhotoOrWeight) {
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'none';
+        } else {
+          // Mostrar mensaje si no hay foto ni peso
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'block';
+        }
+
+        // Llenar tabla de items (solo lectura para no-admins)
+        const itemsTableBody = document.getElementById('detailOrderItems');
+        itemsTableBody.innerHTML = '';
+
+        if (order.items && order.items.length > 0) {
+          order.items.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.articulo || '-'}</td>
+              <td>${item.description || '-'}</td>
+              <td style="text-align: center;">${item.quantity || 0}</td>
+              <td style="text-align: right;">$${formatNumber(item.price || 0)}</td>
+              <td style="text-align: right;">$${formatNumber((item.price || 0) * (item.quantity || 0))}</td>
+            `;
+            itemsTableBody.appendChild(row);
+          });
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td colspan="5" style="text-align: center;">No hay items</td>`;
+          itemsTableBody.appendChild(row);
+        }
+
+        // Mostrar total
+        document.getElementById('detailOrderTotal').textContent = `$${formatNumber(order.total || order.montoTotal || 0)}`;
+
+        // Hide admin-only controls for non-admin users
+        document.getElementById('detailSaveOrderContainer').style.display = 'none';
+        document.getElementById('detailSendWhatsAppContainer').style.display = 'none';
+        document.getElementById('detailEditOrderContainer').style.display = 'none';
+
+        // Show modal
+        document.getElementById('orderDetailsModal').style.display = 'block';
+
+      } catch (error) {
+        console.error('❌ Error showing order details:', error);
+        alert('Error al cargar detalles de la orden');
+      }
+    }
+
     // Show admin order details in modal with editable quantities
     async function adminEditOrder(orderId) {
       if (!isUserAdmin) {
@@ -4795,6 +4930,54 @@
           document.getElementById('detailAdminCreated').textContent = order.usuarioEmail || '-';
         } else {
           document.getElementById('detailAdminCreatedContainer').style.display = 'none';
+        }
+
+        // Mostrar foto y peso de preparación para todos los usuarios
+        const photoWeightContainer = document.getElementById('detailPhotoWeightContainer');
+        const photoContainer = document.getElementById('detailPhotoContainer');
+        const weightContainer = document.getElementById('detailWeightContainer');
+        const noPhotoWeight = document.getElementById('detailNoPhotoWeight');
+        const photoImg = document.getElementById('detailPhotoImg');
+        const photoDate = document.getElementById('detailPhotoDate');
+        const weightSpan = document.getElementById('detailWeight');
+
+        let hasPhotoOrWeight = false;
+
+        // Mostrar foto si existe
+        if (order.fotoPreparacion) {
+          photoImg.src = order.fotoPreparacion;
+
+          // Mostrar fecha de actualización si existe
+          if (order.fotoPreparacionUpdatedAt) {
+            const fecha = new Date(order.fotoPreparacionUpdatedAt.seconds * 1000);
+            photoDate.textContent = `Subida el: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+          } else {
+            photoDate.textContent = '';
+          }
+
+          photoContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          photoContainer.style.display = 'none';
+        }
+
+        // Mostrar peso si existe
+        if (order.pesoPreparacion) {
+          weightSpan.textContent = `${order.pesoPreparacion} kg`;
+          weightContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          weightContainer.style.display = 'none';
+        }
+
+        // Mostrar la sección completa si hay foto o peso
+        if (hasPhotoOrWeight) {
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'none';
+        } else {
+          // Mostrar mensaje si no hay foto ni peso
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'block';
         }
 
         // Llenar tabla de items con campos editables
@@ -7632,6 +7815,13 @@
         window.debugPriceLoading();
       }, 3000);
 
+      // Helper function to open photo in new tab
+      window.openPhotoInNewTab = function(photoUrl) {
+        if (photoUrl) {
+          window.open(photoUrl, '_blank');
+        }
+      };
+
     });
   </script>
 
@@ -7693,6 +7883,30 @@
         <div class="order-total">
           <span>TOTAL: </span>
           <span id="detailOrderTotal">$0.00</span>
+        </div>
+      </div>
+
+      <!-- Photo and Weight Section -->
+      <div class="order-details-section" id="detailPhotoWeightContainer" style="display: none;">
+        <h3>📷 Foto y Peso de Preparación</h3>
+
+        <div class="order-details-info" id="detailPhotoContainer" style="display: none;">
+          <span class="order-details-label">📸 Foto de Preparación:</span>
+          <div class="order-details-value">
+            <div class="photo-preview" id="detailPhotoPreview">
+              <img id="detailPhotoImg" src="" alt="Foto de preparación" style="max-width: 300px; max-height: 200px; border-radius: 8px; cursor: pointer;" onclick="openPhotoInNewTab(this.src)">
+              <div class="photo-date" id="detailPhotoDate" style="font-size: 12px; color: #666; margin-top: 5px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-details-info" id="detailWeightContainer" style="display: none;">
+          <span class="order-details-label">⚖️ Peso:</span>
+          <span class="order-details-value" id="detailWeight">-</span>
+        </div>
+
+        <div class="order-details-info" id="detailNoPhotoWeight" style="display: none;">
+          <span class="order-details-value" style="color: #666; font-style: italic;">No se ha cargado foto ni peso para esta orden</span>
         </div>
       </div>
 
