@@ -2764,6 +2764,30 @@
         </div>
       </div>
 
+      <!-- Photo and Weight Section -->
+      <div class="order-details-section" id="detailPhotoWeightContainer" style="display: none;">
+        <h3>📷 Foto y Peso de Preparación</h3>
+
+        <div class="order-details-info" id="detailPhotoContainer" style="display: none;">
+          <span class="order-details-label">📸 Foto de Preparación:</span>
+          <div class="order-details-value">
+            <div class="photo-preview" id="detailPhotoPreview">
+              <img id="detailPhotoImg" src="" alt="Foto de preparación" style="max-width: 300px; max-height: 200px; border-radius: 8px; cursor: pointer;" onclick="openPhotoInNewTab(this.src)">
+              <div class="photo-date" id="detailPhotoDate" style="font-size: 12px; color: #666; margin-top: 5px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-details-info" id="detailWeightContainer" style="display: none;">
+          <span class="order-details-label">⚖️ Peso:</span>
+          <span class="order-details-value" id="detailWeight">-</span>
+        </div>
+
+        <div class="order-details-info" id="detailNoPhotoWeight" style="display: none;">
+          <span class="order-details-value" style="color: #666; font-style: italic;">No se ha cargado foto ni peso para esta orden</span>
+        </div>
+      </div>
+
       <div class="order-details-section" id="detailSaveOrderContainer" style="display: none;">
         <button class="mdc-button mdc-button--raised" id="detailSaveOrderBtn" style="width: 100%; background-color: #FF9800 !important;">
           <span class="mdc-button__ripple"></span>
@@ -5026,6 +5050,65 @@
           document.getElementById('detailAdminCreatedContainer').style.display = 'none';
         }
 
+        // Mostrar foto y peso de preparación para todos los usuarios
+        console.log('🖼️ [PHOTO DEBUG] Checking photo and weight for order:', orderId);
+        console.log('🖼️ [PHOTO DEBUG] fotoPreparacion:', order.fotoPreparacion);
+        console.log('🖼️ [PHOTO DEBUG] pesoPreparacion:', order.pesoPreparacion);
+
+        const photoWeightContainer = document.getElementById('detailPhotoWeightContainer');
+        const photoContainer = document.getElementById('detailPhotoContainer');
+        const weightContainer = document.getElementById('detailWeightContainer');
+        const noPhotoWeight = document.getElementById('detailNoPhotoWeight');
+        const photoImg = document.getElementById('detailPhotoImg');
+        const photoDate = document.getElementById('detailPhotoDate');
+        const weightSpan = document.getElementById('detailWeight');
+
+        console.log('🖼️ [PHOTO DEBUG] Modal elements found:', {
+          photoWeightContainer: !!photoWeightContainer,
+          photoContainer: !!photoContainer,
+          photoImg: !!photoImg
+        });
+
+        let hasPhotoOrWeight = false;
+
+        // Mostrar foto si existe
+        if (order.fotoPreparacion) {
+          console.log('🖼️ [PHOTO DEBUG] Photo found, setting up display...');
+          photoImg.src = order.fotoPreparacion;
+
+          // Mostrar fecha de actualización si existe
+          if (order.fotoPreparacionUpdatedAt) {
+            const fecha = new Date(order.fotoPreparacionUpdatedAt.seconds * 1000);
+            photoDate.textContent = `Subida el: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+          } else {
+            photoDate.textContent = '';
+          }
+
+          photoContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          photoContainer.style.display = 'none';
+        }
+
+        // Mostrar peso si existe
+        if (order.pesoPreparacion) {
+          weightSpan.textContent = `${order.pesoPreparacion} kg`;
+          weightContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          weightContainer.style.display = 'none';
+        }
+
+        // Mostrar la sección completa si hay foto o peso
+        if (hasPhotoOrWeight) {
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'none';
+        } else {
+          // Mostrar mensaje si no hay foto ni peso
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'block';
+        }
+
         // Llenar tabla de items con campos editables
         const itemsTableBody = document.getElementById('detailOrderItems');
         itemsTableBody.innerHTML = '';
@@ -6269,6 +6352,15 @@
         console.log('ℹ️ No hay carrito en localStorage');
       }
     });
+  </script>
+
+  <script>
+    // Helper function to open photo in new tab
+    window.openPhotoInNewTab = function(photoUrl) {
+      if (photoUrl) {
+        window.open(photoUrl, '_blank');
+      }
+    };
   </script>
 
   <!-- CHANGELOG Modal -->
