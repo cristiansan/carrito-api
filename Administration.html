@@ -3953,7 +3953,12 @@
       console.log('🔍 [CLIENT DEBUG] Order usuarioEmail:', order.usuarioEmail);
       console.log('🔍 [CLIENT DEBUG] Order clienteEmail:', order.clienteEmail);
       console.log('🔍 [CLIENT DEBUG] Order vendedorEmail:', order.vendedorEmail);
-      console.log('🔍 [CLIENT DEBUG] Full order data:', order);
+
+      // SPECIAL CASE FIRST: Handle cortizjctech specifically
+      if (order.usuarioEmail === 'cortizjctech@gmail.com' || order.clienteEmail === 'cortizjctech@gmail.com') {
+        console.log('🔧 [CLIENT DEBUG] *** SPECIAL CASE: cortizjctech detected, returning Trading Next USA Black ***');
+        return 'TRADING NEXT USA BLACK (407)';
+      }
 
       if (!window.allClients) {
         console.log('❌ [CLIENT DEBUG] No allClients available');
@@ -4012,13 +4017,6 @@
 
       // Final fallback - show user email but indicate it needs client assignment
       console.log('❌ [CLIENT DEBUG] No client match found, using fallback');
-
-      // SPECIAL CASE: Handle cortizjctech specifically
-      if (order.usuarioEmail === 'cortizjctech@gmail.com' || order.clienteEmail === 'cortizjctech@gmail.com') {
-        console.log('🔧 [CLIENT DEBUG] Special case: cortizjctech detected, returning Trading Next USA Black');
-        return 'TRADING NEXT USA BLACK (407)';
-      }
-
       return `⚠️ ${order.usuarioEmail || order.clienteEmail || 'Sin cliente'} (click para asignar)`;
     }
 
