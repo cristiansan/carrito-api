@@ -1232,7 +1232,7 @@ function setupUI() {
 function updateStats(filteredData, totals) {
   const statsContainer = document.getElementById('statsContainer');
   const isMarketplace = window.location.pathname.includes('marketplace.html');
-  
+
   console.log('updateStats called:', {
     isMarketplace,
     statsContainer: !!statsContainer,
@@ -1240,9 +1240,9 @@ function updateStats(filteredData, totals) {
     totals: totals,
     pathname: window.location.pathname
   });
-  
+
   if (!statsContainer) {
-    console.error('statsContainer not found');
+    // Silently skip if statsContainer not found (e.g., on Administration page)
     return;
   }
 
@@ -1350,9 +1350,9 @@ function updateHeaderStats(totalProducts, totals) {
 // Fixed updateStats function using compatible syntax
 function updateStatsFixed(filteredData, totals) {
   var statsContainer = document.getElementById('statsContainer');
-  
+
   if (!statsContainer) {
-    console.error('statsContainer not found');
+    // Silently skip if statsContainer not found (e.g., on Administration page)
     return;
   }
 

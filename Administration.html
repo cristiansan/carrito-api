@@ -7811,9 +7811,16 @@
       // Auto-debug on page load
       setTimeout(() => {
         console.log('🚀 AUTO-DEBUG: Checking client display and price loading...');
+        console.log('🔧 debugPhotoIssues function available:', typeof window.debugPhotoIssues);
         window.debugClientDisplay();
         window.debugPriceLoading();
-      }, 3000);
+
+        // Also run photo debug automatically
+        if (typeof window.debugPhotoIssues === 'function') {
+          console.log('🖼️ Running automatic photo debug...');
+          window.debugPhotoIssues();
+        }
+      }, 5000);
 
       // Helper function to open photo in new tab
       window.openPhotoInNewTab = function(photoUrl) {
