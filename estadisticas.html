@@ -697,14 +697,31 @@
         const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
         const usuarios = [];
 
+        // Lista de usuarios de prueba/desarrollo a excluir
+        const testUsers = [
+          'cristiansan@gmail.com',
+          'matensegiles@gmail.com',
+          'test@test.com.ar',
+          'test@test.com',
+          'prueba@prueba.com',
+          'cuenta@demo.com.ar'
+        ];
+
         usuariosSnapshot.forEach(doc => {
           const data = doc.data();
-          usuarios.push({
-            email: data.email,
-            loginCount: data.loginCount || 0,
-            lastLogin: data.lastLogin
-          });
+          const email = data.email || '';
+
+          // Excluir usuarios de prueba
+          if (!testUsers.includes(email.toLowerCase())) {
+            usuarios.push({
+              email: email,
+              loginCount: data.loginCount || 0,
+              lastLogin: data.lastLogin
+            });
+          }
         });
+
+        console.log(`👥 Usuarios conectados después de filtrar: ${usuarios.length}`);
 
         const ranking = usuarios
           .sort((a, b) => b.loginCount - a.loginCount)
