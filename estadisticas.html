@@ -387,6 +387,27 @@
 
         console.log(`✅ Órdenes cargadas: ${orders.length}`);
 
+        // Filter out test/development users
+        const testUsers = [
+          'cristiansan@gmail.com',
+          'matensegiles@gmail.com',
+          'test@test.com.ar',
+          'test@test.com',
+          'prueba@prueba.com',
+          'cuenta@demo.com.ar'
+        ];
+
+        const filteredOrders = orders.filter(order => {
+          const userEmail = order.usuarioEmail || order.clienteEmail || '';
+          return !testUsers.includes(userEmail.toLowerCase());
+        });
+
+        console.log(`📊 Órdenes después de filtrar usuarios de prueba: ${filteredOrders.length} (excluidas: ${orders.length - filteredOrders.length})`);
+
+        // Replace orders array with filtered orders
+        orders.length = 0;
+        orders.push(...filteredOrders);
+
         // Get all clients
         const clientsSnapshot = await getDocs(collection(db, 'clientes'));
         const clients = clientsSnapshot.size;
