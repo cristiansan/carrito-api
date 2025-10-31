@@ -2226,7 +2226,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.42
+          v0.43
         </div>
       </div>
       
@@ -2659,14 +2659,14 @@
 
         <div class="upload-options">
           <button class="upload-btn camera-btn" id="cameraBtn">
-            📷 Tomar Foto
+            📷 Abrir Cámara
           </button>
           <button class="upload-btn file-btn" id="fileBtn">
-            📁 Seleccionar Archivo
+            📁 Cargar Foto Guardada
           </button>
         </div>
 
-        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display: none;">
+        <input type="file" id="photoInput" accept="image/*" capture style="display: none;">
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
 
         <div id="photoPreview" class="photo-preview" style="display: none;">
@@ -5867,8 +5867,8 @@
       const cancelBtn = document.getElementById('cancelUploadBtn');
 
       if (cameraBtn) {
-        cameraBtn.addEventListener('click', () => {
-          photoInput.click();
+        cameraBtn.addEventListener('click', async () => {
+          await openCameraCapture();
         });
       }
 
@@ -5892,6 +5892,156 @@
 
       if (cancelBtn) {
         cancelBtn.addEventListener('click', cancelPhotoUpload);
+      }
+    }
+
+    // Open camera capture using getUserMedia API
+    let cameraStream = null;
+    async function openCameraCapture() {
+      try {
+        // Check if getUserMedia is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('❌ Tu navegador no soporta acceso directo a la cámara.\n\nUsando el botón "Cargar Foto Guardada" puedes seleccionar una imagen.');
+          // Fallback to file input with capture
+          photoInput.click();
+          return;
+        }
+
+        // Request camera access
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }, // Prefer back camera on mobile
+          audio: false
+        });
+
+        // Create camera modal
+        const cameraModal = document.createElement('div');
+        cameraModal.id = 'cameraModal';
+        cameraModal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.95);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 20px;
+          box-sizing: border-box;
+        `;
+
+        const video = document.createElement('video');
+        video.id = 'cameraVideo';
+        video.autoplay = true;
+        video.playsInline = true;
+        video.style.cssText = `
+          max-width: 100%;
+          max-height: 70vh;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        `;
+        video.srcObject = cameraStream;
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.cssText = `
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+          justify-content: center;
+        `;
+
+        const captureBtn = document.createElement('button');
+        captureBtn.textContent = '📸 Capturar Foto';
+        captureBtn.style.cssText = `
+          padding: 15px 30px;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        `;
+
+        const cancelCameraBtn = document.createElement('button');
+        cancelCameraBtn.textContent = '❌ Cancelar';
+        cancelCameraBtn.style.cssText = `
+          padding: 15px 30px;
+          background: #f44336;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        `;
+
+        // Capture photo
+        captureBtn.addEventListener('click', () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0);
+
+          // Convert canvas to blob
+          canvas.toBlob((blob) => {
+            // Stop camera
+            if (cameraStream) {
+              cameraStream.getTracks().forEach(track => track.stop());
+              cameraStream = null;
+            }
+
+            // Remove camera modal
+            document.body.removeChild(cameraModal);
+
+            // Create file from blob
+            const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const previewImage = document.getElementById('previewImage');
+              const photoPreview = document.getElementById('photoPreview');
+
+              previewImage.src = e.target.result;
+              photoPreview.style.display = 'block';
+
+              // Store file for upload
+              selectedPhoto = file;
+            };
+            reader.readAsDataURL(file);
+          }, 'image/jpeg', 0.95);
+        });
+
+        // Cancel camera
+        cancelCameraBtn.addEventListener('click', () => {
+          if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+          }
+          document.body.removeChild(cameraModal);
+        });
+
+        buttonContainer.appendChild(captureBtn);
+        buttonContainer.appendChild(cancelCameraBtn);
+        cameraModal.appendChild(video);
+        cameraModal.appendChild(buttonContainer);
+        document.body.appendChild(cameraModal);
+
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          alert('❌ Permiso de cámara denegado.\n\nPor favor permite el acceso a la cámara en la configuración de tu navegador, o usa "Cargar Foto Guardada".');
+        } else if (error.name === 'NotFoundError') {
+          alert('❌ No se encontró ninguna cámara en tu dispositivo.\n\nUsa "Cargar Foto Guardada" en su lugar.');
+        } else {
+          alert('❌ Error al acceder a la cámara: ' + error.message + '\n\nPuedes usar "Cargar Foto Guardada" como alternativa.');
+        }
+        // Fallback to file input
+        photoInput.click();
       }
     }
 
@@ -6370,7 +6520,20 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.42 - Actual</h3>
+          <h3>v0.43 - Actual</h3>
+          <ul>
+            <li>📸 <strong>Cámara en vivo:</strong> Acceso directo a la cámara con preview en tiempo real para captura de fotos</li>
+            <li>📊 <strong>Estadísticas mejoradas:</strong> Mapeo automático de emails a nombres de clientes (cortizjctech → Trading Next Black USA)</li>
+            <li>📈 <strong>LoginCount funcional:</strong> Sistema de contador de logins implementado y actualizado</li>
+            <li>🔒 <strong>Permisos Firebase:</strong> Reglas agregadas para colección blockedEmails</li>
+            <li>❌ <strong>Botón Cancelar:</strong> Agregado en panel de admisiones para ocultar usuarios sin modificar DB</li>
+            <li>🧹 <strong>Rankings optimizados:</strong> Eliminado ranking duplicado de clientes en estadísticas</li>
+            <li>👥 <strong>Filtros de usuarios:</strong> Usuarios no aprobados excluidos de rankings</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.42</h3>
           <ul>
             <li>🏢 <strong>Cliente Principal:</strong> Mejorar resolución de nombres de cliente principal</li>
             <li>🔍 <strong>Códigos Base:</strong> Extraer código base de códigos de vendedor (ej: "407_xyz" → "407")</li>

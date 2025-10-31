@@ -315,13 +315,6 @@
     </div>
 
     <div class="ranking-card">
-      <h2><span class="material-icons">person</span> Top 10 Clientes Más Activos</h2>
-      <ul class="ranking-list" id="clientesRanking">
-        <li class="no-data">Cargando...</li>
-      </ul>
-    </div>
-
-    <div class="ranking-card">
       <h2><span class="material-icons">login</span> Top 10 Usuarios Más Conectados</h2>
       <ul class="ranking-list" id="usuariosRanking">
         <li class="no-data">Cargando...</li>
@@ -387,9 +380,56 @@
 
         console.log(`✅ Órdenes cargadas: ${orders.length}`);
 
+        // Get all clients for email-to-client mapping
+        const clientsSnapshot = await getDocs(collection(db, 'clientes'));
+        const allClients = [];
+        clientsSnapshot.forEach(doc => {
+          allClients.push({ id: doc.id, ...doc.data() });
+        });
+        console.log(`✅ Clientes cargados: ${allClients.length}`);
+
+        // Helper function to map email to client name
+        const getClientDisplayName = (email, clientCode = '', clientName = '') => {
+          // SPECIAL CASE: cortizjctech -> Trading Next USA Black
+          if (email && email.toLowerCase() === 'cortizjctech@gmail.com') {
+            console.log('🔧 [STATS] Detectado cortizjctech, retornando Trading Next USA Black');
+            return 'TRADING NEXT USA BLACK (407)';
+          }
+
+          // If clientName is already provided, use it
+          if (clientName && clientName !== 'Cliente sin nombre') {
+            return clientCode ? `${clientName} (${clientCode})` : clientName;
+          }
+
+          // Try to find client by email
+          if (email && allClients.length > 0) {
+            const clientByEmail = allClients.find(c => c.email && c.email.toLowerCase() === email.toLowerCase());
+            if (clientByEmail) {
+              const nombre = clientByEmail.nombre || clientByEmail.codigo || 'Sin nombre';
+              const codigo = clientByEmail.codigo || '';
+              console.log(`✅ [STATS] Email ${email} mapeado a cliente ${nombre} (${codigo})`);
+              return codigo ? `${nombre} (${codigo})` : nombre;
+            }
+          }
+
+          // Try to find client by code
+          if (clientCode && allClients.length > 0) {
+            // Handle codes with underscore like "407_rmpNpzeT"
+            const baseCode = clientCode.includes('_') ? clientCode.split('_')[0] : clientCode;
+            const clientByCode = allClients.find(c => c.codigo === baseCode);
+            if (clientByCode) {
+              const nombre = clientByCode.nombre || baseCode;
+              console.log(`✅ [STATS] Código ${clientCode} mapeado a cliente ${nombre} (${baseCode})`);
+              return `${nombre} (${baseCode})`;
+            }
+          }
+
+          // Fallback: return email or 'Sin cliente'
+          return email || 'Sin cliente';
+        };
+
         // Filter out test/development users
         const testUsers = [
-          'cristiansan@gmail.com',
           'matensegiles@gmail.com',
           'matense.giles@gmail.com',
           'test@test.com.ar',
@@ -409,9 +449,8 @@
         orders.length = 0;
         orders.push(...filteredOrders);
 
-        // Get all clients
-        const clientsSnapshot = await getDocs(collection(db, 'clientes'));
-        const clients = clientsSnapshot.size;
+        // Get total clients count (already loaded above)
+        const clients = allClients.length;
 
         // Calculate KPIs
         const totalOrders = orders.length;
@@ -434,9 +473,8 @@
         generateSalesChart(orders);
 
         // Generate rankings
-        generateVendedoresRanking(orders);
+        generateVendedoresRanking(orders, getClientDisplayName);
         generateProductosRanking(orders);
-        generateClientesRanking(orders);
         await generateUsuariosRanking();
 
         // Hide loading and show content
@@ -568,23 +606,27 @@
       });
     }
 
-    function generateVendedoresRanking(orders) {
+    function generateVendedoresRanking(orders, getClientDisplayName) {
       const vendedoresStats = {};
 
       orders.forEach(order => {
-        const vendedor = order.usuarioEmail || 'Sin vendedor';
-        if (!vendedoresStats[vendedor]) {
-          vendedoresStats[vendedor] = {
+        const vendedorEmail = order.usuarioEmail || 'Sin vendedor';
+        // Map email to client name if applicable
+        const vendedorKey = getClientDisplayName(vendedorEmail, order.clienteCodigo, order.clienteNombre);
+
+        if (!vendedoresStats[vendedorKey]) {
+          vendedoresStats[vendedorKey] = {
             ordenes: 0,
-            revenue: 0
+            revenue: 0,
+            originalEmail: vendedorEmail
           };
         }
-        vendedoresStats[vendedor].ordenes += 1;
-        vendedoresStats[vendedor].revenue += (order.total || 0);
+        vendedoresStats[vendedorKey].ordenes += 1;
+        vendedoresStats[vendedorKey].revenue += (order.total || 0);
       });
 
       const ranking = Object.entries(vendedoresStats)
-        .map(([email, stats]) => ({ email, ...stats }))
+        .map(([displayName, stats]) => ({ displayName, ...stats }))
         .sort((a, b) => b.ordenes - a.ordenes)
         .slice(0, 10);
 
@@ -594,7 +636,7 @@
           <li class="ranking-item">
             <div class="ranking-position ${positionClass}">${index + 1}</div>
             <div class="ranking-info">
-              <div class="ranking-name">${vendedor.email}</div>
+              <div class="ranking-name">${vendedor.displayName}</div>
               <div class="ranking-detail">$${vendedor.revenue.toFixed(2)} en ventas</div>
             </div>
             <div class="ranking-value">
@@ -651,46 +693,89 @@
       document.getElementById('productosRanking').innerHTML = html || '<li class="no-data">No hay datos disponibles</li>';
     }
 
-    function generateClientesRanking(orders) {
-      const clientStats = {};
+    async function updateAllLoginCounts() {
+      console.log('🚀 Función updateAllLoginCounts llamada');
 
-      orders.forEach(order => {
-        const clientKey = order.clienteNombre || order.clienteEmail || 'Cliente sin nombre';
-        const clientCode = order.clienteCodigo || '';
-        const key = `${clientKey}${clientCode ? ' ('+clientCode+')' : ''}`;
+      const confirmed = confirm(
+        '⚠️ ¿Estás seguro de que deseas actualizar el loginCount?\n\n' +
+        'Esta acción:\n' +
+        '- Establecerá loginCount = 1 para usuarios sin loginCount o con loginCount = 0\n' +
+        '- Incrementará loginCount en +1 para usuarios que ya tienen loginCount >= 1\n' +
+        '- Solo afectará usuarios aprobados (no pendientes)\n\n' +
+        '¿Deseas continuar?'
+      );
 
-        if (!clientStats[key]) {
-          clientStats[key] = {
-            ordenes: 0,
-            revenue: 0
-          };
+      if (!confirmed) {
+        console.log('🚫 Actualización de loginCount cancelada');
+        return;
+      }
+
+      try {
+        console.log('🔧 Iniciando actualización de loginCount...');
+
+        // Obtener todos los usuarios
+        const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
+        console.log(`📊 Total de usuarios en base de datos: ${usuariosSnapshot.size}`);
+
+        let updatedCount = 0;
+        let skippedCount = 0;
+
+        // Procesar cada usuario
+        for (const userDoc of usuariosSnapshot.docs) {
+          const userData = userDoc.data();
+          const userId = userDoc.id;
+
+          console.log(`\n🔍 Procesando: ${userData.email || userId}`);
+          console.log(`   - approved: ${userData.approved}`);
+          console.log(`   - role: ${userData.role}`);
+          console.log(`   - loginCount actual: ${userData.loginCount || 0}`);
+
+          // Solo actualizar usuarios aprobados (no pendientes)
+          const isApproved = userData.approved !== false && userData.role !== 'pending';
+
+          if (isApproved) {
+            const currentLoginCount = userData.loginCount || 0;
+            const newLoginCount = currentLoginCount === 0 ? 1 : currentLoginCount + 1;
+
+            console.log(`   - ES APROBADO: actualizando de ${currentLoginCount} a ${newLoginCount}`);
+
+            const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+            const userRef = doc(db, 'usuarios', userId);
+            await updateDoc(userRef, { loginCount: newLoginCount });
+
+            console.log(`✅ ACTUALIZADO: ${userData.email || userId} - loginCount: ${currentLoginCount} → ${newLoginCount}`);
+            updatedCount++;
+          } else {
+            console.log(`⏭️  NO APROBADO: omitiendo ${userData.email || userId}`);
+            skippedCount++;
+          }
         }
-        clientStats[key].ordenes += 1;
-        clientStats[key].revenue += (order.total || 0);
-      });
 
-      const ranking = Object.entries(clientStats)
-        .map(([name, stats]) => ({ name, ...stats }))
-        .sort((a, b) => b.ordenes - a.ordenes)
-        .slice(0, 10);
+        console.log('\n' + '='.repeat(50));
+        console.log('✅ Actualización completada:');
+        console.log(`   - Usuarios actualizados: ${updatedCount}`);
+        console.log(`   - Usuarios omitidos (no aprobados): ${skippedCount}`);
+        console.log(`   - Total procesado: ${usuariosSnapshot.size}`);
+        console.log('='.repeat(50));
 
-      const html = ranking.map((client, index) => {
-        const positionClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
-        return `
-          <li class="ranking-item">
-            <div class="ranking-position ${positionClass}">${index + 1}</div>
-            <div class="ranking-info">
-              <div class="ranking-name">${client.name}</div>
-              <div class="ranking-detail">$${client.revenue.toFixed(2)} en compras</div>
-            </div>
-            <div class="ranking-value">
-              ${client.ordenes} <span class="unit">órdenes</span>
-            </div>
-          </li>
-        `;
-      }).join('');
+        alert(
+          `✅ Actualización completada exitosamente\n\n` +
+          `📊 Usuarios actualizados: ${updatedCount}\n` +
+          `⏭️  Usuarios omitidos: ${skippedCount}\n` +
+          `📝 Total procesado: ${usuariosSnapshot.size}\n\n` +
+          `Recargando página en 2 segundos...`
+        );
 
-      document.getElementById('clientesRanking').innerHTML = html || '<li class="no-data">No hay datos disponibles</li>';
+        // Recargar la página automáticamente
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+
+      } catch (error) {
+        console.error('❌ Error actualizando loginCount:', error);
+        console.error('Stack trace:', error.stack);
+        alert('❌ Error al actualizar loginCount: ' + error.message);
+      }
     }
 
     async function generateUsuariosRanking() {
@@ -700,7 +785,6 @@
 
         // Lista de usuarios de prueba/desarrollo a excluir
         const testUsers = [
-          'cristiansan@gmail.com',
           'matensegiles@gmail.com',
           'matense.giles@gmail.com',
           'test@test.com.ar',
@@ -713,12 +797,16 @@
           const data = doc.data();
           const email = data.email || '';
 
-          // Excluir usuarios de prueba
-          if (!testUsers.includes(email.toLowerCase())) {
+          // Excluir usuarios de prueba Y usuarios no aprobados
+          const isTestUser = testUsers.includes(email.toLowerCase());
+          const isNotApproved = data.approved === false || data.role === 'pending';
+
+          if (!isTestUser && !isNotApproved) {
             usuarios.push({
               email: email,
               loginCount: data.loginCount || 0,
-              lastLogin: data.lastLogin
+              lastLogin: data.lastLogin,
+              displayName: data.displayName || email
             });
           }
         });
@@ -757,6 +845,9 @@
         document.getElementById('usuariosRanking').innerHTML = '<li class="no-data">Error cargando datos</li>';
       }
     }
+
+    // Make function globally accessible
+    window.updateAllLoginCounts = updateAllLoginCounts;
   </script>
 </body>
 </html>

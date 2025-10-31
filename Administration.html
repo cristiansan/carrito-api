@@ -3907,7 +3907,7 @@
           <input type="file"
                  id="camera-input-${order.id}"
                  accept="image/*"
-                 capture="camera"
+                 capture
                  onchange="handlePreparacionPhoto('${order.id}', this)"
                  style="display: none;">
           <button class="edit-order-btn"
@@ -4616,11 +4616,11 @@
         <div style="display: flex; gap: 15px; flex-direction: column;">
           <button onclick="selectFromGallery('${orderId}'); closePhotoModal()"
                   style="padding: 15px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
-            🖼️ Seleccionar de Galería
+            📁 Cargar Foto Guardada
           </button>
           <button onclick="captureWithCamera('${orderId}'); closePhotoModal()"
                   style="padding: 15px; border: none; background: #2196F3; color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
-            📷 Tomar con Cámara
+            📷 Abrir Cámara
           </button>
           <button onclick="closePhotoModal()"
                   style="padding: 10px; border: 1px solid #ddd; background: white; color: #666; border-radius: 8px; cursor: pointer;">
@@ -4663,8 +4663,136 @@
      * Abre cámara para capturar foto
      * @param {string} orderId - ID de la orden
      */
-    window.captureWithCamera = function(orderId) {
-      document.getElementById('camera-input-' + orderId).click();
+    window.captureWithCamera = async function(orderId) {
+      try {
+        // Check if getUserMedia is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('❌ Tu navegador no soporta acceso directo a la cámara.\n\nUsando selector de archivos como alternativa.');
+          document.getElementById('camera-input-' + orderId).click();
+          return;
+        }
+
+        // Request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }, // Prefer back camera on mobile
+          audio: false
+        });
+
+        // Create camera modal
+        const cameraModal = document.createElement('div');
+        cameraModal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.95);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 20px;
+          box-sizing: border-box;
+        `;
+
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+        video.style.cssText = `
+          max-width: 100%;
+          max-height: 70vh;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        `;
+        video.srcObject = stream;
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.cssText = `
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+          justify-content: center;
+        `;
+
+        const captureBtn = document.createElement('button');
+        captureBtn.textContent = '📸 Capturar Foto';
+        captureBtn.style.cssText = `
+          padding: 15px 30px;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        `;
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = '❌ Cancelar';
+        cancelBtn.style.cssText = `
+          padding: 15px 30px;
+          background: #f44336;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        `;
+
+        // Capture photo
+        captureBtn.addEventListener('click', () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0);
+
+          // Convert canvas to blob
+          canvas.toBlob(async (blob) => {
+            // Stop camera
+            stream.getTracks().forEach(track => track.stop());
+            document.body.removeChild(cameraModal);
+
+            // Create file from blob
+            const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+
+            // Create a temporary input to trigger handlePreparacionPhoto
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            const input = document.getElementById('camera-input-' + orderId);
+            if (input) {
+              input.files = dataTransfer.files;
+              await handlePreparacionPhoto(orderId, input);
+            }
+          }, 'image/jpeg', 0.95);
+        });
+
+        // Cancel camera
+        cancelBtn.addEventListener('click', () => {
+          stream.getTracks().forEach(track => track.stop());
+          document.body.removeChild(cameraModal);
+        });
+
+        buttonContainer.appendChild(captureBtn);
+        buttonContainer.appendChild(cancelBtn);
+        cameraModal.appendChild(video);
+        cameraModal.appendChild(buttonContainer);
+        document.body.appendChild(cameraModal);
+
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          alert('❌ Permiso de cámara denegado.\n\nPor favor permite el acceso a la cámara en la configuración de tu navegador.');
+        } else if (error.name === 'NotFoundError') {
+          alert('❌ No se encontró ninguna cámara en tu dispositivo.');
+        } else {
+          alert('❌ Error al acceder a la cámara: ' + error.message);
+        }
+        // Fallback to file input
+        document.getElementById('camera-input-' + orderId).click();
+      }
     }
 
     /**
@@ -6893,6 +7021,11 @@
                         <i class="material-icons mdc-button__icon" aria-hidden="true">check_circle</i>
                         <span class="mdc-button__label">Aprobar Usuario</span>
                       </button>
+                      <button class="mdc-button mdc-button--outlined" onclick="cancelUserReview('${userId}')" style="flex: 1;">
+                        <span class="mdc-button__ripple"></span>
+                        <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
+                        <span class="mdc-button__label">Cancelar</span>
+                      </button>
                       <button class="mdc-button mdc-button--raised" onclick="ignoreUser('${userId}', '${user.email}')" style="background-color: #757575 !important; flex: 1;">
                         <span class="mdc-button__ripple"></span>
                         <i class="material-icons mdc-button__icon" aria-hidden="true">block</i>
@@ -7226,10 +7359,135 @@
         }
       }
 
+      /**
+       * Cancela la revisión de un usuario (oculta la tarjeta sin hacer cambios)
+       * @param {string} userId - ID del usuario en Firestore
+       * @version 0.39
+       */
+      function cancelUserReview(userId) {
+        // Buscar el elemento padre que contiene toda la tarjeta del usuario
+        const userCard = document.querySelector(`button[onclick*="'${userId}'"]`)?.closest('.admin-section');
+
+        if (userCard) {
+          // Ocultar la tarjeta con una animación suave
+          userCard.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+          userCard.style.opacity = '0';
+          userCard.style.transform = 'translateX(-20px)';
+
+          setTimeout(() => {
+            userCard.style.display = 'none';
+
+            // Verificar si quedan usuarios pendientes visibles
+            const pendingUsersList = document.getElementById('pendingUsersList');
+            const visibleCards = pendingUsersList.querySelectorAll('.admin-section[style*="display: none"]').length;
+            const totalCards = pendingUsersList.querySelectorAll('.admin-section').length;
+
+            if (visibleCards === totalCards) {
+              // Si todos están ocultos, mostrar mensaje de "no hay usuarios pendientes"
+              document.getElementById('noPendingUsers').style.display = 'block';
+            }
+          }, 300);
+
+          console.log(`🚫 Revisión de usuario ${userId} cancelada (usuario oculto)`);
+        }
+      }
+
+      /**
+       * Actualiza loginCount para todos los usuarios
+       * - Si loginCount es 0 o no existe: establece en 1
+       * - Si loginCount >= 1: incrementa en +1
+       * @version 0.42
+       */
+      async function updateAllLoginCounts() {
+        console.log('🚀 Función updateAllLoginCounts llamada');
+
+        const confirmed = confirm(
+          '⚠️ ¿Estás seguro de que deseas actualizar el loginCount?\n\n' +
+          'Esta acción:\n' +
+          '- Establecerá loginCount = 1 para usuarios sin loginCount o con loginCount = 0\n' +
+          '- Incrementará loginCount en +1 para usuarios que ya tienen loginCount >= 1\n' +
+          '- Solo afectará usuarios aprobados (no pendientes)\n\n' +
+          '¿Deseas continuar?'
+        );
+
+        if (!confirmed) {
+          console.log('🚫 Actualización de loginCount cancelada');
+          return;
+        }
+
+        try {
+          console.log('🔧 Iniciando actualización de loginCount...');
+
+          const db = firebase.firestore();
+          const { collection, getDocs, doc, updateDoc } = firebase.firestoreHelpers;
+
+          // Obtener todos los usuarios
+          const usuariosRef = collection(db, 'usuarios');
+          const snapshot = await getDocs(usuariosRef);
+
+          console.log(`📊 Total de usuarios en base de datos: ${snapshot.size}`);
+
+          let updatedCount = 0;
+          let skippedCount = 0;
+
+          // Procesar cada usuario
+          for (const userDoc of snapshot.docs) {
+            const userData = userDoc.data();
+            const userId = userDoc.id;
+
+            console.log(`\n🔍 Procesando: ${userData.email || userId}`);
+            console.log(`   - approved: ${userData.approved}`);
+            console.log(`   - role: ${userData.role}`);
+            console.log(`   - loginCount actual: ${userData.loginCount || 0}`);
+
+            // Solo actualizar usuarios aprobados (no pendientes)
+            const isApproved = userData.approved !== false && userData.role !== 'pending';
+
+            if (isApproved) {
+              const currentLoginCount = userData.loginCount || 0;
+              const newLoginCount = currentLoginCount === 0 ? 1 : currentLoginCount + 1;
+
+              console.log(`   - ES APROBADO: actualizando de ${currentLoginCount} a ${newLoginCount}`);
+
+              const userRef = doc(db, 'usuarios', userId);
+              await updateDoc(userRef, { loginCount: newLoginCount });
+
+              console.log(`✅ ACTUALIZADO: ${userData.email || userId} - loginCount: ${currentLoginCount} → ${newLoginCount}`);
+              updatedCount++;
+            } else {
+              console.log(`⏭️  NO APROBADO: omitiendo ${userData.email || userId}`);
+              skippedCount++;
+            }
+          }
+
+          console.log('\n' + '='.repeat(50));
+          console.log('✅ Actualización completada:');
+          console.log(`   - Usuarios actualizados: ${updatedCount}`);
+          console.log(`   - Usuarios omitidos (no aprobados): ${skippedCount}`);
+          console.log(`   - Total procesado: ${snapshot.size}`);
+          console.log('='.repeat(50));
+
+          alert(
+            `✅ Actualización completada exitosamente\n\n` +
+            `📊 Usuarios actualizados: ${updatedCount}\n` +
+            `⏭️  Usuarios omitidos: ${skippedCount}\n` +
+            `📝 Total procesado: ${snapshot.size}\n\n` +
+            `IMPORTANTE: Recarga la página de estadísticas (F5) para ver los cambios.`
+          );
+
+        } catch (error) {
+          console.error('❌ Error actualizando loginCount:', error);
+          console.error('Stack trace:', error.stack);
+          alert('❌ Error al actualizar loginCount: ' + error.message);
+        }
+      }
+
       // Make functions globally accessible
       window.loadPendingUsers = loadPendingUsers;
       window.approveUser = approveUser;
       window.ignoreUser = ignoreUser;
+      window.cancelUserReview = cancelUserReview;
+      window.updateAllLoginCounts = updateAllLoginCounts;
 
       // Initialize tab bar
       const tabBar = document.querySelector('.mdc-tab-bar');

@@ -402,18 +402,21 @@
           userData.approved = false;  // Pendiente de aprobación por admin
           userData.role = 'pending';  // pending, usuario, vendedor, admin
           userData.createdAt = serverTimestamp();
+          userData.loginCount = 1;  // Primer login
           await setDoc(userRef, userData);
           console.log('New user document created (pending approval):', user.uid, user.email);
         } else {
-          // Usuario existente - solo actualizar datos básicos, preservar admin
+          // Usuario existente - actualizar datos básicos y incrementar loginCount
+          const currentLoginCount = userDoc.data().loginCount || 0;
           await updateDoc(userRef, {
             email: userData.email,
             displayName: userData.displayName,
             photoURL: userData.photoURL,
             lastLogin: userData.lastLogin,
-            provider: userData.provider
+            provider: userData.provider,
+            loginCount: currentLoginCount + 1  // Incrementar contador de logins
           });
-          console.log('User document updated:', user.uid, user.email);
+          console.log('User document updated:', user.uid, user.email, '- Login count:', currentLoginCount + 1);
         }
         
         return true;
