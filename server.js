@@ -206,6 +206,113 @@ app.post('/api/send-welcome-email', async (req, res) => {
   }
 });
 
+// Endpoint para el chatbot con IA
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { userQuery, products, intent } = req.body;
+
+    console.log(`🤖 [CHATBOT] Nueva consulta: "${userQuery}"`);
+    console.log(`📦 [CHATBOT] Productos encontrados: ${products.length}`);
+    console.log(`🎯 [CHATBOT] Intención: ${intent}`);
+
+    // Validar datos recibidos
+    if (!userQuery || !products) {
+      return res.status(400).json({
+        ok: false,
+        message: 'Faltan parámetros requeridos'
+      });
+    }
+
+    // Construir contexto para Claude
+    let productContext = '';
+    if (products.length > 0) {
+      productContext = 'Productos encontrados:\n';
+      products.forEach((p, index) => {
+        productContext += `${index + 1}. ${p.articulo || 'Sin código'}: ${p.descripcion || 'Sin descripción'} - Precio: $${p.precio || 'Consultar'} - Stock: ${p.stock || 0} unidades\n`;
+      });
+    } else {
+      productContext = 'No se encontraron productos que coincidan con la búsqueda.';
+    }
+
+    // Prompt para Claude optimizado para ser útil y conciso
+    const systemPrompt = `Eres un asistente virtual de ventas para South Traders, una tienda de productos electrónicos.
+
+Tu objetivo es ayudar al cliente a encontrar productos y tomar decisiones de compra de manera amigable y profesional.
+
+Reglas importantes:
+- Sé conciso y directo (máximo 2-3 oraciones)
+- Si hay productos disponibles, recomienda máximo 2 productos
+- Menciona el precio y stock si es relevante
+- Si no hay productos, sugiere reformular la búsqueda
+- Usa un tono amigable pero profesional
+- NO inventes información que no esté en los datos proporcionados
+- Si un producto no tiene stock, menciónalo
+
+Contexto de la consulta:
+Pregunta del usuario: "${userQuery}"
+Intención detectada: ${intent}
+
+${productContext}`;
+
+    // Llamar a la API de Claude usando Anthropic SDK
+    // NOTA: Si no tienes instalado @anthropic-ai/sdk, usa fetch directo
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY || 'tu-api-key-aqui',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-haiku-20240307', // Modelo más económico
+        max_tokens: 300, // Límite de tokens para respuestas cortas
+        messages: [{
+          role: 'user',
+          content: systemPrompt
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ [CHATBOT] Error de Claude API:', errorText);
+      throw new Error('Error en la API de Claude');
+    }
+
+    const data = await response.json();
+    const botResponse = data.content[0].text;
+
+    console.log(`✅ [CHATBOT] Respuesta generada: "${botResponse.substring(0, 100)}..."`);
+
+    res.json({
+      ok: true,
+      response: botResponse,
+      productsCount: products.length,
+      intent: intent
+    });
+
+  } catch (error) {
+    console.error('❌ [CHATBOT] Error:', error);
+
+    // Respuesta de fallback sin IA
+    let fallbackResponse = 'Encontré algunos productos que podrían interesarte. ';
+
+    if (req.body.products && req.body.products.length > 0) {
+      const firstProduct = req.body.products[0];
+      fallbackResponse += `Te recomiendo el ${firstProduct.articulo || 'producto'} por $${firstProduct.precio || 'consultar precio'}.`;
+    } else {
+      fallbackResponse = 'No encontré productos con esos criterios. ¿Podrías intentar con otras palabras clave?';
+    }
+
+    res.json({
+      ok: true,
+      response: fallbackResponse,
+      productsCount: req.body.products ? req.body.products.length : 0,
+      fallback: true
+    });
+  }
+});
+
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Proxy escuchando en http://localhost:${PORT}`);
