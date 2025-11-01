@@ -511,8 +511,7 @@ async function initChatbotModal() {
 
       // Obtener todas las interacciones de Firebase
       const interactionsRef = collection(db, 'chatbot_interactions');
-      const q = query(interactionsRef, orderBy('createdAt', 'desc'), firestoreLimit(1000));
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(interactionsRef);
 
       if (querySnapshot.empty) {
         alert('No hay preguntas para exportar');
@@ -530,9 +529,20 @@ async function initChatbotModal() {
           'Pregunta': interaction.question || 'N/A',
           'Respuesta': interaction.response || 'N/A',
           'Intención': interaction.intent || 'N/A',
-          'Productos Encontrados': interaction.productsCount || 0
+          'Productos Encontrados': interaction.productsCount || 0,
+          '_timestamp': interaction.createdAt // Para ordenar
         });
       });
+
+      // Ordenar por fecha descendente (más recientes primero)
+      data.sort((a, b) => {
+        const dateA = a._timestamp ? new Date(a._timestamp).getTime() : 0;
+        const dateB = b._timestamp ? new Date(b._timestamp).getTime() : 0;
+        return dateB - dateA;
+      });
+
+      // Remover el campo temporal de ordenamiento
+      data.forEach(item => delete item._timestamp);
 
       console.log(`✅ ${data.length} interacciones encontradas`);
 
