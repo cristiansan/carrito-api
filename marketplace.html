@@ -223,7 +223,7 @@
     
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
     header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; }
-    .header-logo { height: auto; max-width: 150px; width: 100%; object-fit: contain; position: absolute; left: 16px; }
+    .header-logo { height: auto; max-width: 195px; width: 100%; object-fit: contain; position: absolute; left: 16px; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
     .header-stats {
       display: flex;
@@ -636,8 +636,8 @@
     /* === CHATBOT BUTTON === */
     .chatbot-btn {
       position: fixed !important;
-      top: 85px !important;
-      right: 20px !important;
+      top: 16px !important;
+      left: 225px !important;
       z-index: 1001 !important;
       width: 70px;
       height: 60px;
@@ -2454,6 +2454,12 @@
     @media (max-width: 768px) {
       .header-logo {
         display: none;
+      }
+
+      /* Reposicionar chatbot cuando logo está oculto */
+      .chatbot-btn {
+        top: 85px !important;
+        left: 20px !important;
       }
     }
   </style>
