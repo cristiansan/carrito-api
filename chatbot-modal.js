@@ -6,7 +6,7 @@
 // ==================== FIREBASE CONFIGURATION ====================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy, limit as firestoreLimit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
@@ -339,6 +339,33 @@ async function initChatbotModal() {
     });
   });
 
+  // Función para guardar interacción en Firebase
+  async function saveChatInteraction(userQuestion, botResponse, intent, productsCount) {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.log('⚠️ No hay usuario autenticado, no se guardará la interacción');
+        return;
+      }
+
+      const interactionData = {
+        userEmail: user.email,
+        userName: user.displayName || user.email,
+        question: userQuestion,
+        response: botResponse,
+        intent: intent || 'unknown',
+        productsCount: productsCount || 0,
+        timestamp: serverTimestamp(),
+        createdAt: new Date().toISOString()
+      };
+
+      await addDoc(collection(db, 'chatbot_interactions'), interactionData);
+      console.log('✅ Interacción guardada en Firebase');
+    } catch (error) {
+      console.error('❌ Error guardando interacción:', error);
+    }
+  }
+
   async function sendMessage() {
     const message = chatInput.value.trim();
     if (!message) return;
@@ -359,11 +386,15 @@ async function initChatbotModal() {
 
       hideTyping();
 
+      let responseText = '';
       if (searchResult.products.length === 0) {
-        addBotMessage('No encontré productos que coincidan con tu búsqueda. ¿Podrías ser más específico?', []);
+        responseText = 'No encontré productos que coincidan con tu búsqueda. ¿Podrías ser más específico?';
+        addBotMessage(responseText, []);
+
+        // Guardar interacción sin productos
+        await saveChatInteraction(message, responseText, searchResult.intent, 0);
       } else {
         // Generar respuesta según intención
-        let responseText = '';
         if (searchResult.intent === 'stock') {
           responseText = `📦 Encontré ${searchResult.products.length} productos con stock disponible:`;
         } else if (searchResult.intent === 'cheap') {
@@ -378,6 +409,9 @@ async function initChatbotModal() {
 
         const limitedProducts = searchResult.products.slice(0, 5);
         addBotMessage(responseText, limitedProducts);
+
+        // Guardar interacción con productos
+        await saveChatInteraction(message, responseText, searchResult.intent, searchResult.products.length);
       }
     } catch (error) {
       console.error('❌ Error:', error);
@@ -468,6 +502,67 @@ async function initChatbotModal() {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  // Función para exportar preguntas a Excel
+  async function exportQuestionsToExcel() {
+    try {
+      console.log('📥 Iniciando exportación de preguntas...');
+
+      // Obtener todas las interacciones de Firebase
+      const interactionsRef = collection(db, 'chatbot_interactions');
+      const q = query(interactionsRef, orderBy('createdAt', 'desc'), firestoreLimit(1000));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        alert('No hay preguntas para exportar');
+        return;
+      }
+
+      // Preparar datos para Excel
+      const data = [];
+      querySnapshot.forEach((doc) => {
+        const interaction = doc.data();
+        data.push({
+          'Fecha': interaction.createdAt ? new Date(interaction.createdAt).toLocaleString('es-AR') : 'N/A',
+          'Usuario': interaction.userName || 'N/A',
+          'Email': interaction.userEmail || 'N/A',
+          'Pregunta': interaction.question || 'N/A',
+          'Respuesta': interaction.response || 'N/A',
+          'Intención': interaction.intent || 'N/A',
+          'Productos Encontrados': interaction.productsCount || 0
+        });
+      });
+
+      console.log(`✅ ${data.length} interacciones encontradas`);
+
+      // Cargar librería SheetJS dinámicamente
+      const script = document.createElement('script');
+      script.src = 'https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js';
+      script.onload = () => {
+        // Crear libro de Excel
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Preguntas Chatbot');
+
+        // Descargar archivo
+        const filename = `chatbot_preguntas_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, filename);
+        console.log('✅ Archivo Excel descargado:', filename);
+      };
+      document.head.appendChild(script);
+
+    } catch (error) {
+      console.error('❌ Error exportando preguntas:', error);
+      alert('Error al exportar preguntas. Por favor verifica los permisos de Firebase.');
+    }
+  }
+
+  // Event listener para botón de exportar
+  const exportBtn = document.getElementById('chatbotExportBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportQuestionsToExcel);
+    console.log('✅ Botón de exportar configurado');
   }
 
   console.log('✅ Chatbot modal inicializado');

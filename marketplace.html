@@ -784,6 +784,28 @@
       flex: 1;
     }
 
+    .chatbot-export-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .chatbot-export-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .chatbot-export-btn .material-icons {
+      font-size: 18px;
+    }
+
     .chatbot-modal-close {
       background: rgba(255,255,255,0.2);
       border: none;
@@ -2653,6 +2675,9 @@
     <div class="chatbot-modal-header">
       <span class="material-icons">smart_toy</span>
       <h3>Asistente Virtual</h3>
+      <button class="chatbot-export-btn" id="chatbotExportBtn" title="Exportar preguntas a Excel">
+        <span class="material-icons">download</span>
+      </button>
       <button class="chatbot-modal-close" onclick="closeChatbotModal()">
         <span class="material-icons">close</span>
       </button>
@@ -7597,7 +7622,7 @@
     async function loadChatbot() {
       // Importar chatbot-modal.js dinámicamente
       try {
-        await import('./chatbot-modal.js?v=9');
+        await import('./chatbot-modal.js?v=10');
         console.log('✅ Chatbot modal cargado');
       } catch (error) {
         console.error('❌ Error cargando chatbot:', error);
