@@ -778,10 +778,23 @@
       flex-shrink: 0;
     }
 
+    .chatbot-header-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
     .chatbot-modal-header h3 {
       font-size: 18px;
       font-weight: 500;
-      flex: 1;
+      margin: 0;
+    }
+
+    .chatbot-beta-badge {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
     }
 
     .chatbot-export-btn {
@@ -2674,7 +2687,10 @@
     <!-- Header -->
     <div class="chatbot-modal-header">
       <span class="material-icons">smart_toy</span>
-      <h3>Asistente Virtual</h3>
+      <div class="chatbot-header-text">
+        <h3>Asistente Virtual</h3>
+        <span class="chatbot-beta-badge">Versión de prueba, solo visible para Santi y Cris</span>
+      </div>
       <button class="chatbot-export-btn" id="chatbotExportBtn" title="Exportar preguntas a Excel">
         <span class="material-icons">download</span>
       </button>
