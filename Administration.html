@@ -6958,12 +6958,36 @@
                   <div style="flex: 1;">
                     <h3 style="margin: 0 0 10px 0;">
                       <i class="material-icons" style="vertical-align: middle; color: #666;">person</i>
-                      ${user.displayName || 'Usuario sin nombre'}
+                      ${user.displayName || user.name || 'Usuario sin nombre'}
                     </h3>
                     <p style="margin: 5px 0; color: #666;">
                       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">email</i>
                       <strong>Email:</strong> ${user.email}
                     </p>
+                    ${user.name ? `
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">badge</i>
+                      <strong>Nombre:</strong> ${user.name}
+                    </p>
+                    ` : ''}
+                    ${user.company ? `
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">business</i>
+                      <strong>Empresa:</strong> ${user.company}
+                    </p>
+                    ` : ''}
+                    ${user.country ? `
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">public</i>
+                      <strong>País:</strong> ${user.country}
+                    </p>
+                    ` : ''}
+                    ${user.phone ? `
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">phone</i>
+                      <strong>Teléfono:</strong> ${user.phone}
+                    </p>
+                    ` : ''}
                     <p style="margin: 5px 0; color: #666;">
                       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">access_time</i>
                       <strong>Fecha registro:</strong> ${formattedDate}
