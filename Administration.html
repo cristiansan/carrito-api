@@ -6964,6 +6964,12 @@
                       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">email</i>
                       <strong>Email:</strong> ${user.email}
                     </p>
+                    ${user.provider ? `
+                    <p style="margin: 5px 0; color: #666;">
+                      <i class="material-icons" style="vertical-align: middle; font-size: 18px;">${user.provider === 'google.com' ? 'account_circle' : 'mail'}</i>
+                      <strong>Método:</strong> ${user.provider === 'google.com' ? '🔵 Google' : '📧 Email'}
+                    </p>
+                    ` : ''}
                     ${user.name ? `
                     <p style="margin: 5px 0; color: #666;">
                       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">badge</i>
@@ -6987,6 +6993,15 @@
                       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">phone</i>
                       <strong>Teléfono:</strong> ${user.phone}
                     </p>
+                    ` : ''}
+                    ${!user.name && !user.company && !user.country && !user.phone ? `
+                    <div style="margin: 10px 0; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                      <p style="margin: 0; color: #856404; font-size: 13px;">
+                        <i class="material-icons" style="vertical-align: middle; font-size: 16px;">info</i>
+                        <strong>Información incompleta:</strong> Este usuario no proporcionó datos adicionales.
+                        ${user.provider === 'google.com' ? 'Se registró con Google.' : 'Puede ser un registro antiguo o con Google.'}
+                      </p>
+                    </div>
                     ` : ''}
                     <p style="margin: 5px 0; color: #666;">
                       <i class="material-icons" style="vertical-align: middle; font-size: 18px;">access_time</i>
