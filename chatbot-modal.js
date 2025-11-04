@@ -200,48 +200,155 @@ async function initChatbotModal() {
       const queryLower = userQuery.toLowerCase();
       console.log(`🎯 SmartSearch: "${userQuery}"`);
 
-      // Detectar intención: Stock disponible
-      if (queryLower.includes('stock') || queryLower.includes('disponible')) {
+      // ========== FILTRO DE PREGUNTAS NO RELACIONADAS ==========
+      // Palabras clave de temas no relacionados con el negocio
+      const unrelatedTopics = [
+        'clima', 'tiempo', 'temperatura', 'lluvia', 'sol',
+        'fútbol', 'deporte', 'partido', 'gol',
+        'política', 'presidente', 'elección',
+        'receta', 'cocina', 'comida', 'restaurante',
+        'película', 'cine', 'serie', 'netflix',
+        'música', 'canción', 'cantante', 'banda',
+        'libro', 'autor', 'novela',
+        'viaje', 'turismo', 'hotel', 'avión',
+        'salud', 'médico', 'enfermedad', 'síntoma',
+        'color favorito', 'edad', 'cumpleaños', 'signo',
+        'matemática', 'suma', 'resta', 'división',
+        'historia', 'geografía', 'país', 'capital'
+      ];
+
+      const isUnrelated = unrelatedTopics.some(topic => queryLower.includes(topic));
+
+      // También detectar preguntas personales al bot
+      const personalQuestions = [
+        'quién eres', 'cómo te llamas', 'qué eres', 'tu nombre',
+        'dónde vives', 'cuántos años', 'de dónde eres',
+        'te gusta', 'prefieres', 'opinas'
+      ];
+
+      const isPersonal = personalQuestions.some(q => queryLower.includes(q));
+
+      if (isUnrelated || isPersonal) {
+        console.log('⚠️ Pregunta no relacionada detectada');
+        return {
+          intent: 'unrelated',
+          products: [],
+          message: 'Lo siento, esa pregunta no está relacionada con nuestros productos. Soy un asistente especializado en ayudarte a encontrar celulares y productos tecnológicos. ¿En qué producto puedo ayudarte?'
+        };
+      }
+
+      // ========== SALUDOS Y AYUDA ==========
+      if (queryLower.match(/^(hola|buenos días|buenas tardes|buenas noches|hey|hi|saludos)$/)) {
+        console.log('✅ Intención: Saludo');
+        return {
+          intent: 'greeting',
+          products: [],
+          message: '¡Hola! 👋 Soy tu asistente virtual. Puedo ayudarte a encontrar celulares, consultar precios, verificar stock y recomendarte los mejores productos. ¿Qué necesitas?'
+        };
+      }
+
+      if (queryLower.includes('ayuda') || queryLower.includes('qué puedes hacer') || queryLower.includes('cómo funciona')) {
+        console.log('✅ Intención: Ayuda');
+        return {
+          intent: 'help',
+          products: [],
+          message: 'Puedo ayudarte con:\n\n📱 Buscar celulares por marca (iPhone, Samsung, Xiaomi, Motorola)\n💰 Mostrar productos económicos\n📦 Verificar stock disponible\n⭐ Recomendar productos con mejor relación calidad/precio\n🔍 Buscar modelos específicos\n\n¿Qué te gustaría consultar?'
+        };
+      }
+
+      // ========== CONSULTAS DE PRECIO ==========
+      if (queryLower.includes('cuánto cuesta') || queryLower.includes('cuál es el precio') ||
+          queryLower.includes('precio de') || queryLower.includes('valor de')) {
+        console.log('✅ Intención: Consulta de precio');
+        // Extraer modelo del query (después de "precio de" o similar)
+        const words = queryLower.split(' ');
+        const searchTerm = words.slice(-2).join(' '); // últimas 2 palabras
+        const products = await this.searchByText(searchTerm);
+
+        if (products.length > 0) {
+          return {
+            intent: 'price',
+            products: products,
+            message: `Estos son los precios que encontré:`
+          };
+        } else {
+          return {
+            intent: 'price',
+            products: [],
+            message: 'No encontré ese producto. ¿Podrías especificar mejor el modelo que buscas?'
+          };
+        }
+      }
+
+      // ========== STOCK DISPONIBLE ==========
+      if (queryLower.includes('stock') || queryLower.includes('disponible') ||
+          queryLower.includes('hay') || queryLower.includes('tienen')) {
         console.log('✅ Intención detectada: Stock');
-        return { intent: 'stock', products: await this.searchWithStock() };
+        const products = await this.searchWithStock();
+        return {
+          intent: 'stock',
+          products: products,
+          message: products.length > 0
+            ? `📦 Tenemos ${products.length} productos disponibles con stock inmediato:`
+            : 'Lo siento, no hay productos con stock en este momento.'
+        };
       }
 
-      // Detectar intención: Productos baratos
-      if (queryLower.includes('barato') || queryLower.includes('económico') || queryLower.includes('más baratos')) {
+      // ========== PRODUCTOS BARATOS/ECONÓMICOS ==========
+      if (queryLower.includes('barato') || queryLower.includes('económico') ||
+          queryLower.includes('más baratos') || queryLower.includes('menor precio') ||
+          queryLower.includes('más barato')) {
         console.log('✅ Intención detectada: Baratos');
-        return { intent: 'cheap', products: await this.getCheapestProducts() };
+        const products = await this.getCheapestProducts();
+        return {
+          intent: 'cheap',
+          products: products,
+          message: products.length > 0
+            ? `💰 Estos son nuestros productos más económicos:`
+            : 'Lo siento, no pude encontrar productos en este momento.'
+        };
       }
 
-      // Detectar intención: Mejor relación precio/calidad o recomendaciones
+      // ========== COMPARACIÓN DE PRODUCTOS ==========
+      if (queryLower.includes('mejor entre') || queryLower.includes('diferencia entre') ||
+          queryLower.includes('comparar') || queryLower.includes('vs') || queryLower.includes('o el')) {
+        console.log('✅ Intención: Comparación');
+        // Extraer los productos a comparar
+        const products = await this.searchByText(queryLower);
+        return {
+          intent: 'comparison',
+          products: products,
+          message: products.length >= 2
+            ? `Aquí tienes los productos que mencionaste para que puedas compararlos:`
+            : 'Para comparar productos, necesito que me digas qué modelos quieres ver. Por ejemplo: "¿Cuál es mejor, iPhone 13 o Samsung S21?"'
+        };
+      }
+
+      // ========== RECOMENDACIONES ==========
       const isRecommendation =
         queryLower.includes('conviene') ||
         queryLower.includes('recomiend') ||
         queryLower.includes('recomendación') ||
-        queryLower.includes('mejor') ||
+        queryLower.includes('sugerir') ||
+        queryLower.includes('aconsejar') ||
+        queryLower.includes('mejor opción') ||
         queryLower.includes('calidad') ||
         queryLower.includes('precio/calidad') ||
         queryLower.includes('precio calidad') ||
         queryLower.includes('bueno') ||
         queryLower.includes('vale la pena');
 
-      console.log(`🤔 ¿Es recomendación? ${isRecommendation}`);
-      console.log(`📱 ¿Incluye celular? ${queryLower.includes('celular')}`);
-
-      // Si pregunta por celulares + recomendación
+      // Recomendación de celulares
       if ((queryLower.includes('celular') || queryLower.includes('teléfono') || queryLower.includes('phone')) && isRecommendation) {
         console.log('✅ Intención: Recomendación de celular (precio/calidad)');
         const celulares = await this.searchCellphonesBestSellers('celular');
-        console.log(`📱 Total celulares encontrados: ${celulares.length}`);
 
-        // Filtrar celulares con stock y ordenar por mejor relación precio/stock
         const conStock = celulares.filter(p => {
           const stock = parseInt(p.stock || p.stockTeorico || p.Stock) || 0;
           const precio = p.precio1 || p.precio || p.Precio || 0;
           return stock > 0 && precio > 0;
         });
-        console.log(`📦 Celulares con stock y precio: ${conStock.length}`);
 
-        // Ordenar por score: (stock * 10 / precio) - más stock y menos precio = mejor score
         const sorted = conStock.sort((a, b) => {
           const stockA = parseInt(a.stock || a.stockTeorico || a.Stock) || 0;
           const stockB = parseInt(b.stock || b.stockTeorico || b.Stock) || 0;
@@ -257,15 +364,20 @@ async function initChatbotModal() {
         return {
           intent: 'recommendation',
           products: sorted.slice(0, 10),
-          message: 'mejores celulares relación precio/calidad'
+          message: sorted.length > 0
+            ? '⭐ Estos son los celulares que más te convienen por su relación calidad/precio y disponibilidad:'
+            : 'En este momento no tengo celulares disponibles para recomendar.'
         };
       }
 
-      // Si pregunta por iPhone o Samsung específico + recomendación
-      if ((queryLower.includes('iphone') || queryLower.includes('samsung')) && isRecommendation) {
-        const marca = queryLower.includes('iphone') ? 'iphone' : 'samsung';
+      // Recomendación de marca específica
+      if ((queryLower.includes('iphone') || queryLower.includes('samsung') ||
+           queryLower.includes('xiaomi') || queryLower.includes('motorola')) && isRecommendation) {
+        const marca = queryLower.includes('iphone') ? 'iPhone' :
+                      queryLower.includes('samsung') ? 'Samsung' :
+                      queryLower.includes('xiaomi') ? 'Xiaomi' : 'Motorola';
         console.log(`✅ Intención: Recomendación de ${marca}`);
-        const productos = await this.searchCellphonesBestSellers(marca);
+        const productos = await this.searchCellphonesBestSellers(marca.toLowerCase());
 
         const conStock = productos.filter(p => {
           const stock = parseInt(p.stock || p.stockTeorico || p.Stock) || 0;
@@ -276,11 +388,13 @@ async function initChatbotModal() {
         return {
           intent: 'recommendation',
           products: conStock.slice(0, 10),
-          message: `mejores ${marca} disponibles`
+          message: conStock.length > 0
+            ? `⭐ Los mejores ${marca} disponibles con mejor relación precio/calidad:`
+            : `Lo siento, no tengo ${marca} con stock disponible en este momento.`
         };
       }
 
-      // Recomendación general (sin categoría específica)
+      // Recomendación general
       if (isRecommendation) {
         console.log('✅ Intención: Recomendación general');
         const allProducts = await this.getAllProducts();
@@ -290,7 +404,6 @@ async function initChatbotModal() {
           return stock > 0 && precio > 0;
         });
 
-        // Ordenar por mejor relación stock/precio
         const sorted = conStock.sort((a, b) => {
           const stockA = parseInt(a.stock || a.stockTeorico || a.Stock) || 0;
           const stockB = parseInt(b.stock || b.stockTeorico || b.Stock) || 0;
@@ -306,17 +419,45 @@ async function initChatbotModal() {
         return {
           intent: 'recommendation',
           products: sorted.slice(0, 10),
-          message: 'productos recomendados'
+          message: sorted.length > 0
+            ? '⭐ Estos son los productos que más te recomiendo por su relación precio/calidad:'
+            : 'En este momento no tengo productos disponibles para recomendar.'
         };
       }
 
-      // Celulares más vendidos (sin recomendación)
-      if (queryLower.includes('celular') || queryLower.includes('iphone') || queryLower.includes('samsung')) {
-        return { intent: 'bestsellers', products: await this.searchCellphonesBestSellers(userQuery) };
+      // ========== BÚSQUEDA DE MARCAS ESPECÍFICAS ==========
+      const brands = ['iphone', 'samsung', 'xiaomi', 'motorola', 'galaxy', 'redmi'];
+      const hasBrand = brands.some(brand => queryLower.includes(brand));
+
+      if (hasBrand) {
+        console.log('✅ Intención: Búsqueda de marca');
+        const products = await this.searchCellphonesBestSellers(queryLower);
+        return {
+          intent: 'brand',
+          products: products,
+          message: products.length > 0
+            ? `📱 Encontré estos modelos que buscas:`
+            : 'No encontré productos de esa marca con stock. ¿Te gustaría ver otras opciones similares?'
+        };
       }
 
-      // Búsqueda general por texto
-      return { intent: 'general', products: await this.searchByText(userQuery) };
+      // ========== BÚSQUEDA GENERAL ==========
+      console.log('✅ Intención: Búsqueda general');
+      const products = await this.searchByText(userQuery);
+
+      if (products.length === 0) {
+        return {
+          intent: 'not_found',
+          products: [],
+          message: 'No encontré productos que coincidan con tu búsqueda. ¿Podrías intentar con otro término? Por ejemplo: "celulares Samsung", "iPhone 13", "productos baratos"'
+        };
+      }
+
+      return {
+        intent: 'general',
+        products: products,
+        message: `Encontré ${products.length} producto${products.length > 1 ? 's' : ''}:`
+      };
     }
   };
 
@@ -381,38 +522,28 @@ async function initChatbotModal() {
     showTyping();
 
     try {
-      // Buscar productos
+      // Buscar productos con inteligencia mejorada
       const searchResult = await searchEngine.smartSearch(message);
 
       hideTyping();
 
-      let responseText = '';
-      if (searchResult.products.length === 0) {
-        responseText = 'No encontré productos que coincidan con tu búsqueda. ¿Podrías ser más específico?';
-        addBotMessage(responseText, []);
+      // Usar el mensaje predefinido que viene de smartSearch
+      const responseText = searchResult.message || 'Aquí tienes los resultados:';
 
-        // Guardar interacción sin productos
-        await saveChatInteraction(message, responseText, searchResult.intent, 0);
-      } else {
-        // Generar respuesta según intención
-        if (searchResult.intent === 'stock') {
-          responseText = `📦 Encontré ${searchResult.products.length} productos con stock disponible:`;
-        } else if (searchResult.intent === 'cheap') {
-          responseText = `💰 Estos son los productos más económicos:`;
-        } else if (searchResult.intent === 'bestsellers') {
-          responseText = `📱 Estos son los celulares más vendidos:`;
-        } else if (searchResult.intent === 'recommendation') {
-          responseText = `⭐ Aquí están los ${searchResult.message} con mejor relación precio/calidad:`;
-        } else {
-          responseText = `Encontré ${searchResult.products.length} productos:`;
-        }
+      // Limitar productos mostrados a 5
+      const limitedProducts = searchResult.products.slice(0, 5);
 
-        const limitedProducts = searchResult.products.slice(0, 5);
-        addBotMessage(responseText, limitedProducts);
+      // Mostrar respuesta
+      addBotMessage(responseText, limitedProducts);
 
-        // Guardar interacción con productos
-        await saveChatInteraction(message, responseText, searchResult.intent, searchResult.products.length);
-      }
+      // Guardar interacción en Firebase
+      await saveChatInteraction(
+        message,
+        responseText,
+        searchResult.intent,
+        searchResult.products.length
+      );
+
     } catch (error) {
       console.error('❌ Error:', error);
       hideTyping();
