@@ -468,7 +468,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
     const firebaseConfig = {
@@ -1023,6 +1023,45 @@
           return;
         }
 
+        // Verificar que Firebase esté correctamente inicializado
+        if (!window.firebase || !window.firebase.firestoreHelpers) {
+          console.error('❌ Firebase no está inicializado correctamente');
+          alert('Error: El sistema no está listo. Por favor recarga la página.');
+          return;
+        }
+
+        console.log('✅ Usuario autenticado:', window.currentUser.email);
+        console.log('✅ Firebase inicializado correctamente');
+
+        // Verificar que el usuario esté aprobado
+        try {
+          const { doc, getDoc } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+          const userRef = doc(db, 'usuarios', window.currentUser.uid);
+          const userDoc = await getDoc(userRef);
+
+          if (!userDoc.exists()) {
+            console.error('❌ Usuario no tiene documento en Firestore');
+            alert('Error: Tu perfil no está configurado correctamente.\n\nPor favor contacta al administrador.');
+            return;
+          }
+
+          const userData = userDoc.data();
+          console.log('👤 Datos del usuario:', userData);
+
+          if (userData.approved === false || userData.role === 'pending') {
+            console.warn('⚠️ Usuario no aprobado:', userData);
+            alert('⏳ Tu cuenta está pendiente de aprobación.\n\nNo puedes crear órdenes hasta que un administrador apruebe tu cuenta.\n\nRecibirás un email cuando sea aprobada.');
+            return;
+          }
+
+          console.log('✅ Usuario aprobado, puede crear órdenes');
+        } catch (userCheckError) {
+          console.error('❌ Error al verificar estado del usuario:', userCheckError);
+          alert('Error al verificar tu cuenta. Por favor intenta de nuevo o contacta al administrador.');
+          return;
+        }
+
         const editingOrderId = localStorage.getItem('editingOrderId');
         let isEditing = !!editingOrderId;
 
@@ -1096,6 +1135,7 @@
 
         // Preparar datos de la orden
         const now = new Date();
+        const timestampNow = Timestamp.fromDate(now); // Convertir a Timestamp de Firestore
         const fechaLocal = now.toLocaleDateString('es-AR', {
           day: '2-digit',
           month: '2-digit',
@@ -1125,13 +1165,13 @@
           usuarioUid: window.currentUser.uid,
           clienteEmail: clienteEmail, // Email del cliente (puede ser diferente si admin carga para otro)
           clienteNombre: clienteNombre,
-          clienteCodigo: clienteCodigo, // Código del cliente
-          vendedorId: vendedorId,
+          clienteCodigo: clienteCodigo || '', // Código del cliente (string vacío si no existe)
+          vendedorId: vendedorId || null, // null si no tiene vendedor asignado
           items: items,
           total: total,
           cantidadItems: cantidadItems,
-          fecha: now,
-          timestamp: now, // Para ordenar en marketplace.html
+          fecha: timestampNow, // Usar Timestamp de Firestore
+          timestamp: timestampNow, // Para ordenar en marketplace.html
           fechaLocal: fechaLocal,
           logisticsState: isEditing ? (existingOrderData.logisticsState || 'borrador') : 'borrador',
           estado: isEditing ? (existingOrderData.estado || 'pendiente') : 'pendiente',
@@ -1140,21 +1180,35 @@
 
         // Solo agregar campos de modificación si estamos editando
         if (isEditing) {
-          orderToSave.ultimaModificacion = now;
+          orderToSave.ultimaModificacion = timestampNow; // Usar Timestamp
           orderToSave.fechaUltimaModificacion = fechaLocal;
         }
 
         // Guardar o actualizar en Firebase
-        if (isEditing) {
-          // Actualizar orden existente
-          const orderRef = doc(db, 'pedidos', editingOrderId);
-          await updateDoc(orderRef, orderToSave);
-          console.log('✅ Orden actualizada en Firebase');
-        } else {
-          // Crear nueva orden
-          const pedidosRef = collection(db, 'pedidos');
-          await addDoc(pedidosRef, orderToSave);
-          console.log('✅ Orden guardada en Firebase');
+        console.log('💾 Guardando orden en Firebase...', {
+          numeroOrden: orderNumber,
+          isEditing: isEditing,
+          usuarioEmail: window.currentUser.email,
+          clienteNombre: clienteNombre,
+          total: total,
+          cantidadItems: cantidadItems
+        });
+
+        try {
+          if (isEditing) {
+            // Actualizar orden existente
+            const orderRef = doc(db, 'pedidos', editingOrderId);
+            await updateDoc(orderRef, orderToSave);
+            console.log('✅ Orden actualizada en Firebase');
+          } else {
+            // Crear nueva orden
+            const pedidosRef = collection(db, 'pedidos');
+            const docRef = await addDoc(pedidosRef, orderToSave);
+            console.log('✅ Orden guardada en Firebase con ID:', docRef.id);
+          }
+        } catch (firebaseError) {
+          console.error('❌ Error específico al guardar en Firebase:', firebaseError);
+          throw new Error(`Error al guardar en Firebase: ${firebaseError.message}`);
         }
 
         // Mostrar loading modal
@@ -1163,7 +1217,13 @@
 
         // Enviar WhatsApp al vendedor (si no hay vendedor, se usa Santiago por defecto)
         console.log('📱 Preparando WhatsApp para vendedor:', vendedorId || 'Santiago (por defecto)');
-        await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
+        try {
+          await sendOrderToSellerWhatsApp(orderToSave, orderNumber, clienteNombre);
+          console.log('✅ WhatsApp enviado correctamente');
+        } catch (whatsappError) {
+          console.error('⚠️ Error al enviar WhatsApp (no crítico):', whatsappError);
+          // No lanzar error aquí, el WhatsApp es opcional
+        }
 
         // Ocultar loading modal
         document.getElementById('loadingModal').style.display = 'none';
@@ -1187,7 +1247,30 @@
 
       } catch (error) {
         console.error('❌ Error confirmando orden:', error);
-        alert('Hubo un error al confirmar la orden. Por favor intenta de nuevo.');
+        console.error('❌ Detalles del error:', error.message, error.stack);
+
+        // Ocultar loading modal si está visible
+        const loadingModal = document.getElementById('loadingModal');
+        if (loadingModal) {
+          loadingModal.style.display = 'none';
+        }
+
+        // Mensaje de error más detallado
+        let errorMessage = 'Hubo un error al confirmar la orden.';
+
+        if (error.message) {
+          if (error.message.includes('permission') || error.message.includes('denied')) {
+            errorMessage = 'No tienes permisos para crear órdenes. Por favor contacta al administrador.';
+          } else if (error.message.includes('network') || error.message.includes('fetch')) {
+            errorMessage = 'Error de conexión. Verifica tu internet e intenta de nuevo.';
+          } else if (error.message.includes('firebase') || error.message.includes('firestore')) {
+            errorMessage = 'Error al guardar en la base de datos. Intenta de nuevo.';
+          } else {
+            errorMessage = `Error: ${error.message}`;
+          }
+        }
+
+        alert(errorMessage + '\n\nSi el problema persiste, contacta al administrador.');
       }
     }
 

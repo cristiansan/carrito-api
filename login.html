@@ -323,6 +323,21 @@
     </div>
   </div>
   
+  <!-- Modal de Datos Adicionales para Google -->
+  <div id="googleDataModal" class="modal">
+    <div class="modal-content">
+      <h2>Completa tu Registro</h2>
+      <p style="color: #b5b5b5; font-size: 14px; margin-bottom: 20px;">Para finalizar, por favor completa la siguiente información:</p>
+      <input type="text" id="googleName" placeholder="Nombre completo *">
+      <input type="text" id="googleCompany" placeholder="Empresa *">
+      <input type="text" id="googleCountry" placeholder="País *">
+      <input type="tel" id="googlePhone" placeholder="Número de celular (con código de país, ej: +54 11 1234-5678) *">
+      <small style="display: block; margin: 10px 0; color: #888; font-size: 12px;">* Todos los campos son obligatorios</small>
+      <button id="googleDataBtn">Completar Registro</button>
+      <div id="googleDataError"></div>
+    </div>
+  </div>
+
   <!-- Modal de Términos y Condiciones -->
   <div id="termsModal" class="modal terms-modal">
     <div class="modal-content">
@@ -821,25 +836,140 @@
       }
     }
     
+    // Variable global para almacenar el usuario de Google temporalmente
+    let pendingGoogleUser = null;
+
+    // Elementos del DOM - Google Data Modal
+    const googleDataModal = document.getElementById('googleDataModal');
+    const googleNameInput = document.getElementById('googleName');
+    const googleCompanyInput = document.getElementById('googleCompany');
+    const googleCountryInput = document.getElementById('googleCountry');
+    const googlePhoneInput = document.getElementById('googlePhone');
+    const googleDataBtn = document.getElementById('googleDataBtn');
+    const googleDataErrorDiv = document.getElementById('googleDataError');
+
+    // Función para mostrar el modal de datos adicionales de Google
+    function showGoogleDataModal() {
+      googleDataModal.classList.add('show');
+      // Pre-llenar el nombre si está disponible
+      if (pendingGoogleUser && pendingGoogleUser.displayName) {
+        googleNameInput.value = pendingGoogleUser.displayName;
+      }
+    }
+
+    // Función para ocultar el modal de datos adicionales de Google
+    function hideGoogleDataModal() {
+      googleDataModal.classList.remove('show');
+      clearGoogleDataForm();
+    }
+
+    // Función para limpiar el formulario de datos de Google
+    function clearGoogleDataForm() {
+      googleNameInput.value = '';
+      googleCompanyInput.value = '';
+      googleCountryInput.value = '';
+      googlePhoneInput.value = '';
+      googleDataErrorDiv.textContent = '';
+    }
+
+    // Función para mostrar error en el modal de datos de Google
+    function showGoogleDataError(message) {
+      googleDataErrorDiv.textContent = message;
+      googleDataErrorDiv.style.color = '#ff6b6b';
+      googleDataErrorDiv.style.marginTop = '10px';
+      googleDataErrorDiv.style.fontSize = '14px';
+      setTimeout(() => {
+        googleDataErrorDiv.textContent = '';
+      }, 5000);
+    }
+
+    // Manejador del botón de completar datos de Google
+    googleDataBtn.addEventListener('click', async () => {
+      if (!pendingGoogleUser) {
+        showGoogleDataError('Error: No hay sesión de Google activa');
+        return;
+      }
+
+      const name = googleNameInput.value.trim();
+      const company = googleCompanyInput.value.trim();
+      const country = googleCountryInput.value.trim();
+      const phone = googlePhoneInput.value.trim();
+
+      // Validaciones
+      if (!name || !company || !country || !phone) {
+        showGoogleDataError('Por favor completa todos los campos');
+        return;
+      }
+
+      googleDataBtn.disabled = true;
+      googleDataBtn.textContent = 'Completando registro...';
+
+      try {
+        // Crear documento de usuario nuevo con TODOS los datos requeridos
+        const { doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        const userRef = doc(db, 'usuarios', pendingGoogleUser.uid);
+
+        const userData = {
+          email: pendingGoogleUser.email,
+          displayName: pendingGoogleUser.displayName || name,
+          photoURL: pendingGoogleUser.photoURL || null,
+          name: name,
+          company: company,
+          country: country,
+          phone: phone,
+          provider: 'google.com',
+          admin: false,
+          approved: false,  // SIEMPRE pendiente de aprobación para usuarios nuevos
+          role: 'pending',  // SIEMPRE pending para usuarios nuevos
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+          loginCount: 1
+        };
+
+        // Usar setDoc con merge: false para asegurar que se cree el documento completo
+        await setDoc(userRef, userData);
+        console.log('✅ Nuevo usuario de Google registrado (pending approval):', pendingGoogleUser.uid, pendingGoogleUser.email);
+
+        hideGoogleDataModal();
+
+        // Siempre es un usuario nuevo que necesita aprobación
+        await auth.signOut();
+        alert('✅ Registro completado exitosamente!\n\n⏳ Tu cuenta está pendiente de aprobación por un administrador.\n\nRecibirás un email cuando tu cuenta sea aprobada.');
+        pendingGoogleUser = null;
+
+      } catch (error) {
+        console.error('❌ Error al completar datos de Google:', error);
+        showGoogleDataError('Error al guardar los datos. Por favor intenta de nuevo.');
+      } finally {
+        googleDataBtn.disabled = false;
+        googleDataBtn.textContent = 'Completar Registro';
+      }
+    });
+
     // Función de Google login extraída
     async function handleGoogleLogin() {
       googleBtn.disabled = true;
       googleBtn.textContent = 'Iniciando con Google...';
-      
+
       try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         console.log('Usuario autenticado con Google:', user);
 
-        await createOrUpdateUserDocument(user);
-
-        // Verificar si el usuario está aprobado
+        // Verificar si el usuario ya existe
         const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
         const userRef = doc(db, 'usuarios', user.uid);
         const userDoc = await getDoc(userRef);
 
+        // Si el usuario ya existe, es un LOGIN (no registro)
         if (userDoc.exists()) {
+          console.log('Usuario existente - iniciando sesión');
           const userData = userDoc.data();
+
+          // Actualizar datos del último login
+          await createOrUpdateUserDocument(user);
+
+          // Verificar aprobación
           if (userData.approved === false || userData.role === 'pending') {
             await auth.signOut();
             showError('⏳ Tu cuenta está pendiente de aprobación por un administrador.\n\nRecibirás un email cuando sea aprobada.');
@@ -847,19 +977,27 @@
             googleBtn.textContent = 'Continuar con Google';
             return;
           }
+
+          // Usuario aprobado - continuar con login
+          localStorage.setItem('userAuthenticated', 'true');
+          localStorage.setItem('userEmail', user.email);
+          localStorage.setItem('userDisplayName', user.displayName);
+          localStorage.setItem('userPhotoURL', user.photoURL);
+          window.location.href = 'marketplace.html';
+
+        } else {
+          // Usuario nuevo - REGISTRO: mostrar formulario de datos adicionales
+          console.log('Usuario nuevo de Google - mostrando formulario de registro');
+          pendingGoogleUser = user;
+          showGoogleDataModal();
+          googleBtn.disabled = false;
+          googleBtn.textContent = 'Continuar con Google';
         }
 
-        localStorage.setItem('userAuthenticated', 'true');
-        localStorage.setItem('userEmail', user.email);
-        localStorage.setItem('userDisplayName', user.displayName);
-        localStorage.setItem('userPhotoURL', user.photoURL);
-
-        window.location.href = 'marketplace.html';
-        
       } catch (error) {
         console.error('Error en login con Google:', error);
         let errorMessage = 'Error al iniciar sesión con Google';
-        
+
         switch (error.code) {
           case 'auth/popup-closed-by-user':
             errorMessage = 'Ventana cerrada por el usuario';
@@ -874,9 +1012,8 @@
             errorMessage = 'Login con Google deshabilitado';
             break;
         }
-        
+
         showError(errorMessage);
-      } finally {
         googleBtn.disabled = false;
         googleBtn.innerHTML = `
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

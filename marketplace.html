@@ -2744,7 +2744,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.44
+          v0.45
         </div>
       </div>
       
@@ -7058,7 +7058,20 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.44 - Actual</h3>
+          <h3>v0.45 - Actual</h3>
+          <ul>
+            <li>🔐 <strong>Registro Google mejorado:</strong> Formulario obligatorio al registrarse con Google (nombre, empresa, país, teléfono)</li>
+            <li>✅ <strong>Validación de usuarios:</strong> Sistema de verificación de aprobación antes de crear órdenes</li>
+            <li>🛒 <strong>Manejo de errores mejorado:</strong> Mensajes detallados y específicos según tipo de error (permisos, conexión, Firebase)</li>
+            <li>📋 <strong>Cliente correcto en órdenes:</strong> Muestra nombre del cliente real en lugar del admin que creó la orden</li>
+            <li>🔧 <strong>Timestamps de Firestore:</strong> Uso correcto de Timestamp.fromDate() para fechas en órdenes</li>
+            <li>🐛 <strong>Validación campos null:</strong> Prevención de undefined en clienteCodigo y vendedorId</li>
+            <li>📊 <strong>Priorización clienteNombre:</strong> Sistema prioriza nombre del cliente sobre emails en visualización</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.44</h3>
           <ul>
             <li>🤖 <strong>Chatbot AI Beta:</strong> Asistente virtual inteligente con búsqueda semántica de productos</li>
             <li>🎨 <strong>Diseño personalizado:</strong> Icono de robot con antenitas y etiqueta "AI"</li>
