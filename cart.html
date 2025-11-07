@@ -470,6 +470,7 @@
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+    import ErrorLogger from './error-logger.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
@@ -485,6 +486,10 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
+    // Inicializar sistema de logging de errores
+    const errorLogger = new ErrorLogger(app);
+    window.errorLogger = errorLogger;
+
     // Hacer Firebase accesible globalmente
     window.firebase = {
       app: () => app,
@@ -495,7 +500,7 @@
         ref, uploadBytes, getDownloadURL
       },
       firestoreHelpers: {
-        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction
+        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp
       }
     };
 
@@ -510,6 +515,7 @@
       }
 
       window.currentUser = user;
+      errorLogger.setCurrentUser(user); // Actualizar usuario en error logger
       if (user) {
         console.log('✅ Usuario autenticado:', user.email);
 
@@ -1058,6 +1064,18 @@
           console.log('✅ Usuario aprobado, puede crear órdenes');
         } catch (userCheckError) {
           console.error('❌ Error al verificar estado del usuario:', userCheckError);
+
+          // Registrar error
+          errorLogger.logError({
+            errorMessage: 'Error al verificar tu cuenta',
+            stackTrace: userCheckError.stack || '',
+            errorType: 'user_verification_error',
+            additionalData: {
+              originalError: userCheckError.message,
+              errorName: userCheckError.name
+            }
+          });
+
           alert('Error al verificar tu cuenta. Por favor intenta de nuevo o contacta al administrador.');
           return;
         }
@@ -1269,6 +1287,18 @@
             errorMessage = `Error: ${error.message}`;
           }
         }
+
+        // Registrar error antes de mostrar al usuario
+        errorLogger.logError({
+          errorMessage: errorMessage,
+          stackTrace: error.stack || '',
+          errorType: 'order_confirmation_error',
+          additionalData: {
+            originalError: error.message,
+            errorName: error.name,
+            action: 'confirmOrder'
+          }
+        });
 
         alert(errorMessage + '\n\nSi el problema persiste, contacta al administrador.');
       }

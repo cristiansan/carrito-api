@@ -2744,7 +2744,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.45
+          v0.46
         </div>
       </div>
       
@@ -7058,7 +7058,21 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.45 - Actual</h3>
+          <h3>v0.46 - Actual</h3>
+          <ul>
+            <li>🐛 <strong>Sistema de Logging de Errores:</strong> Registro automático de todos los errores del sistema en Firebase</li>
+            <li>📋 <strong>Captura de Consola:</strong> Guarda automáticamente los últimos 50 mensajes de console.log, console.error y console.warn</li>
+            <li>👀 <strong>Panel de Administración:</strong> Nueva pestaña "Logs de Errores" en Administration para visualizar errores</li>
+            <li>📊 <strong>Detalles Completos:</strong> Cada log incluye mensaje, fecha/hora, usuario, URL, stack trace y mensajes de consola</li>
+            <li>🔍 <strong>Filtrado por Tipo:</strong> Filtros para ver errores por categoría (confirmación de orden, verificación de usuario, etc.)</li>
+            <li>📥 <strong>Exportación a Excel:</strong> Descarga todos los logs en formato Excel con un click</li>
+            <li>⚡ <strong>Captura Automática:</strong> Intercepta errores globales, promesas rechazadas y errores no manejados</li>
+            <li>🔧 <strong>Fix Timestamp:</strong> Corregido export de Timestamp en cart.html para prevenir error "Can't find variable"</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.45</h3>
           <ul>
             <li>🔐 <strong>Registro Google mejorado:</strong> Formulario obligatorio al registrarse con Google (nombre, empresa, país, teléfono)</li>
             <li>✅ <strong>Validación de usuarios:</strong> Sistema de verificación de aprobación antes de crear órdenes</li>

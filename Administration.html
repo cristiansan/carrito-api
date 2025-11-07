@@ -1832,6 +1832,15 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="errorlogs">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">🐛 Logs de Errores</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -2191,6 +2200,46 @@
         <div id="noPendingUsers" style="display: none; text-align: center; padding: 40px; color: #666;">
           <i class="material-icons" style="font-size: 64px; opacity: 0.3;">check_circle</i>
           <p>No hay usuarios pendientes de aprobación</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Logs Tab Content -->
+  <div id="errorlogs-content" class="tab-content" style="display: none;">
+    <h2>🐛 Logs de Errores</h2>
+    <div class="admin-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <p style="color: #888; margin: 0;">Registro completo de errores del sistema con mensajes de consola</p>
+        <button class="mdc-button mdc-button--raised" id="exportErrorLogsBtn" style="background-color: #4CAF50;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">file_download</i>
+          <span class="mdc-button__label">Exportar a Excel</span>
+        </button>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="margin-right: 10px;">Filtrar por tipo:</label>
+        <select id="errorTypeFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          <option value="all">Todos</option>
+          <option value="uncaught_error">Errores no capturados</option>
+          <option value="unhandled_rejection">Promesas rechazadas</option>
+          <option value="order_confirmation_error">Errores de confirmación de orden</option>
+          <option value="user_verification_error">Errores de verificación de usuario</option>
+          <option value="caught_error">Errores capturados</option>
+          <option value="manual">Errores manuales</option>
+        </select>
+      </div>
+
+      <div id="errorLogsContainer">
+        <div id="errorLogsList"></div>
+        <div id="noErrorLogs" style="display: none; text-align: center; padding: 40px; color: #666;">
+          <i class="material-icons" style="font-size: 64px; opacity: 0.3;">check_circle</i>
+          <p>No hay errores registrados</p>
+        </div>
+        <div id="loadingErrorLogs" style="text-align: center; padding: 40px; color: #666;">
+          <i class="material-icons rotating" style="font-size: 48px;">refresh</i>
+          <p>Cargando logs...</p>
         </div>
       </div>
     </div>
@@ -8362,6 +8411,218 @@
           console.log('- Manual photo setup complete');
         }
       };
+
+      // ===============================
+      // ERROR LOGS FUNCTIONALITY
+      // ===============================
+
+      let allErrorLogs = [];
+
+      // Cargar logs de errores
+      async function loadErrorLogs() {
+        try {
+          console.log('🐛 Cargando logs de errores...');
+
+          const { collection, query, orderBy, getDocs } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+
+          const logsContainer = document.getElementById('errorLogsList');
+          const noLogsDiv = document.getElementById('noErrorLogs');
+          const loadingDiv = document.getElementById('loadingErrorLogs');
+
+          loadingDiv.style.display = 'block';
+          logsContainer.style.display = 'none';
+          noLogsDiv.style.display = 'none';
+
+          const logsCollection = collection(db, 'error_logs');
+          const logsQuery = query(logsCollection, orderBy('timestamp', 'desc'));
+
+          const querySnapshot = await getDocs(logsQuery);
+          allErrorLogs = [];
+
+          querySnapshot.forEach((doc) => {
+            allErrorLogs.push({ id: doc.id, ...doc.data() });
+          });
+
+          loadingDiv.style.display = 'none';
+
+          if (allErrorLogs.length === 0) {
+            noLogsDiv.style.display = 'block';
+          } else {
+            displayErrorLogs(allErrorLogs);
+          }
+        } catch (error) {
+          console.error('Error al cargar logs de errores:', error);
+          document.getElementById('loadingErrorLogs').innerHTML = `
+            <i class="material-icons" style="font-size: 48px; color: #f44336;">error</i>
+            <p>Error al cargar logs: ${error.message}</p>
+          `;
+        }
+      }
+
+      // Mostrar logs de errores
+      function displayErrorLogs(logs) {
+        const logsContainer = document.getElementById('errorLogsList');
+        logsContainer.style.display = 'block';
+        logsContainer.innerHTML = '';
+
+        logs.forEach((log) => {
+          const logCard = document.createElement('div');
+          logCard.style.cssText = `
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          `;
+
+          const timestamp = log.dateTime ? new Date(log.dateTime).toLocaleString('es-AR') : 'N/A';
+          const errorType = log.errorType || 'unknown';
+          const errorTypeColors = {
+            'uncaught_error': '#f44336',
+            'unhandled_rejection': '#ff9800',
+            'order_confirmation_error': '#e91e63',
+            'user_verification_error': '#9c27b0',
+            'caught_error': '#3f51b5',
+            'manual': '#607d8b'
+          };
+          const typeColor = errorTypeColors[errorType] || '#666';
+
+          // Formatear mensajes de consola
+          let consoleMessagesHtml = '';
+          if (log.consoleMessages && log.consoleMessages.length > 0) {
+            consoleMessagesHtml = '<div style="margin-top: 12px;"><strong>📋 Mensajes de consola:</strong><div style="background: #f5f5f5; padding: 8px; border-radius: 4px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; margin-top: 8px;">';
+            log.consoleMessages.forEach((msg) => {
+              const msgTypeIcon = msg.type === 'error' ? '❌' : msg.type === 'warn' ? '⚠️' : '📝';
+              const msgColor = msg.type === 'error' ? '#f44336' : msg.type === 'warn' ? '#ff9800' : '#666';
+              consoleMessagesHtml += `<div style="margin-bottom: 4px; padding: 4px; border-left: 3px solid ${msgColor};"><span style="color: ${msgColor};">${msgTypeIcon} ${msg.type}:</span> ${escapeHtml(msg.message)}</div>`;
+            });
+            consoleMessagesHtml += '</div></div>';
+          }
+
+          logCard.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+              <div>
+                <div style="font-weight: bold; font-size: 16px; color: #333; margin-bottom: 4px;">
+                  ${escapeHtml(log.errorMessage)}
+                </div>
+                <div style="color: #666; font-size: 12px;">
+                  🕐 ${timestamp} | 👤 ${escapeHtml(log.userEmail)} | 🌐 ${escapeHtml(log.url || 'N/A')}
+                </div>
+              </div>
+              <span style="background: ${typeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap;">
+                ${errorType}
+              </span>
+            </div>
+            ${log.stackTrace ? `
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: #666; font-size: 13px;">📚 Stack Trace</summary>
+                <pre style="background: #f5f5f5; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${escapeHtml(log.stackTrace)}</pre>
+              </details>
+            ` : ''}
+            ${consoleMessagesHtml}
+            ${log.additionalData && Object.keys(log.additionalData).length > 0 ? `
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: #666; font-size: 13px;">ℹ️ Datos adicionales</summary>
+                <pre style="background: #f5f5f5; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${JSON.stringify(log.additionalData, null, 2)}</pre>
+              </details>
+            ` : ''}
+          `;
+
+          logsContainer.appendChild(logCard);
+        });
+      }
+
+      // Función para escapar HTML
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Filtrar logs por tipo
+      document.getElementById('errorTypeFilter')?.addEventListener('change', (e) => {
+        const filterValue = e.target.value;
+        if (filterValue === 'all') {
+          displayErrorLogs(allErrorLogs);
+        } else {
+          const filtered = allErrorLogs.filter(log => log.errorType === filterValue);
+          displayErrorLogs(filtered);
+        }
+      });
+
+      // Exportar logs a Excel
+      document.getElementById('exportErrorLogsBtn')?.addEventListener('click', async () => {
+        try {
+          // Cargar librería SheetJS si no está cargada
+          if (typeof XLSX === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js';
+            document.head.appendChild(script);
+            await new Promise((resolve) => {
+              script.onload = resolve;
+            });
+          }
+
+          if (allErrorLogs.length === 0) {
+            alert('No hay logs para exportar');
+            return;
+          }
+
+          // Preparar datos para Excel
+          const excelData = allErrorLogs.map(log => {
+            const consoleMessages = log.consoleMessages && log.consoleMessages.length > 0
+              ? log.consoleMessages.map(m => `[${m.type}] ${m.message}`).join('\n')
+              : 'Sin mensajes de consola';
+
+            return {
+              'Fecha y Hora': log.dateTime ? new Date(log.dateTime).toLocaleString('es-AR') : 'N/A',
+              'Usuario': log.userEmail || 'N/A',
+              'Nombre': log.userName || 'N/A',
+              'Tipo de Error': log.errorType || 'N/A',
+              'Mensaje de Error': log.errorMessage || 'N/A',
+              'URL': log.url || 'N/A',
+              'Mensajes de Consola': consoleMessages,
+              'Stack Trace': log.stackTrace || 'N/A',
+              'User Agent': log.userAgent || 'N/A'
+            };
+          });
+
+          // Crear workbook
+          const ws = XLSX.utils.json_to_sheet(excelData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Error Logs');
+
+          // Auto-ajustar anchos de columna
+          const colWidths = [
+            { wch: 20 }, // Fecha y Hora
+            { wch: 30 }, // Usuario
+            { wch: 25 }, // Nombre
+            { wch: 25 }, // Tipo de Error
+            { wch: 50 }, // Mensaje de Error
+            { wch: 40 }, // URL
+            { wch: 60 }, // Mensajes de Consola
+            { wch: 60 }, // Stack Trace
+            { wch: 40 }  // User Agent
+          ];
+          ws['!cols'] = colWidths;
+
+          // Descargar archivo
+          const fecha = new Date().toISOString().split('T')[0];
+          XLSX.writeFile(wb, `error_logs_${fecha}.xlsx`);
+
+          console.log('✅ Logs exportados exitosamente');
+        } catch (error) {
+          console.error('❌ Error al exportar logs:', error);
+          alert('Error al exportar logs: ' + error.message);
+        }
+      });
+
+      // Cargar logs cuando se abre el tab
+      document.querySelector('[data-tab="errorlogs"]')?.addEventListener('click', () => {
+        loadErrorLogs();
+      });
 
     });
   </script>
