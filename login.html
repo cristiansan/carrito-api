@@ -389,6 +389,70 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Función para detectar el tipo de dispositivo y sistema operativo
+    function getDeviceInfo() {
+      const ua = navigator.userAgent;
+      let device = 'Desktop';
+      let os = 'Unknown';
+
+      // Detectar sistema operativo
+      if (/Windows/i.test(ua)) {
+        os = 'Windows';
+        device = 'PC';
+      } else if (/Macintosh|MacIntel|MacPPC|Mac68K/i.test(ua)) {
+        os = 'Mac';
+        device = 'Mac';
+      } else if (/Linux/i.test(ua) && !/Android/i.test(ua)) {
+        os = 'Linux';
+        device = 'PC';
+      } else if (/iPhone/i.test(ua)) {
+        os = 'iOS';
+        device = 'iPhone';
+      } else if (/iPad/i.test(ua)) {
+        os = 'iOS';
+        device = 'iPad';
+      } else if (/Android/i.test(ua)) {
+        os = 'Android';
+        // Detectar si es tablet o teléfono
+        if (/Mobile/i.test(ua)) {
+          device = 'Android Phone';
+        } else {
+          device = 'Android Tablet';
+        }
+      }
+
+      return { device, os };
+    }
+
+    // Función para detectar el navegador
+    function getBrowserInfo() {
+      const ua = navigator.userAgent;
+      let browser = 'Unknown';
+      let version = '';
+
+      if (/Edg\//i.test(ua)) {
+        browser = 'Edge';
+        version = ua.match(/Edg\/(\d+)/)?.[1] || '';
+      } else if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) {
+        browser = 'Chrome';
+        version = ua.match(/Chrome\/(\d+)/)?.[1] || '';
+      } else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) {
+        browser = 'Safari';
+        version = ua.match(/Version\/(\d+)/)?.[1] || '';
+      } else if (/Firefox/i.test(ua)) {
+        browser = 'Firefox';
+        version = ua.match(/Firefox\/(\d+)/)?.[1] || '';
+      } else if (/MSIE|Trident/i.test(ua)) {
+        browser = 'Internet Explorer';
+        version = ua.match(/(?:MSIE |rv:)(\d+)/)?.[1] || '';
+      } else if (/Opera|OPR/i.test(ua)) {
+        browser = 'Opera';
+        version = ua.match(/(?:Opera|OPR)\/(\d+)/)?.[1] || '';
+      }
+
+      return { browser, version };
+    }
+
     // Función para crear o actualizar documento del usuario en Firestore
     async function createOrUpdateUserDocument(user, additionalData = {}) {
       try {
@@ -397,12 +461,20 @@
         const userRef = doc(db, 'usuarios', user.uid);
         const userDoc = await getDoc(userRef);
 
+        // Obtener información del dispositivo y navegador
+        const deviceInfo = getDeviceInfo();
+        const browserInfo = getBrowserInfo();
+
         const userData = {
           email: user.email,
           displayName: user.displayName || additionalData.name || user.email.split('@')[0],
           photoURL: user.photoURL || null,
           lastLogin: serverTimestamp(),
-          provider: user.providerData.length > 0 ? user.providerData[0].providerId : 'email'
+          provider: user.providerData.length > 0 ? user.providerData[0].providerId : 'email',
+          lastDevice: deviceInfo.device,
+          lastOS: deviceInfo.os,
+          lastBrowser: browserInfo.browser,
+          lastBrowserVersion: browserInfo.version
         };
 
         // Agregar datos adicionales del registro si existen
@@ -429,9 +501,13 @@
             photoURL: userData.photoURL,
             lastLogin: userData.lastLogin,
             provider: userData.provider,
-            loginCount: currentLoginCount + 1  // Incrementar contador de logins
+            loginCount: currentLoginCount + 1,  // Incrementar contador de logins
+            lastDevice: userData.lastDevice,
+            lastOS: userData.lastOS,
+            lastBrowser: userData.lastBrowser,
+            lastBrowserVersion: userData.lastBrowserVersion
           });
-          console.log('User document updated:', user.uid, user.email, '- Login count:', currentLoginCount + 1);
+          console.log('User document updated:', user.uid, user.email, '- Login count:', currentLoginCount + 1, '- Device:', userData.lastDevice, '- Browser:', userData.lastBrowser);
         }
         
         return true;

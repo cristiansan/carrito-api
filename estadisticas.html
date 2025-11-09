@@ -322,6 +322,18 @@
       </div>
     </div>
 
+    <!-- Gráficos de Dispositivos y Browsers -->
+    <div class="charts-container">
+      <div class="chart-card">
+        <h2><span class="material-icons">devices</span> Dispositivos Más Usados</h2>
+        <canvas id="devicesChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2><span class="material-icons">web</span> Navegadores Más Usados</h2>
+        <canvas id="browsersChart"></canvas>
+      </div>
+    </div>
+
     <!-- Rankings -->
     <!-- Contenedor para Top 10 Vendedores y Usuarios lado a lado -->
     <div class="top-rankings-grid">
@@ -505,6 +517,10 @@
         generateVendedoresRanking(orders, getClientDisplayName);
         generateProductosRanking(orders);
         await generateUsuariosRanking();
+
+        // Generate device and browser charts
+        await generateDevicesChart();
+        await generateBrowsersChart();
 
         // Hide loading and show content
         document.getElementById('loadingIndicator').style.display = 'none';
@@ -1034,6 +1050,176 @@
       } catch (error) {
         console.error('❌ Error cargando ranking de usuarios:', error);
         document.getElementById('usuariosRanking').innerHTML = '<li class="no-data">Error cargando datos</li>';
+      }
+    }
+
+    async function generateDevicesChart() {
+      try {
+        const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
+        const deviceCounts = {};
+
+        // Lista de usuarios de prueba a excluir (misma que generateUsuariosRanking)
+        const testUsers = [
+          'matensegiles@gmail.com',
+          'matense.giles@gmail.com',
+          'test@test.com.ar',
+          'test@test.com',
+          'prueba@prueba.com',
+          'cuenta@demo.com.ar'
+        ];
+
+        usuariosSnapshot.forEach(doc => {
+          const data = doc.data();
+          const email = data.email || '';
+          const isTestUser = testUsers.includes(email.toLowerCase());
+          const isNotApproved = data.approved === false || data.role === 'pending';
+
+          if (!isTestUser && !isNotApproved && data.lastDevice) {
+            deviceCounts[data.lastDevice] = (deviceCounts[data.lastDevice] || 0) + 1;
+          }
+        });
+
+        const labels = Object.keys(deviceCounts);
+        const data = Object.values(deviceCounts);
+
+        const ctx = document.getElementById('devicesChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: [
+                '#4CAF50', // Verde
+                '#2196F3', // Azul
+                '#FFC107', // Amarillo
+                '#FF5722', // Rojo-naranja
+                '#9C27B0', // Púrpura
+                '#00BCD4', // Cian
+                '#FF9800', // Naranja
+                '#607D8B'  // Gris azulado
+              ],
+              borderColor: '#1a1a1a',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: 'white',
+                  padding: 15,
+                  font: {
+                    size: 12
+                  }
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${label}: ${value} (${percentage}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        console.log('📱 Gráfico de dispositivos generado:', deviceCounts);
+      } catch (error) {
+        console.error('❌ Error generando gráfico de dispositivos:', error);
+      }
+    }
+
+    async function generateBrowsersChart() {
+      try {
+        const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
+        const browserCounts = {};
+
+        // Lista de usuarios de prueba a excluir
+        const testUsers = [
+          'matensegiles@gmail.com',
+          'matense.giles@gmail.com',
+          'test@test.com.ar',
+          'test@test.com',
+          'prueba@prueba.com',
+          'cuenta@demo.com.ar'
+        ];
+
+        usuariosSnapshot.forEach(doc => {
+          const data = doc.data();
+          const email = data.email || '';
+          const isTestUser = testUsers.includes(email.toLowerCase());
+          const isNotApproved = data.approved === false || data.role === 'pending';
+
+          if (!isTestUser && !isNotApproved && data.lastBrowser) {
+            browserCounts[data.lastBrowser] = (browserCounts[data.lastBrowser] || 0) + 1;
+          }
+        });
+
+        const labels = Object.keys(browserCounts);
+        const data = Object.values(browserCounts);
+
+        const ctx = document.getElementById('browsersChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: [
+                '#4CAF50', // Verde - Chrome
+                '#2196F3', // Azul - Edge
+                '#FFC107', // Amarillo - Firefox
+                '#FF5722', // Rojo - Safari
+                '#9C27B0', // Púrpura - Opera
+                '#00BCD4', // Cian
+                '#FF9800', // Naranja
+                '#607D8B'  // Gris azulado
+              ],
+              borderColor: '#1a1a1a',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: 'white',
+                  padding: 15,
+                  font: {
+                    size: 12
+                  }
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${label}: ${value} (${percentage}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        console.log('🌐 Gráfico de navegadores generado:', browserCounts);
+      } catch (error) {
+        console.error('❌ Error generando gráfico de navegadores:', error);
       }
     }
 
