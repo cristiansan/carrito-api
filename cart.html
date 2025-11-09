@@ -468,7 +468,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
     import ErrorLogger from './error-logger.js';
 
@@ -500,7 +500,7 @@
         ref, uploadBytes, getDownloadURL
       },
       firestoreHelpers: {
-        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp
+        doc, getDoc, setDoc, addDoc, updateDoc, collection, query, orderBy, getDocs, where, limit, runTransaction, Timestamp, serverTimestamp
       }
     };
 
@@ -1153,7 +1153,7 @@
 
         // Preparar datos de la orden
         const now = new Date();
-        const timestampNow = Timestamp.fromDate(now); // Convertir a Timestamp de Firestore
+        const timestampNow = serverTimestamp(); // Usar serverTimestamp de Firestore (más confiable)
         const fechaLocal = now.toLocaleDateString('es-AR', {
           day: '2-digit',
           month: '2-digit',

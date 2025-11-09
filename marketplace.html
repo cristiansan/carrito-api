@@ -2744,7 +2744,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.46
+          v0.47
         </div>
       </div>
       
@@ -7058,7 +7058,16 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.46 - Actual</h3>
+          <h3>v0.47 - Actual</h3>
+          <ul>
+            <li>🔧 <strong>Fix crítico Timestamp:</strong> Reemplazado Timestamp.fromDate() por serverTimestamp() para evitar error "Can't find variable: Timestamp"</li>
+            <li>⚡ <strong>Mejora de confiabilidad:</strong> serverTimestamp() usa el reloj del servidor Firebase (más preciso y confiable)</li>
+            <li>✅ <strong>Compatibilidad universal:</strong> Solución que funciona en todos los navegadores sin importar carga de módulos</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.46</h3>
           <ul>
             <li>🐛 <strong>Sistema de Logging de Errores:</strong> Registro automático de todos los errores del sistema en Firebase</li>
             <li>📋 <strong>Captura de Consola:</strong> Guarda automáticamente los últimos 50 mensajes de console.log, console.error y console.warn</li>
