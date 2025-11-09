@@ -2211,11 +2211,18 @@
     <div class="admin-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <p style="color: #888; margin: 0;">Registro completo de errores del sistema con mensajes de consola</p>
-        <button class="mdc-button mdc-button--raised" id="exportErrorLogsBtn" style="background-color: #4CAF50;">
-          <span class="mdc-button__ripple"></span>
-          <i class="material-icons mdc-button__icon" aria-hidden="true">file_download</i>
-          <span class="mdc-button__label">Exportar a Excel</span>
-        </button>
+        <div style="display: flex; gap: 12px;">
+          <button class="mdc-button mdc-button--raised" id="saveLogsSnapshotBtn" style="background-color: #2196F3;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+            <span class="mdc-button__label">Guardar Logs</span>
+          </button>
+          <button class="mdc-button mdc-button--raised" id="exportErrorLogsBtn" style="background-color: #4CAF50;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">file_download</i>
+            <span class="mdc-button__label">Exportar a Excel</span>
+          </button>
+        </div>
       </div>
 
       <div style="margin-bottom: 20px;">
@@ -8450,6 +8457,7 @@
             noLogsDiv.style.display = 'block';
           } else {
             displayErrorLogs(allErrorLogs);
+            updateFilterOptions(); // Actualizar opciones del filtro con fechas guardadas
           }
         } catch (error) {
           console.error('Error al cargar logs de errores:', error);
@@ -8469,12 +8477,12 @@
         logs.forEach((log) => {
           const logCard = document.createElement('div');
           logCard.style.cssText = `
-            background: white;
-            border: 1px solid #e0e0e0;
+            background: #2a2a2a;
+            border: 1px solid #404040;
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
           `;
 
           const timestamp = log.dateTime ? new Date(log.dateTime).toLocaleString('es-AR') : 'N/A';
@@ -8492,11 +8500,11 @@
           // Formatear mensajes de consola
           let consoleMessagesHtml = '';
           if (log.consoleMessages && log.consoleMessages.length > 0) {
-            consoleMessagesHtml = '<div style="margin-top: 12px;"><strong>📋 Mensajes de consola:</strong><div style="background: #f5f5f5; padding: 8px; border-radius: 4px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; margin-top: 8px;">';
+            consoleMessagesHtml = '<div style="margin-top: 12px;"><strong style="color: #eee;">📋 Mensajes de consola:</strong><div style="background: #1a1a1a; padding: 8px; border-radius: 4px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; margin-top: 8px;">';
             log.consoleMessages.forEach((msg) => {
               const msgTypeIcon = msg.type === 'error' ? '❌' : msg.type === 'warn' ? '⚠️' : '📝';
-              const msgColor = msg.type === 'error' ? '#f44336' : msg.type === 'warn' ? '#ff9800' : '#666';
-              consoleMessagesHtml += `<div style="margin-bottom: 4px; padding: 4px; border-left: 3px solid ${msgColor};"><span style="color: ${msgColor};">${msgTypeIcon} ${msg.type}:</span> ${escapeHtml(msg.message)}</div>`;
+              const msgColor = msg.type === 'error' ? '#f44336' : msg.type === 'warn' ? '#ff9800' : '#aaa';
+              consoleMessagesHtml += `<div style="margin-bottom: 4px; padding: 4px; border-left: 3px solid ${msgColor}; color: #ddd;"><span style="color: ${msgColor};">${msgTypeIcon} ${msg.type}:</span> ${escapeHtml(msg.message)}</div>`;
             });
             consoleMessagesHtml += '</div></div>';
           }
@@ -8504,10 +8512,10 @@
           logCard.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
               <div>
-                <div style="font-weight: bold; font-size: 16px; color: #333; margin-bottom: 4px;">
+                <div style="font-weight: bold; font-size: 16px; color: #fff; margin-bottom: 4px;">
                   ${escapeHtml(log.errorMessage)}
                 </div>
-                <div style="color: #666; font-size: 12px;">
+                <div style="color: #ccc; font-size: 12px;">
                   🕐 ${timestamp} | 👤 ${escapeHtml(log.userEmail)} | 🌐 ${escapeHtml(log.url || 'N/A')}
                 </div>
               </div>
@@ -8517,15 +8525,15 @@
             </div>
             ${log.stackTrace ? `
               <details style="margin-top: 8px;">
-                <summary style="cursor: pointer; color: #666; font-size: 13px;">📚 Stack Trace</summary>
-                <pre style="background: #f5f5f5; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${escapeHtml(log.stackTrace)}</pre>
+                <summary style="cursor: pointer; color: #ccc; font-size: 13px;">📚 Stack Trace</summary>
+                <pre style="background: #1a1a1a; color: #ddd; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${escapeHtml(log.stackTrace)}</pre>
               </details>
             ` : ''}
             ${consoleMessagesHtml}
             ${log.additionalData && Object.keys(log.additionalData).length > 0 ? `
               <details style="margin-top: 8px;">
-                <summary style="cursor: pointer; color: #666; font-size: 13px;">ℹ️ Datos adicionales</summary>
-                <pre style="background: #f5f5f5; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${JSON.stringify(log.additionalData, null, 2)}</pre>
+                <summary style="cursor: pointer; color: #ccc; font-size: 13px;">ℹ️ Datos adicionales</summary>
+                <pre style="background: #1a1a1a; color: #ddd; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${JSON.stringify(log.additionalData, null, 2)}</pre>
               </details>
             ` : ''}
           `;
@@ -8541,14 +8549,133 @@
         return div.innerHTML;
       }
 
-      // Filtrar logs por tipo
+      // Función para actualizar opciones del filtro
+      function updateFilterOptions() {
+        const filterSelect = document.getElementById('errorTypeFilter');
+        if (!filterSelect) return;
+
+        // Obtener fechas únicas de logs guardados
+        const savedDates = [...new Set(allErrorLogs
+          .filter(log => log.savedDate)
+          .map(log => log.savedDate)
+        )].sort().reverse(); // Más reciente primero
+
+        // Opciones fijas
+        const fixedOptions = [
+          { value: 'all', text: 'Todos' },
+          { value: 'uncaught_error', text: 'Errores no capturados' },
+          { value: 'unhandled_rejection', text: 'Promesas rechazadas' },
+          { value: 'order_confirmation_error', text: 'Errores de confirmación de orden' },
+          { value: 'user_verification_error', text: 'Errores de verificación de usuario' },
+          { value: 'caught_error', text: 'Errores capturados' },
+          { value: 'manual', text: 'Errores manuales' }
+        ];
+
+        // Guardar valor actual
+        const currentValue = filterSelect.value;
+
+        // Limpiar y reconstruir opciones
+        filterSelect.innerHTML = '';
+
+        // Agregar opciones fijas
+        fixedOptions.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.text;
+          filterSelect.appendChild(option);
+        });
+
+        // Agregar separador si hay fechas guardadas
+        if (savedDates.length > 0) {
+          const separator = document.createElement('option');
+          separator.disabled = true;
+          separator.textContent = '─────────────────';
+          filterSelect.appendChild(separator);
+
+          const header = document.createElement('option');
+          header.disabled = true;
+          header.textContent = '📅 Logs guardados';
+          filterSelect.appendChild(header);
+
+          // Agregar fechas guardadas
+          savedDates.forEach(date => {
+            const option = document.createElement('option');
+            option.value = date;
+            option.textContent = `📌 ${date}`;
+            filterSelect.appendChild(option);
+          });
+        }
+
+        // Restaurar valor anterior si existe
+        if (currentValue) {
+          filterSelect.value = currentValue;
+        }
+      }
+
+      // Filtrar logs por tipo o fecha guardada
       document.getElementById('errorTypeFilter')?.addEventListener('change', (e) => {
         const filterValue = e.target.value;
         if (filterValue === 'all') {
           displayErrorLogs(allErrorLogs);
         } else {
-          const filtered = allErrorLogs.filter(log => log.errorType === filterValue);
+          // Filtrar por tipo de error o por fecha guardada
+          const filtered = allErrorLogs.filter(log =>
+            log.errorType === filterValue || log.savedDate === filterValue
+          );
           displayErrorLogs(filtered);
+        }
+      });
+
+      // Guardar snapshot de logs actuales
+      document.getElementById('saveLogsSnapshotBtn')?.addEventListener('click', async () => {
+        try {
+          const currentFilter = document.getElementById('errorTypeFilter').value;
+          const logsToSave = currentFilter === 'all' ? allErrorLogs : allErrorLogs.filter(log => log.errorType === currentFilter || log.savedDate === currentFilter);
+
+          if (logsToSave.length === 0) {
+            alert('No hay logs para guardar');
+            return;
+          }
+
+          const confirmSave = confirm(`¿Guardar ${logsToSave.length} logs con la fecha de hoy?\n\nEstos logs quedarán disponibles en el filtro con la fecha del día.`);
+          if (!confirmSave) return;
+
+          const { collection, doc, updateDoc } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+
+          const today = new Date().toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }).replace(/\//g, '-');
+
+          console.log(`💾 Guardando ${logsToSave.length} logs con fecha: ${today}`);
+
+          // Actualizar cada log con la fecha de guardado
+          let savedCount = 0;
+          for (const log of logsToSave) {
+            try {
+              const logRef = doc(db, 'error_logs', log.id);
+              await updateDoc(logRef, {
+                savedDate: today
+              });
+              savedCount++;
+            } catch (error) {
+              console.error(`Error al guardar log ${log.id}:`, error);
+            }
+          }
+
+          alert(`✅ Se guardaron ${savedCount} logs con la fecha ${today}\n\nAhora puedes filtrarlos seleccionando "${today}" en el filtro.`);
+
+          // Recargar logs para actualizar el filtro
+          await loadErrorLogs();
+
+          // Actualizar opciones del filtro
+          updateFilterOptions();
+
+        } catch (error) {
+          console.error('❌ Error al guardar snapshot de logs:', error);
+          alert('Error al guardar logs: ' + error.message);
         }
       });
 
