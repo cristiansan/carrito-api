@@ -862,7 +862,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.47</span>
+    <span id="versionBtn" class="version-btn">v0.48</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -885,7 +885,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.47</button>
+      <button id="mobileVersionBtn">v0.48</button>
     </div>
   </div>
 
@@ -1101,7 +1101,20 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.47 - Actual</h3>
+          <h3>v0.48 - Actual</h3>
+          <ul>
+            <li>📊 <strong>Estadísticas de Ventas Mejoradas:</strong> Nuevos gráficos de ventas por mes (últimos 12 meses) y por año</li>
+            <li>📱 <strong>Tracking de Dispositivos:</strong> Detección automática de PC, Mac, iPhone, iPad, Android Phone/Tablet en cada login</li>
+            <li>🌐 <strong>Tracking de Navegadores:</strong> Detección automática de Chrome, Safari, Firefox, Edge, Opera con versión</li>
+            <li>📈 <strong>Gráficos Dispositivos/Browsers:</strong> Visualización tipo doughnut con porcentajes en estadísticas</li>
+            <li>🎨 <strong>Layout Top 10 Mejorado:</strong> Vendedores y Usuarios lado a lado (responsive en móvil)</li>
+            <li>💾 <strong>Datos en Firebase:</strong> Campos lastDevice, lastOS, lastBrowser, lastBrowserVersion guardados automáticamente</li>
+            <li>📊 <strong>Análisis de Audiencia:</strong> Identifica qué dispositivos y navegadores prefieren tus usuarios</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.47</h3>
           <ul>
             <li>🔧 <strong>Fix crítico Timestamp:</strong> Reemplazado Timestamp.fromDate() por serverTimestamp() para evitar error "Can't find variable: Timestamp"</li>
             <li>⚡ <strong>Mejora de confiabilidad:</strong> serverTimestamp() usa el reloj del servidor Firebase (más preciso y confiable)</li>
