@@ -1114,8 +1114,8 @@
         }
 
         // Buscar datos del cliente
-        const { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } = window.firebase.firestoreHelpers;
         const db = window.firebase.firestore();
+        const { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc, serverTimestamp } = window.firebase.firestoreHelpers;
 
         let clienteNombre = window.currentUser.email;
         let clienteEmail = window.currentUser.email;
