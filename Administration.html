@@ -5497,14 +5497,30 @@
                 console.warn('⚠️ No se pudo obtener nombre de usuario:', e);
               }
 
+              // Limpiar y validar items antes de guardar
+              const cleanedItems = order.items.map(item => ({
+                articulo: item.articulo || '',
+                description: item.description || '',
+                quantity: parseInt(item.quantity) || 0,
+                price: parseFloat(item.price) || 0,
+                subtotal: parseFloat(item.subtotal) || 0
+              }));
+
+              // Validar total
+              const cleanedTotal = parseFloat(order.total) || 0;
+
+              console.log('📦 Items a guardar:', cleanedItems);
+              console.log('💰 Total a guardar:', cleanedTotal);
+
               // Actualizar orden en Firebase con información de quién editó
               const { doc, updateDoc } = firebase.firestoreHelpers;
               const db = firebase.firestore();
               const orderRef = doc(db, 'pedidos', order.id);
 
               await updateDoc(orderRef, {
-                items: order.items,
-                total: order.total,
+                items: cleanedItems,
+                total: cleanedTotal,
+                montoTotal: cleanedTotal, // Agregar también montoTotal para compatibilidad
                 editadaPor: currentUser.uid,
                 editadaPorEmail: userEmail,
                 editadaPorNombre: userName,
@@ -5512,7 +5528,11 @@
                 fechaEdicionLocal: new Date().toLocaleString('es-AR')
               });
 
-              console.log('✅ Orden guardada exitosamente');
+              console.log('✅ Orden guardada exitosamente en Firebase');
+
+              // Actualizar orden local
+              order.items = cleanedItems;
+              order.total = cleanedTotal;
 
               // Enviar WhatsApp al vendedor (si no hay vendedor, se usa Santiago por defecto)
               console.log('📱 Preparando WhatsApp para vendedor:', order.vendedorId || 'Santiago (por defecto)');
@@ -5537,7 +5557,24 @@
               alert('✅ Cambios guardados exitosamente');
             } catch (error) {
               console.error('❌ Error guardando cambios:', error);
-              alert('❌ Error al guardar cambios. Por favor intenta nuevamente.');
+              console.error('❌ Detalles del error:', {
+                message: error.message,
+                code: error.code,
+                stack: error.stack
+              });
+
+              let errorMessage = 'Error al guardar cambios. ';
+              if (error.code === 'permission-denied') {
+                errorMessage += 'No tienes permisos para realizar esta acción.';
+              } else if (error.code === 'unavailable') {
+                errorMessage += 'Firestore no está disponible. Verifica tu conexión a internet.';
+              } else if (error.message) {
+                errorMessage += error.message;
+              } else {
+                errorMessage += 'Por favor intenta nuevamente.';
+              }
+
+              alert('❌ ' + errorMessage);
             }
           });
         }
