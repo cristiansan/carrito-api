@@ -7058,7 +7058,51 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.49 - Actual</h3>
+          <h3>v0.52.1 - Actual</h3>
+          <ul>
+            <li>🐛 <strong>Fix Edición de Precios:</strong> Solucionado problema de edición de precios al editar órdenes desde Master</li>
+            <li>📝 <strong>Logging Detallado:</strong> Agregados logs de consola para debugging de edición de precios</li>
+            <li>⚡ <strong>Actualización Dinámica:</strong> Cambio de precios ahora actualiza totales sin recargar página (mantiene contexto)</li>
+            <li>🔍 <strong>Debug Info:</strong> Logs muestran estado de admin, valores de precio, y event listeners</li>
+            <li>✅ <strong>Mejor UX:</strong> Confirmación visual inmediata al cambiar precios</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.52</h3>
+          <ul>
+            <li>✏️ <strong>Edición Completa desde Master:</strong> Editar órdenes existentes con cambio de cliente y precios</li>
+            <li>👤 <strong>Preservación de Cliente:</strong> Al editar orden, se carga automáticamente el cliente asignado</li>
+            <li>💰 <strong>Edición de Precios:</strong> Admins pueden modificar precios de items en órdenes editadas</li>
+            <li>🔄 <strong>Auto-selección:</strong> Cliente se selecciona automáticamente en dropdown al editar orden</li>
+            <li>💾 <strong>Actualización Inteligente:</strong> Confirmar actualiza la orden original en lugar de crear nueva</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.51</h3>
+          <ul>
+            <li>🎨 <strong>Panel Cliente Mejorado:</strong> Fondo oscuro con texto blanco para mejor visibilidad</li>
+            <li>🔧 <strong>Fix Visibility:</strong> Solucionado problema de texto blanco sobre fondo blanco</li>
+            <li>✨ <strong>Diseño Consistente:</strong> Panel de cliente con estilo similar a otros componentes admin</li>
+            <li>👁️ <strong>Contraste Mejorado:</strong> Color verde (#4CAF50) para títulos con fondo oscuro (#2a2a33)</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.50</h3>
+          <ul>
+            <li>💰 <strong>Edición de Precios:</strong> Admins pueden editar precios de items en el carrito</li>
+            <li>👤 <strong>Cambio de Cliente:</strong> Admins pueden asignar una orden a cualquier cliente</li>
+            <li>🔒 <strong>Solo Admins:</strong> Funcionalidad restringida a usuarios administradores</li>
+            <li>🎨 <strong>Panel Verde de Cliente:</strong> Indicador visual del cliente seleccionado para la orden</li>
+            <li>🔄 <strong>Botón Cambiar Cliente:</strong> Acceso rápido para reasignar órdenes</li>
+            <li>📝 <strong>Inputs Numéricos:</strong> Campos de precio con validación y formato decimal</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.49</h3>
           <ul>
             <li>🔧 <strong>Fix Guardado de Logs:</strong> Corregida lógica que causaba guardar 0 logs</li>
             <li>🔒 <strong>Permisos Firebase:</strong> Agregadas reglas de seguridad para permitir actualización de logs por admins</li>

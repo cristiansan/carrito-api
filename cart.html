@@ -805,6 +805,10 @@
              </td>`
           : `<td class="text-right">$${item.price.toFixed(2)}</td>`;
 
+        if (index === 0) {
+          console.log(`🎨 Renderizando carrito. isUserAdmin: ${window.isUserAdmin}, priceCell tipo: ${window.isUserAdmin ? 'EDITABLE' : 'SOLO LECTURA'}`);
+        }
+
         html += `
           <tr data-item-id="${item.item}">
             <td>${item.item}</td>
@@ -880,10 +884,13 @@
       });
 
       // Agregar manejadores para los inputs de precio (solo admin)
-      document.querySelectorAll('.price-input').forEach(input => {
+      const priceInputs = document.querySelectorAll('.price-input');
+      console.log(`📝 Agregando event listeners a ${priceInputs.length} inputs de precio. isUserAdmin: ${window.isUserAdmin}`);
+      priceInputs.forEach(input => {
         input.addEventListener('change', function() {
           const index = parseInt(this.getAttribute('data-index'));
           const newPrice = parseFloat(this.value);
+          console.log('💰 Input de precio cambiado:', { index, newPrice, value: this.value });
           updateItemPrice(index, newPrice);
         });
       });
@@ -1061,8 +1068,11 @@
 
     // Función para actualizar el precio de un item (solo admin)
     function updateItemPrice(index, newPrice) {
+      console.log('updateItemPrice llamado:', { index, newPrice, isAdmin: window.isUserAdmin });
+
       if (!window.isUserAdmin) {
         console.warn('Solo administradores pueden editar precios');
+        alert('Solo administradores pueden editar precios');
         return;
       }
 
@@ -1070,10 +1080,28 @@
 
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (index >= 0 && index < cart.length) {
+        const oldPrice = cart[index].price;
         cart[index].price = newPrice;
         localStorage.setItem('cart', JSON.stringify(cart));
-        // Recargar la página para actualizar los totales
-        window.location.reload();
+        console.log(`✅ Precio actualizado de $${oldPrice} a $${newPrice} para item ${cart[index].item}`);
+
+        // Actualizar la fila específica sin recargar toda la página
+        const rowTotal = newPrice * cart[index].quantity;
+        const rowTotalElement = document.getElementById(`row-total-${index}`);
+        if (rowTotalElement) {
+          rowTotalElement.textContent = `$${rowTotal.toFixed(2)}`;
+        }
+
+        // Actualizar el total general
+        let total = 0;
+        cart.forEach(item => {
+          total += item.price * item.quantity;
+        });
+
+        const totalRow = document.querySelector('.total-row td.text-right strong');
+        if (totalRow) {
+          totalRow.textContent = `$${total.toFixed(2)}`;
+        }
       }
     }
 
