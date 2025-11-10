@@ -8543,7 +8543,7 @@
                 </div>
               </div>
               <div style="display: flex; gap: 8px; align-items: center;">
-                <button onclick="copyLogToClipboard('${log.id}')" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px;" title="Copiar log completo">
+                <button onclick="copyLogToClipboard(this, '${log.id}')" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px;" title="Copiar log completo">
                   <i class="material-icons" style="font-size: 14px;">content_copy</i>
                   Copiar JSON
                 </button>
@@ -8572,7 +8572,7 @@
       }
 
       // Función para copiar log completo al portapapeles
-      window.copyLogToClipboard = function(logId) {
+      window.copyLogToClipboard = function(button, logId) {
         const log = allErrorLogs.find(l => l.id === logId);
         if (!log) {
           alert('Log no encontrado');
@@ -8583,7 +8583,6 @@
 
         navigator.clipboard.writeText(logJson).then(() => {
           // Mostrar notificación temporal
-          const button = event.target.closest('button');
           const originalText = button.innerHTML;
           button.innerHTML = '<i class="material-icons" style="font-size: 14px;">check</i> Copiado!';
           button.style.background = '#4CAF50';
@@ -8594,7 +8593,8 @@
           }, 2000);
         }).catch(err => {
           console.error('Error al copiar:', err);
-          alert('Error al copiar al portapapeles');
+          alert('Error al copiar al portapapeles. Intenta copiar manualmente desde la consola.');
+          console.log('LOG COMPLETO:', logJson);
         });
       };
 
