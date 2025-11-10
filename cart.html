@@ -532,6 +532,8 @@
             // Si es admin, cargar dropdown de clientes
             if (window.isUserAdmin) {
               await loadClientesDropdown();
+              // Re-renderizar el carrito con las opciones de admin
+              initCart();
             }
           }
         } catch (error) {
