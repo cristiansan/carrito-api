@@ -80,5 +80,13 @@ service cloud.firestore {
       allow read: if request.auth != null;  // Usuarios autenticados pueden leer
       allow write: if request.auth != null; // Usuarios autenticados pueden escribir
     }
+
+    // REGLAS PARA ERROR LOGS - Sistema de logging de errores
+    match /error_logs/{logId} {
+      allow read: if isAdmin();  // Solo admins pueden leer logs
+      allow create: if request.auth != null;  // Cualquier usuario autenticado puede crear logs (registrar errores)
+      allow update: if isAdmin();  // Solo admins pueden actualizar logs (agregar savedDate)
+      allow delete: if isAdmin();  // Solo admins pueden eliminar logs
+    }
   }
 }

@@ -8451,12 +8451,28 @@
             allErrorLogs.push({ id: doc.id, ...doc.data() });
           });
 
+          console.log('📊 Logs cargados desde Firebase:', allErrorLogs.length);
+          console.log('📊 Logs con savedDate después de cargar:', allErrorLogs.filter(log => log.savedDate).length);
+          console.log('📊 Logs SIN savedDate después de cargar:', allErrorLogs.filter(log => !log.savedDate).length);
+
           loadingDiv.style.display = 'none';
 
           if (allErrorLogs.length === 0) {
             noLogsDiv.style.display = 'block';
           } else {
-            displayErrorLogs(allErrorLogs);
+            // Aplicar el filtro actual o mostrar solo logs sin guardar por defecto
+            const filterSelect = document.getElementById('errorTypeFilter');
+            const currentFilter = filterSelect?.value || 'all';
+
+            if (currentFilter === 'all') {
+              // Mostrar solo logs actuales (sin guardar)
+              const filtered = allErrorLogs.filter(log => !log.savedDate);
+              displayErrorLogs(filtered);
+            } else {
+              // Aplicar el filtro que esté seleccionado
+              displayErrorLogs(allErrorLogs);
+            }
+
             updateFilterOptions(); // Actualizar opciones del filtro con fechas guardadas
           }
         } catch (error) {
@@ -8562,7 +8578,7 @@
 
         // Opciones fijas
         const fixedOptions = [
-          { value: 'all', text: 'Todos' },
+          { value: 'all', text: '📋 Actuales (sin guardar)' },
           { value: 'uncaught_error', text: 'Errores no capturados' },
           { value: 'unhandled_rejection', text: 'Promesas rechazadas' },
           { value: 'order_confirmation_error', text: 'Errores de confirmación de orden' },
@@ -8616,7 +8632,9 @@
       document.getElementById('errorTypeFilter')?.addEventListener('change', (e) => {
         const filterValue = e.target.value;
         if (filterValue === 'all') {
-          displayErrorLogs(allErrorLogs);
+          // Mostrar solo logs actuales (sin guardar)
+          const filtered = allErrorLogs.filter(log => !log.savedDate);
+          displayErrorLogs(filtered);
         } else {
           // Filtrar por tipo de error o por fecha guardada
           const filtered = allErrorLogs.filter(log =>
@@ -8629,15 +8647,32 @@
       // Guardar snapshot de logs actuales
       document.getElementById('saveLogsSnapshotBtn')?.addEventListener('click', async () => {
         try {
-          const currentFilter = document.getElementById('errorTypeFilter').value;
-          const logsToSave = currentFilter === 'all' ? allErrorLogs : allErrorLogs.filter(log => log.errorType === currentFilter || log.savedDate === currentFilter);
+          // Debug: Ver todos los logs y sus savedDate
+          console.log('📊 Total de logs cargados:', allErrorLogs.length);
+          console.log('📊 Logs con savedDate:', allErrorLogs.filter(log => log.savedDate).length);
+          console.log('📊 Logs SIN savedDate:', allErrorLogs.filter(log => !log.savedDate).length);
+
+          // Mostrar algunos ejemplos
+          console.log('📋 Ejemplo de logs:', allErrorLogs.slice(0, 3).map(log => ({
+            id: log.id,
+            errorMessage: log.errorMessage?.substring(0, 50),
+            savedDate: log.savedDate,
+            hasSavedDate: !!log.savedDate
+          })));
+
+          // Solo guardar logs que NO tienen savedDate (logs nuevos sin guardar)
+          const logsToSave = allErrorLogs.filter(log => !log.savedDate);
+
+          console.log('💾 Logs a guardar:', logsToSave.length);
 
           if (logsToSave.length === 0) {
-            alert('No hay logs para guardar');
+            alert('No hay logs nuevos para guardar.\n\nTodos los logs actuales ya fueron guardados anteriormente.\n\n' +
+                  `Total de logs: ${allErrorLogs.length}\n` +
+                  `Logs con fecha guardada: ${allErrorLogs.filter(log => log.savedDate).length}`);
             return;
           }
 
-          const confirmSave = confirm(`¿Guardar ${logsToSave.length} logs con la fecha de hoy?\n\nEstos logs quedarán disponibles en el filtro con la fecha del día.`);
+          const confirmSave = confirm(`¿Guardar ${logsToSave.length} logs nuevos con la fecha de hoy?\n\nEstos logs quedarán disponibles en el filtro con la fecha del día.\n\n(Solo se guardarán logs que no han sido guardados anteriormente)`);
           if (!confirmSave) return;
 
           const { collection, doc, updateDoc } = window.firebase.firestoreHelpers;
@@ -8650,6 +8685,7 @@
           }).replace(/\//g, '-');
 
           console.log(`💾 Guardando ${logsToSave.length} logs con fecha: ${today}`);
+          console.log('💾 IDs de logs a guardar:', logsToSave.map(l => l.id));
 
           // Actualizar cada log con la fecha de guardado
           let savedCount = 0;
@@ -8659,19 +8695,35 @@
               await updateDoc(logRef, {
                 savedDate: today
               });
+              console.log(`✅ Log guardado: ${log.id} con fecha ${today}`);
               savedCount++;
             } catch (error) {
               console.error(`Error al guardar log ${log.id}:`, error);
             }
           }
 
-          alert(`✅ Se guardaron ${savedCount} logs con la fecha ${today}\n\nAhora puedes filtrarlos seleccionando "${today}" en el filtro.`);
+          console.log(`✅ Total guardados: ${savedCount} de ${logsToSave.length}`);
+
+          alert(`✅ Se guardaron ${savedCount} logs con la fecha ${today}\n\nLos logs guardados se han ocultado de la vista.\nFiltrando ahora solo logs nuevos sin guardar.`);
+
+          console.log('🔄 Recargando logs desde Firebase...');
 
           // Recargar logs para actualizar el filtro
           await loadErrorLogs();
 
+          console.log('✅ Recarga completada');
+
           // Actualizar opciones del filtro
           updateFilterOptions();
+
+          // Cambiar automáticamente el filtro a "Actuales" para ocultar los logs guardados
+          const filterSelect = document.getElementById('errorTypeFilter');
+          if (filterSelect) {
+            filterSelect.value = 'all';
+            // Disparar evento change para aplicar el filtro
+            const event = new Event('change');
+            filterSelect.dispatchEvent(event);
+          }
 
         } catch (error) {
           console.error('❌ Error al guardar snapshot de logs:', error);

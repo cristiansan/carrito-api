@@ -2744,7 +2744,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.48
+          v0.49
         </div>
       </div>
       
@@ -7058,7 +7058,22 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.48 - Actual</h3>
+          <h3>v0.49 - Actual</h3>
+          <ul>
+            <li>🔧 <strong>Fix Guardado de Logs:</strong> Corregida lógica que causaba guardar 0 logs</li>
+            <li>🔒 <strong>Permisos Firebase:</strong> Agregadas reglas de seguridad para permitir actualización de logs por admins</li>
+            <li>📝 <strong>Solo Logs Nuevos:</strong> Ahora guarda ÚNICAMENTE logs sin fecha guardada (sin sobrescribir anteriores)</li>
+            <li>📋 <strong>Filtro "Actuales":</strong> Renombrado de "Todos" a "Actuales (sin guardar)" - muestra solo logs nuevos pendientes</li>
+            <li>👁️ <strong>Auto-Ocultar Logs Guardados:</strong> Después de guardar, automáticamente filtra y muestra solo logs actuales</li>
+            <li>📅 <strong>Acceso a Logs Guardados:</strong> Los logs guardados quedan archivados y accesibles por fecha en el filtro</li>
+            <li>⚡ <strong>Independiente del Filtro:</strong> El guardado ya no depende del filtro seleccionado</li>
+            <li>✅ <strong>Mensajes Mejorados:</strong> Alertas más claras indicando cuántos logs nuevos se guardarán</li>
+            <li>🚫 <strong>Prevención de Duplicados:</strong> Evita sobrescribir fechas de guardado anteriores</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.48</h3>
           <ul>
             <li>📊 <strong>Estadísticas de Ventas Mejoradas:</strong> Nuevos gráficos de ventas por mes (últimos 12 meses) y por año</li>
             <li>📱 <strong>Tracking de Dispositivos:</strong> Detección automática de PC, Mac, iPhone, iPad, Android Phone/Tablet en cada login</li>
