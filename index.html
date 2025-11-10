@@ -1101,7 +1101,19 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.52.1 - Actual</h3>
+          <h3>v0.52.2 - Actual</h3>
+          <ul>
+            <li>🔧 <strong>Fix Botones Master:</strong> Solucionado comportamiento errático de botones en panel Master</li>
+            <li>✏️ <strong>Botones Siempre Visibles:</strong> Botón "Editar" y botones de cambio de estado ahora aparecen consistentemente</li>
+            <li>🔄 <strong>Re-render Automático:</strong> Órdenes se re-renderizan automáticamente cuando se confirma usuario admin</li>
+            <li>⏱️ <strong>Timing Mejorado:</strong> Aumentado delay de tab Master de 100ms a 300ms para sincronización</li>
+            <li>📝 <strong>Logging de Tab:</strong> Logs muestran estado de isUserAdmin al cambiar a Master</li>
+            <li>🎯 <strong>Race Condition Fix:</strong> Eliminada condición de carrera entre verificación admin y carga de órdenes</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.52.1</h3>
           <ul>
             <li>🐛 <strong>Fix Edición de Precios:</strong> Solucionado problema de edición de precios al editar órdenes desde Master</li>
             <li>📝 <strong>Logging Detallado:</strong> Agregados logs de consola para debugging de edición de precios</li>

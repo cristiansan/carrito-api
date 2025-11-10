@@ -2549,6 +2549,7 @@
           if (userDoc.exists()) {
             const userData = userDoc.data();
             isAdmin = userData.admin === true;
+            const wasAdmin = isUserAdmin; // Guardar estado anterior
             isUserAdmin = isAdmin; // Guardar en variable global
             console.log('👤 Usuario encontrado:', userData);
             console.log('🔐 Es admin:', isAdmin);
@@ -2558,6 +2559,16 @@
               // No redirigir, solo mostrar con permisos de solo lectura
             } else {
               console.log('✅ Acceso admin confirmado para:', user.email);
+
+              // Si cambió el estado de admin y hay órdenes cargadas, re-renderizar
+              if (!wasAdmin && window.orders && window.orders.length > 0) {
+                console.log('🔄 Re-renderizando órdenes con permisos de admin...');
+                setTimeout(() => {
+                  if (typeof displayOrders === 'function') {
+                    displayOrders();
+                  }
+                }, 500);
+              }
             }
 
             return true; // Permitir acceso a todos los usuarios autenticados
@@ -7677,14 +7688,16 @@
               }
             }, 100);
           } else if (tabId === 'master') {
+            console.log('🎯 [MASTER TAB] Switching to Master tab, isUserAdmin:', isUserAdmin);
             setTimeout(() => {
               // Load sellers first to populate dropdown, then load orders
               if (window.loadSellers && window.loadOrders) {
                 window.loadSellers().then(() => {
+                  console.log('🎯 [MASTER TAB] About to loadOrders(), isUserAdmin:', isUserAdmin);
                   window.loadOrders();
                 });
               }
-            }, 100);
+            }, 300); // Aumentado de 100ms a 300ms para dar tiempo a que isUserAdmin se establezca
           } else if (tabId === 'admisiones') {
             setTimeout(() => {
               if (window.loadPendingUsers) {
