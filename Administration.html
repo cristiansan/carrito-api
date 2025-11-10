@@ -2225,17 +2225,24 @@
         </div>
       </div>
 
-      <div style="margin-bottom: 20px;">
-        <label style="margin-right: 10px;">Filtrar por tipo:</label>
-        <select id="errorTypeFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-          <option value="all">Todos</option>
-          <option value="uncaught_error">Errores no capturados</option>
-          <option value="unhandled_rejection">Promesas rechazadas</option>
-          <option value="order_confirmation_error">Errores de confirmación de orden</option>
-          <option value="user_verification_error">Errores de verificación de usuario</option>
-          <option value="caught_error">Errores capturados</option>
-          <option value="manual">Errores manuales</option>
-        </select>
+      <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 500;">🔍 Buscar por usuario o mensaje:</label>
+          <input type="text" id="errorSearchInput" placeholder="Ej: cortizjctech, timestamp, orden 10073..."
+                 style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+        </div>
+        <div style="min-width: 200px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 500;">Filtrar por tipo:</label>
+          <select id="errorTypeFilter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="all">Todos</option>
+            <option value="uncaught_error">Errores no capturados</option>
+            <option value="unhandled_rejection">Promesas rechazadas</option>
+            <option value="order_confirmation_error">Errores de confirmación de orden</option>
+            <option value="user_verification_error">Errores de verificación de usuario</option>
+            <option value="caught_error">Errores capturados</option>
+            <option value="manual">Errores manuales</option>
+          </select>
+        </div>
       </div>
 
       <div id="errorLogsContainer">
@@ -8527,7 +8534,7 @@
 
           logCard.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-              <div>
+              <div style="flex: 1;">
                 <div style="font-weight: bold; font-size: 16px; color: #fff; margin-bottom: 4px;">
                   ${escapeHtml(log.errorMessage)}
                 </div>
@@ -8535,9 +8542,15 @@
                   🕐 ${timestamp} | 👤 ${escapeHtml(log.userEmail)} | 🌐 ${escapeHtml(log.url || 'N/A')}
                 </div>
               </div>
-              <span style="background: ${typeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap;">
-                ${errorType}
-              </span>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="copyLogToClipboard('${log.id}')" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px;" title="Copiar log completo">
+                  <i class="material-icons" style="font-size: 14px;">content_copy</i>
+                  Copiar JSON
+                </button>
+                <span style="background: ${typeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap;">
+                  ${errorType}
+                </span>
+              </div>
             </div>
             ${log.stackTrace ? `
               <details style="margin-top: 8px;">
@@ -8557,6 +8570,33 @@
           logsContainer.appendChild(logCard);
         });
       }
+
+      // Función para copiar log completo al portapapeles
+      window.copyLogToClipboard = function(logId) {
+        const log = allErrorLogs.find(l => l.id === logId);
+        if (!log) {
+          alert('Log no encontrado');
+          return;
+        }
+
+        const logJson = JSON.stringify(log, null, 2);
+
+        navigator.clipboard.writeText(logJson).then(() => {
+          // Mostrar notificación temporal
+          const button = event.target.closest('button');
+          const originalText = button.innerHTML;
+          button.innerHTML = '<i class="material-icons" style="font-size: 14px;">check</i> Copiado!';
+          button.style.background = '#4CAF50';
+
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '#2196F3';
+          }, 2000);
+        }).catch(err => {
+          console.error('Error al copiar:', err);
+          alert('Error al copiar al portapapeles');
+        });
+      };
 
       // Función para escapar HTML
       function escapeHtml(text) {
@@ -8628,21 +8668,69 @@
         }
       }
 
-      // Filtrar logs por tipo o fecha guardada
-      document.getElementById('errorTypeFilter')?.addEventListener('change', (e) => {
-        const filterValue = e.target.value;
+      // Función combinada para aplicar filtros
+      function applyFilters() {
+        const filterValue = document.getElementById('errorTypeFilter')?.value || 'all';
+        const searchText = document.getElementById('errorSearchInput')?.value?.toLowerCase() || '';
+
+        let filtered = allErrorLogs;
+
+        // Aplicar filtro de tipo
         if (filterValue === 'all') {
           // Mostrar solo logs actuales (sin guardar)
-          const filtered = allErrorLogs.filter(log => !log.savedDate);
-          displayErrorLogs(filtered);
+          filtered = filtered.filter(log => !log.savedDate);
         } else {
           // Filtrar por tipo de error o por fecha guardada
-          const filtered = allErrorLogs.filter(log =>
+          filtered = filtered.filter(log =>
             log.errorType === filterValue || log.savedDate === filterValue
           );
-          displayErrorLogs(filtered);
         }
-      });
+
+        // Aplicar búsqueda de texto
+        if (searchText) {
+          filtered = filtered.filter(log => {
+            // Buscar en email, mensaje de error
+            const matchEmail = log.userEmail?.toLowerCase().includes(searchText);
+            const matchMessage = log.errorMessage?.toLowerCase().includes(searchText);
+            const matchUrl = log.url?.toLowerCase().includes(searchText);
+
+            // Buscar en mensajes de consola
+            let matchConsole = false;
+            if (log.consoleMessages && log.consoleMessages.length > 0) {
+              matchConsole = log.consoleMessages.some(msg =>
+                msg.message?.toLowerCase().includes(searchText)
+              );
+            }
+
+            // Buscar en additionalData
+            let matchAdditional = false;
+            if (log.additionalData) {
+              const additionalStr = JSON.stringify(log.additionalData).toLowerCase();
+              matchAdditional = additionalStr.includes(searchText);
+            }
+
+            return matchEmail || matchMessage || matchUrl || matchConsole || matchAdditional;
+          });
+        }
+
+        displayErrorLogs(filtered);
+
+        // Mostrar mensaje si no hay resultados
+        if (filtered.length === 0 && searchText) {
+          document.getElementById('errorLogsList').innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+              <i class="material-icons" style="font-size: 64px; opacity: 0.3;">search_off</i>
+              <p>No se encontraron logs que coincidan con "${searchText}"</p>
+            </div>
+          `;
+        }
+      }
+
+      // Filtrar logs por tipo o fecha guardada
+      document.getElementById('errorTypeFilter')?.addEventListener('change', applyFilters);
+
+      // Buscar logs por texto
+      document.getElementById('errorSearchInput')?.addEventListener('input', applyFilters);
 
       // Guardar snapshot de logs actuales
       document.getElementById('saveLogsSnapshotBtn')?.addEventListener('click', async () => {
