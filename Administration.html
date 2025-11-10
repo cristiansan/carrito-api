@@ -2522,7 +2522,7 @@
 
     // === ADMIN ACCESS CONTROL ===
     // Variable global para almacenar el estado de admin
-    let isUserAdmin = false;
+    window.window.isUserAdmin = false;
 
     // === PRICE TABLE SORTING STATE ===
     let priceTableSort = {
@@ -2549,8 +2549,8 @@
           if (userDoc.exists()) {
             const userData = userDoc.data();
             isAdmin = userData.admin === true;
-            const wasAdmin = isUserAdmin; // Guardar estado anterior
-            isUserAdmin = isAdmin; // Guardar en variable global
+            const wasAdmin = window.isUserAdmin; // Guardar estado anterior
+            window.isUserAdmin = isAdmin; // Guardar en variable global
             console.log('👤 Usuario encontrado:', userData);
             console.log('🔐 Es admin:', isAdmin);
 
@@ -2574,7 +2574,7 @@
             return true; // Permitir acceso a todos los usuarios autenticados
           } else {
             console.log('⚠️ Usuario no encontrado en Firestore');
-            isUserAdmin = false;
+            window.isUserAdmin = false;
             return true; // Permitir acceso de solo lectura
           }
         } else {
@@ -2587,7 +2587,7 @@
         }
       } catch (error) {
         console.error('❌ Error verificando acceso admin:', error);
-        isUserAdmin = false;
+        window.isUserAdmin = false;
         return true; // Permitir acceso de solo lectura en caso de error
       }
     }
@@ -3896,7 +3896,7 @@
 
     // Create HTML for an order item (admin version with edit capabilities)
     async function createAdminOrderHTML(order, currentFlow, currentState) {
-      const canEdit = isUserAdmin;
+      const canEdit = window.isUserAdmin;
       const hasNext = currentFlow && currentFlow.next !== null;
       const hasPrev = currentFlow && currentFlow.prev !== null;
       let buttonHtml = '';
@@ -4880,7 +4880,7 @@
      * @param {HTMLInputElement} inputElement - Elemento input[type=file]
      */
     window.handlePreparacionPhoto = async function(orderId, inputElement) {
-      if (!isUserAdmin) {
+      if (!window.isUserAdmin) {
         alert('⚠️ No tienes permisos para actualizar fotos');
         return;
       }
@@ -4981,7 +4981,7 @@
      * @param {string} peso - Peso en kg
      */
     window.handlePreparacionPeso = async function(orderId, peso) {
-      if (!isUserAdmin) {
+      if (!window.isUserAdmin) {
         alert('⚠️ No tienes permisos para actualizar el peso');
         return;
       }
@@ -5026,7 +5026,7 @@
 
     // Admin move order to next state
     async function adminMoveOrder(orderId, nextState) {
-      if (!isUserAdmin) {
+      if (!window.isUserAdmin) {
         alert('⚠️ No tienes permisos para cambiar el estado de las órdenes');
         return;
       }
@@ -5242,7 +5242,7 @@
 
     // Show admin order details in modal with editable quantities
     window.adminEditOrder = async function(orderId) {
-      if (!isUserAdmin) {
+      if (!window.isUserAdmin) {
         alert('⚠️ No tienes permisos para editar órdenes');
         return;
       }
@@ -7688,16 +7688,16 @@
               }
             }, 100);
           } else if (tabId === 'master') {
-            console.log('🎯 [MASTER TAB] Switching to Master tab, isUserAdmin:', isUserAdmin);
+            console.log('🎯 [MASTER TAB] Switching to Master tab, window.isUserAdmin:', window.isUserAdmin);
             setTimeout(() => {
               // Load sellers first to populate dropdown, then load orders
               if (window.loadSellers && window.loadOrders) {
                 window.loadSellers().then(() => {
-                  console.log('🎯 [MASTER TAB] About to loadOrders(), isUserAdmin:', isUserAdmin);
+                  console.log('🎯 [MASTER TAB] About to loadOrders(), window.isUserAdmin:', window.isUserAdmin);
                   window.loadOrders();
                 });
               }
-            }, 300); // Aumentado de 100ms a 300ms para dar tiempo a que isUserAdmin se establezca
+            }, 300); // Aumentado de 100ms a 300ms para dar tiempo a que window.isUserAdmin se establezca
           } else if (tabId === 'admisiones') {
             setTimeout(() => {
               if (window.loadPendingUsers) {
@@ -8380,7 +8380,7 @@
 
       // Handler for order clicks - routes to appropriate function based on user type
       window.handleOrderClick = function(orderId) {
-        if (window.isUserAdmin) {
+        if (window.window.isUserAdmin) {
           adminEditOrder(orderId);
         } else {
           showOrderDetails(orderId);
