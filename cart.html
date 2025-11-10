@@ -656,7 +656,9 @@
             // Actualizar el display en el carrito si existe
             const displayElement = document.getElementById('selectedClienteDisplay');
             if (displayElement) {
-              displayElement.textContent = window.selectedClienteData?.nombre || window.currentUser?.email || 'No seleccionado';
+              const nombre = window.selectedClienteData?.nombre || window.currentUser?.email || 'No seleccionado';
+              const codigo = window.selectedClienteData?.codigo || '';
+              displayElement.textContent = codigo ? `[${codigo}] ${nombre}` : nombre;
             }
           });
         }
@@ -714,17 +716,27 @@
       let clienteSelector = '';
       if (window.isUserAdmin) {
         const currentClienteName = window.selectedClienteData?.nombre || window.currentUser?.email || 'No seleccionado';
+        const currentClienteCodigo = window.selectedClienteData?.codigo || '';
+        const displayText = currentClienteCodigo ? `[${currentClienteCodigo}] ${currentClienteName}` : currentClienteName;
+
         clienteSelector = `
-          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-              <div>
-                <span style="font-weight: 600; color: #495057;">👤 Cliente:</span>
-                <span style="margin-left: 10px; color: #6c757d;" id="selectedClienteDisplay">${currentClienteName}</span>
+          <div style="background: #2a2a33; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #4CAF50; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+              <div style="flex: 1; min-width: 200px;">
+                <div style="font-weight: 600; color: #4CAF50; font-size: 16px; margin-bottom: 8px;">
+                  👤 CLIENTE DE ESTA ORDEN
+                </div>
+                <div style="color: #ffffff; font-size: 18px; font-weight: 500;" id="selectedClienteDisplay">
+                  ${displayText}
+                </div>
+                <div style="color: #b5b5b5; font-size: 13px; margin-top: 4px;">
+                  Haz clic en "Cambiar Cliente" para asignar esta orden a otro cliente
+                </div>
               </div>
-              <button id="changeClienteBtn" class="mdc-button mdc-button--outlined" style="padding: 8px 16px;">
+              <button id="changeClienteBtn" class="mdc-button mdc-button--raised" style="background-color: #4CAF50; color: white; padding: 10px 20px;">
                 <span class="mdc-button__ripple"></span>
-                <i class="material-icons mdc-button__icon" style="font-size: 18px;">swap_horiz</i>
-                <span class="mdc-button__label">Cambiar Cliente</span>
+                <i class="material-icons mdc-button__icon" style="font-size: 20px;">swap_horiz</i>
+                <span class="mdc-button__label" style="font-size: 14px;">Cambiar Cliente</span>
               </button>
             </div>
           </div>
