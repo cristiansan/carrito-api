@@ -642,12 +642,19 @@
                 id: this.value,
                 email: selectedOption.getAttribute('data-email'),
                 nombre: selectedOption.textContent.split(' (')[0],
-                vendedorId: selectedOption.getAttribute('data-vendedor') || null
+                vendedorId: selectedOption.getAttribute('data-vendedor') || null,
+                codigo: selectedOption.textContent.match(/\[(\d+)\]/)?.[1] || ''
               };
               console.log('👤 Cliente seleccionado:', window.selectedClienteData);
             } else {
               window.selectedClienteData = null;
               console.log('👤 Usando usuario actual');
+            }
+
+            // Actualizar el display en el carrito si existe
+            const displayElement = document.getElementById('selectedClienteDisplay');
+            if (displayElement) {
+              displayElement.textContent = window.selectedClienteData?.nombre || window.currentUser?.email || 'No seleccionado';
             }
           });
         }
@@ -701,7 +708,28 @@
         `;
       }
 
-      let html = editingIndicator + `
+      // Selector de cliente para admin
+      let clienteSelector = '';
+      if (window.isUserAdmin) {
+        const currentClienteName = window.selectedClienteData?.nombre || window.currentUser?.email || 'No seleccionado';
+        clienteSelector = `
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <span style="font-weight: 600; color: #495057;">👤 Cliente:</span>
+                <span style="margin-left: 10px; color: #6c757d;" id="selectedClienteDisplay">${currentClienteName}</span>
+              </div>
+              <button id="changeClienteBtn" class="mdc-button mdc-button--outlined" style="padding: 8px 16px;">
+                <span class="mdc-button__ripple"></span>
+                <i class="material-icons mdc-button__icon" style="font-size: 18px;">swap_horiz</i>
+                <span class="mdc-button__label">Cambiar Cliente</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      let html = editingIndicator + clienteSelector + `
         <table id="cartTable">
           <thead>
             <tr>
@@ -721,11 +749,24 @@
         total += rowTotal;
         totalItems += item.quantity;
 
+        // Admin puede editar precio
+        const priceCell = window.isUserAdmin
+          ? `<td class="text-right">
+               $<input type="number"
+                      class="price-input"
+                      data-index="${index}"
+                      value="${item.price.toFixed(2)}"
+                      min="0"
+                      step="0.01"
+                      style="width: 80px; padding: 4px; text-align: right; border: 1px solid #ddd; border-radius: 4px;">
+             </td>`
+          : `<td class="text-right">$${item.price.toFixed(2)}</td>`;
+
         html += `
           <tr data-item-id="${item.item}">
             <td>${item.item}</td>
             <td>${item.description}</td>
-            <td class="text-right">$${item.price.toFixed(2)}</td>
+            ${priceCell}
             <td class="text-right">
               <input type="number"
                      class="quantity-input"
@@ -795,12 +836,53 @@
         });
       });
 
+      // Agregar manejadores para los inputs de precio (solo admin)
+      document.querySelectorAll('.price-input').forEach(input => {
+        input.addEventListener('change', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          const newPrice = parseFloat(this.value);
+          updateItemPrice(index, newPrice);
+        });
+      });
+
+      // Manejador para el botón de cambiar cliente (solo admin)
+      const changeClienteBtn = document.getElementById('changeClienteBtn');
+      if (changeClienteBtn && window.isUserAdmin) {
+        changeClienteBtn.addEventListener('click', function() {
+          // Abrir modal de selección de cliente (el mismo que ya existe)
+          openClienteSelectionModal();
+        });
+      }
+
       // Manejador para el botón de confirmar orden
       const checkoutBtn = document.getElementById('checkoutBtn');
       if (checkoutBtn) {
         checkoutBtn.addEventListener('click', async function() {
           await confirmOrder();
         });
+      }
+    }
+
+    // Función para abrir modal de selección de cliente
+    function openClienteSelectionModal() {
+      // Hacer scroll hasta el dropdown de clientes
+      const clientSelector = document.getElementById('clientSelectorContainer');
+      if (clientSelector) {
+        clientSelector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Resaltar brevemente el selector
+        const selector = document.getElementById('clientSelector');
+        if (selector) {
+          selector.style.transition = 'all 0.3s';
+          selector.style.border = '2px solid #4CAF50';
+          selector.style.boxShadow = '0 0 10px rgba(76, 175, 80, 0.5)';
+          selector.focus();
+
+          setTimeout(() => {
+            selector.style.border = '';
+            selector.style.boxShadow = '';
+          }, 2000);
+        }
       }
     }
 
@@ -928,6 +1010,24 @@
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (index >= 0 && index < cart.length) {
         cart[index].quantity = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        // Recargar la página para actualizar los totales
+        window.location.reload();
+      }
+    }
+
+    // Función para actualizar el precio de un item (solo admin)
+    function updateItemPrice(index, newPrice) {
+      if (!window.isUserAdmin) {
+        console.warn('Solo administradores pueden editar precios');
+        return;
+      }
+
+      if (newPrice < 0) newPrice = 0;
+
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (index >= 0 && index < cart.length) {
+        cart[index].price = newPrice;
         localStorage.setItem('cart', JSON.stringify(cart));
         // Recargar la página para actualizar los totales
         window.location.reload();
