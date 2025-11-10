@@ -5530,7 +5530,7 @@
     // Show order details modal
     let allOrdersCache = [];
 
-    async function showOrderDetails(orderId) {
+    window.showOrderDetails = async function(orderId) {
       try {
         console.log('📋 Mostrando detalles de orden:', orderId);
 
