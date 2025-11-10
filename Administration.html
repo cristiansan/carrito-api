@@ -5513,7 +5513,18 @@
           }));
           localStorage.setItem('cart', JSON.stringify(cartItems));
           localStorage.setItem('editingOrderId', order.id);
+
+          // Guardar datos del cliente de la orden para edición
+          const clienteData = {
+            nombre: order.clienteNombre || order.clienteEmail || order.usuarioEmail,
+            email: order.clienteEmail || order.usuarioEmail,
+            codigo: order.clienteCodigo || '',
+            vendedorId: order.vendedorId || null
+          };
+          localStorage.setItem('editingOrderClienteData', JSON.stringify(clienteData));
+
           console.log('📦 Orden guardada en localStorage, redirigiendo a marketplace...');
+          console.log('👤 Cliente de la orden:', clienteData);
           window.location.href = 'marketplace.html';
         });
 

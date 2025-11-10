@@ -532,6 +532,34 @@
             // Si es admin, cargar dropdown de clientes
             if (window.isUserAdmin) {
               await loadClientesDropdown();
+
+              // Si estamos editando una orden, cargar el cliente de la orden
+              const editingOrderId = localStorage.getItem('editingOrderId');
+              const editingClienteDataStr = localStorage.getItem('editingOrderClienteData');
+
+              if (editingOrderId && editingClienteDataStr) {
+                try {
+                  const clienteData = JSON.parse(editingClienteDataStr);
+                  window.selectedClienteData = clienteData;
+                  console.log('👤 Cliente de orden cargado:', clienteData);
+
+                  // Seleccionar el cliente en el dropdown si existe
+                  const clientSelector = document.getElementById('clientSelector');
+                  if (clientSelector) {
+                    // Intentar encontrar y seleccionar el cliente por email
+                    const options = clientSelector.options;
+                    for (let i = 0; i < options.length; i++) {
+                      if (options[i].getAttribute('data-email') === clienteData.email) {
+                        clientSelector.selectedIndex = i;
+                        break;
+                      }
+                    }
+                  }
+                } catch (e) {
+                  console.error('Error cargando cliente de orden:', e);
+                }
+              }
+
               // Re-renderizar el carrito con las opciones de admin
               initCart();
             }
@@ -679,8 +707,9 @@
       if (!container) return;
 
       if (cart.length === 0) {
-        // Limpiar editingOrderId si el carrito está vacío
+        // Limpiar editingOrderId y datos del cliente si el carrito está vacío
         localStorage.removeItem('editingOrderId');
+        localStorage.removeItem('editingOrderClienteData');
 
         // Mostrar mensaje de carrito vacío
         container.innerHTML = `
@@ -1373,9 +1402,10 @@
 
         document.getElementById('successModal').style.display = 'block';
 
-        // Limpiar carrito y editingOrderId
+        // Limpiar carrito, editingOrderId y datos del cliente de la orden
         localStorage.removeItem('cart');
         localStorage.removeItem('editingOrderId');
+        localStorage.removeItem('editingOrderClienteData');
 
       } catch (error) {
         console.error('❌ Error confirmando orden:', error);
