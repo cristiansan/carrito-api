@@ -700,6 +700,10 @@ function renderRows() {
             td.textContent = '?';
             td.style.fontWeight = 'bold';
             td.style.color = '#ff9800'; // Orange color for unknown price
+          } else if (Number(value) === 0) {
+            td.textContent = '$' + formatNumber(value);
+            td.style.fontWeight = 'bold';
+            td.style.color = '#f44336'; // Red color for zero price
           } else {
             td.textContent = '$' + formatNumber(value);
           }
