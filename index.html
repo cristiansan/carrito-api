@@ -862,7 +862,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.52.3</span>
+    <span id="versionBtn" class="version-btn">v0.54</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -885,7 +885,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.52.3</button>
+      <button id="mobileVersionBtn">v0.54</button>
     </div>
   </div>
 
@@ -1101,7 +1101,18 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.52.3 - Actual</h3>
+          <h3>v0.54 - Actual</h3>
+          <ul>
+            <li>🐛 <strong>Fix Error Precios Null:</strong> Solucionado error "Cannot read properties of null (reading 'toFixed')" en cart.html</li>
+            <li>✅ <strong>Validación de Datos:</strong> Agregada validación para item.price e item.quantity antes de operaciones matemáticas</li>
+            <li>🔒 <strong>Valores Por Defecto:</strong> Usa 0 como valor por defecto cuando price o quantity son null/undefined/NaN</li>
+            <li>🎯 <strong>Múltiples Funciones:</strong> Correcciones aplicadas a initCart(), updateItemPrice() y confirmOrder()</li>
+            <li>📊 <strong>Cálculos Seguros:</strong> Todos los cálculos de subtotales y totales ahora manejan valores nulos correctamente</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.52.3</h3>
           <ul>
             <li>💰 <strong>Edición de Precios en Modal:</strong> Ahora puedes editar precios directamente en el modal de detalles de orden</li>
             <li>👤 <strong>Cambio de Cliente en Modal:</strong> Nuevo botón "Cambiar Cliente" junto al nombre del cliente</li>

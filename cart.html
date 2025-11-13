@@ -788,9 +788,13 @@
       `;
 
       cart.forEach((item, index) => {
-        const rowTotal = item.price * item.quantity;
+        // Validar que price sea un número válido, usar 0 si es null/undefined/NaN
+        const itemPrice = (item.price !== null && item.price !== undefined && !isNaN(item.price)) ? item.price : 0;
+        const itemQuantity = (item.quantity !== null && item.quantity !== undefined && !isNaN(item.quantity)) ? item.quantity : 0;
+
+        const rowTotal = itemPrice * itemQuantity;
         total += rowTotal;
-        totalItems += item.quantity;
+        totalItems += itemQuantity;
 
         // Admin puede editar precio
         const priceCell = window.isUserAdmin
@@ -798,12 +802,12 @@
                $<input type="number"
                       class="price-input"
                       data-index="${index}"
-                      value="${item.price.toFixed(2)}"
+                      value="${itemPrice.toFixed(2)}"
                       min="0"
                       step="0.01"
                       style="width: 80px; padding: 4px; text-align: right; border: 1px solid #ddd; border-radius: 4px;">
              </td>`
-          : `<td class="text-right">$${item.price.toFixed(2)}</td>`;
+          : `<td class="text-right">$${itemPrice.toFixed(2)}</td>`;
 
         if (index === 0) {
           console.log(`🎨 Renderizando carrito. isUserAdmin: ${window.isUserAdmin}, priceCell tipo: ${window.isUserAdmin ? 'EDITABLE' : 'SOLO LECTURA'}`);
@@ -818,7 +822,7 @@
               <input type="number"
                      class="quantity-input"
                      data-index="${index}"
-                     value="${item.quantity}"
+                     value="${itemQuantity}"
                      min="1"
                      max="9999">
             </td>
@@ -1076,17 +1080,21 @@
         return;
       }
 
-      if (newPrice < 0) newPrice = 0;
+      // Validar que newPrice sea un número válido
+      if (newPrice === null || newPrice === undefined || isNaN(newPrice) || newPrice < 0) {
+        newPrice = 0;
+      }
 
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (index >= 0 && index < cart.length) {
-        const oldPrice = cart[index].price;
+        const oldPrice = cart[index].price || 0;
         cart[index].price = newPrice;
         localStorage.setItem('cart', JSON.stringify(cart));
-        console.log(`✅ Precio actualizado de $${oldPrice} a $${newPrice} para item ${cart[index].item}`);
+        console.log(`✅ Precio actualizado de $${oldPrice.toFixed(2)} a $${newPrice.toFixed(2)} para item ${cart[index].item}`);
 
         // Actualizar la fila específica sin recargar toda la página
-        const rowTotal = newPrice * cart[index].quantity;
+        const itemQuantity = (cart[index].quantity !== null && cart[index].quantity !== undefined && !isNaN(cart[index].quantity)) ? cart[index].quantity : 0;
+        const rowTotal = newPrice * itemQuantity;
         const rowTotalElement = document.getElementById(`row-total-${index}`);
         if (rowTotalElement) {
           rowTotalElement.textContent = `$${rowTotal.toFixed(2)}`;
@@ -1095,7 +1103,9 @@
         // Actualizar el total general
         let total = 0;
         cart.forEach(item => {
-          total += item.price * item.quantity;
+          const price = (item.price !== null && item.price !== undefined && !isNaN(item.price)) ? item.price : 0;
+          const quantity = (item.quantity !== null && item.quantity !== undefined && !isNaN(item.quantity)) ? item.quantity : 0;
+          total += price * quantity;
         });
 
         const totalRow = document.querySelector('.total-row td.text-right strong');
@@ -1336,14 +1346,18 @@
         let total = 0;
         let cantidadItems = 0;
         const items = cart.map(item => {
-          const subtotal = item.price * item.quantity;
+          // Validar que price y quantity sean números válidos
+          const itemPrice = (item.price !== null && item.price !== undefined && !isNaN(item.price)) ? item.price : 0;
+          const itemQuantity = (item.quantity !== null && item.quantity !== undefined && !isNaN(item.quantity)) ? item.quantity : 0;
+
+          const subtotal = itemPrice * itemQuantity;
           total += subtotal;
-          cantidadItems += item.quantity;
+          cantidadItems += itemQuantity;
           return {
             articulo: item.item,
             description: item.description,
-            quantity: item.quantity,
-            price: item.price,
+            quantity: itemQuantity,
+            price: itemPrice,
             subtotal: subtotal
           };
         });
