@@ -1074,8 +1074,17 @@
           const isTestUser = testUsers.includes(email.toLowerCase());
           const isNotApproved = data.approved === false || data.role === 'pending';
 
-          if (!isTestUser && !isNotApproved && data.lastDevice) {
-            deviceCounts[data.lastDevice] = (deviceCounts[data.lastDevice] || 0) + 1;
+          if (!isTestUser && !isNotApproved) {
+            // Contar todos los dispositivos únicos que ha usado este usuario
+            const usedDevices = data.usedDevices || [];
+            usedDevices.forEach(device => {
+              deviceCounts[device] = (deviceCounts[device] || 0) + 1;
+            });
+
+            // Si no hay historial, usar el último dispositivo como fallback
+            if (usedDevices.length === 0 && data.lastDevice) {
+              deviceCounts[data.lastDevice] = (deviceCounts[data.lastDevice] || 0) + 1;
+            }
           }
         });
 
@@ -1159,8 +1168,17 @@
           const isTestUser = testUsers.includes(email.toLowerCase());
           const isNotApproved = data.approved === false || data.role === 'pending';
 
-          if (!isTestUser && !isNotApproved && data.lastBrowser) {
-            browserCounts[data.lastBrowser] = (browserCounts[data.lastBrowser] || 0) + 1;
+          if (!isTestUser && !isNotApproved) {
+            // Contar todos los navegadores únicos que ha usado este usuario
+            const usedBrowsers = data.usedBrowsers || [];
+            usedBrowsers.forEach(browser => {
+              browserCounts[browser] = (browserCounts[browser] || 0) + 1;
+            });
+
+            // Si no hay historial, usar el último navegador como fallback
+            if (usedBrowsers.length === 0 && data.lastBrowser) {
+              browserCounts[data.lastBrowser] = (browserCounts[data.lastBrowser] || 0) + 1;
+            }
           }
         });
 

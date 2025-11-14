@@ -490,11 +490,30 @@
           userData.role = 'pending';  // pending, usuario, vendedor, admin
           userData.createdAt = serverTimestamp();
           userData.loginCount = 1;  // Primer login
+          // Inicializar arrays de dispositivos y navegadores únicos
+          userData.usedDevices = [deviceInfo.device];
+          userData.usedBrowsers = [browserInfo.browser];
           await setDoc(userRef, userData);
           console.log('New user document created (pending approval):', user.uid, user.email);
         } else {
           // Usuario existente - actualizar datos básicos y incrementar loginCount
           const currentLoginCount = userDoc.data().loginCount || 0;
+          const existingData = userDoc.data();
+
+          // Obtener arrays existentes de dispositivos y navegadores únicos
+          const usedDevices = existingData.usedDevices || [];
+          const usedBrowsers = existingData.usedBrowsers || [];
+
+          // Agregar dispositivo actual si no existe
+          if (!usedDevices.includes(deviceInfo.device)) {
+            usedDevices.push(deviceInfo.device);
+          }
+
+          // Agregar navegador actual si no existe
+          if (!usedBrowsers.includes(browserInfo.browser)) {
+            usedBrowsers.push(browserInfo.browser);
+          }
+
           await updateDoc(userRef, {
             email: userData.email,
             displayName: userData.displayName,
@@ -505,9 +524,11 @@
             lastDevice: userData.lastDevice,
             lastOS: userData.lastOS,
             lastBrowser: userData.lastBrowser,
-            lastBrowserVersion: userData.lastBrowserVersion
+            lastBrowserVersion: userData.lastBrowserVersion,
+            usedDevices: usedDevices,  // Array de dispositivos únicos
+            usedBrowsers: usedBrowsers  // Array de navegadores únicos
           });
-          console.log('User document updated:', user.uid, user.email, '- Login count:', currentLoginCount + 1, '- Device:', userData.lastDevice, '- Browser:', userData.lastBrowser);
+          console.log('User document updated:', user.uid, user.email, '- Login count:', currentLoginCount + 1, '- Device:', userData.lastDevice, '- Browser:', userData.lastBrowser, '- Total devices used:', usedDevices.length, '- Total browsers used:', usedBrowsers.length);
         }
         
         return true;
