@@ -862,7 +862,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.54</span>
+    <span id="versionBtn" class="version-btn">v0.55</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -885,7 +885,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.54</button>
+      <button id="mobileVersionBtn">v0.55</button>
     </div>
   </div>
 
@@ -1101,7 +1101,25 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.54 - Actual</h3>
+          <h3>v0.55 - Actual</h3>
+          <ul>
+            <li>🆕 <strong>Nueva Página de Ayuda:</strong> Creada ayuda.html con formulario de soporte técnico</li>
+            <li>📝 <strong>Sistema de Tickets:</strong> Usuarios pueden reportar problemas con nombre, teléfono, descripción y foto adjunta</li>
+            <li>📸 <strong>Subida de Fotos:</strong> Vista previa de imágenes antes de enviar, almacenadas en Firebase Storage</li>
+            <li>💾 <strong>Guardado en Firebase:</strong> Tickets guardados en colección soporte_tickets con timestamp y status</li>
+            <li>🤖 <strong>Chatbot Reubicado:</strong> Chatbot AI movido de marketplace.html a ayuda.html (solo visible para admins)</li>
+            <li>🐛 <strong>Logs de Errores Reubicados:</strong> Visor de logs movido de Administration.html a ayuda.html (solo admins)</li>
+            <li>📊 <strong>Panel Admin en Ayuda:</strong> 3 botones para admins: Chatbot AI, Estadísticas y Logs de Errores</li>
+            <li>🔒 <strong>Control de Acceso:</strong> Todos los componentes admin validados con Firebase auth (solo santifn@gmail.com y cristiansan@gmail.com)</li>
+            <li>🗑️ <strong>Limpieza de Código:</strong> Removido HTML, CSS y JS del chatbot de marketplace.html (~500 líneas)</li>
+            <li>📋 <strong>Menú Reorganizado:</strong> Botón AYUDA movido al final del menú hamburguesa</li>
+            <li>🔐 <strong>Reglas Firebase Actualizadas:</strong> Agregadas reglas para soporte_tickets (create para usuarios, read/update/delete para admins)</li>
+            <li>📂 <strong>Storage Rules:</strong> Nueva carpeta /soporte/ en Storage con permisos para imágenes de tickets</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.54</h3>
           <ul>
             <li>🐛 <strong>Fix Error Precios Null:</strong> Solucionado error "Cannot read properties of null (reading 'toFixed')" en cart.html</li>
             <li>✅ <strong>Validación de Datos:</strong> Agregada validación para item.price e item.quantity antes de operaciones matemáticas</li>

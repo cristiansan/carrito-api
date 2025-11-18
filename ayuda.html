@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayuda - South Traders</title>
+
+  <!-- Material Design Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: #1a1a1a;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #4CAF50;
+    }
+
+    .header h1 {
+      color: #4CAF50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .back-btn:hover {
+      background: #45a049;
+    }
+
+    .admin-controls {
+      display: none;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .admin-controls.visible {
+      display: flex;
+    }
+
+    .admin-btn {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .admin-btn:hover {
+      background: #1976D2;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.4);
+    }
+
+    .admin-btn.chatbot {
+      background: #4CAF50;
+    }
+
+    .admin-btn.chatbot:hover {
+      background: #45a049;
+    }
+
+    .admin-btn.logs {
+      background: #FF9800;
+    }
+
+    .admin-btn.logs:hover {
+      background: #F57C00;
+    }
+
+    .form-container {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      border: 1px solid #333;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-container h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #999;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: white;
+      font-size: 14px;
+      font-family: 'Roboto', Arial, sans-serif;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-input-label:hover {
+      border-color: #4CAF50;
+      color: #4CAF50;
+    }
+
+    .file-input-label .material-icons {
+      color: #4CAF50;
+    }
+
+    .file-preview {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .file-preview.active {
+      display: block;
+    }
+
+    .file-preview img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 5px;
+      border: 1px solid #444;
+    }
+
+    .file-name {
+      color: #4CAF50;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .submit-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.3s;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .submit-btn:hover {
+      background: #45a049;
+    }
+
+    .submit-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+    .success-message {
+      display: none;
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      text-align: center;
+      animation: slideIn 0.3s ease;
+    }
+
+    .success-message.active {
+      display: block;
+    }
+
+    .error-message {
+      display: none;
+      background: #f44336;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      text-align: center;
+      animation: slideIn 0.3s ease;
+    }
+
+    .error-message.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* === CHATBOT MODAL === */
+    .chatbot-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      animation: fadeIn 0.3s;
+    }
+
+    .chatbot-modal-overlay.active {
+      display: block;
+    }
+
+    .chatbot-modal {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 450px;
+      height: 650px;
+      background: #1a1a1a;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      overflow: hidden;
+      animation: slideUp 0.3s;
+    }
+
+    .chatbot-modal.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chatbot-modal-header {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .chatbot-header-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chatbot-modal-header h3 {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .chatbot-beta-badge {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
+    }
+
+    .chatbot-export-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .chatbot-export-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .chatbot-export-btn .material-icons {
+      font-size: 18px;
+    }
+
+    .chatbot-modal-close {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .chatbot-modal-close:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .chatbot-modal-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: #1a1a1a;
+    }
+
+    .chatbot-modal-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chatbot-modal-messages::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 3px;
+    }
+
+    /* Chat Messages */
+    .chatbot-modal .message {
+      margin-bottom: 12px;
+      animation: slideIn 0.3s;
+    }
+
+    .chatbot-modal .message.bot {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .chatbot-modal .message.user {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .chatbot-modal .message-avatar {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .chatbot-modal .message-content {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      line-height: 1.4;
+      font-size: 13px;
+    }
+
+    .chatbot-modal .message.bot .message-content {
+      background: #2a2a2a;
+      color: #e0e0e0;
+    }
+
+    .chatbot-modal .message.user .message-content {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+    }
+
+    /* Typing Indicator */
+    .chatbot-modal .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chatbot-modal .typing-indicator.active {
+      display: flex;
+    }
+
+    .chatbot-modal .typing-dots {
+      display: flex;
+      gap: 4px;
+      padding: 10px 14px;
+      background: #2a2a2a;
+      border-radius: 16px;
+    }
+
+    .chatbot-modal .typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: #666;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+
+    .chatbot-modal .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .chatbot-modal .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      30% {
+        transform: translateY(-8px);
+        opacity: 1;
+      }
+    }
+
+    /* Product Cards */
+    .chatbot-modal .product-card {
+      background: #2a2a2a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .chatbot-modal .product-card:hover {
+      background: #333;
+      border-color: #4CAF50;
+      transform: translateY(-2px);
+    }
+
+    .chatbot-modal .product-info h4 {
+      color: #4CAF50;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .chatbot-modal .product-info p {
+      color: #999;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .chatbot-modal .product-price {
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* Quick Suggestions */
+    .chatbot-modal-suggestions {
+      padding: 10px 16px;
+      background: #1a1a1a;
+      border-top: 1px solid #333;
+      overflow-x: auto;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .chatbot-modal-suggestions::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .chatbot-modal-suggestions::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 2px;
+    }
+
+    .chatbot-modal .suggestion-chip {
+      display: inline-block;
+      background: #2a2a2a;
+      color: #4CAF50;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      margin-right: 6px;
+      border: 1px solid #333;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .chatbot-modal .suggestion-chip:hover {
+      background: #4CAF50;
+      color: white;
+      border-color: #4CAF50;
+    }
+
+    /* Input Area */
+    .chatbot-modal-input {
+      padding: 12px 16px;
+      background: #2a2a2a;
+      border-top: 1px solid #333;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .chatbot-modal-input input {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 20px;
+      padding: 10px 16px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .chatbot-modal-input input:focus {
+      border-color: #4CAF50;
+    }
+
+    .chatbot-modal-input input::placeholder {
+      color: #666;
+    }
+
+    .chatbot-modal-input button {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .chatbot-modal-input button:hover {
+      transform: scale(1.1);
+    }
+
+    .chatbot-modal-input button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Welcome Message */
+    .chatbot-modal .welcome-message {
+      text-align: center;
+      padding: 30px 20px;
+      color: #666;
+    }
+
+    .chatbot-modal .welcome-message .bot-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .chatbot-modal .welcome-message h2 {
+      color: #4CAF50;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .chatbot-modal .welcome-message p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* === ERROR LOGS MODAL === */
+    .error-logs-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10000;
+    }
+
+    .error-logs-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .error-logs-modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+
+    .error-logs-modal-content {
+      position: relative;
+      z-index: 2;
+      background: #2a2a2a;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 1200px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #4CAF50;
+    }
+
+    .error-logs-modal-header {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .error-logs-modal-header h2 {
+      color: white;
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .error-logs-close-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .error-logs-close-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .error-logs-modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .error-logs-modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .error-logs-modal-body::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 4px;
+    }
+
+    .rotating {
+      animation: rotate 2s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .admin-btn.error-logs {
+      background: #F44336;
+    }
+
+    .admin-btn.error-logs:hover {
+      background: #D32F2F;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 20px;
+      }
+
+      .form-container {
+        padding: 20px;
+      }
+
+      .admin-controls {
+        flex-direction: column;
+      }
+
+      .chatbot-modal {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 80vh;
+        border-radius: 16px 16px 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>
+      <span class="material-icons">help_center</span>
+      Centro de Ayuda
+    </h1>
+    <button class="back-btn" onclick="window.location.href='marketplace.html'">
+      <span class="material-icons">arrow_back</span>
+      Volver
+    </button>
+  </div>
+
+  <!-- Admin Controls (only visible for admin) -->
+  <div class="admin-controls" id="adminControls">
+    <button class="admin-btn chatbot" onclick="openChatbotModal()">
+      <span class="material-icons">smart_toy</span>
+      Chatbot AI
+    </button>
+    <button class="admin-btn logs" onclick="window.location.href='estadisticas.html'">
+      <span class="material-icons">bar_chart</span>
+      Estadísticas
+    </button>
+    <button class="admin-btn logs error-logs" onclick="openErrorLogsModal()">
+      <span class="material-icons">bug_report</span>
+      Logs de Errores
+    </button>
+  </div>
+
+  <div class="form-container">
+    <h2>
+      <span class="material-icons">report_problem</span>
+      Reportar un Problema
+    </h2>
+
+    <form id="supportForm">
+      <div class="form-group">
+        <label for="userName">
+          <span class="material-icons" style="vertical-align: middle; font-size: 16px;">person</span>
+          Nombre
+        </label>
+        <input type="text" id="userName" name="userName" required placeholder="Ingrese su nombre">
+      </div>
+
+      <div class="form-group">
+        <label for="userPhone">
+          <span class="material-icons" style="vertical-align: middle; font-size: 16px;">phone</span>
+          Teléfono
+        </label>
+        <input type="tel" id="userPhone" name="userPhone" required placeholder="Ingrese su teléfono">
+      </div>
+
+      <div class="form-group">
+        <label for="problemDescription">
+          <span class="material-icons" style="vertical-align: middle; font-size: 16px;">description</span>
+          Descripción del Problema
+        </label>
+        <textarea id="problemDescription" name="problemDescription" required placeholder="Describa detalladamente el problema que está experimentando..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="photoUpload">
+          <span class="material-icons" style="vertical-align: middle; font-size: 16px;">add_photo_alternate</span>
+          Captura de Pantalla (Opcional)
+        </label>
+        <div class="file-input-wrapper">
+          <input type="file" id="photoUpload" name="photoUpload" accept="image/*">
+          <label for="photoUpload" class="file-input-label">
+            <span class="material-icons">cloud_upload</span>
+            <span id="fileInputText">Seleccionar imagen...</span>
+          </label>
+        </div>
+        <div class="file-preview" id="filePreview">
+          <img id="previewImage" src="" alt="Vista previa">
+          <div class="file-name" id="fileName"></div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="material-icons">send</span>
+        Enviar Reporte
+      </button>
+    </form>
+
+    <div class="success-message" id="successMessage">
+      <span class="material-icons" style="vertical-align: middle;">check_circle</span>
+      Su reporte ha sido enviado exitosamente. Nos pondremos en contacto pronto.
+    </div>
+
+    <div class="error-message" id="errorMessage">
+      <span class="material-icons" style="vertical-align: middle;">error</span>
+      <span id="errorText">Error al enviar el reporte. Por favor, intente nuevamente.</span>
+    </div>
+  </div>
+
+  <!-- Chatbot Modal Overlay -->
+  <div class="chatbot-modal-overlay" id="chatbotModalOverlay" onclick="closeChatbotModal()"></div>
+
+  <!-- Chatbot Modal -->
+  <div class="chatbot-modal" id="chatbotModal">
+    <!-- Header -->
+    <div class="chatbot-modal-header">
+      <span class="material-icons">smart_toy</span>
+      <div class="chatbot-header-text">
+        <h3>Asistente Virtual</h3>
+        <span class="chatbot-beta-badge">Versión de prueba, solo visible para Santi y Cris</span>
+      </div>
+      <button class="chatbot-export-btn" id="chatbotExportBtn" title="Exportar preguntas a Excel">
+        <span class="material-icons">download</span>
+      </button>
+      <button class="chatbot-modal-close" onclick="closeChatbotModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="chatbot-modal-messages" id="chatbotMessages">
+      <!-- Welcome Message -->
+      <div class="welcome-message" id="chatbotWelcome">
+        <div class="bot-icon">🤖</div>
+        <h2>¡Hola! Soy tu asistente virtual</h2>
+        <p>Estoy aquí para ayudarte a encontrar los mejores productos.<br>
+        Pregúntame sobre stock, precios, o pídeme recomendaciones.</p>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="typing-indicator" id="chatbotTyping">
+        <div class="message-avatar">
+          <span class="material-icons">smart_toy</span>
+        </div>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Suggestions -->
+    <div class="chatbot-modal-suggestions" id="chatbotSuggestions">
+      <span class="suggestion-chip" data-message="qué celulares me recomendas">⭐ Recomendaciones</span>
+      <span class="suggestion-chip" data-message="productos más baratos">💰 Más baratos</span>
+      <span class="suggestion-chip" data-message="productos con stock">📦 Con stock</span>
+      <span class="suggestion-chip" data-message="iPhone 13">📱 iPhone 13</span>
+      <span class="suggestion-chip" data-message="Samsung Galaxy">📱 Samsung</span>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chatbot-modal-input">
+      <input
+        type="text"
+        id="chatbotInput"
+        placeholder="Escribe tu pregunta..."
+        autocomplete="off"
+      >
+      <button id="chatbotSendBtn">
+        <span class="material-icons">send</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Logs Modal -->
+  <div class="error-logs-modal" id="errorLogsModal">
+    <div class="error-logs-modal-overlay" onclick="closeErrorLogsModal()"></div>
+    <div class="error-logs-modal-content">
+      <div class="error-logs-modal-header">
+        <h2>🐛 Logs de Errores</h2>
+        <button class="error-logs-close-btn" onclick="closeErrorLogsModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="error-logs-modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <p style="color: #888; margin: 0;">Registro completo de errores del sistema con mensajes de consola</p>
+          <div style="display: flex; gap: 12px;">
+            <button class="admin-btn chatbot" id="saveLogsSnapshotBtn" style="padding: 10px 20px; font-size: 14px;">
+              <span class="material-icons" style="font-size: 18px;">save</span>
+              Guardar Logs
+            </button>
+            <button class="admin-btn logs" id="exportErrorLogsBtn" style="padding: 10px 20px; font-size: 14px;">
+              <span class="material-icons" style="font-size: 18px;">file_download</span>
+              Exportar a Excel
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 250px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #999;">🔍 Buscar por usuario o mensaje:</label>
+            <input type="text" id="errorSearchInput" placeholder="Ej: usuario@email.com, timestamp, orden 10073..."
+                   style="width: 100%; padding: 8px; border: 1px solid #444; border-radius: 4px; font-size: 14px; background: #1a1a1a; color: white;">
+          </div>
+          <div style="min-width: 200px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #999;">Filtrar por tipo:</label>
+            <select id="errorTypeFilter" style="width: 100%; padding: 8px; border: 1px solid #444; border-radius: 4px; background: #1a1a1a; color: white;">
+              <option value="all">📋 Actuales (sin guardar)</option>
+              <option value="uncaught_error">Errores no capturados</option>
+              <option value="unhandled_rejection">Promesas rechazadas</option>
+              <option value="order_confirmation_error">Errores de confirmación de orden</option>
+              <option value="user_verification_error">Errores de verificación de usuario</option>
+              <option value="caught_error">Errores capturados</option>
+              <option value="manual">Errores manuales</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="errorLogsContainer">
+          <div id="errorLogsList"></div>
+          <div id="noErrorLogs" style="display: none; text-align: center; padding: 40px; color: #666;">
+            <span class="material-icons" style="font-size: 64px; opacity: 0.3;">check_circle</span>
+            <p>No hay errores registrados</p>
+          </div>
+          <div id="loadingErrorLogs" style="text-align: center; padding: 40px; color: #666;">
+            <span class="material-icons rotating" style="font-size: 48px;">refresh</span>
+            <p>Cargando logs...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase configuration
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
+      authDomain: "carrito-138c3.firebaseapp.com",
+      projectId: "carrito-138c3",
+      storageBucket: "carrito-138c3.firebasestorage.app",
+      messagingSenderId: "1002158386608",
+      appId: "1:1002158386608:web:5f4f9a3e876a0f44dfe7a4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUser = null;
+    let isAdmin = false;
+
+    // Check authentication and admin status
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+
+      // Check if user is admin
+      const userDoc = await getDocs(query(collection(db, 'usuarios'), where('email', '==', user.email)));
+      if (!userDoc.empty && userDoc.docs[0].data().admin) {
+        isAdmin = true;
+        document.getElementById('adminControls').classList.add('visible');
+      }
+
+      // Pre-fill user email if available
+      const userData = userDoc.docs[0]?.data();
+      if (userData && userData.displayName) {
+        document.getElementById('userName').value = userData.displayName;
+      }
+    });
+
+    // File preview
+    const photoUpload = document.getElementById('photoUpload');
+    const fileInputText = document.getElementById('fileInputText');
+    const filePreview = document.getElementById('filePreview');
+    const previewImage = document.getElementById('previewImage');
+    const fileName = document.getElementById('fileName');
+
+    photoUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        fileInputText.textContent = file.name;
+        fileName.textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImage.src = e.target.result;
+          filePreview.classList.add('active');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        fileInputText.textContent = 'Seleccionar imagen...';
+        filePreview.classList.remove('active');
+      }
+    });
+
+    // Form submission
+    const supportForm = document.getElementById('supportForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+
+    supportForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!currentUser) {
+        showError('Usuario no autenticado');
+        return;
+      }
+
+      // Disable submit button
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="material-icons">hourglass_empty</span> Enviando...';
+
+      try {
+        const userName = document.getElementById('userName').value;
+        const userPhone = document.getElementById('userPhone').value;
+        const problemDescription = document.getElementById('problemDescription').value;
+        const photoFile = photoUpload.files[0];
+
+        let photoURL = null;
+
+        // Upload photo if provided
+        if (photoFile) {
+          const storageRef = ref(storage, `soporte/${Date.now()}_${photoFile.name}`);
+          const snapshot = await uploadBytes(storageRef, photoFile);
+          photoURL = await getDownloadURL(snapshot.ref);
+          console.log('📸 Foto subida:', photoURL);
+        }
+
+        // Save ticket to Firestore
+        const ticketData = {
+          userName,
+          userPhone,
+          userEmail: currentUser.email,
+          problemDescription,
+          photoURL,
+          timestamp: serverTimestamp(),
+          status: 'pending', // pending, in_progress, resolved
+          createdBy: currentUser.uid
+        };
+
+        const docRef = await addDoc(collection(db, 'soporte_tickets'), ticketData);
+        console.log('✅ Ticket creado con ID:', docRef.id);
+
+        // Show success message
+        showSuccess();
+
+        // Reset form
+        supportForm.reset();
+        fileInputText.textContent = 'Seleccionar imagen...';
+        filePreview.classList.remove('active');
+
+      } catch (error) {
+        console.error('❌ Error enviando ticket:', error);
+        showError('Error al enviar el reporte: ' + error.message);
+      } finally {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="material-icons">send</span> Enviar Reporte';
+      }
+    });
+
+    function showSuccess() {
+      successMessage.classList.add('active');
+      errorMessage.classList.remove('active');
+      setTimeout(() => {
+        successMessage.classList.remove('active');
+      }, 5000);
+    }
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMessage.classList.add('active');
+      successMessage.classList.remove('active');
+      setTimeout(() => {
+        errorMessage.classList.remove('active');
+      }, 5000);
+    }
+
+    // Make openChatbotModal globally accessible
+    window.openChatbotModal = function() {
+      // This will be handled by chatbot-modal.js if loaded
+      const chatbotModal = document.getElementById('chatbotModal');
+      const chatbotOverlay = document.getElementById('chatbotModalOverlay');
+
+      if (chatbotModal && chatbotOverlay) {
+        chatbotModal.classList.add('active');
+        chatbotOverlay.classList.add('active');
+      } else {
+        // If chatbot modal not loaded, redirect to marketplace with chatbot open
+        window.location.href = 'marketplace.html';
+      }
+    };
+
+    // Make closeChatbotModal globally accessible
+    window.closeChatbotModal = function() {
+      const chatbotModal = document.getElementById('chatbotModal');
+      const chatbotOverlay = document.getElementById('chatbotModalOverlay');
+
+      if (chatbotModal && chatbotOverlay) {
+        chatbotModal.classList.remove('active');
+        chatbotOverlay.classList.remove('active');
+      }
+    };
+
+    // Make openErrorLogsModal globally accessible
+    window.openErrorLogsModal = function() {
+      const modal = document.getElementById('errorLogsModal');
+      if (modal) {
+        modal.classList.add('active');
+        // Load error logs when opening modal
+        if (window.loadErrorLogs) {
+          window.loadErrorLogs();
+        }
+      }
+    };
+
+    // Make closeErrorLogsModal globally accessible
+    window.closeErrorLogsModal = function() {
+      const modal = document.getElementById('errorLogsModal');
+      if (modal) {
+        modal.classList.remove('active');
+      }
+    };
+  </script>
+
+  <!-- Error Logs Functionality (Admin Only) -->
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, orderBy, where, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const auth = getAuth();
+    const db = getFirestore();
+
+    let allErrorLogs = [];
+
+    // Check if user is admin before loading error logs functionality
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      const userDoc = await getDocs(query(collection(db, 'usuarios'), where('email', '==', user.email)));
+      if (!userDoc.empty && userDoc.docs[0].data().admin) {
+        // User is admin, initialize error logs functionality
+        initializeErrorLogs();
+      }
+    });
+
+    function initializeErrorLogs() {
+      // Cargar logs de errores
+      window.loadErrorLogs = async function() {
+        try {
+          console.log('🐛 Cargando logs de errores...');
+
+          const logsContainer = document.getElementById('errorLogsList');
+          const noLogsDiv = document.getElementById('noErrorLogs');
+          const loadingDiv = document.getElementById('loadingErrorLogs');
+
+          loadingDiv.style.display = 'block';
+          logsContainer.style.display = 'none';
+          noLogsDiv.style.display = 'none';
+
+          const logsCollection = collection(db, 'error_logs');
+          const logsQuery = query(logsCollection, orderBy('timestamp', 'desc'));
+
+          const querySnapshot = await getDocs(logsQuery);
+          allErrorLogs = [];
+
+          querySnapshot.forEach((docSnap) => {
+            allErrorLogs.push({ id: docSnap.id, ...docSnap.data() });
+          });
+
+          console.log('📊 Logs cargados desde Firebase:', allErrorLogs.length);
+          console.log('📊 Logs con savedDate:', allErrorLogs.filter(log => log.savedDate).length);
+          console.log('📊 Logs SIN savedDate:', allErrorLogs.filter(log => !log.savedDate).length);
+
+          loadingDiv.style.display = 'none';
+
+          if (allErrorLogs.length === 0) {
+            noLogsDiv.style.display = 'block';
+          } else {
+            const filterSelect = document.getElementById('errorTypeFilter');
+            const currentFilter = filterSelect?.value || 'all';
+
+            if (currentFilter === 'all') {
+              const filtered = allErrorLogs.filter(log => !log.savedDate);
+              displayErrorLogs(filtered);
+            } else {
+              displayErrorLogs(allErrorLogs);
+            }
+
+            updateFilterOptions();
+          }
+        } catch (error) {
+          console.error('Error al cargar logs de errores:', error);
+          document.getElementById('loadingErrorLogs').innerHTML = `
+            <span class="material-icons" style="font-size: 48px; color: #f44336;">error</span>
+            <p>Error al cargar logs: ${error.message}</p>
+          `;
+        }
+      };
+
+      // Mostrar logs de errores
+      function displayErrorLogs(logs) {
+        const logsContainer = document.getElementById('errorLogsList');
+        logsContainer.style.display = 'block';
+        logsContainer.innerHTML = '';
+
+        logs.forEach((log) => {
+          const logCard = document.createElement('div');
+          logCard.style.cssText = `
+            background: #2a2a2a;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          `;
+
+          const timestamp = log.dateTime ? new Date(log.dateTime).toLocaleString('es-AR') : 'N/A';
+          const errorType = log.errorType || 'unknown';
+          const errorTypeColors = {
+            'uncaught_error': '#f44336',
+            'unhandled_rejection': '#ff9800',
+            'order_confirmation_error': '#e91e63',
+            'user_verification_error': '#9c27b0',
+            'caught_error': '#3f51b5',
+            'manual': '#607d8b'
+          };
+          const typeColor = errorTypeColors[errorType] || '#666';
+
+          let consoleMessagesHtml = '';
+          if (log.consoleMessages && log.consoleMessages.length > 0) {
+            consoleMessagesHtml = '<div style="margin-top: 12px;"><strong style="color: #eee;">📋 Mensajes de consola:</strong><div style="background: #1a1a1a; padding: 8px; border-radius: 4px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; margin-top: 8px;">';
+            log.consoleMessages.forEach((msg) => {
+              const msgTypeIcon = msg.type === 'error' ? '❌' : msg.type === 'warn' ? '⚠️' : '📝';
+              const msgColor = msg.type === 'error' ? '#f44336' : msg.type === 'warn' ? '#ff9800' : '#aaa';
+              consoleMessagesHtml += `<div style="margin-bottom: 4px; padding: 4px; border-left: 3px solid ${msgColor}; color: #ddd;"><span style="color: ${msgColor};">${msgTypeIcon} ${msg.type}:</span> ${escapeHtml(msg.message)}</div>`;
+            });
+            consoleMessagesHtml += '</div></div>';
+          }
+
+          logCard.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+              <div style="flex: 1;">
+                <div style="font-weight: bold; font-size: 16px; color: #fff; margin-bottom: 4px;">
+                  ${escapeHtml(log.errorMessage)}
+                </div>
+                <div style="color: #ccc; font-size: 12px;">
+                  🕐 ${timestamp} | 👤 ${escapeHtml(log.userEmail)} | 🌐 ${escapeHtml(log.url || 'N/A')}
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="copyLogToClipboard(this, '${log.id}')" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px;" title="Copiar log completo">
+                  <span class="material-icons" style="font-size: 14px;">content_copy</span>
+                  Copiar JSON
+                </button>
+                <span style="background: ${typeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap;">
+                  ${errorType}
+                </span>
+              </div>
+            </div>
+            ${log.stackTrace ? `
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: #ccc; font-size: 13px;">📚 Stack Trace</summary>
+                <pre style="background: #1a1a1a; color: #ddd; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${escapeHtml(log.stackTrace)}</pre>
+              </details>
+            ` : ''}
+            ${consoleMessagesHtml}
+            ${log.additionalData && Object.keys(log.additionalData).length > 0 ? `
+              <details style="margin-top: 8px;">
+                <summary style="cursor: pointer; color: #ccc; font-size: 13px;">ℹ️ Datos adicionales</summary>
+                <pre style="background: #1a1a1a; color: #ddd; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin-top: 8px;">${JSON.stringify(log.additionalData, null, 2)}</pre>
+              </details>
+            ` : ''}
+          `;
+
+          logsContainer.appendChild(logCard);
+        });
+      }
+
+      // Función para copiar log completo al portapapeles
+      window.copyLogToClipboard = function(button, logId) {
+        const log = allErrorLogs.find(l => l.id === logId);
+        if (!log) {
+          alert('Log no encontrado');
+          return;
+        }
+
+        const logJson = JSON.stringify(log, null, 2);
+
+        navigator.clipboard.writeText(logJson).then(() => {
+          const originalText = button.innerHTML;
+          button.innerHTML = '<span class="material-icons" style="font-size: 14px;">check</span> Copiado!';
+          button.style.background = '#4CAF50';
+
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '#2196F3';
+          }, 2000);
+        }).catch(err => {
+          console.error('Error al copiar:', err);
+          alert('Error al copiar al portapapeles.');
+          console.log('LOG COMPLETO:', logJson);
+        });
+      };
+
+      // Función para escapar HTML
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Función para actualizar opciones del filtro
+      function updateFilterOptions() {
+        const filterSelect = document.getElementById('errorTypeFilter');
+        if (!filterSelect) return;
+
+        const savedDates = [...new Set(allErrorLogs
+          .filter(log => log.savedDate)
+          .map(log => log.savedDate)
+        )].sort().reverse();
+
+        const fixedOptions = [
+          { value: 'all', text: '📋 Actuales (sin guardar)' },
+          { value: 'uncaught_error', text: 'Errores no capturados' },
+          { value: 'unhandled_rejection', text: 'Promesas rechazadas' },
+          { value: 'order_confirmation_error', text: 'Errores de confirmación de orden' },
+          { value: 'user_verification_error', text: 'Errores de verificación de usuario' },
+          { value: 'caught_error', text: 'Errores capturados' },
+          { value: 'manual', text: 'Errores manuales' }
+        ];
+
+        const currentValue = filterSelect.value;
+        filterSelect.innerHTML = '';
+
+        fixedOptions.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.text;
+          filterSelect.appendChild(option);
+        });
+
+        if (savedDates.length > 0) {
+          const separator = document.createElement('option');
+          separator.disabled = true;
+          separator.textContent = '─────────────────';
+          filterSelect.appendChild(separator);
+
+          const header = document.createElement('option');
+          header.disabled = true;
+          header.textContent = '📅 Logs guardados';
+          filterSelect.appendChild(header);
+
+          savedDates.forEach(date => {
+            const option = document.createElement('option');
+            option.value = date;
+            option.textContent = `📌 ${date}`;
+            filterSelect.appendChild(option);
+          });
+        }
+
+        if (currentValue) {
+          filterSelect.value = currentValue;
+        }
+      }
+
+      // Función para aplicar filtros
+      function applyFilters() {
+        const filterValue = document.getElementById('errorTypeFilter')?.value || 'all';
+        const searchText = document.getElementById('errorSearchInput')?.value?.toLowerCase() || '';
+
+        let filtered = allErrorLogs;
+
+        if (filterValue === 'all') {
+          filtered = filtered.filter(log => !log.savedDate);
+        } else {
+          filtered = filtered.filter(log =>
+            log.errorType === filterValue || log.savedDate === filterValue
+          );
+        }
+
+        if (searchText) {
+          filtered = filtered.filter(log => {
+            const matchEmail = log.userEmail?.toLowerCase().includes(searchText);
+            const matchMessage = log.errorMessage?.toLowerCase().includes(searchText);
+            const matchUrl = log.url?.toLowerCase().includes(searchText);
+
+            let matchConsole = false;
+            if (log.consoleMessages && log.consoleMessages.length > 0) {
+              matchConsole = log.consoleMessages.some(msg =>
+                msg.message?.toLowerCase().includes(searchText)
+              );
+            }
+
+            let matchAdditional = false;
+            if (log.additionalData) {
+              const additionalStr = JSON.stringify(log.additionalData).toLowerCase();
+              matchAdditional = additionalStr.includes(searchText);
+            }
+
+            return matchEmail || matchMessage || matchUrl || matchConsole || matchAdditional;
+          });
+        }
+
+        displayErrorLogs(filtered);
+
+        if (filtered.length === 0 && searchText) {
+          document.getElementById('errorLogsList').innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+              <span class="material-icons" style="font-size: 64px; opacity: 0.3;">search_off</span>
+              <p>No se encontraron logs que coincidan con "${searchText}"</p>
+            </div>
+          `;
+        }
+      }
+
+      // Event listeners
+      document.getElementById('errorTypeFilter')?.addEventListener('change', applyFilters);
+      document.getElementById('errorSearchInput')?.addEventListener('input', applyFilters);
+
+      // Guardar snapshot de logs
+      document.getElementById('saveLogsSnapshotBtn')?.addEventListener('click', async () => {
+        try {
+          const logsToSave = allErrorLogs.filter(log => !log.savedDate);
+
+          if (logsToSave.length === 0) {
+            alert('No hay logs nuevos para guardar.');
+            return;
+          }
+
+          const confirmSave = confirm(`¿Guardar ${logsToSave.length} logs nuevos con la fecha de hoy?`);
+          if (!confirmSave) return;
+
+          const today = new Date().toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }).replace(/\//g, '-');
+
+          let savedCount = 0;
+          for (const log of logsToSave) {
+            try {
+              const logRef = doc(db, 'error_logs', log.id);
+              await updateDoc(logRef, { savedDate: today });
+              savedCount++;
+            } catch (error) {
+              console.error(`Error al guardar log ${log.id}:`, error);
+            }
+          }
+
+          alert(`✅ Se guardaron ${savedCount} logs con la fecha ${today}`);
+          await window.loadErrorLogs();
+          updateFilterOptions();
+
+          const filterSelect = document.getElementById('errorTypeFilter');
+          if (filterSelect) {
+            filterSelect.value = 'all';
+            filterSelect.dispatchEvent(new Event('change'));
+          }
+        } catch (error) {
+          console.error('❌ Error al guardar snapshot de logs:', error);
+          alert('Error al guardar logs: ' + error.message);
+        }
+      });
+
+      // Exportar logs a Excel
+      document.getElementById('exportErrorLogsBtn')?.addEventListener('click', async () => {
+        try {
+          if (typeof XLSX === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js';
+            document.head.appendChild(script);
+            await new Promise((resolve) => {
+              script.onload = resolve;
+            });
+          }
+
+          if (allErrorLogs.length === 0) {
+            alert('No hay logs para exportar');
+            return;
+          }
+
+          const excelData = allErrorLogs.map(log => {
+            const consoleMessages = log.consoleMessages && log.consoleMessages.length > 0
+              ? log.consoleMessages.map(m => `[${m.type}] ${m.message}`).join('\n')
+              : 'Sin mensajes de consola';
+
+            return {
+              'Fecha y Hora': log.dateTime ? new Date(log.dateTime).toLocaleString('es-AR') : 'N/A',
+              'Usuario': log.userEmail || 'N/A',
+              'Nombre': log.userName || 'N/A',
+              'Tipo de Error': log.errorType || 'N/A',
+              'Mensaje de Error': log.errorMessage || 'N/A',
+              'URL': log.url || 'N/A',
+              'Mensajes de Consola': consoleMessages,
+              'Stack Trace': log.stackTrace || 'N/A',
+              'User Agent': log.userAgent || 'N/A'
+            };
+          });
+
+          const ws = XLSX.utils.json_to_sheet(excelData);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Error Logs');
+
+          const colWidths = [
+            { wch: 20 }, { wch: 30 }, { wch: 25 }, { wch: 25 },
+            { wch: 50 }, { wch: 40 }, { wch: 60 }, { wch: 60 }, { wch: 40 }
+          ];
+          ws['!cols'] = colWidths;
+
+          const fecha = new Date().toISOString().split('T')[0];
+          XLSX.writeFile(wb, `error_logs_${fecha}.xlsx`);
+
+          console.log('✅ Logs exportados exitosamente');
+        } catch (error) {
+          console.error('❌ Error al exportar logs:', error);
+          alert('Error al exportar logs: ' + error.message);
+        }
+      });
+    }
+  </script>
+
+  <!-- Load Chatbot Modal for Admin Users -->
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const auth = getAuth();
+    const db = getFirestore();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      // Check if user is admin
+      const userDoc = await getDocs(query(collection(db, 'usuarios'), where('email', '==', user.email)));
+      if (!userDoc.empty && userDoc.docs[0].data().admin) {
+        // Load chatbot modal script
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = 'chatbot-modal.js?v=' + Date.now();
+        document.body.appendChild(script);
+      }
+    });
+  </script>
+</body>
+</html>

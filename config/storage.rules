@@ -11,6 +11,15 @@ service firebase.storage {
       allow read: if true;
     }
 
+    // Support ticket images
+    match /soporte/{fileName} {
+      // Allow authenticated users to upload support ticket images
+      allow create, write: if request.auth != null;
+
+      // Allow anyone to read support images (for admins to view)
+      allow read: if true;
+    }
+
     // Default: deny all other access
     match /{allPaths=**} {
       allow read, write: if false;

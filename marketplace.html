@@ -633,445 +633,7 @@
       transform: rotate(-45deg) translate(6px, -6px);
     }
 
-    /* === CHATBOT BUTTON === */
-    .chatbot-btn {
-      position: fixed !important;
-      top: 16px !important;
-      left: 225px !important;
-      z-index: 1001 !important;
-      width: 70px;
-      height: 60px;
-      background: linear-gradient(135deg, #4CAF50, #45a049) !important;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      display: none !important; /* Oculto por defecto, se muestra con JS */
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-      padding: 8px 0;
-      gap: 4px;
-    }
-
-    .chatbot-btn.visible {
-      display: flex !important;
-    }
-
-    .chatbot-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-    }
-
-    .chatbot-btn .bot-text {
-      color: white;
-      font-weight: bold;
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      line-height: 1;
-    }
-
-    .chatbot-btn .bot-label {
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      letter-spacing: 1px;
-      line-height: 1;
-    }
-
-    /* === CHATBOT MODAL === */
-    .chatbot-modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 9998;
-      animation: fadeIn 0.3s;
-    }
-
-    .chatbot-modal-overlay.active {
-      display: block;
-    }
-
-    .chatbot-modal {
-      display: none;
-      position: fixed;
-      bottom: 100px;
-      right: 20px;
-      width: 450px;
-      height: 650px;
-      background: #1a1a1a;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      z-index: 9999;
-      overflow: hidden;
-      animation: slideUp 0.3s;
-    }
-
-    .chatbot-modal.active {
-      display: flex;
-      flex-direction: column;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .chatbot-modal-header {
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      color: white;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    .chatbot-header-text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .chatbot-modal-header h3 {
-      font-size: 18px;
-      font-weight: 500;
-      margin: 0;
-    }
-
-    .chatbot-beta-badge {
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.7);
-      font-style: italic;
-    }
-
-    .chatbot-export-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
-    }
-
-    .chatbot-export-btn:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .chatbot-export-btn .material-icons {
-      font-size: 18px;
-    }
-
-    .chatbot-modal-close {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
-    }
-
-    .chatbot-modal-close:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .chatbot-modal-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      background: #1a1a1a;
-    }
-
-    .chatbot-modal-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chatbot-modal-messages::-webkit-scrollbar-thumb {
-      background: #4CAF50;
-      border-radius: 3px;
-    }
-
-    /* Chat Messages */
-    .chatbot-modal .message {
-      margin-bottom: 12px;
-      animation: slideIn 0.3s;
-    }
-
-    .chatbot-modal .message.bot {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
-    .chatbot-modal .message.user {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .chatbot-modal .message-avatar {
-      width: 30px;
-      height: 30px;
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .chatbot-modal .message-content {
-      max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 16px;
-      line-height: 1.4;
-      font-size: 13px;
-    }
-
-    .chatbot-modal .message.bot .message-content {
-      background: #2a2a2a;
-      color: #e0e0e0;
-    }
-
-    .chatbot-modal .message.user .message-content {
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      color: white;
-    }
-
-    /* Typing Indicator */
-    .chatbot-modal .typing-indicator {
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .chatbot-modal .typing-indicator.active {
-      display: flex;
-    }
-
-    .chatbot-modal .typing-dots {
-      display: flex;
-      gap: 4px;
-      padding: 10px 14px;
-      background: #2a2a2a;
-      border-radius: 16px;
-    }
-
-    .chatbot-modal .typing-dots span {
-      width: 6px;
-      height: 6px;
-      background: #666;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-
-    .chatbot-modal .typing-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .chatbot-modal .typing-dots span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-      0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.7;
-      }
-      30% {
-        transform: translateY(-8px);
-        opacity: 1;
-      }
-    }
-
-    /* Product Cards */
-    .chatbot-modal .product-card {
-      background: #2a2a2a;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 10px;
-      margin-top: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .chatbot-modal .product-card:hover {
-      background: #333;
-      border-color: #4CAF50;
-      transform: translateY(-2px);
-    }
-
-    .chatbot-modal .product-info h4 {
-      color: #4CAF50;
-      font-size: 13px;
-      margin-bottom: 4px;
-    }
-
-    .chatbot-modal .product-info p {
-      color: #999;
-      font-size: 11px;
-      margin-bottom: 4px;
-    }
-
-    .chatbot-modal .product-price {
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    /* Quick Suggestions */
-    .chatbot-modal-suggestions {
-      padding: 10px 16px;
-      background: #1a1a1a;
-      border-top: 1px solid #333;
-      overflow-x: auto;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .chatbot-modal-suggestions::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    .chatbot-modal-suggestions::-webkit-scrollbar-thumb {
-      background: #4CAF50;
-      border-radius: 2px;
-    }
-
-    .chatbot-modal .suggestion-chip {
-      display: inline-block;
-      background: #2a2a2a;
-      color: #4CAF50;
-      padding: 6px 12px;
-      border-radius: 16px;
-      font-size: 12px;
-      margin-right: 6px;
-      border: 1px solid #333;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .chatbot-modal .suggestion-chip:hover {
-      background: #4CAF50;
-      color: white;
-      border-color: #4CAF50;
-    }
-
-    /* Input Area */
-    .chatbot-modal-input {
-      padding: 12px 16px;
-      background: #2a2a2a;
-      border-top: 1px solid #333;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .chatbot-modal-input input {
-      flex: 1;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 20px;
-      padding: 10px 16px;
-      color: white;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .chatbot-modal-input input:focus {
-      border-color: #4CAF50;
-    }
-
-    .chatbot-modal-input input::placeholder {
-      color: #666;
-    }
-
-    .chatbot-modal-input button {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      border: none;
-      border-radius: 50%;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s;
-    }
-
-    .chatbot-modal-input button:hover {
-      transform: scale(1.1);
-    }
-
-    .chatbot-modal-input button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Welcome Message */
-    .chatbot-modal .welcome-message {
-      text-align: center;
-      padding: 30px 20px;
-      color: #666;
-    }
-
-    .chatbot-modal .welcome-message .bot-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .chatbot-modal .welcome-message h2 {
-      color: #4CAF50;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    .chatbot-modal .welcome-message p {
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .chatbot-modal {
-        bottom: 0;
-        right: 0;
-        left: 0;
-        width: 100%;
-        height: 80vh;
-        border-radius: 16px 16px 0 0;
-      }
-    }
+    /* === CHATBOT STYLES REMOVIDOS (ahora en ayuda.html) === */
 
     /* === SLIDE MENU === */
     .slide-menu {
@@ -2640,77 +2202,7 @@
     <span class="hamburger-line"></span>
   </button>
 
-  <!-- Chatbot Button -->
-  <button class="chatbot-btn" id="chatbotBtn" onclick="openChatbotModal()" title="Asistente Virtual">
-    <span class="bot-text">ChatBot</span>
-    <span class="bot-label">AI</span>
-  </button>
-
-  <!-- Chatbot Modal Overlay -->
-  <div class="chatbot-modal-overlay" id="chatbotModalOverlay" onclick="closeChatbotModal()"></div>
-
-  <!-- Chatbot Modal -->
-  <div class="chatbot-modal" id="chatbotModal">
-    <!-- Header -->
-    <div class="chatbot-modal-header">
-      <span class="material-icons">smart_toy</span>
-      <div class="chatbot-header-text">
-        <h3>Asistente Virtual</h3>
-        <span class="chatbot-beta-badge">Versión de prueba, solo visible para Santi y Cris</span>
-      </div>
-      <button class="chatbot-export-btn" id="chatbotExportBtn" title="Exportar preguntas a Excel">
-        <span class="material-icons">download</span>
-      </button>
-      <button class="chatbot-modal-close" onclick="closeChatbotModal()">
-        <span class="material-icons">close</span>
-      </button>
-    </div>
-
-    <!-- Messages Area -->
-    <div class="chatbot-modal-messages" id="chatbotMessages">
-      <!-- Welcome Message -->
-      <div class="welcome-message" id="chatbotWelcome">
-        <div class="bot-icon">🤖</div>
-        <h2>¡Hola! Soy tu asistente virtual</h2>
-        <p>Estoy aquí para ayudarte a encontrar los mejores productos.<br>
-        Pregúntame sobre stock, precios, o pídeme recomendaciones.</p>
-      </div>
-
-      <!-- Typing Indicator -->
-      <div class="typing-indicator" id="chatbotTyping">
-        <div class="message-avatar">
-          <span class="material-icons">smart_toy</span>
-        </div>
-        <div class="typing-dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Suggestions -->
-    <div class="chatbot-modal-suggestions" id="chatbotSuggestions">
-      <span class="suggestion-chip" data-message="qué celulares me recomendas">⭐ Recomendaciones</span>
-      <span class="suggestion-chip" data-message="productos más baratos">💰 Más baratos</span>
-      <span class="suggestion-chip" data-message="productos con stock">📦 Con stock</span>
-      <span class="suggestion-chip" data-message="iPhone 13">📱 iPhone 13</span>
-      <span class="suggestion-chip" data-message="Samsung Galaxy">📱 Samsung</span>
-    </div>
-
-    <!-- Input Area -->
-    <div class="chatbot-modal-input">
-      <input
-        type="text"
-        id="chatbotInput"
-        placeholder="Escribe tu pregunta..."
-        autocomplete="off"
-      >
-      <button id="chatbotSendBtn">
-        <span class="material-icons">send</span>
-      </button>
-    </div>
-  </div>
+  <!-- Chatbot REMOVIDO - ahora solo disponible en ayuda.html -->
 
   <!-- Slide-in Menu -->
   <div class="slide-menu" id="slideMenu">
@@ -2737,6 +2229,9 @@
         <button class="menu-btn" id="estadisticasBtn" style="display: none;">
           ESTADISTICAS
         </button>
+        <button class="menu-btn" id="ayudaBtn">
+          AYUDA
+        </button>
       </div>
 
       <div class="menu-footer">
@@ -2744,7 +2239,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.54
+          v0.55
         </div>
       </div>
       
@@ -4891,6 +4386,15 @@
           openModal('changelogModal');
         });
         console.log('✅ Menu version button handler added');
+      }
+
+      const ayudaBtn = document.getElementById('ayudaBtn');
+      if (ayudaBtn) {
+        ayudaBtn.addEventListener('click', function() {
+          closeMenu();
+          window.location.href = 'ayuda.html';
+        });
+        console.log('✅ Ayuda button handler added');
       }
 
       const adminBtn = document.getElementById('adminBtn');
@@ -7058,7 +6562,25 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.54 - Actual</h3>
+          <h3>v0.55 - Actual</h3>
+          <ul>
+            <li>🆕 <strong>Nueva Página de Ayuda:</strong> Creada ayuda.html con formulario de soporte técnico</li>
+            <li>📝 <strong>Sistema de Tickets:</strong> Usuarios pueden reportar problemas con nombre, teléfono, descripción y foto adjunta</li>
+            <li>📸 <strong>Subida de Fotos:</strong> Vista previa de imágenes antes de enviar, almacenadas en Firebase Storage</li>
+            <li>💾 <strong>Guardado en Firebase:</strong> Tickets guardados en colección soporte_tickets con timestamp y status</li>
+            <li>🤖 <strong>Chatbot Reubicado:</strong> Chatbot AI movido de marketplace.html a ayuda.html (solo visible para admins)</li>
+            <li>🐛 <strong>Logs de Errores Reubicados:</strong> Visor de logs movido de Administration.html a ayuda.html (solo admins)</li>
+            <li>📊 <strong>Panel Admin en Ayuda:</strong> 3 botones para admins: Chatbot AI, Estadísticas y Logs de Errores</li>
+            <li>🔒 <strong>Control de Acceso:</strong> Todos los componentes admin validados con Firebase auth (solo santifn@gmail.com y cristiansan@gmail.com)</li>
+            <li>🗑️ <strong>Limpieza de Código:</strong> Removido HTML, CSS y JS del chatbot de marketplace.html (~500 líneas)</li>
+            <li>📋 <strong>Menú Reorganizado:</strong> Botón AYUDA movido al final del menú hamburguesa</li>
+            <li>🔐 <strong>Reglas Firebase Actualizadas:</strong> Agregadas reglas para soporte_tickets (create para usuarios, read/update/delete para admins)</li>
+            <li>📂 <strong>Storage Rules:</strong> Nueva carpeta /soporte/ en Storage con permisos para imágenes de tickets</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.54</h3>
           <ul>
             <li>🐛 <strong>Fix Error Precios Null:</strong> Solucionado error "Cannot read properties of null (reading 'toFixed')" en cart.html</li>
             <li>✅ <strong>Validación de Datos:</strong> Agregada validación para item.price e item.quantity antes de operaciones matemáticas</li>
@@ -7730,66 +7252,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <!-- Chatbot Modal Script -->
-  <script type="module">
-    // Funciones para abrir/cerrar modal
-    window.openChatbotModal = function() {
-      document.getElementById('chatbotModalOverlay').classList.add('active');
-      document.getElementById('chatbotModal').classList.add('active');
-
-      // Cargar chatbot si no está cargado
-      if (!window.chatbotLoaded) {
-        loadChatbot();
-        window.chatbotLoaded = true;
-      }
-    };
-
-    window.closeChatbotModal = function() {
-      document.getElementById('chatbotModalOverlay').classList.remove('active');
-      document.getElementById('chatbotModal').classList.remove('active');
-    };
-
-    // Cargar el chatbot
-    async function loadChatbot() {
-      // Importar chatbot-modal.js dinámicamente
-      try {
-        await import('./chatbot-modal.js?v=11');
-        console.log('✅ Chatbot modal cargado');
-      } catch (error) {
-        console.error('❌ Error cargando chatbot:', error);
-        // Fallback: mostrar mensaje de error
-        const messagesDiv = document.getElementById('chatbotMessages');
-        if (messagesDiv) {
-          messagesDiv.innerHTML = `
-            <div class="message bot">
-              <div class="message-avatar"><span class="material-icons">error</span></div>
-              <div class="message-content">
-                Lo siento, hubo un error al cargar el asistente: ${error.message}<br>
-                Por favor intenta recargar la página.
-              </div>
-            </div>
-          `;
-        }
-        console.error('Error completo:', error);
-      }
-    }
-
-    // Event listeners para sugerencias
-    document.addEventListener('DOMContentLoaded', () => {
-      const suggestions = document.querySelectorAll('#chatbotSuggestions .suggestion-chip');
-      suggestions.forEach(chip => {
-        chip.addEventListener('click', () => {
-          const message = chip.getAttribute('data-message');
-          const input = document.getElementById('chatbotInput');
-          if (input) {
-            input.value = message;
-            // Trigger send
-            const sendBtn = document.getElementById('chatbotSendBtn');
-            if (sendBtn) sendBtn.click();
-          }
-        });
-      });
-    });
-  </script>
+  <!-- Chatbot JavaScript REMOVIDO (ahora en ayuda.html) -->
 </body>
 </html>

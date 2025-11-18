@@ -88,5 +88,13 @@ service cloud.firestore {
       allow update: if isAdmin();  // Solo admins pueden actualizar logs (agregar savedDate)
       allow delete: if isAdmin();  // Solo admins pueden eliminar logs
     }
+
+    // REGLAS PARA TICKETS DE SOPORTE - Sistema de ayuda
+    match /soporte_tickets/{ticketId} {
+      allow read: if isAdmin();  // Solo admins pueden leer tickets
+      allow create: if request.auth != null;  // Cualquier usuario autenticado puede crear tickets
+      allow update: if isAdmin();  // Solo admins pueden actualizar tickets (cambiar status, etc.)
+      allow delete: if isAdmin();  // Solo admins pueden eliminar tickets
+    }
   }
 }
