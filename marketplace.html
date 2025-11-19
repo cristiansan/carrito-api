@@ -2220,14 +2220,11 @@
         <button class="menu-btn" id="historialModalBtn">
           HISTORIAL
         </button>
-        <button class="menu-btn" id="logisticsModalBtn">
+        <button class="menu-btn" id="logisticsModalBtn" style="display: none;">
           SEGUIMIENTO
         </button>
         <button class="menu-btn" id="adminBtn" style="display: none;">
           ADMIN
-        </button>
-        <button class="menu-btn" id="estadisticasBtn" style="display: none;">
-          ESTADISTICAS
         </button>
         <button class="menu-btn" id="ayudaBtn">
           AYUDA
@@ -3537,15 +3534,8 @@
                 console.log('✅ STATS visible');
               }
               if (logisticsModalBtn) {
-                logisticsModalBtn.remove();
-                console.log('🗑️ SEGUIMIENTO botón eliminado del DOM para admin (disponible en ADMIN/MASTER)');
-              }
-
-              // También eliminar el modal SEGUIMIENTO para admins
-              const logisticsModal = document.getElementById('logisticsModal');
-              if (logisticsModal) {
-                logisticsModal.remove();
-                console.log('🗑️ SEGUIMIENTO modal eliminado del DOM para admin');
+                logisticsModalBtn.style.display = 'none';
+                console.log('✅ SEGUIMIENTO oculto para admin (disponible en ADMIN/MASTER)');
               }
               if (historialModalBtn) {
                 historialModalBtn.style.display = 'block';
@@ -3555,20 +3545,15 @@
                 adminBtn.style.display = 'block';
                 console.log('✅ ADMIN visible para usuario admin');
               }
-              const estadisticasBtn = document.getElementById('estadisticasBtn');
-              if (estadisticasBtn) {
-                estadisticasBtn.style.display = 'block';
-                console.log('✅ ESTADISTICAS visible para usuario admin');
-              }
 
             }
           };
           
           // Aplicar inmediatamente
           applyControlsVisibility();
-          
+
           // También aplicar después de un pequeño delay para asegurar que el DOM esté listo
-          setTimeout(applyControlsVisibility, 500);
+          setTimeout(applyControlsVisibility, 100);
           
           // Para usuarios no-admin, asegurar que los KPIs se muestren con columnas básicas
           if (!isAdmin) {
@@ -4406,14 +4391,6 @@
         console.log('✅ Admin button handler added');
       }
 
-      const estadisticasBtn = document.getElementById('estadisticasBtn');
-      if (estadisticasBtn) {
-        estadisticasBtn.addEventListener('click', function() {
-          closeMenu();
-          window.location.href = 'estadisticas.html';
-        });
-        console.log('✅ Estadisticas button handler added');
-      }
 
 
       const exportHistorialBtn = document.getElementById('exportHistorialBtn');
@@ -4475,10 +4452,9 @@
       
       // Cargar configuración cuando el usuario se autentique
       if (typeof firebase !== 'undefined' && firebase.auth) {
-        // Importar onAuthStateChanged dentro del callback
-        setTimeout(() => {
-          if (window.firebase && window.firebase.firestoreHelpers) {
-            firebase.auth().onAuthStateChanged(async function(user) {
+        // Ejecutar inmediatamente sin delay
+        if (window.firebase && window.firebase.firestoreHelpers) {
+          firebase.auth().onAuthStateChanged(async function(user) {
               if (user) {
                 console.log('👤 Usuario autenticado, verificando permisos...');
 
@@ -4519,7 +4495,6 @@
               }
             });
           }
-        }, 1000); // Esperar a que Firebase se cargue completamente
       }
       
       // Old logout button removed - now in hamburger menu
