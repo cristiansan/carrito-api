@@ -5907,6 +5907,20 @@
         if (aVal === null || aVal === undefined || aVal === '-') return 1;
         if (bVal === null || bVal === undefined || bVal === '-') return -1;
 
+        // Special handling for numeric columns (codigo)
+        if (col === 'codigo' || col === 'saldoCredito') {
+          // Try to parse as numbers
+          const aNum = parseFloat(aVal);
+          const bNum = parseFloat(bVal);
+
+          // If both are valid numbers, compare numerically
+          if (!isNaN(aNum) && !isNaN(bNum)) {
+            if (aNum < bNum) return -1 * dir;
+            if (aNum > bNum) return 1 * dir;
+            return 0;
+          }
+        }
+
         // Convert to string for comparison if needed
         if (typeof aVal === 'string') aVal = aVal.toLowerCase();
         if (typeof bVal === 'string') bVal = bVal.toLowerCase();
