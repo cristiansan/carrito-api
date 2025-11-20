@@ -773,22 +773,57 @@
     }
 
     @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
       .header {
         flex-direction: column;
         gap: 15px;
         text-align: center;
+        padding: 15px;
       }
 
       .header h1 {
         font-size: 20px;
       }
 
+      .back-btn {
+        padding: 8px 15px;
+        font-size: 13px;
+      }
+
       .form-container {
-        padding: 20px;
+        padding: 20px 15px;
+      }
+
+      .form-container h2 {
+        font-size: 20px;
+      }
+
+      .form-group label {
+        font-size: 13px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .submit-btn {
+        padding: 12px 25px;
+        font-size: 14px;
       }
 
       .admin-controls {
         flex-direction: column;
+        gap: 12px;
+      }
+
+      .admin-btn {
+        padding: 12px 20px;
+        font-size: 14px;
       }
 
       .chatbot-modal {
@@ -796,8 +831,137 @@
         right: 0;
         left: 0;
         width: 100%;
-        height: 80vh;
+        height: 85vh;
         border-radius: 16px 16px 0 0;
+      }
+
+      .error-logs-modal-content {
+        width: 95%;
+        max-width: 95%;
+      }
+
+      .error-logs-modal-header h2 {
+        font-size: 20px;
+      }
+
+      .error-logs-modal-body {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .header {
+        padding: 12px;
+      }
+
+      .header h1 {
+        font-size: 18px;
+      }
+
+      .header h1 .material-icons {
+        font-size: 20px;
+      }
+
+      .back-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .form-container {
+        padding: 15px 12px;
+      }
+
+      .form-container h2 {
+        font-size: 18px;
+      }
+
+      .form-container h2 .material-icons {
+        font-size: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        font-size: 12px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        font-size: 13px;
+        padding: 8px;
+      }
+
+      .form-group textarea {
+        min-height: 100px;
+      }
+
+      .submit-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+
+      .success-message,
+      .error-message {
+        padding: 12px;
+        font-size: 13px;
+      }
+
+      .admin-btn {
+        padding: 10px 15px;
+        font-size: 13px;
+      }
+
+      .chatbot-modal {
+        height: 90vh;
+      }
+
+      .chatbot-modal-header {
+        padding: 12px 15px;
+      }
+
+      .chatbot-modal-header h3 {
+        font-size: 16px;
+      }
+
+      .chatbot-modal-messages {
+        padding: 12px;
+      }
+
+      .chatbot-modal-input {
+        padding: 10px 12px;
+      }
+
+      .chatbot-modal-input input {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      .error-logs-modal-content {
+        width: 98%;
+      }
+
+      .error-logs-modal-header {
+        padding: 15px;
+      }
+
+      .error-logs-modal-header h2 {
+        font-size: 18px;
+      }
+
+      .error-logs-modal-body {
+        padding: 12px;
+      }
+
+      #exportErrorLogsBtn,
+      #saveLogsSnapshotBtn {
+        font-size: 12px;
+        padding: 8px 15px;
       }
     }
   </style>
@@ -843,6 +1007,14 @@
           Nombre
         </label>
         <input type="text" id="userName" name="userName" required placeholder="Ingrese su nombre">
+      </div>
+
+      <div class="form-group">
+        <label for="userEmail">
+          <span class="material-icons" style="vertical-align: middle; font-size: 16px;">email</span>
+          Email
+        </label>
+        <input type="email" id="userEmail" name="userEmail" required placeholder="Ingrese su email">
       </div>
 
       <div class="form-group">
@@ -1063,10 +1235,14 @@
         document.getElementById('adminControls').classList.add('visible');
       }
 
-      // Pre-fill user email if available
+      // Pre-fill user data if available
       const userData = userDoc.docs[0]?.data();
       if (userData && userData.displayName) {
         document.getElementById('userName').value = userData.displayName;
+      }
+      // Pre-fill email
+      if (user.email) {
+        document.getElementById('userEmail').value = user.email;
       }
     });
 
@@ -1116,6 +1292,7 @@
 
       try {
         const userName = document.getElementById('userName').value;
+        const userEmail = document.getElementById('userEmail').value;
         const userPhone = document.getElementById('userPhone').value;
         const problemDescription = document.getElementById('problemDescription').value;
         const photoFile = photoUpload.files[0];
@@ -1134,7 +1311,7 @@
         const ticketData = {
           userName,
           userPhone,
-          userEmail: currentUser.email,
+          userEmail,
           problemDescription,
           photoURL,
           timestamp: serverTimestamp(),

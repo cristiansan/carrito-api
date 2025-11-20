@@ -443,6 +443,12 @@
         flex-direction: column;
         align-items: stretch;
       }
+      .header-logo {
+        position: relative;
+        left: 0;
+        margin: 0 auto 10px auto;
+        max-width: 150px;
+      }
       .header-stats {
         flex-direction: column;
         width: 100%;
@@ -450,14 +456,40 @@
       .header-stat-card {
         width: 100%;
         min-width: unset;
+        padding: 10px 15px;
+      }
+      .header-stat-number {
+        font-size: 1.5em;
+      }
+      .header-stat-label {
+        font-size: 0.75em;
       }
       .tab {
         padding: 6px 8px;
+        font-size: 12px;
       }
       .toolbar {
         flex-wrap: wrap;
+        gap: 6px;
+      }
+      .toolbar button {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+      .cart-btn {
+        width: 36px;
+        height: 36px;
+      }
+      .slide-menu-content {
+        width: 85%;
+        max-width: 350px;
       }
       th, td {
+        padding: 6px 4px;
+        font-size: 11px;
+      }
+      .buy-input {
+        width: 35px;
         padding: 4px;
         font-size: 12px;
       }
@@ -581,6 +613,88 @@
         right: 0 !important;
         bottom: 0 !important;
         top: auto !important;
+      }
+    }
+
+    /* Extra small devices (phones, less than 480px) */
+    @media (max-width: 480px) {
+      .header {
+        padding: 10px 8px;
+      }
+
+      .header-logo {
+        max-width: 120px;
+      }
+
+      .header-stat-card {
+        padding: 8px 12px;
+      }
+
+      .header-stat-number {
+        font-size: 1.3em;
+      }
+
+      .header-stat-label {
+        font-size: 0.7em;
+      }
+
+      .container {
+        padding: 6px;
+      }
+
+      .toolbar {
+        gap: 4px;
+      }
+
+      .toolbar button {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .cart-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .hamburger-btn {
+        width: 45px;
+        height: 45px;
+        top: 15px;
+        right: 15px;
+      }
+
+      .slide-menu-content {
+        width: 90%;
+      }
+
+      th, td {
+        padding: 4px 2px;
+        font-size: 10px;
+      }
+
+      .buy-input {
+        width: 30px;
+        padding: 2px;
+      }
+
+      .modal-content {
+        width: 98%;
+        padding: 10px;
+      }
+
+      .column-toggle-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+
+      .mobile-column-toggles {
+        gap: 4px;
+        padding: 6px;
+      }
+
+      .tab {
+        padding: 5px 6px;
+        font-size: 11px;
       }
     }
 
@@ -2236,7 +2350,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.55
+          v0.56
         </div>
       </div>
       
@@ -6537,7 +6651,21 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.55 - Actual</h3>
+          <h3>v0.56 - Actual</h3>
+          <ul>
+            <li>📱 <strong>Diseño Responsive:</strong> Optimización completa para móviles Android e iPhone en todas las páginas</li>
+            <li>📐 <strong>Media Queries:</strong> 2 breakpoints (768px tablets, 480px móviles) para mejor adaptación</li>
+            <li>🔤 <strong>Tamaños de Fuente:</strong> Ajustados para legibilidad en pantallas pequeñas con mínimo 16px en inputs (previene zoom iOS)</li>
+            <li>👆 <strong>Botones Táctiles:</strong> Tamaños aumentados para facilitar interacción en dispositivos móviles</li>
+            <li>📊 <strong>Tablas Responsive:</strong> Columnas colapsables con botones toggle en marketplace móvil</li>
+            <li>🍔 <strong>Menús Optimizados:</strong> Menú hamburguesa y modales adaptados para pantallas táctiles</li>
+            <li>📧 <strong>Campo Email en Ayuda:</strong> Agregado campo de email obligatorio en formulario de soporte</li>
+            <li>📈 <strong>Estadísticas Filtradas:</strong> Email cristiansan@gmail.com excluido de métricas y rankings (desarrollo)</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.55</h3>
           <ul>
             <li>🆕 <strong>Nueva Página de Ayuda:</strong> Creada ayuda.html con formulario de soporte técnico</li>
             <li>📝 <strong>Sistema de Tickets:</strong> Usuarios pueden reportar problemas con nombre, teléfono, descripción y foto adjunta</li>

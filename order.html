@@ -846,33 +846,202 @@
       background: #c82333;
     }
     
+    /* === MOBILE RESPONSIVE STYLES === */
     @media (max-width: 768px) {
-      .order-container {
-        padding: 20px;
-        margin: 10px;
+      body {
+        padding: 10px;
       }
-      
+
+      .order-container {
+        padding: 20px 15px;
+        margin: 0;
+      }
+
+      .logo {
+        max-width: 150px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .order-summary {
+        padding: 20px 15px;
+      }
+
+      .summary-title {
+        font-size: 18px;
+      }
+
+      .order-date {
+        font-size: 12px;
+      }
+
       .share-section {
         grid-template-columns: 1fr;
         gap: 15px;
       }
-      
+
+      .share-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        max-width: 100%;
+      }
+
+      .continue-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        max-width: 100%;
+      }
+
       .product-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
-        padding: 20px 0;
+        gap: 8px;
+        padding: 15px 0;
       }
-      
+
+      .product-name {
+        font-size: 14px;
+      }
+
+      .product-code {
+        font-size: 11px;
+      }
+
       .product-quantity,
       .product-price {
         margin: 0;
         align-self: flex-end;
+        font-size: 14px;
       }
-      
+
+      .total-section {
+        padding: 15px;
+      }
+
+      .total-row {
+        font-size: 14px;
+      }
+
+      .total-row:last-child {
+        font-size: 16px;
+      }
+
+      .hamburger-btn {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+      }
+
       .slide-menu-content {
-        width: 100%;
+        width: 85%;
         max-width: 350px;
+      }
+
+      .modal-content {
+        width: 90%;
+        padding: 15px;
+      }
+
+      .version-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 11px;
+        padding: 3px 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+
+      .order-container {
+        padding: 15px 10px;
+      }
+
+      .logo {
+        max-width: 120px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .order-summary {
+        padding: 15px 12px;
+      }
+
+      .summary-title {
+        font-size: 16px;
+      }
+
+      .product-item {
+        padding: 12px 0;
+      }
+
+      .product-name {
+        font-size: 13px;
+      }
+
+      .product-code {
+        font-size: 10px;
+      }
+
+      .product-quantity,
+      .product-price {
+        font-size: 13px;
+      }
+
+      .total-section {
+        padding: 12px;
+      }
+
+      .total-row {
+        font-size: 13px;
+      }
+
+      .total-row:last-child {
+        font-size: 15px;
+      }
+
+      .share-btn,
+      .continue-btn {
+        padding: 10px 15px;
+        font-size: 13px;
+      }
+
+      .hamburger-btn {
+        width: 42px;
+        height: 42px;
+      }
+
+      .slide-menu-content {
+        width: 90%;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 12px;
+      }
+
+      .empty-cart-icon {
+        font-size: 36px;
+      }
+
+      .empty-cart {
+        padding: 30px 15px;
+        font-size: 14px;
       }
     }
     
