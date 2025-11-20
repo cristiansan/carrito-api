@@ -4596,36 +4596,34 @@
       console.log('✅ Menu setup complete');
 
       // === MOBILE COLUMN TOGGLE FUNCTIONALITY ===
-      document.addEventListener('DOMContentLoaded', function() {
-        const table = document.getElementById('productsTable');
-        const toggleButtons = document.querySelectorAll('.column-toggle-btn');
+      const table = document.getElementById('productsTable');
+      const toggleButtons = document.querySelectorAll('.column-toggle-btn');
 
-        if (table && toggleButtons.length > 0) {
-          toggleButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-              const column = this.getAttribute('data-toggle');
-              const span = this.querySelector('span');
+      if (table && toggleButtons.length > 0) {
+        toggleButtons.forEach(btn => {
+          btn.addEventListener('click', function() {
+            const column = this.getAttribute('data-toggle');
+            const span = this.querySelector('span');
 
-              // Toggle active class on button
-              this.classList.toggle('active');
+            // Toggle active class on button
+            this.classList.toggle('active');
 
-              // Toggle show class on table
-              table.classList.toggle(`show-${column}`);
+            // Toggle show class on table
+            table.classList.toggle(`show-${column}`);
 
-              // Toggle icon between + and -
-              if (this.classList.contains('active')) {
-                span.textContent = '-';
-              } else {
-                span.textContent = '+';
-              }
+            // Toggle icon between + and -
+            if (this.classList.contains('active')) {
+              span.textContent = '-';
+            } else {
+              span.textContent = '+';
+            }
 
-              console.log(`🔄 Columna ${column} ${this.classList.contains('active') ? 'visible' : 'oculta'}`);
-            });
+            console.log(`🔄 Columna ${column} ${this.classList.contains('active') ? 'visible' : 'oculta'}`);
           });
+        });
 
-          console.log('✅ Toggle buttons para columnas móviles inicializados');
-        }
-      });
+        console.log('✅ Toggle buttons para columnas móviles inicializados');
+      }
     });
   </script>
 
