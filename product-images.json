@@ -1,0 +1,100 @@
+{
+  "patterns": [
+    {
+      "regex": ["usb.*c.*adapter", "usb.*c.*power", "usb-c.*adapter", "usbc.*adapter", "adaptador.*usb.*c"],
+      "image": "imagenes/usb-c-adapter.jpg",
+      "priority": 20
+    },
+    {
+      "regex": ["adapter", "adaptador", "power.*adapter", "charger", "cargador"],
+      "image": "imagenes/apple-adapter.jpg",
+      "priority": 15
+    },
+    {
+      "regex": ["iphone.*16.*pro", "16.*pro.*max"],
+      "image": "imagenes/iphone-15-pro.jpg",
+      "priority": 11
+    },
+    {
+      "regex": ["iphone.*15.*pro", "15.*pro.*max"],
+      "image": "imagenes/iphone-15-pro.jpg",
+      "priority": 10
+    },
+    {
+      "regex": ["iphone.*14.*pro", "14.*pro.*max", "iphone.*14.*pro.*max"],
+      "image": "imagenes/iphone-14-pro.jpg",
+      "priority": 9
+    },
+    {
+      "regex": ["iphone.*14", "iphone.*14.*plus", "14.*plus"],
+      "image": "imagenes/iphone-14.jpg",
+      "priority": 8
+    },
+    {
+      "regex": ["iphone.*13", "iphone.*13.*pro", "iphone.*13.*mini", "13.*pro", "13.*mini"],
+      "image": "imagenes/iphone-13.jpg",
+      "priority": 7
+    },
+    {
+      "regex": ["iphone.*12", "iphone.*12.*pro", "12.*pro", "12.*mini"],
+      "image": "imagenes/iphone-xs.jpg",
+      "priority": 6
+    },
+    {
+      "regex": ["iphone.*11", "iphone.*xs", "iphone.*xr", "iphone.*x"],
+      "image": "imagenes/iphone-xs.jpg",
+      "priority": 5
+    },
+    {
+      "regex": ["iphone"],
+      "image": "imagenes/iphone-14.jpg",
+      "priority": 1
+    },
+    {
+      "regex": ["macbook.*pro", "mbp", "m[1-3].*pro"],
+      "image": "imagenes/macbook-pro.jpg",
+      "priority": 10
+    },
+    {
+      "regex": ["macbook.*air", "mba", "m[1-3].*air"],
+      "image": "imagenes/macbook-air.jpg",
+      "priority": 10
+    },
+    {
+      "regex": ["macbook"],
+      "image": "imagenes/macbook-air.jpg",
+      "priority": 5
+    },
+    {
+      "regex": ["samsung.*s24", "galaxy.*s24", "s24.*ultra", "s24.*plus"],
+      "image": "imagenes/samsung-s24.jpg",
+      "priority": 10
+    },
+    {
+      "regex": ["samsung.*s23", "galaxy.*s23", "s23.*ultra", "s23.*plus"],
+      "image": "imagenes/samsung-s23.jpg",
+      "priority": 9
+    },
+    {
+      "regex": ["samsung.*s22", "galaxy.*s22", "s22.*ultra"],
+      "image": "imagenes/samsung-galaxy.jpg",
+      "priority": 8
+    },
+    {
+      "regex": ["samsung.*s21", "galaxy.*s21"],
+      "image": "imagenes/samsung-galaxy.jpg",
+      "priority": 7
+    },
+    {
+      "regex": ["samsung.*galaxy", "galaxy.*s[0-9]"],
+      "image": "imagenes/samsung-galaxy.jpg",
+      "priority": 6
+    },
+    {
+      "regex": ["samsung"],
+      "image": "imagenes/samsung-galaxy.jpg",
+      "priority": 5
+    }
+  ],
+  "default": "imagenes/default-phone.jpg"
+}

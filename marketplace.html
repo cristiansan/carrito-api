@@ -2122,6 +2122,1033 @@
         left: 20px !important;
       }
     }
+
+    /* ========================================
+       VIEW MODE SELECTOR STYLES
+       ======================================== */
+    .view-mode-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px;
+      background: #1b1b1f;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      flex-wrap: wrap;
+    }
+
+    .view-mode-btn {
+      background: #23232a;
+      border: 1px solid #3a3a44;
+      border-radius: 6px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d0d0d0;
+    }
+
+    .view-mode-btn:hover {
+      background: #2a2a2f;
+      border-color: #4CAF50;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .view-mode-btn.active {
+      background: #4CAF50;
+      border-color: #4CAF50;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+
+    .view-mode-btn .material-icons {
+      font-size: 24px;
+    }
+
+    /* View Container Management */
+    .view-container {
+      transition: opacity 0.3s ease;
+    }
+
+    .view-container:not(.active) {
+      display: none;
+    }
+
+    /* ========================================
+       PRODUCT CARD BASE STYLES
+       ======================================== */
+    .product-card {
+      background: #1e1e24;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card:hover {
+      border-color: #4CAF50;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 48px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .product-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      z-index: 1;
+    }
+
+    .product-image.placeholder {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1e1e24 100%);
+    }
+
+    .product-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f1f1f1;
+      margin-bottom: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .product-code {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .product-description {
+      font-size: 14px;
+      color: #b0b0b0;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .product-info {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .product-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .product-info-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .product-info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f1f1f1;
+    }
+
+    .product-price {
+      font-size: 24px;
+      font-weight: 700;
+      color: #4CAF50;
+      margin-bottom: 12px;
+    }
+
+    .product-quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .product-quantity-controls button {
+      background: #2a2a33;
+      border: 1px solid #3a3a44;
+      color: #f1f1f1;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .product-quantity-controls button:hover {
+      background: #4CAF50;
+      border-color: #4CAF50;
+    }
+
+    .product-quantity-controls input {
+      width: 60px;
+      text-align: center;
+      padding: 8px;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      background: #1b1b1f;
+      color: #f1f1f1;
+      font-size: 16px;
+    }
+
+    /* ========================================
+       LIST VIEW STYLES
+       ======================================== */
+    .products-grid.list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+    }
+
+    .products-grid.list-view .product-card {
+      flex-direction: row;
+      gap: 20px;
+      padding: 16px;
+      min-height: 140px;
+    }
+
+    .products-grid.list-view .product-image {
+      width: 120px;
+      height: 120px;
+      min-width: 120px;
+      margin-bottom: 0;
+      font-size: 48px;
+    }
+
+    .products-grid.list-view .product-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .products-grid.list-view .product-main-info {
+      flex: 1;
+      min-width: 250px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .products-grid.list-view .product-title {
+      font-size: 16px;
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+
+    .products-grid.list-view .product-code {
+      margin-bottom: 0;
+      font-size: 13px;
+    }
+
+    .products-grid.list-view .product-description {
+      display: none;
+    }
+
+    .products-grid.list-view .product-info {
+      margin-bottom: 0;
+      gap: 12px;
+    }
+
+    .products-grid.list-view .product-info-item {
+      min-width: 90px;
+    }
+
+    .products-grid.list-view .product-info-label {
+      font-size: 12px;
+    }
+
+    .products-grid.list-view .product-info-value {
+      font-size: 18px;
+    }
+
+    .products-grid.list-view .product-price {
+      font-size: 22px;
+      margin-bottom: 0;
+      min-width: 120px;
+      font-weight: 700;
+    }
+
+    .products-grid.list-view .product-quantity-controls {
+      margin-top: 0;
+      min-width: 200px;
+    }
+
+    /* ========================================
+       GRID VIEW STYLES (Classic Cards - 2 columns)
+       ======================================== */
+    .products-grid.grid-view {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 20px;
+      padding: 20px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+    }
+
+    .products-grid.grid-view .product-card {
+      height: 100%;
+    }
+
+    .products-grid.grid-view .product-image {
+      height: 180px;
+    }
+
+    /* ========================================
+       LARGE GRID / GALLERY VIEW STYLES (3 columns)
+       ======================================== */
+    .products-grid.large-grid-view {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 24px;
+      padding: 24px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+    }
+
+    .products-grid.large-grid-view .product-card {
+      height: 100%;
+    }
+
+    .products-grid.large-grid-view .product-image {
+      height: 280px;
+      font-size: 64px;
+    }
+
+    .products-grid.large-grid-view .product-title {
+      font-size: 18px;
+    }
+
+    .products-grid.large-grid-view .product-description {
+      -webkit-line-clamp: 4;
+      font-size: 15px;
+    }
+
+    .products-grid.large-grid-view .product-price {
+      font-size: 28px;
+    }
+
+    /* ========================================
+       SPLIT CARD LAYOUT STYLES
+       ======================================== */
+    .products-grid.split-view {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+    }
+
+    .products-grid.split-view .product-card {
+      flex-direction: row;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .products-grid.split-view .product-image {
+      width: 160px;
+      height: 160px;
+      min-width: 160px;
+      margin-bottom: 0;
+      font-size: 48px;
+    }
+
+    .products-grid.split-view .product-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .products-grid.split-view .product-title {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .products-grid.split-view .product-description {
+      -webkit-line-clamp: 4;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+
+    .products-grid.split-view .product-info {
+      flex-direction: row;
+      gap: 16px;
+    }
+
+    .products-grid.split-view .product-price {
+      font-size: 26px;
+    }
+
+    /* ========================================
+       MASONRY / PINTEREST-STYLE GRID
+       ======================================== */
+    .products-grid.masonry-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      padding: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      grid-auto-flow: dense;
+    }
+
+    .products-grid.masonry-view .product-card {
+      height: fit-content;
+    }
+
+    .products-grid.masonry-view .product-card:nth-child(3n+1) .product-image {
+      height: 220px;
+    }
+
+    .products-grid.masonry-view .product-card:nth-child(3n+2) .product-image {
+      height: 160px;
+    }
+
+    .products-grid.masonry-view .product-card:nth-child(3n+3) .product-image {
+      height: 190px;
+    }
+
+    .products-grid.masonry-view .product-description {
+      -webkit-line-clamp: 2;
+    }
+
+    /* ========================================
+       RESPONSIVE DESIGN FOR VIEW MODES
+       ======================================== */
+    @media (max-width: 768px) {
+      .view-mode-selector {
+        justify-content: center;
+      }
+
+      .view-mode-btn {
+        padding: 8px 12px;
+      }
+
+      /* List View Mobile - mantener horizontal pero más compacto */
+      .products-grid.list-view .product-card {
+        flex-direction: row;
+        min-height: 150px;
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .products-grid.list-view .product-image {
+        width: 110px;
+        height: 110px;
+        min-width: 110px;
+      }
+
+      .products-grid.list-view .product-content {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .products-grid.list-view .product-main-info {
+        min-width: 0;
+        width: 100%;
+        gap: 6px;
+      }
+
+      .products-grid.list-view .product-title {
+        font-size: 15px;
+        line-height: 1.4;
+      }
+
+      .products-grid.list-view .product-code {
+        font-size: 12px;
+      }
+
+      .products-grid.list-view .product-info {
+        flex-direction: row;
+        gap: 10px;
+      }
+
+      .products-grid.list-view .product-info-item {
+        min-width: 65px;
+      }
+
+      .products-grid.list-view .product-info-label {
+        font-size: 11px;
+      }
+
+      .products-grid.list-view .product-info-value {
+        font-size: 16px;
+      }
+
+      .products-grid.list-view .product-price {
+        font-size: 20px;
+        min-width: auto;
+      }
+
+      .products-grid.list-view .product-quantity-controls {
+        width: 100%;
+        min-width: 100%;
+        justify-content: space-between;
+      }
+
+      .products-grid.list-view .product-quantity-controls button {
+        padding: 6px 12px;
+      }
+
+      .products-grid.list-view .product-quantity-controls input {
+        width: 50px;
+      }
+
+      /* Grid View Mobile - 2 columns */
+      .products-grid.grid-view {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .products-grid.grid-view .product-image {
+        height: 140px;
+      }
+
+      .products-grid.grid-view .product-title {
+        font-size: 14px;
+      }
+
+      .products-grid.grid-view .product-price {
+        font-size: 18px;
+      }
+
+      /* Large Grid Mobile - 2 columns (3 would be too cramped) */
+      .products-grid.large-grid-view {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px;
+        padding: 16px;
+      }
+
+      /* Split View Mobile */
+      .products-grid.split-view .product-card {
+        flex-direction: column;
+      }
+
+      .products-grid.split-view .product-image {
+        width: 100%;
+        height: 200px;
+      }
+
+      /* Masonry Mobile */
+      .products-grid.masonry-view {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .products-grid.masonry-view .product-card:nth-child(n) .product-image {
+        height: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      /* En pantallas muy pequeñas, todas las vistas se convierten en 1 columna */
+      .products-grid.grid-view {
+        grid-template-columns: 1fr !important;
+      }
+
+      .products-grid.large-grid-view {
+        grid-template-columns: 1fr !important;
+      }
+
+      .products-grid.masonry-view {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* ========================================
+       PRODUCT DETAIL MODAL
+       ======================================== */
+    .product-detail-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      overflow-y: auto;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .product-detail-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .product-detail-content {
+      background: #1e1e24;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .product-detail-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #2a2a33;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      color: #f1f1f1;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .product-detail-close:hover {
+      background: #f44336;
+      transform: rotate(90deg);
+    }
+
+    .product-detail-header {
+      display: flex;
+      gap: 24px;
+      padding: 24px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .product-detail-image-container {
+      flex-shrink: 0;
+      width: 300px;
+      height: 300px;
+      background: #2a2a2a;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-detail-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-detail-image-container .placeholder {
+      font-size: 80px;
+      color: #666;
+    }
+
+    .product-detail-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .product-detail-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #f1f1f1;
+      line-height: 1.3;
+    }
+
+    .product-detail-code {
+      font-size: 14px;
+      color: #888;
+      font-family: monospace;
+    }
+
+    .product-detail-price {
+      font-size: 36px;
+      font-weight: 700;
+      color: #4CAF50;
+      margin-top: auto;
+    }
+
+    .product-detail-specs {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .product-detail-spec {
+      background: #23232a;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .product-detail-spec-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .product-detail-spec-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #f1f1f1;
+    }
+
+    .product-detail-spec-value.zero {
+      color: #f44336;
+    }
+
+    .product-detail-spec-value.positive {
+      color: #4CAF50;
+    }
+
+    .product-detail-actions {
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: #23232a;
+    }
+
+    .product-detail-quantity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-detail-quantity button {
+      background: #2a2a33;
+      border: 1px solid #3a3a44;
+      color: #f1f1f1;
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .product-detail-quantity button:hover {
+      background: #4CAF50;
+      border-color: #4CAF50;
+    }
+
+    .product-detail-quantity input {
+      width: 80px;
+      text-align: center;
+      padding: 12px;
+      border: 1px solid #3a3a44;
+      border-radius: 6px;
+      background: #1b1b1f;
+      color: #f1f1f1;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .product-detail-add-btn {
+      flex: 1;
+      background: #4CAF50;
+      border: none;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .product-detail-add-btn:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    /* Compact Technical Specifications (shown in header) */
+    .product-tech-specs-compact {
+      margin: 12px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tech-spec-chip {
+      background: #2a2a33;
+      border: 1px solid #3a3a44;
+      color: #d0d0d0;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .tech-spec-chip:hover {
+      background: #3a3a44;
+      border-color: #4CAF50;
+      color: #f1f1f1;
+    }
+
+    .tech-spec-chip-icon {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .tech-spec-chip.highlight {
+      background: #4CAF50;
+      border-color: #4CAF50;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Technical Specifications Section */
+    .product-tech-specs {
+      padding: 24px;
+      border-top: 1px solid #2a2a2a;
+      background: #1a1a20;
+    }
+
+    .tech-specs-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f1f1f1;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tech-specs-title::before {
+      content: "⚡";
+      font-size: 20px;
+    }
+
+    .tech-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .tech-spec-item {
+      background: #23232a;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .tech-spec-item-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .tech-spec-item-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #f1f1f1;
+      line-height: 1.3;
+    }
+
+    .tech-spec-features {
+      grid-column: 1 / -1;
+      background: #23232a;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .tech-spec-features-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .tech-spec-features-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tech-spec-feature-tag {
+      background: #4CAF50;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Mobile responsive for modal */
+    @media (max-width: 768px) {
+      .product-detail-content {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+
+      .product-detail-header {
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .product-detail-image-container {
+        width: 100%;
+        height: 250px;
+      }
+
+      .product-detail-title {
+        font-size: 20px;
+      }
+
+      .product-tech-specs-compact {
+        margin: 10px 0;
+        gap: 5px;
+      }
+
+      .tech-spec-chip {
+        font-size: 10px;
+        padding: 3px 8px;
+      }
+
+      .product-detail-price {
+        font-size: 28px;
+      }
+
+      .product-detail-specs {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        padding: 20px;
+      }
+
+      .product-detail-actions {
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .product-detail-quantity {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .product-detail-add-btn {
+        width: 100%;
+      }
+
+      .tech-specs-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+
+      .product-tech-specs {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-detail-modal.active {
+        padding: 0;
+      }
+
+      .product-detail-specs {
+        grid-template-columns: 1fr;
+      }
+
+      .product-detail-spec-value {
+        font-size: 20px;
+      }
+
+      .tech-specs-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tech-spec-item-value {
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2262,6 +3289,22 @@
       </button>
     </div>
 
+    <!-- View Mode Selector -->
+    <div class="view-mode-selector">
+      <button class="view-mode-btn active" data-view="table" title="Table View">
+        <span class="material-icons">table_rows</span>
+      </button>
+      <button class="view-mode-btn" data-view="list" title="List View">
+        <span class="material-icons">view_list</span>
+      </button>
+      <button class="view-mode-btn" data-view="grid" title="Grid View (2 columnas)">
+        <span class="material-icons">grid_view</span>
+      </button>
+      <button class="view-mode-btn" data-view="large-grid" title="Large Grid View (3 columnas)">
+        <span class="material-icons">view_module</span>
+      </button>
+    </div>
+
     <!-- Botones de toggle de columnas para móvil -->
     <div class="mobile-column-toggles">
       <button class="column-toggle-btn" data-toggle="articulo">
@@ -2275,11 +3318,62 @@
       </button>
     </div>
 
-    <div style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
+    <!-- Table View Container -->
+    <div id="tableViewContainer" class="view-container active" style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table id="productsTable">
         <thead></thead>
         <tbody id="tbody"></tbody>
       </table>
+    </div>
+
+    <!-- Products Grid Container (for card-based views) -->
+    <div id="productsGrid" class="view-container products-grid" style="display: none;"></div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div id="productDetailModal" class="product-detail-modal">
+    <div class="product-detail-content">
+      <button class="product-detail-close" id="closeProductDetail">&times;</button>
+
+      <div class="product-detail-header">
+        <div class="product-detail-image-container" id="modalProductImageContainer">
+          <span class="material-icons placeholder">inventory_2</span>
+        </div>
+        <div class="product-detail-info">
+          <h2 class="product-detail-title" id="modalProductTitle">Título del Producto</h2>
+          <div class="product-detail-code" id="modalProductCode">Código: ---</div>
+          <!-- Compact Tech Specs -->
+          <div id="modalTechSpecsCompact" class="product-tech-specs-compact" style="display: none;"></div>
+          <div class="product-detail-price" id="modalProductPrice">$0</div>
+        </div>
+      </div>
+
+      <div class="product-detail-specs">
+        <div class="product-detail-spec">
+          <div class="product-detail-spec-label">Stock Disponible</div>
+          <div class="product-detail-spec-value" id="modalProductStock">0</div>
+        </div>
+        <div class="product-detail-spec">
+          <div class="product-detail-spec-label">En Tránsito</div>
+          <div class="product-detail-spec-value" id="modalProductTransit">0</div>
+        </div>
+        <div class="product-detail-spec">
+          <div class="product-detail-spec-label">Total Disponible</div>
+          <div class="product-detail-spec-value" id="modalProductTotal">0</div>
+        </div>
+      </div>
+
+      <div class="product-detail-actions">
+        <div class="product-detail-quantity">
+          <button id="modalDecreaseQty">−</button>
+          <input type="number" id="modalQuantity" value="0" min="0" max="999">
+          <button id="modalIncreaseQty">+</button>
+        </div>
+        <button class="product-detail-add-btn" id="modalAddToCart">
+          <span class="material-icons">shopping_cart</span>
+          Agregar al Carrito
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2334,7 +3428,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.57
+          v0.58
         </div>
       </div>
       
@@ -6633,7 +7727,21 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.57 - Actual</h3>
+          <h3>v0.58 - Actual</h3>
+          <ul>
+            <li>🖼️ <strong>Sistema de Imágenes:</strong> Mapeo automático de productos a imágenes mediante product-images.json con 13 imágenes de productos</li>
+            <li>📋 <strong>Especificaciones Técnicas:</strong> Chips compactos con emojis (año, procesador, almacenamiento) en modal y tarjetas</li>
+            <li>📱 <strong>Adaptador USB-C:</strong> Imagen específica agregada (242KB) con prioridad 20 en mapeo</li>
+            <li>🎨 <strong>Vistas de Productos:</strong> 4 modos (Table, List, Grid 2 cols, Large Grid 3 cols) - Split/Masonry eliminados</li>
+            <li>📏 <strong>List View Mejorado:</strong> Altura aumentada desktop (140px) y móvil (150px) con imagen 110x110px</li>
+            <li>🔲 <strong>Grid Columnas Fijas:</strong> Grid View = 2 columnas, Large Grid View = 3 columnas en desktop</li>
+            <li>📊 <strong>Product Specs JSON:</strong> Base de datos de especificaciones técnicas para 30+ modelos (iPhone, MacBook, Samsung)</li>
+            <li>✨ <strong>Modal Compacto:</strong> Especificaciones técnicas mostradas como badges debajo del nombre del producto</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.57</h3>
           <ul>
             <li>📱 <strong>Administration Responsive:</strong> Órdenes Master optimizadas para móviles con layout en columna</li>
             <li>🔘 <strong>Botones Reorganizados:</strong> Botones de acción (Preparación, Cancelar, Editar) debajo del texto en móvil</li>
@@ -7351,6 +8459,673 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- View Mode Management Script -->
+  <script>
+    (function() {
+      'use strict';
+
+      // Current view mode (default: table)
+      let currentViewMode = localStorage.getItem('viewMode') || 'table';
+
+      // Store filtered products data for re-rendering
+      window.currentFilteredProducts = [];
+
+      // Product image mapping
+      let productImageMapping = null;
+
+      // Product specifications mapping
+      let productSpecsMapping = null;
+
+      // Load product image mapping
+      async function loadProductImageMapping() {
+        try {
+          const response = await fetch('product-images.json');
+          productImageMapping = await response.json();
+          console.log('✅ Product image mapping loaded');
+        } catch (error) {
+          console.error('❌ Failed to load product image mapping:', error);
+          productImageMapping = { patterns: [], default: 'imagenes/default-phone.jpg' };
+        }
+      }
+
+      // Load product specifications mapping
+      async function loadProductSpecsMapping() {
+        try {
+          const response = await fetch('product-specs.json');
+          productSpecsMapping = await response.json();
+          console.log('✅ Product specs mapping loaded');
+        } catch (error) {
+          console.error('❌ Failed to load product specs mapping:', error);
+          productSpecsMapping = { specs: [] };
+        }
+      }
+
+      // Get image for product based on description and code
+      function getProductImage(product) {
+        if (!productImageMapping) {
+          console.log('⚠️ Product image mapping not loaded');
+          return 'imagenes/default-phone.jpg';
+        }
+
+        const searchText = `${product.description || ''} ${product.articulo || ''}`.toLowerCase();
+
+        // Sort patterns by priority (higher first)
+        const sortedPatterns = [...productImageMapping.patterns].sort((a, b) =>
+          (b.priority || 0) - (a.priority || 0)
+        );
+
+        // Find first matching pattern
+        for (const pattern of sortedPatterns) {
+          for (const regex of pattern.regex) {
+            const regexObj = new RegExp(regex, 'i');
+            if (regexObj.test(searchText)) {
+              console.log(`✅ Matched "${searchText}" with pattern "${regex}" -> ${pattern.image}`);
+              return pattern.image;
+            }
+          }
+        }
+
+        console.log(`ℹ️ No match for "${searchText}", using default`);
+        return productImageMapping.default || 'imagenes/default-phone.jpg';
+      }
+
+      // Get technical specifications for product
+      function getProductSpecs(product) {
+        if (!productSpecsMapping || !productSpecsMapping.specs) {
+          return null;
+        }
+
+        const searchText = `${product.description || ''} ${product.articulo || ''}`.toLowerCase();
+
+        // Find matching specs
+        for (const spec of productSpecsMapping.specs) {
+          for (const pattern of spec.patterns) {
+            const regexObj = new RegExp(pattern, 'i');
+            if (regexObj.test(searchText)) {
+              console.log(`✅ Found specs for "${searchText}" -> ${spec.name}`);
+              return spec;
+            }
+          }
+        }
+
+        console.log(`ℹ️ No specs found for "${searchText}"`);
+        return null;
+      }
+
+      // Initialize view mode on page load
+      function initViewMode() {
+        // Set initial active state on buttons
+        updateViewButtons();
+
+        // Show the appropriate container
+        switchView(currentViewMode);
+
+        // Add event listeners to view mode buttons
+        const viewButtons = document.querySelectorAll('.view-mode-btn');
+        viewButtons.forEach(btn => {
+          btn.addEventListener('click', function() {
+            const newView = this.getAttribute('data-view');
+            currentViewMode = newView;
+            localStorage.setItem('viewMode', newView);
+            switchView(newView);
+            updateViewButtons();
+
+            // Re-render products in new view
+            if (window.currentFilteredProducts && window.currentFilteredProducts.length > 0) {
+              renderProductsInCurrentView(window.currentFilteredProducts);
+            }
+          });
+        });
+
+        console.log('✅ View mode system initialized:', currentViewMode);
+      }
+
+      // Update active state on view buttons
+      function updateViewButtons() {
+        const viewButtons = document.querySelectorAll('.view-mode-btn');
+        viewButtons.forEach(btn => {
+          if (btn.getAttribute('data-view') === currentViewMode) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      }
+
+      // Switch between view containers
+      function switchView(viewMode) {
+        const tableContainer = document.getElementById('tableViewContainer');
+        const gridContainer = document.getElementById('productsGrid');
+        const mobileToggles = document.querySelector('.mobile-column-toggles');
+
+        if (viewMode === 'table') {
+          // Show table, hide grid
+          tableContainer.style.display = '';
+          tableContainer.classList.add('active');
+          gridContainer.style.display = 'none';
+          gridContainer.classList.remove('active');
+          if (mobileToggles) mobileToggles.style.display = 'flex';
+        } else {
+          // Hide table, show grid
+          tableContainer.style.display = 'none';
+          tableContainer.classList.remove('active');
+          gridContainer.style.display = ''; // Let CSS handle the display
+          gridContainer.classList.add('active');
+          if (mobileToggles) mobileToggles.style.display = 'none';
+
+          // Apply view-specific class
+          gridContainer.className = 'view-container products-grid active';
+          gridContainer.classList.add(viewMode + '-view');
+        }
+      }
+
+      // Format number for display
+      function formatNumber(num) {
+        if (num === null || num === undefined) return '0';
+        return Number(num).toLocaleString('en-US');
+      }
+
+      // Format specs as plain text
+      function formatSpecsAsText(product) {
+        const specs = getProductSpecs(product);
+        if (!specs) return '';
+
+        let specsText = '';
+        const specsArray = [];
+
+        if (specs.year) specsArray.push(specs.year);
+        if (specs.storage) specsArray.push(specs.storage);
+        if (specs.chip) specsArray.push(specs.chip);
+        if (specs.display) specsArray.push(specs.display);
+        if (specs.camera) specsArray.push(specs.camera);
+        if (specs.battery) specsArray.push(specs.battery);
+
+        if (specsArray.length > 0) {
+          specsText = specsArray.join(' • ');
+        }
+
+        return specsText;
+      }
+
+      // Format specs as compact HTML chips
+      function formatSpecsAsChips(product) {
+        const specs = getProductSpecs(product);
+        if (!specs) return '';
+
+        let specsHTML = '';
+
+        // Year chip (highlighted)
+        if (specs.year) {
+          specsHTML += `<span class="tech-spec-chip highlight">📅 ${specs.year}</span>`;
+        }
+
+        // Chip/Processor
+        if (specs.chip) {
+          specsHTML += `<span class="tech-spec-chip">⚡ ${specs.chip}</span>`;
+        }
+
+        // Storage
+        if (specs.storage) {
+          specsHTML += `<span class="tech-spec-chip">💾 ${specs.storage}</span>`;
+        }
+
+        // Features (first 2 only to keep cards compact)
+        if (specs.features && specs.features.length > 0) {
+          const maxFeatures = 2;
+          specs.features.slice(0, maxFeatures).forEach(feature => {
+            specsHTML += `<span class="tech-spec-chip">${feature}</span>`;
+          });
+        }
+
+        if (specsHTML) {
+          return `<div class="product-tech-specs-compact">${specsHTML}</div>`;
+        }
+
+        return '';
+      }
+
+      // Create product card HTML
+      function createProductCard(product, viewMode) {
+        const articulo = product.articulo || '';
+        const description = product.description || 'Sin descripción';
+        const price = product.price;
+        const stock = product.teorico || 0;
+        const transito = product.transito || 0;
+        const quantity = window.selectedItems ? (window.selectedItems.get(articulo)?.quantity || 0) : 0;
+
+        // Get the appropriate image for this product
+        const productImage = getProductImage(product);
+
+        // Get specs as compact HTML chips
+        const specsChips = formatSpecsAsChips(product);
+
+        // Format price display
+        let priceDisplay = '';
+        if (price === null || price === undefined) {
+          priceDisplay = '<span style="color: #ff9800;">?</span>';
+        } else if (Number(price) === 0) {
+          priceDisplay = '<span style="color: #f44336;">$' + formatNumber(price) + '</span>';
+        } else {
+          priceDisplay = '$' + formatNumber(price);
+        }
+
+        // Different card structures based on view mode
+        if (viewMode === 'list') {
+          return `
+            <div class="product-card" data-item="${articulo}">
+              <img src="${productImage}" alt="${description}" class="product-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="product-image placeholder" style="display: none;">
+                <span class="material-icons">inventory_2</span>
+              </div>
+              <div class="product-content">
+                <div class="product-main-info">
+                  <div class="product-title" title="${description}">${description}</div>
+                  <div class="product-code">Código: ${articulo}</div>
+                  ${specsChips}
+                </div>
+                <div class="product-info">
+                  <div class="product-info-item">
+                    <span class="product-info-label">Stock</span>
+                    <span class="product-info-value">${formatNumber(stock)}</span>
+                  </div>
+                  <div class="product-info-item">
+                    <span class="product-info-label">Tránsito</span>
+                    <span class="product-info-value">${formatNumber(transito)}</span>
+                  </div>
+                </div>
+                <div class="product-price">${priceDisplay}</div>
+                <div class="product-quantity-controls">
+                  <button class="qty-btn-card" data-action="decrease" data-item="${articulo}">−</button>
+                  <input type="number" class="qty-input-card" data-item="${articulo}" value="${quantity}" min="0" max="999">
+                  <button class="qty-btn-card" data-action="increase" data-item="${articulo}">+</button>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Default card for grid and large-grid views
+          return `
+            <div class="product-card" data-item="${articulo}">
+              <img src="${productImage}" alt="${description}" class="product-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="product-image placeholder" style="display: none;">
+                <span class="material-icons">inventory_2</span>
+              </div>
+              <div class="product-title" title="${description}">${description}</div>
+              <div class="product-code">Código: ${articulo}</div>
+              ${specsChips}
+              <div class="product-description">${description}</div>
+              <div class="product-info">
+                <div class="product-info-item">
+                  <span class="product-info-label">Stock</span>
+                  <span class="product-info-value">${formatNumber(stock)}</span>
+                </div>
+                <div class="product-info-item">
+                  <span class="product-info-label">Tránsito</span>
+                  <span class="product-info-value">${formatNumber(transito)}</span>
+                </div>
+              </div>
+              <div class="product-price">${priceDisplay}</div>
+              <div class="product-quantity-controls">
+                <button class="qty-btn-card" data-action="decrease" data-item="${articulo}">−</button>
+                <input type="number" class="qty-input-card" data-item="${articulo}" value="${quantity}" min="0" max="999">
+                <button class="qty-btn-card" data-action="increase" data-item="${articulo}">+</button>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Render products in the current view
+      function renderProductsInCurrentView(products) {
+        if (currentViewMode === 'table') {
+          // Table view is handled by main.js
+          return;
+        }
+
+        const gridContainer = document.getElementById('productsGrid');
+        if (!gridContainer) return;
+
+        // Clear existing content
+        gridContainer.innerHTML = '';
+
+        // Store products for later use
+        window.currentFilteredProducts = products;
+
+        // Render products as cards
+        products.forEach(product => {
+          const cardHTML = createProductCard(product, currentViewMode);
+          gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+        // Attach event listeners to quantity controls
+        attachQuantityEventListeners();
+
+        console.log(`✅ Rendered ${products.length} products in ${currentViewMode} view`);
+      }
+
+      // Attach event listeners to quantity control buttons
+      function attachQuantityEventListeners() {
+        const gridContainer = document.getElementById('productsGrid');
+        if (!gridContainer) return;
+
+        // Quantity buttons
+        gridContainer.querySelectorAll('.qty-btn-card').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const action = this.getAttribute('data-action');
+            const itemId = this.getAttribute('data-item');
+            const input = gridContainer.querySelector(`.qty-input-card[data-item="${itemId}"]`);
+
+            if (input) {
+              let currentValue = parseInt(input.value) || 0;
+
+              if (action === 'increase') {
+                currentValue = Math.min(999, currentValue + 1);
+              } else if (action === 'decrease') {
+                currentValue = Math.max(0, currentValue - 1);
+              }
+
+              input.value = currentValue;
+              updateSelectedItems(itemId, currentValue);
+            }
+          });
+        });
+
+        // Quantity inputs
+        gridContainer.querySelectorAll('.qty-input-card').forEach(input => {
+          input.addEventListener('input', function() {
+            const itemId = this.getAttribute('data-item');
+            let value = parseInt(this.value) || 0;
+            value = Math.max(0, Math.min(999, value));
+            this.value = value;
+            updateSelectedItems(itemId, value);
+          });
+
+          input.addEventListener('change', function() {
+            const itemId = this.getAttribute('data-item');
+            let value = parseInt(this.value) || 0;
+            value = Math.max(0, Math.min(999, value));
+            this.value = value;
+            updateSelectedItems(itemId, value);
+          });
+        });
+
+        // Product images - click to open detail modal
+        gridContainer.querySelectorAll('.product-image').forEach(img => {
+          img.style.cursor = 'pointer';
+          img.addEventListener('click', function() {
+            const productCard = this.closest('.product-card');
+            if (productCard) {
+              const itemId = productCard.getAttribute('data-item');
+              const product = window.currentFilteredProducts.find(p => p.articulo === itemId);
+              if (product) {
+                openProductDetailModal(product);
+              }
+            }
+          });
+        });
+      }
+
+      // Update selected items in the global cart
+      function updateSelectedItems(itemId, quantity) {
+        if (!window.selectedItems || !window.mappedStockData) return;
+
+        const product = window.mappedStockData.find(p => p.articulo === itemId);
+        if (!product) return;
+
+        if (quantity > 0) {
+          window.selectedItems.set(itemId, { product, quantity });
+        } else {
+          window.selectedItems.delete(itemId);
+        }
+
+        console.log(`Updated cart: ${itemId} = ${quantity}`);
+      }
+
+      // ========================================
+      // PRODUCT DETAIL MODAL FUNCTIONALITY
+      // ========================================
+
+      let currentModalProduct = null;
+
+      // Open product detail modal
+      function openProductDetailModal(product) {
+        currentModalProduct = product;
+        const modal = document.getElementById('productDetailModal');
+
+        if (!modal || !product) return;
+
+        // Populate modal with product data
+        const productImage = getProductImage(product);
+        const articulo = product.articulo || '';
+        const description = product.description || 'Sin descripción';
+        const price = product.price;
+        const stock = product.teorico || 0;
+        const transito = product.transito || 0;
+        const total = stock + transito;
+        const currentQuantity = window.selectedItems ? (window.selectedItems.get(articulo)?.quantity || 0) : 0;
+
+        // Update image
+        const imageContainer = document.getElementById('modalProductImageContainer');
+        imageContainer.innerHTML = `
+          <img src="${productImage}" alt="${description}"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="material-icons placeholder" style="display: none;">inventory_2</span>
+        `;
+
+        // Update text content
+        document.getElementById('modalProductTitle').textContent = description;
+        document.getElementById('modalProductCode').textContent = `Código: ${articulo}`;
+
+        // Update price
+        const priceElement = document.getElementById('modalProductPrice');
+        if (price === null || price === undefined) {
+          priceElement.innerHTML = '<span style="color: #ff9800;">Precio no disponible</span>';
+        } else if (Number(price) === 0) {
+          priceElement.innerHTML = '<span style="color: #f44336;">$' + formatNumber(price) + '</span>';
+        } else {
+          priceElement.textContent = '$' + formatNumber(price);
+          priceElement.style.color = '#4CAF50';
+        }
+
+        // Update specs
+        const stockElement = document.getElementById('modalProductStock');
+        stockElement.textContent = formatNumber(stock);
+        stockElement.className = 'product-detail-spec-value ' + (stock > 0 ? 'positive' : 'zero');
+
+        const transitElement = document.getElementById('modalProductTransit');
+        transitElement.textContent = formatNumber(transito);
+        transitElement.className = 'product-detail-spec-value ' + (transito > 0 ? 'positive' : 'zero');
+
+        const totalElement = document.getElementById('modalProductTotal');
+        totalElement.textContent = formatNumber(total);
+        totalElement.className = 'product-detail-spec-value ' + (total > 0 ? 'positive' : 'zero');
+
+        // Update quantity
+        document.getElementById('modalQuantity').value = currentQuantity;
+
+        // Get and display technical specifications in compact format
+        const specs = getProductSpecs(product);
+        const techSpecsCompact = document.getElementById('modalTechSpecsCompact');
+
+        if (specs && techSpecsCompact) {
+          // Build compact specs HTML as chips
+          let specsHTML = '';
+
+          // Year chip (highlighted)
+          if (specs.year) {
+            specsHTML += `<span class="tech-spec-chip highlight">📅 ${specs.year}</span>`;
+          }
+
+          // Chip/Processor
+          if (specs.chip) {
+            specsHTML += `<span class="tech-spec-chip">⚡ ${specs.chip}</span>`;
+          }
+
+          // Storage
+          if (specs.storage) {
+            specsHTML += `<span class="tech-spec-chip">💾 ${specs.storage}</span>`;
+          }
+
+          // Display
+          if (specs.display) {
+            specsHTML += `<span class="tech-spec-chip">📱 ${specs.display}</span>`;
+          }
+
+          // Camera
+          if (specs.camera) {
+            specsHTML += `<span class="tech-spec-chip">📷 ${specs.camera}</span>`;
+          }
+
+          // Battery
+          if (specs.battery) {
+            specsHTML += `<span class="tech-spec-chip">🔋 ${specs.battery}</span>`;
+          }
+
+          // Features (first 3 only to keep it compact)
+          if (specs.features && specs.features.length > 0) {
+            const maxFeatures = 3;
+            specs.features.slice(0, maxFeatures).forEach(feature => {
+              specsHTML += `<span class="tech-spec-chip">${feature}</span>`;
+            });
+            if (specs.features.length > maxFeatures) {
+              specsHTML += `<span class="tech-spec-chip">+${specs.features.length - maxFeatures} más</span>`;
+            }
+          }
+
+          techSpecsCompact.innerHTML = specsHTML;
+          techSpecsCompact.style.display = 'flex';
+        } else {
+          if (techSpecsCompact) {
+            techSpecsCompact.style.display = 'none';
+          }
+        }
+
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+      }
+
+      // Close product detail modal
+      function closeProductDetailModal() {
+        const modal = document.getElementById('productDetailModal');
+        if (modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = ''; // Restore scroll
+          currentModalProduct = null;
+        }
+      }
+
+      // Initialize modal event listeners
+      function initModalEventListeners() {
+        const modal = document.getElementById('productDetailModal');
+        const closeBtn = document.getElementById('closeProductDetail');
+        const decreaseBtn = document.getElementById('modalDecreaseQty');
+        const increaseBtn = document.getElementById('modalIncreaseQty');
+        const quantityInput = document.getElementById('modalQuantity');
+        const addToCartBtn = document.getElementById('modalAddToCart');
+
+        // Close button
+        if (closeBtn) {
+          closeBtn.addEventListener('click', closeProductDetailModal);
+        }
+
+        // Click outside to close
+        if (modal) {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+              closeProductDetailModal();
+            }
+          });
+        }
+
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeProductDetailModal();
+          }
+        });
+
+        // Quantity controls
+        if (decreaseBtn) {
+          decreaseBtn.addEventListener('click', () => {
+            const input = document.getElementById('modalQuantity');
+            if (input) {
+              let value = parseInt(input.value) || 0;
+              value = Math.max(0, value - 1);
+              input.value = value;
+            }
+          });
+        }
+
+        if (increaseBtn) {
+          increaseBtn.addEventListener('click', () => {
+            const input = document.getElementById('modalQuantity');
+            if (input) {
+              let value = parseInt(input.value) || 0;
+              value = Math.min(999, value + 1);
+              input.value = value;
+            }
+          });
+        }
+
+        if (quantityInput) {
+          quantityInput.addEventListener('input', (e) => {
+            let value = parseInt(e.target.value) || 0;
+            value = Math.max(0, Math.min(999, value));
+            e.target.value = value;
+          });
+        }
+
+        // Add to cart button
+        if (addToCartBtn) {
+          addToCartBtn.addEventListener('click', () => {
+            if (!currentModalProduct) return;
+
+            const quantity = parseInt(document.getElementById('modalQuantity').value) || 0;
+            const articulo = currentModalProduct.articulo;
+
+            // Update cart
+            updateSelectedItems(articulo, quantity);
+
+            // Update all quantity inputs in card views
+            const cardInputs = document.querySelectorAll(`.qty-input-card[data-item="${articulo}"]`);
+            cardInputs.forEach(input => {
+              input.value = quantity;
+            });
+
+            // Show feedback
+            addToCartBtn.innerHTML = '<span class="material-icons">check_circle</span> Agregado!';
+            setTimeout(() => {
+              addToCartBtn.innerHTML = '<span class="material-icons">shopping_cart</span> Agregar al Carrito';
+            }, 1500);
+
+            console.log(`✅ Added ${quantity} of ${articulo} to cart`);
+          });
+        }
+      }
+
+      // Expose functions globally so main.js can call them
+      window.renderProductsInCurrentView = renderProductsInCurrentView;
+      window.getCurrentViewMode = function() { return currentViewMode; };
+
+      // Initialize when DOM is ready
+      async function init() {
+        await Promise.all([
+          loadProductImageMapping(),
+          loadProductSpecsMapping()
+        ]);
+        initViewMode();
+        initModalEventListeners();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 
   <!-- Chatbot JavaScript REMOVIDO (ahora en ayuda.html) -->
 </body>

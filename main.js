@@ -750,12 +750,17 @@ function renderRows() {
     trTotal.appendChild(td);
   });
   tbody.appendChild(trTotal);
-  
+
   // Actualizar estadísticas KPI - using fixed function
   updateStatsFixed(filtered, totals);
 
   // Update header KPIs
   updateHeaderStats(filtered.length, totals);
+
+  // Render products in card views if view mode is not table
+  if (typeof window.renderProductsInCurrentView === 'function') {
+    window.renderProductsInCurrentView(filtered);
+  }
 }
 
 async function forceReconnect() {

@@ -1,0 +1,301 @@
+{
+  "specs": [
+    {
+      "patterns": ["iphone.*16.*pro.*max", "16.*pro.*max"],
+      "name": "iPhone 16 Pro Max",
+      "year": "2024",
+      "storage": "256GB / 512GB / 1TB",
+      "display": "6.9\" Super Retina XDR OLED",
+      "chip": "A18 Pro",
+      "camera": "48MP Principal + 48MP Ultra Wide + 12MP Telefoto 5x",
+      "battery": "4685 mAh",
+      "features": ["5G", "Dynamic Island", "ProMotion 120Hz", "Action Button", "USB-C", "Titanio"]
+    },
+    {
+      "patterns": ["iphone.*16.*pro", "16.*pro"],
+      "name": "iPhone 16 Pro",
+      "year": "2024",
+      "storage": "128GB / 256GB / 512GB / 1TB",
+      "display": "6.3\" Super Retina XDR OLED",
+      "chip": "A18 Pro",
+      "camera": "48MP Principal + 48MP Ultra Wide + 12MP Telefoto 5x",
+      "battery": "3582 mAh",
+      "features": ["5G", "Dynamic Island", "ProMotion 120Hz", "Action Button", "USB-C", "Titanio"]
+    },
+    {
+      "patterns": ["iphone.*15.*pro.*max", "15.*pro.*max"],
+      "name": "iPhone 15 Pro Max",
+      "year": "2023",
+      "storage": "256GB / 512GB / 1TB",
+      "display": "6.7\" Super Retina XDR OLED",
+      "chip": "A17 Pro",
+      "camera": "48MP Principal + 12MP Ultra Wide + 12MP Telefoto 5x",
+      "battery": "4422 mAh",
+      "features": ["5G", "Dynamic Island", "ProMotion 120Hz", "Action Button", "USB-C", "Titanio"]
+    },
+    {
+      "patterns": ["iphone.*15.*pro", "15.*pro"],
+      "name": "iPhone 15 Pro",
+      "year": "2023",
+      "storage": "128GB / 256GB / 512GB / 1TB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A17 Pro",
+      "camera": "48MP Principal + 12MP Ultra Wide + 12MP Telefoto 3x",
+      "battery": "3274 mAh",
+      "features": ["5G", "Dynamic Island", "ProMotion 120Hz", "Action Button", "USB-C", "Titanio"]
+    },
+    {
+      "patterns": ["iphone.*15.*plus"],
+      "name": "iPhone 15 Plus",
+      "year": "2023",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.7\" Super Retina XDR OLED",
+      "chip": "A16 Bionic",
+      "camera": "48MP Principal + 12MP Ultra Wide",
+      "battery": "4383 mAh",
+      "features": ["5G", "Dynamic Island", "USB-C", "Aluminio"]
+    },
+    {
+      "patterns": ["iphone.*15", "iphone 15"],
+      "name": "iPhone 15",
+      "year": "2023",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A16 Bionic",
+      "camera": "48MP Principal + 12MP Ultra Wide",
+      "battery": "3349 mAh",
+      "features": ["5G", "Dynamic Island", "USB-C", "Aluminio"]
+    },
+    {
+      "patterns": ["iphone.*14.*pro.*max", "14.*pro.*max"],
+      "name": "iPhone 14 Pro Max",
+      "year": "2022",
+      "storage": "128GB / 256GB / 512GB / 1TB",
+      "display": "6.7\" Super Retina XDR OLED",
+      "chip": "A16 Bionic",
+      "camera": "48MP Principal + 12MP Ultra Wide + 12MP Telefoto 3x",
+      "battery": "4323 mAh",
+      "features": ["5G", "Dynamic Island", "ProMotion 120Hz", "Always-On Display", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*14.*pro", "14.*pro"],
+      "name": "iPhone 14 Pro",
+      "year": "2022",
+      "storage": "128GB / 256GB / 512GB / 1TB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A16 Bionic",
+      "camera": "48MP Principal + 12MP Ultra Wide + 12MP Telefoto 3x",
+      "battery": "3200 mAh",
+      "features": ["5G", "Dynamic Island", "ProMotion 120Hz", "Always-On Display", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*14.*plus"],
+      "name": "iPhone 14 Plus",
+      "year": "2022",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.7\" Super Retina XDR OLED",
+      "chip": "A15 Bionic",
+      "camera": "12MP Dual Camera",
+      "battery": "4325 mAh",
+      "features": ["5G", "Notch", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*14", "iphone 14"],
+      "name": "iPhone 14",
+      "year": "2022",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A15 Bionic",
+      "camera": "12MP Dual Camera",
+      "battery": "3279 mAh",
+      "features": ["5G", "Notch", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*13.*pro.*max", "13.*pro.*max"],
+      "name": "iPhone 13 Pro Max",
+      "year": "2021",
+      "storage": "128GB / 256GB / 512GB / 1TB",
+      "display": "6.7\" Super Retina XDR OLED",
+      "chip": "A15 Bionic",
+      "camera": "12MP Triple Camera + LiDAR",
+      "battery": "4352 mAh",
+      "features": ["5G", "ProMotion 120Hz", "Ceramic Shield", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*13.*pro", "13.*pro"],
+      "name": "iPhone 13 Pro",
+      "year": "2021",
+      "storage": "128GB / 256GB / 512GB / 1TB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A15 Bionic",
+      "camera": "12MP Triple Camera + LiDAR",
+      "battery": "3095 mAh",
+      "features": ["5G", "ProMotion 120Hz", "Ceramic Shield", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*13.*mini"],
+      "name": "iPhone 13 mini",
+      "year": "2021",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "5.4\" Super Retina XDR OLED",
+      "chip": "A15 Bionic",
+      "camera": "12MP Dual Camera",
+      "battery": "2438 mAh",
+      "features": ["5G", "Ceramic Shield", "Lightning", "Compact Design"]
+    },
+    {
+      "patterns": ["iphone.*13", "iphone 13"],
+      "name": "iPhone 13",
+      "year": "2021",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A15 Bionic",
+      "camera": "12MP Dual Camera",
+      "battery": "3240 mAh",
+      "features": ["5G", "Ceramic Shield", "Lightning"]
+    },
+    {
+      "patterns": ["iphone.*12.*pro.*max", "12.*pro.*max"],
+      "name": "iPhone 12 Pro Max",
+      "year": "2020",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.7\" Super Retina XDR OLED",
+      "chip": "A14 Bionic",
+      "camera": "12MP Triple Camera + LiDAR",
+      "battery": "3687 mAh",
+      "features": ["5G", "Ceramic Shield", "Lightning", "MagSafe"]
+    },
+    {
+      "patterns": ["iphone.*12.*pro", "12.*pro"],
+      "name": "iPhone 12 Pro",
+      "year": "2020",
+      "storage": "128GB / 256GB / 512GB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A14 Bionic",
+      "camera": "12MP Triple Camera + LiDAR",
+      "battery": "2815 mAh",
+      "features": ["5G", "Ceramic Shield", "Lightning", "MagSafe"]
+    },
+    {
+      "patterns": ["iphone.*12", "iphone 12"],
+      "name": "iPhone 12",
+      "year": "2020",
+      "storage": "64GB / 128GB / 256GB",
+      "display": "6.1\" Super Retina XDR OLED",
+      "chip": "A14 Bionic",
+      "camera": "12MP Dual Camera",
+      "battery": "2815 mAh",
+      "features": ["5G", "Ceramic Shield", "Lightning", "MagSafe"]
+    },
+    {
+      "patterns": ["macbook.*pro.*16", "mbp.*16"],
+      "name": "MacBook Pro 16\"",
+      "year": "2023-2024",
+      "storage": "512GB - 8TB SSD",
+      "display": "16.2\" Liquid Retina XDR",
+      "chip": "M3 Pro / M3 Max",
+      "camera": "1080p FaceTime HD",
+      "battery": "Hasta 22 horas",
+      "features": ["Mini-LED", "ProMotion 120Hz", "Thunderbolt 4", "MagSafe 3", "HDMI", "SDXC"]
+    },
+    {
+      "patterns": ["macbook.*pro.*14", "mbp.*14"],
+      "name": "MacBook Pro 14\"",
+      "year": "2023-2024",
+      "storage": "512GB - 8TB SSD",
+      "display": "14.2\" Liquid Retina XDR",
+      "chip": "M3 / M3 Pro / M3 Max",
+      "camera": "1080p FaceTime HD",
+      "battery": "Hasta 18 horas",
+      "features": ["Mini-LED", "ProMotion 120Hz", "Thunderbolt 4", "MagSafe 3", "HDMI", "SDXC"]
+    },
+    {
+      "patterns": ["macbook.*air.*15", "mba.*15"],
+      "name": "MacBook Air 15\"",
+      "year": "2023-2024",
+      "storage": "256GB - 2TB SSD",
+      "display": "15.3\" Liquid Retina",
+      "chip": "M2 / M3",
+      "camera": "1080p FaceTime HD",
+      "battery": "Hasta 18 horas",
+      "features": ["MagSafe 3", "Thunderbolt", "Touch ID", "Thin & Light"]
+    },
+    {
+      "patterns": ["macbook.*air.*13", "mba.*13", "macbook.*air"],
+      "name": "MacBook Air 13\"",
+      "year": "2022-2024",
+      "storage": "256GB - 2TB SSD",
+      "display": "13.6\" Liquid Retina",
+      "chip": "M2 / M3",
+      "camera": "1080p FaceTime HD",
+      "battery": "Hasta 18 horas",
+      "features": ["MagSafe 3", "Thunderbolt", "Touch ID", "Thin & Light"]
+    },
+    {
+      "patterns": ["samsung.*s24.*ultra", "galaxy.*s24.*ultra"],
+      "name": "Samsung Galaxy S24 Ultra",
+      "year": "2024",
+      "storage": "256GB / 512GB / 1TB",
+      "display": "6.8\" Dynamic AMOLED 2X",
+      "chip": "Snapdragon 8 Gen 3",
+      "camera": "200MP + 50MP + 12MP + 10MP",
+      "battery": "5000 mAh",
+      "features": ["S Pen", "120Hz", "Gorilla Armor", "IP68", "5G", "Titanio"]
+    },
+    {
+      "patterns": ["samsung.*s24.*plus", "galaxy.*s24.*plus"],
+      "name": "Samsung Galaxy S24+",
+      "year": "2024",
+      "storage": "256GB / 512GB",
+      "display": "6.7\" Dynamic AMOLED 2X",
+      "chip": "Exynos 2400 / Snapdragon 8 Gen 3",
+      "camera": "50MP + 12MP + 10MP",
+      "battery": "4900 mAh",
+      "features": ["120Hz", "Gorilla Glass Victus 2", "IP68", "5G"]
+    },
+    {
+      "patterns": ["samsung.*s24", "galaxy.*s24"],
+      "name": "Samsung Galaxy S24",
+      "year": "2024",
+      "storage": "128GB / 256GB",
+      "display": "6.2\" Dynamic AMOLED 2X",
+      "chip": "Exynos 2400 / Snapdragon 8 Gen 3",
+      "camera": "50MP + 12MP + 10MP",
+      "battery": "4000 mAh",
+      "features": ["120Hz", "Gorilla Glass Victus 2", "IP68", "5G"]
+    },
+    {
+      "patterns": ["samsung.*s23.*ultra", "galaxy.*s23.*ultra"],
+      "name": "Samsung Galaxy S23 Ultra",
+      "year": "2023",
+      "storage": "256GB / 512GB / 1TB",
+      "display": "6.8\" Dynamic AMOLED 2X",
+      "chip": "Snapdragon 8 Gen 2",
+      "camera": "200MP + 12MP + 10MP + 10MP",
+      "battery": "5000 mAh",
+      "features": ["S Pen", "120Hz", "Gorilla Glass Victus 2", "IP68", "5G"]
+    },
+    {
+      "patterns": ["samsung.*s23.*plus", "galaxy.*s23.*plus"],
+      "name": "Samsung Galaxy S23+",
+      "year": "2023",
+      "storage": "256GB / 512GB",
+      "display": "6.6\" Dynamic AMOLED 2X",
+      "chip": "Snapdragon 8 Gen 2",
+      "camera": "50MP + 12MP + 10MP",
+      "battery": "4700 mAh",
+      "features": ["120Hz", "Gorilla Glass Victus 2", "IP68", "5G"]
+    },
+    {
+      "patterns": ["samsung.*s23", "galaxy.*s23"],
+      "name": "Samsung Galaxy S23",
+      "year": "2023",
+      "storage": "128GB / 256GB",
+      "display": "6.1\" Dynamic AMOLED 2X",
+      "chip": "Snapdragon 8 Gen 2",
+      "camera": "50MP + 12MP + 10MP",
+      "battery": "3900 mAh",
+      "features": ["120Hz", "Gorilla Glass Victus 2", "IP68", "5G"]
+    }
+  ]
+}
