@@ -223,7 +223,7 @@
     
     body { margin: 0; padding: 0; background: #0f0f10; color: #f1f1f1; width: 100%; max-width: 100%; overflow-x: hidden; }
     header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; }
-    .header-logo { height: auto; max-width: 195px; width: 100%; object-fit: contain; position: absolute; left: 16px; }
+    .header-logo { height: auto; max-width: 195px; width: 100%; object-fit: contain; position: absolute; left: 80px; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
     .header-stats {
       display: flex;
@@ -254,6 +254,215 @@
       letter-spacing: 0.5px;
       white-space: nowrap;
     }
+
+    /* Notifications Bell */
+    .notifications-container {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+    }
+
+    .notifications-bell {
+      position: relative;
+      background: #1b1b1f;
+      border: 1px solid #2a2a2a;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .notifications-bell:hover {
+      background: #2a2a33;
+      border-color: #4CAF50;
+      transform: scale(1.05);
+    }
+
+    .notifications-bell .material-icons {
+      color: #f0f0f0;
+      font-size: 24px;
+    }
+
+    .notifications-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #f44336;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 18px;
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Notifications Dropdown */
+    .notifications-dropdown {
+      position: absolute;
+      left: 0;
+      top: calc(100% + 8px);
+      background: #1b1b1f;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      width: 380px;
+      max-height: 500px;
+      overflow: hidden;
+      z-index: 1000;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .notifications-header {
+      padding: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #15151a;
+    }
+
+    .notifications-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #f0f0f0;
+    }
+
+    .notifications-close {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .notifications-close:hover {
+      background: #2a2a33;
+      color: #f0f0f0;
+    }
+
+    .notifications-list {
+      max-height: 440px;
+      overflow-y: auto;
+    }
+
+    .notification-empty {
+      padding: 32px;
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .notification-item {
+      padding: 16px;
+      border-bottom: 1px solid #2a2a2a;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .notification-item:hover {
+      background: #15151a;
+    }
+
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+
+    .notification-item.warning {
+      border-left: 3px solid #ff9800;
+    }
+
+    .notification-item.error {
+      border-left: 3px solid #f44336;
+    }
+
+    .notification-item.info {
+      border-left: 3px solid #2196F3;
+    }
+
+    .notification-item-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .notification-item-icon {
+      font-size: 20px;
+      margin-top: 2px;
+    }
+
+    .notification-item.warning .notification-item-icon {
+      color: #ff9800;
+    }
+
+    .notification-item.error .notification-item-icon {
+      color: #f44336;
+    }
+
+    .notification-item.info .notification-item-icon {
+      color: #2196F3;
+    }
+
+    .notification-item-content {
+      flex: 1;
+    }
+
+    .notification-item-title {
+      font-weight: 600;
+      color: #f0f0f0;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .notification-item-message {
+      color: #b5b5b5;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .notification-item-count {
+      background: #2a2a33;
+      color: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
     .container { padding: 16px; width: 100%; box-sizing: border-box; }
     .tabs { display: flex; gap: 8px; border-bottom: 1px solid #2a2a2a; margin-bottom: 12px; }
     .tab { padding: 8px 12px; cursor: pointer; border: 1px solid #2a2a2a; border-bottom: none; border-radius: 6px 6px 0 0; background: #1b1b1f; color: #e6e6e6; }
@@ -273,6 +482,17 @@
       color: #ff6b6b !important;
       font-weight: 500;
     }
+
+    /* Warning for products without price */
+    .no-price-warning {
+      border-left: 3px solid #ff9800 !important;
+      background: rgba(255, 152, 0, 0.05) !important;
+    }
+
+    .no-price-warning:hover {
+      background: rgba(255, 152, 0, 0.1) !important;
+    }
+
     th.sortable {
       cursor: pointer;
     }
@@ -454,6 +674,31 @@
       .header-stats {
         display: none !important;
       }
+
+      /* Notifications mobile */
+      .notifications-container {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        transform: none;
+        margin: 8px auto 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      .notifications-bell {
+        width: 44px;
+        height: 44px;
+      }
+
+      .notifications-dropdown {
+        width: calc(100vw - 32px);
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+      }
+
       .tab {
         padding: 6px 8px;
         font-size: 12px;
@@ -3154,6 +3399,26 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
+
+    <!-- Notifications Bell -->
+    <div class="notifications-container">
+      <button class="notifications-bell" id="notificationsBell" title="Notificaciones">
+        <span class="material-icons">notifications</span>
+        <span class="notifications-badge" id="notificationsBadge" style="display: none;">0</span>
+      </button>
+
+      <!-- Notifications Dropdown -->
+      <div class="notifications-dropdown" id="notificationsDropdown" style="display: none;">
+        <div class="notifications-header">
+          <h3>Notificaciones</h3>
+          <button class="notifications-close" id="notificationsClose">&times;</button>
+        </div>
+        <div class="notifications-list" id="notificationsList">
+          <div class="notification-empty">No hay notificaciones</div>
+        </div>
+      </div>
+    </div>
+
     <div class="header-stats" id="headerStats">
       <div class="header-stat-card" id="headerTotalProducts">
         <div class="header-stat-number">0</div>
@@ -3428,7 +3693,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.58
+          v0.59
         </div>
       </div>
       
@@ -5750,6 +6015,8 @@
     console.log('🔥 Firebase inicializado en marketplace.html (solo Auth y Firestore)');
 
     // Hacer Firebase disponible globalmente
+    window.firebaseAuth = auth;
+    window.firebaseDb = db;
     window.firebase = {
       app: () => app,
       auth: () => auth,
@@ -7541,10 +7808,21 @@
           return;
         }
 
-        // Filter out items with quantity 0
+        // Filter out items with quantity 0 and validate prices
         const itemsToAdd = [];
+        const itemsWithoutPrice = [];
+
         window.selectedItems.forEach(({ product, quantity }, id) => {
           if (quantity > 0) {
+            // Check if product has a valid price
+            if (product.price === null || product.price === undefined || product.price === 0) {
+              itemsWithoutPrice.push({
+                articulo: product.articulo,
+                description: product.description,
+                quantity: quantity
+              });
+            }
+
             itemsToAdd.push({
               item: product.articulo,
               description: product.description,
@@ -7557,6 +7835,26 @@
         if (itemsToAdd.length === 0) {
           alert('Por favor selecciona al menos un producto con cantidad mayor a 0');
           return;
+        }
+
+        // Alert if there are items without price
+        if (itemsWithoutPrice.length > 0) {
+          const productList = itemsWithoutPrice.map(item =>
+            `• ${item.articulo} - ${item.description} (Cant: ${item.quantity})`
+          ).join('\n');
+
+          const proceed = confirm(
+            `⚠️ ATENCIÓN: Los siguientes productos NO TIENEN PRECIO asignado:\n\n${productList}\n\n` +
+            `Estos productos aparecerán con precio $0 en la orden.\n\n` +
+            `¿Deseas continuar de todas formas?`
+          );
+
+          if (!proceed) {
+            console.log('❌ Usuario canceló creación de orden por productos sin precio');
+            return;
+          }
+
+          console.warn('⚠️ Usuario confirmó crear orden con productos sin precio:', itemsWithoutPrice);
         }
 
         // Save cart to localStorage
@@ -7727,7 +8025,21 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.58 - Actual</h3>
+          <h3>v0.59 - Actual</h3>
+          <ul>
+            <li>🔔 <strong>Sistema de Notificaciones:</strong> Campanita en esquina superior izquierda con badge animado</li>
+            <li>👑 <strong>Notificaciones Admin:</strong> Solo administradores ven notificaciones de productos sin precio y usuarios pendientes</li>
+            <li>⚠️ <strong>Productos Sin Precio:</strong> Alerta visual con borde naranja en tabla + notificación en campanita</li>
+            <li>👥 <strong>Usuarios Pendientes:</strong> Notificación automática para admins cuando hay usuarios esperando aprobación</li>
+            <li>🔄 <strong>Auto-actualización:</strong> Notificaciones se actualizan cada 30 segundos automáticamente</li>
+            <li>✅ <strong>Validación de Órdenes:</strong> Confirmación antes de crear orden con productos sin precio asignado</li>
+            <li>🔗 <strong>Redirección Inteligente:</strong> Click en notificación de usuarios pendientes abre Administration.html</li>
+            <li>🎯 <strong>Scroll Automático:</strong> Click en productos sin precio hace scroll al primer producto afectado</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.58</h3>
           <ul>
             <li>🖼️ <strong>Sistema de Imágenes:</strong> Mapeo automático de productos a imágenes mediante product-images.json con 13 imágenes de productos</li>
             <li>📋 <strong>Especificaciones Técnicas:</strong> Chips compactos con emojis (año, procesador, almacenamiento) en modal y tarjetas</li>
@@ -9123,6 +9435,246 @@
         document.addEventListener('DOMContentLoaded', init);
       } else {
         init();
+      }
+    })();
+
+    // ========================================
+    // NOTIFICATIONS SYSTEM
+    // ========================================
+    (function() {
+      const notificationsBell = document.getElementById('notificationsBell');
+      const notificationsBadge = document.getElementById('notificationsBadge');
+      const notificationsDropdown = document.getElementById('notificationsDropdown');
+      const notificationsClose = document.getElementById('notificationsClose');
+      const notificationsList = document.getElementById('notificationsList');
+
+      let notifications = [];
+
+      // Wait for Firebase to be initialized
+      function waitForFirebase() {
+        return new Promise((resolve) => {
+          const checkFirebase = setInterval(() => {
+            if (window.firebaseAuth && window.firebaseDb) {
+              clearInterval(checkFirebase);
+              resolve();
+            }
+          }, 100);
+        });
+      }
+
+      // Toggle dropdown
+      function toggleNotifications() {
+        const isVisible = notificationsDropdown.style.display === 'block';
+        notificationsDropdown.style.display = isVisible ? 'none' : 'block';
+      }
+
+      // Close dropdown
+      function closeNotifications() {
+        notificationsDropdown.style.display = 'none';
+      }
+
+      // Update notifications
+      async function updateNotifications() {
+        notifications = [];
+
+        // Wait for Firebase to be initialized
+        if (!window.firebaseAuth || !window.firebaseDb) {
+          console.log('⏳ Esperando Firebase...');
+          await waitForFirebase();
+        }
+
+        const auth = window.firebaseAuth;
+        const db = window.firebaseDb;
+
+        // Check if user is authenticated
+        const user = auth.currentUser;
+        if (!user) {
+          console.log('ℹ️ No hay usuario autenticado');
+          notificationsBadge.style.display = 'none';
+          renderNotifications();
+          return;
+        }
+
+        // Use the global isUserAdmin variable that was already set by checkUserPermissions()
+        const isAdmin = window.isUserAdmin;
+        console.log('👑 Usuario es admin:', isAdmin, 'Email:', user.email);
+
+        // Only show notifications for admins
+        if (!isAdmin) {
+          console.log('ℹ️ Usuario no es admin, no se muestran notificaciones');
+          // Update badge (hide it)
+          notificationsBadge.style.display = 'none';
+          renderNotifications();
+          return;
+        }
+
+        console.log('✅ Usuario es admin, verificando notificaciones...');
+
+        // Check for products without price (only for admins)
+        if (window.mappedStockData && window.mappedStockData.length > 0) {
+          const productsWithoutPrice = window.mappedStockData.filter(product =>
+            product.price === null || product.price === undefined || Number(product.price) === 0
+          );
+
+          if (productsWithoutPrice.length > 0) {
+            notifications.push({
+              type: 'warning',
+              icon: 'warning',
+              title: 'Productos sin precio',
+              message: `${productsWithoutPrice.length} producto(s) no tienen precio asignado`,
+              count: productsWithoutPrice.length,
+              data: productsWithoutPrice,
+              action: 'products-without-price'
+            });
+            console.log(`⚠️ ${productsWithoutPrice.length} productos sin precio detectados`);
+          }
+        }
+
+        // Check for pending users (only for admins)
+        try {
+          // Use Firebase helpers to query usuarios (Spanish collection name)
+          const usersRef = window.firebase.firestoreHelpers.collection(db, 'usuarios');
+          const q = window.firebase.firestoreHelpers.query(
+            usersRef,
+            window.firebase.firestoreHelpers.where('approved', '==', false)
+          );
+          const pendingUsersSnapshot = await window.firebase.firestoreHelpers.getDocs(q);
+
+          const pendingUsersCount = pendingUsersSnapshot.size;
+
+          console.log(`👥 Usuarios pendientes encontrados: ${pendingUsersCount}`);
+
+          if (pendingUsersCount > 0) {
+            notifications.push({
+              type: 'info',
+              icon: 'person_add',
+              title: 'Usuarios pendientes de aprobación',
+              message: `${pendingUsersCount} usuario(s) esperando admisión`,
+              count: pendingUsersCount,
+              data: pendingUsersSnapshot.docs,
+              action: 'pending-users'
+            });
+            console.log(`🔔 Notificación de usuarios pendientes agregada`);
+          }
+        } catch (error) {
+          console.error('❌ Error al verificar usuarios pendientes:', error);
+          console.error('Detalles del error:', error.message, error.code);
+        }
+
+        // Update badge
+        const totalNotifications = notifications.length;
+        if (totalNotifications > 0) {
+          notificationsBadge.textContent = totalNotifications;
+          notificationsBadge.style.display = 'block';
+        } else {
+          notificationsBadge.style.display = 'none';
+        }
+
+        // Render notifications
+        renderNotifications();
+      }
+
+      // Render notifications list
+      function renderNotifications() {
+        if (notifications.length === 0) {
+          notificationsList.innerHTML = '<div class="notification-empty">No hay notificaciones</div>';
+          return;
+        }
+
+        let html = '';
+        notifications.forEach(notification => {
+          html += `
+            <div class="notification-item ${notification.type}" onclick="handleNotificationClick('${notification.action}')">
+              <div class="notification-item-header">
+                <span class="material-icons notification-item-icon">${notification.icon}</span>
+                <div class="notification-item-content">
+                  <div class="notification-item-title">
+                    ${notification.title}
+                    <span class="notification-item-count">${notification.count}</span>
+                  </div>
+                  <div class="notification-item-message">${notification.message}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        notificationsList.innerHTML = html;
+      }
+
+      // Handle notification click
+      window.handleNotificationClick = function(action) {
+        if (action === 'products-without-price') {
+          // Scroll to first product without price in table
+          const firstRowWithoutPrice = document.querySelector('.no-price-warning');
+          if (firstRowWithoutPrice) {
+            firstRowWithoutPrice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Highlight briefly
+            firstRowWithoutPrice.style.background = 'rgba(255, 152, 0, 0.2)';
+            setTimeout(() => {
+              firstRowWithoutPrice.style.background = '';
+            }, 2000);
+          }
+        } else if (action === 'pending-users') {
+          // Redirect to Administration page
+          console.log('🔄 Redirigiendo a Administration.html para revisar usuarios pendientes...');
+          window.location.href = 'Administration.html';
+        }
+        closeNotifications();
+      };
+
+      // Event listeners
+      if (notificationsBell) {
+        notificationsBell.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleNotifications();
+        });
+      }
+
+      if (notificationsClose) {
+        notificationsClose.addEventListener('click', closeNotifications);
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!notificationsBell?.contains(e.target) && !notificationsDropdown?.contains(e.target)) {
+          closeNotifications();
+        }
+      });
+
+      // Update notifications when stock data changes
+      function initNotifications() {
+        // Wait for stock data to be loaded
+        const checkStockData = setInterval(() => {
+          if (window.mappedStockData && window.mappedStockData.length > 0) {
+            clearInterval(checkStockData);
+            updateNotifications();
+            console.log('🔔 Notifications system initialized');
+
+            // Update notifications every 30 seconds for pending users
+            setInterval(() => {
+              updateNotifications();
+              console.log('🔄 Notificaciones actualizadas automáticamente');
+            }, 30000); // 30 seconds
+          }
+        }, 500);
+
+        // Also update when table is re-rendered
+        const originalRenderTable = window.renderTable;
+        if (originalRenderTable) {
+          window.renderTable = function(...args) {
+            const result = originalRenderTable.apply(this, args);
+            updateNotifications();
+            return result;
+          };
+        }
+      }
+
+      // Initialize
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNotifications);
+      } else {
+        initNotifications();
       }
     })();
   </script>

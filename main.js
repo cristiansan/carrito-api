@@ -672,6 +672,13 @@ function renderRows() {
     });
 
     const tr = document.createElement('tr');
+
+    // Add warning class if product has no price
+    if (r.price === null || r.price === undefined || Number(r.price) === 0) {
+      tr.classList.add('no-price-warning');
+      tr.setAttribute('title', '⚠️ Este producto NO tiene precio asignado');
+    }
+
     columnsToRender.forEach(col => {
       const td = document.createElement('td');
 
