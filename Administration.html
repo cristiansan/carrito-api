@@ -1436,6 +1436,81 @@
       #admisiones-content p {
         font-size: 12px !important;
       }
+
+      /* Ocultar KPIs estadísticas en móvil */
+      .stats-grid {
+        display: none !important;
+      }
+
+      /* Order items en columna para móvil */
+      .order-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .order-info {
+        width: 100%;
+      }
+
+      .order-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .order-actions button {
+        flex: 1;
+        min-width: 45%;
+      }
+
+      .order-number {
+        font-size: 14px;
+      }
+
+      .order-details {
+        font-size: 11px;
+      }
+
+      .move-order-btn,
+      .cancel-order-btn {
+        font-size: 11px;
+        padding: 8px 10px;
+      }
+    }
+
+    /* Extra small devices (phones, less than 480px) */
+    @media (max-width: 480px) {
+      .stats-grid {
+        display: none !important;
+      }
+
+      .order-item {
+        padding: 10px;
+      }
+
+      .order-actions {
+        gap: 6px;
+      }
+
+      .order-actions button {
+        min-width: 100%;
+        flex: 1 1 100%;
+      }
+
+      .move-order-btn,
+      .cancel-order-btn {
+        font-size: 10px;
+        padding: 6px 8px;
+      }
+
+      .order-number {
+        font-size: 13px;
+      }
+
+      .order-details {
+        font-size: 10px;
+      }
     }
 
     /* Logistics/Orders Section Styles */
