@@ -264,7 +264,7 @@
     table { width: 100%; border-collapse: collapse; color: #f0f0f0; table-layout: fixed; }
     th, td { padding: 8px; border-bottom: 1px solid #2a2a2a; text-align: left; }
     th { background: #1e1e24; position: sticky; top: 0; color: #ffffff; }
-    .right { text-align: right; }
+    .right { text-align: center; }
     .error { color: #ff6b6b; font-size: 13px; }
     .hidden { display: none; }
     tr:nth-child(even) td { background: #15151a; }
@@ -304,8 +304,10 @@
       background-color: #45a049;
     }
     .buy-input {
-      width: 40px; /* Adjust as needed */
+      width: 50px;
+      max-width: 50px;
       text-align: center;
+      padding: 4px 2px;
     }
     #columnFilterDropdown {
       background-color: #1b1b1f;
@@ -477,8 +479,9 @@
         font-size: 11px;
       }
       .buy-input {
-        width: 35px;
-        padding: 4px;
+        width: 45px;
+        max-width: 45px;
+        padding: 4px 2px;
         font-size: 12px;
       }
 
@@ -653,8 +656,9 @@
       }
 
       .buy-input {
-        width: 30px;
-        padding: 2px;
+        width: 40px;
+        max-width: 40px;
+        padding: 3px 2px;
       }
 
       .modal-content {
