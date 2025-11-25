@@ -8933,8 +8933,24 @@
 
             // Re-render products in new view
             const productsToRender = window.currentFilteredProducts || window.mappedStockData || [];
+            console.log('🔄 View changed to:', newView, '| Products available:', productsToRender.length);
+
             if (productsToRender.length > 0) {
               renderProductsInCurrentView(productsToRender);
+            } else {
+              console.warn('⚠️ No products available yet. Waiting for data to load...');
+              // Retry after a short delay if data is not ready
+              const retryInterval = setInterval(() => {
+                const retryProducts = window.currentFilteredProducts || window.mappedStockData || [];
+                if (retryProducts.length > 0) {
+                  console.log('✅ Products now available, rendering...');
+                  renderProductsInCurrentView(retryProducts);
+                  clearInterval(retryInterval);
+                }
+              }, 100);
+
+              // Clear interval after 5 seconds to avoid infinite loop
+              setTimeout(() => clearInterval(retryInterval), 5000);
             }
           });
         });
