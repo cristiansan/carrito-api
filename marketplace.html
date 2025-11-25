@@ -8894,8 +8894,9 @@
             updateViewButtons();
 
             // Re-render products in new view
-            if (window.currentFilteredProducts && window.currentFilteredProducts.length > 0) {
-              renderProductsInCurrentView(window.currentFilteredProducts);
+            const productsToRender = window.currentFilteredProducts || window.mappedStockData || [];
+            if (productsToRender.length > 0) {
+              renderProductsInCurrentView(productsToRender);
             }
           });
         });
