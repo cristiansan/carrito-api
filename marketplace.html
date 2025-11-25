@@ -470,9 +470,9 @@
     .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; position: relative; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
     .toolbar button { padding: 6px 10px; cursor: pointer; background: #2a2a33; color: #f0f0f0; border: 1px solid #3a3a44; border-radius: 4px; }
     .status { font-size: 12px; color: #b5b5b5; }
-    table { width: 100%; border-collapse: collapse; color: #f0f0f0; table-layout: fixed; }
-    th, td { padding: 8px; border-bottom: 1px solid #2a2a2a; text-align: left; }
-    th { background: #1e1e24; position: sticky; top: 0; color: #ffffff; }
+    table { min-width: 100%; border-collapse: collapse; color: #f0f0f0; table-layout: auto; }
+    th, td { padding: 8px; border-bottom: 1px solid #2a2a2a; text-align: left; white-space: nowrap; }
+    th { background: #1e1e24; position: sticky; top: 0; color: #ffffff; z-index: 10; }
     .right { text-align: center; }
     .error { color: #ff6b6b; font-size: 13px; }
     .hidden { display: none; }
