@@ -694,7 +694,7 @@ function renderRows() {
         td.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px;">
             <button class="qty-btn" data-action="decrease" data-item="${itemId}">-</button>
-            <input type="number" class="qty-input" data-item="${itemId}" value="${quantity}" min="0" max="999" style="width: 60px; text-align: center; padding: 4px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
+            <input type="number" class="qty-input" data-item="${itemId}" value="${quantity}" min="0" max="999" style="width: 30px; text-align: center; padding: 2px 1px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0;">
             <button class="qty-btn" data-action="increase" data-item="${itemId}">+</button>
           </div>
         `;
