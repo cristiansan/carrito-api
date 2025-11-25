@@ -554,7 +554,7 @@ function renderRows() {
   // Define all columns
   let columns = [
     { id: 'articulo', label: 'Artículo', sortable: true, class: '', width: '15%' },
-    { id: 'description', label: 'Descripción', sortable: true, class: '', width: '30%' },
+    { id: 'description', label: 'Descripción', sortable: true, class: '', width: '15%' },
     { id: 'grupo', label: 'Grupo', sortable: true, class: '', width: '12%' },
     { id: 'stock', label: 'Stock', sortable: true, class: '', width: '10%' },
     { id: 'disponible', label: 'Disponible', sortable: true, class: 'right', width: '10%' },
