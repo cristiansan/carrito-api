@@ -1801,6 +1801,33 @@
       -moz-appearance: textfield !important;
     }
 
+    /* Quantity button styling */
+    .qty-btn {
+      padding: 4px 8px !important;
+      cursor: pointer !important;
+      border: none !important;
+      border-radius: 4px !important;
+      font-weight: bold !important;
+      transition: all 0.2s ease !important;
+      color: white !important;
+    }
+
+    .qty-btn[data-action="increase"] {
+      background: #4CAF50 !important;
+    }
+
+    .qty-btn[data-action="increase"]:hover {
+      background: #45a049 !important;
+    }
+
+    .qty-btn[data-action="decrease"] {
+      background: #f44336 !important;
+    }
+
+    .qty-btn[data-action="decrease"]:hover {
+      background: #da190b !important;
+    }
+
     /* Logistics Modal Styles */
     .logistics-content {
       max-height: 70vh;
