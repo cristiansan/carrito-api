@@ -3711,6 +3711,9 @@
         <button class="menu-btn" id="adminBtn" style="display: none;">
           ADMIN
         </button>
+        <button class="menu-btn" id="estadisticasBtn" style="display: none;">
+          ESTADÍSTICAS
+        </button>
         <button class="menu-btn" id="ayudaBtn">
           AYUDA
         </button>
@@ -3721,7 +3724,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.61
+          v0.62
         </div>
       </div>
       
@@ -4923,7 +4926,8 @@
             const historialModalBtn = document.getElementById('historialModalBtn');
             const logisticsModalBtn = document.getElementById('logisticsModalBtn');
             const adminBtn = document.getElementById('adminBtn');
-            
+            const estadisticasBtn = document.getElementById('estadisticasBtn');
+
             console.log('🔍 Elementos encontrados:');
             console.log('- hamburgerBtn:', !!hamburgerBtn);
             console.log('- filterBtn:', !!filterBtn);
@@ -4979,8 +4983,12 @@
                 adminBtn.style.display = 'none';
                 console.log('🚫 ADMIN ocultado para usuario no-admin');
               }
+              if (estadisticasBtn) {
+                estadisticasBtn.style.display = 'none';
+                console.log('🚫 ESTADÍSTICAS ocultado para usuario no-admin');
+              }
 
-              
+
             } else {
               console.log('✅ Usuario ADMIN: mostrando todos los controles');
 
@@ -5029,6 +5037,10 @@
               if (adminBtn) {
                 adminBtn.style.display = 'block';
                 console.log('✅ ADMIN visible para usuario admin');
+              }
+              if (estadisticasBtn) {
+                estadisticasBtn.style.display = 'block';
+                console.log('✅ ESTADÍSTICAS visible para usuario admin');
               }
 
             }
@@ -5876,7 +5888,14 @@
         console.log('✅ Admin button handler added');
       }
 
-
+      const estadisticasBtn = document.getElementById('estadisticasBtn');
+      if (estadisticasBtn) {
+        estadisticasBtn.addEventListener('click', function() {
+          closeMenu();
+          window.location.href = 'estadisticas.html';
+        });
+        console.log('✅ Estadísticas button handler added');
+      }
 
       const exportHistorialBtn = document.getElementById('exportHistorialBtn');
       if (exportHistorialBtn) {
@@ -5947,6 +5966,22 @@
                 if (typeof window.isUserLoggedIn !== 'undefined') {
                   window.isUserLoggedIn = true;
                   console.log('✅ Usuario marcado como logueado (window.isUserLoggedIn = true)');
+                }
+
+                // Track page visit
+                try {
+                  const { collection, addDoc, serverTimestamp } = firebase.firestoreHelpers;
+                  const db = firebase.firestore();
+                  await addDoc(collection(db, 'page_visits'), {
+                    page: 'marketplace',
+                    pageName: 'Marketplace',
+                    userId: user.uid,
+                    userEmail: user.email,
+                    timestamp: serverTimestamp()
+                  });
+                  console.log('📊 Page visit tracked: marketplace');
+                } catch (error) {
+                  console.error('Error tracking page visit:', error);
                 }
 
                 await checkUserPermissions(user);

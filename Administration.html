@@ -2679,6 +2679,22 @@
             console.log('👤 Usuario autenticado en Administration.html:', user.email);
             console.log('🔍 UID del usuario:', user.uid);
 
+            // Track page visit
+            try {
+              const { collection, addDoc, serverTimestamp } = firebase.firestoreHelpers;
+              const db = firebase.firestore();
+              await addDoc(collection(db, 'page_visits'), {
+                page: 'administration',
+                pageName: 'Administración',
+                userId: user.uid,
+                userEmail: user.email,
+                timestamp: serverTimestamp()
+              });
+              console.log('📊 Page visit tracked: administration');
+            } catch (error) {
+              console.error('Error tracking page visit:', error);
+            }
+
             const hasAccess = await checkAdminAccess(user);
             if (hasAccess) {
               console.log('✅ Usuario admin confirmado, mostrando página');

@@ -663,6 +663,20 @@
       if (user) {
         console.log('✅ Usuario autenticado:', user.email);
 
+        // Track page visit
+        try {
+          await addDoc(collection(db, 'page_visits'), {
+            page: 'cart',
+            pageName: 'Carrito',
+            userId: user.uid,
+            userEmail: user.email,
+            timestamp: serverTimestamp()
+          });
+          console.log('📊 Page visit tracked: cart');
+        } catch (error) {
+          console.error('Error tracking page visit:', error);
+        }
+
         // Verificar si es admin
         try {
           const userRef = doc(db, 'usuarios', user.uid);

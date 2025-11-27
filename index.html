@@ -1076,7 +1076,25 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.61 - Actual</h3>
+          <h3>v0.62 - Actual</h3>
+          <ul>
+            <li>📊 <strong>Sistema de Analytics de Páginas:</strong> Tracking automático de visitas a todas las páginas (Marketplace, Carrito, Index, Ayuda, Administración, Estadísticas)</li>
+            <li>📈 <strong>Gráfico de Páginas Más Visitadas:</strong> Nuevo gráfico de barras mostrando qué páginas usan más los usuarios (acumulado desde octubre 2025)</li>
+            <li>💰 <strong>KPIs de Ventas Mejorados:</strong> Renombrado "Revenue Total" a "Venta Total", "Costo Total" a "Costo de Venta"</li>
+            <li>💵 <strong>Ganancia Total:</strong> Nuevo KPI calculando automáticamente Venta - Costo con color verde/rojo según positivo/negativo</li>
+            <li>💲 <strong>Cálculo de Costos Real:</strong> Costo de Venta ahora toma el costoContable desde la API para cada producto vendido</li>
+            <li>📱 <strong>Estadísticas de Dispositivos:</strong> Cambiado de "usuarios únicos" a "total de logins acumulados" por dispositivo</li>
+            <li>🌐 <strong>Estadísticas de Navegadores:</strong> Cambiado de "usuarios únicos" a "total de logins acumulados" por navegador</li>
+            <li>📊 <strong>Gráfico de Órdenes por Estado:</strong> Cambiado de gráfico circular (pie) a gráfico de barras para mejor visualización</li>
+            <li>🗓️ <strong>Año Actualizado:</strong> Corregido "desde octubre 2024" a "desde octubre 2025" en todos los gráficos</li>
+            <li>🚫 <strong>Filtro de Unknown:</strong> Dispositivos y navegadores "Unknown" ya no aparecen en las estadísticas</li>
+            <li>🎯 <strong>Botón Estadísticas en Menú:</strong> Movido de Ayuda al menú principal entre ADMIN y AYUDA (solo visible para admins)</li>
+            <li>📍 <strong>Reorganización de Estadísticas:</strong> Gráfico de "Páginas Más Visitadas" movido al final de la página</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.61</h3>
           <ul>
             <li>📱 <strong>Scroll Horizontal Tabla:</strong> Tabla con scroll horizontal para evitar superposición de columnas al activar todas las opciones</li>
             <li>📏 <strong>Columna Descripción:</strong> Ancho reducido con max-width 200px y ellipsis para mejor visualización en móvil</li>
@@ -1946,6 +1964,21 @@
       if (user) {
         console.log('👤 Usuario autenticado en index.html, verificando permisos...');
         await checkUserPermissions(user);
+
+        // Track page visit
+        try {
+          const { addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+          await addDoc(collection(db, 'page_visits'), {
+            page: 'index',
+            pageName: 'Index (Listado Público)',
+            userId: user.uid,
+            userEmail: user.email,
+            timestamp: serverTimestamp()
+          });
+          console.log('📊 Page visit tracked: index');
+        } catch (error) {
+          console.error('Error tracking page visit:', error);
+        }
 
         // Set global login flag for price display
         window.isUserLoggedIn = true;

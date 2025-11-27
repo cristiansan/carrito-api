@@ -286,9 +286,19 @@
         <div class="subtitle">Todas las órdenes del sistema</div>
       </div>
       <div class="stat-card">
-        <h3><span class="material-icons">attach_money</span> Revenue Total</h3>
+        <h3><span class="material-icons">attach_money</span> Venta Total</h3>
         <div class="value" id="totalRevenue">$0</div>
         <div class="subtitle">Suma de todas las órdenes</div>
+      </div>
+      <div class="stat-card">
+        <h3><span class="material-icons">paid</span> Costo de Venta</h3>
+        <div class="value" id="totalCost">$0</div>
+        <div class="subtitle">Monto total al costo</div>
+      </div>
+      <div class="stat-card">
+        <h3><span class="material-icons">trending_up</span> Ganancia Total</h3>
+        <div class="value" id="totalProfit">$0</div>
+        <div class="subtitle">Venta - Costo</div>
       </div>
       <div class="stat-card">
         <h3><span class="material-icons">people</span> Clientes Totales</h3>
@@ -305,7 +315,7 @@
     <!-- Gráficos -->
     <div class="charts-container">
       <div class="chart-card">
-        <h2><span class="material-icons">pie_chart</span> Órdenes por Estado</h2>
+        <h2><span class="material-icons">bar_chart</span> Órdenes por Estado</h2>
         <canvas id="statusChart"></canvas>
       </div>
       <div class="chart-card">
@@ -325,12 +335,18 @@
     <!-- Gráficos de Dispositivos y Browsers -->
     <div class="charts-container">
       <div class="chart-card">
-        <h2><span class="material-icons">devices</span> Dispositivos Más Usados</h2>
+        <h2><span class="material-icons">devices</span> Total de Conexiones por Dispositivo</h2>
         <canvas id="devicesChart"></canvas>
+        <div style="color: #888; font-size: 12px; margin-top: 10px; text-align: center;">
+          Acumulado desde octubre 2025
+        </div>
       </div>
       <div class="chart-card">
-        <h2><span class="material-icons">web</span> Navegadores Más Usados</h2>
+        <h2><span class="material-icons">web</span> Total de Conexiones por Navegador</h2>
         <canvas id="browsersChart"></canvas>
+        <div style="color: #888; font-size: 12px; margin-top: 10px; text-align: center;">
+          Acumulado desde octubre 2025
+        </div>
       </div>
     </div>
 
@@ -359,6 +375,15 @@
         <li class="no-data">Cargando...</li>
       </ul>
     </div>
+
+    <!-- Gráfico de Páginas Más Visitadas -->
+    <div class="chart-card" style="margin-top: 20px;">
+      <h2><span class="material-icons">analytics</span> Páginas Más Visitadas</h2>
+      <canvas id="pagesChart"></canvas>
+      <div id="pagesChartSubtitle" style="color: #888; font-size: 12px; margin-top: 10px; text-align: center;">
+        Acumulado desde octubre 2025
+      </div>
+    </div>
   </div>
 
   <style>
@@ -372,7 +397,7 @@
     // Firebase configuration
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, collection, getDocs, query, where, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, collection, getDocs, query, where, orderBy, limit, doc, getDoc, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCXjSGtVGfQas_cEyjmI0RTaeEl94jdp6g",
@@ -387,11 +412,127 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // API Configuration
+    const API_BASE = '/api';
+    const AUTH_URL = `${API_BASE}/authenticate`;
+    const STOCK_URL = `${API_BASE}/stock`;
+
+    const CREDENTIALS = {
+      username: 'Api',
+      md5password: 'e10adc3949ba59abbe56e057f20f883e'
+    };
+
+    let authToken = null;
+    let tokenExpiresAt = 0;
+
+    // Helper functions
+    function normalizeKey(key) {
+      return String(key)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '');
+    }
+
+    function getFirstExisting(row, candidateKeys) {
+      const normalizedMap = new Map();
+      for (const k of Object.keys(row || {})) {
+        normalizedMap.set(normalizeKey(k), k);
+      }
+      for (const c of candidateKeys) {
+        const nk = normalizeKey(c);
+        if (normalizedMap.has(nk)) {
+          const originalKey = normalizedMap.get(nk);
+          return row[originalKey];
+        }
+      }
+      return undefined;
+    }
+
+    function parseLocaleNumber(str) {
+      if (typeof str !== 'string') return NaN;
+      const cleaned = str.replace(/\./g, '').replace(',', '.');
+      return parseFloat(cleaned);
+    }
+
+    // API Authentication
+    async function authenticate() {
+      if (authToken && Date.now() < tokenExpiresAt) {
+        return authToken;
+      }
+
+      try {
+        const response = await fetch(AUTH_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(CREDENTIALS)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Authentication failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        authToken = data.token;
+        tokenExpiresAt = Date.now() + (data.expires ? data.expires * 1000 : 55 * 60 * 1000);
+        console.log('✅ Authenticated with API');
+        return authToken;
+      } catch (error) {
+        console.error('❌ Authentication error:', error);
+        throw error;
+      }
+    }
+
+    // Fetch products from API
+    async function fetchProductsFromAPI() {
+      try {
+        const token = await authenticate();
+        const url = `${STOCK_URL}?format=JSON&ViewOption=0`;
+
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log(`✅ Loaded ${data.length} products from API`);
+        return data;
+      } catch (error) {
+        console.error('❌ Error fetching products:', error);
+        throw error;
+      }
+    }
+
+    // Extract cost from product data
+    function extractCostFromProduct(raw) {
+      let costoContable = getFirstExisting(raw, ['Costo Contable', 'CostoContable']);
+      costoContable = Number.isFinite(Number(costoContable)) ? Number(costoContable) : parseLocaleNumber(String(costoContable ?? ''));
+      if (!Number.isFinite(costoContable)) costoContable = 0;
+      return costoContable;
+    }
+
     // Check if user is authenticated and is admin
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = 'login.html';
         return;
+      }
+
+      // Track page visit
+      try {
+        await addDoc(collection(db, 'page_visits'), {
+          page: 'estadisticas',
+          pageName: 'Estadísticas',
+          userId: user.uid,
+          userEmail: user.email,
+          timestamp: serverTimestamp()
+        });
+        console.log('📊 Page visit tracked: estadisticas');
+      } catch (error) {
+        console.error('Error tracking page visit:', error);
       }
 
       // Check if user is admin
@@ -409,6 +550,21 @@
     async function loadStatistics() {
       try {
         console.log('📊 Cargando estadísticas...');
+
+        // Load products from API to get costs
+        console.log('📦 Cargando productos desde la API...');
+        const productsData = await fetchProductsFromAPI();
+
+        // Create map of articulo -> cost
+        const costMap = new Map();
+        productsData.forEach(product => {
+          const articulo = getFirstExisting(product, ['Artículo', 'Articulo', 'item', 'Item', 'Codigo', 'Código']);
+          if (articulo) {
+            const cost = extractCostFromProduct(product);
+            costMap.set(String(articulo).trim(), cost);
+          }
+        });
+        console.log(`✅ Mapa de costos creado con ${costMap.size} productos`);
 
         // Get all orders
         const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
@@ -496,6 +652,23 @@
         // Calculate KPIs
         const totalOrders = orders.length;
         const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+        const totalCost = orders.reduce((sum, order) => {
+          if (order.items && Array.isArray(order.items)) {
+            return sum + order.items.reduce((itemSum, item) => {
+              const quantity = item.quantity || 0;
+              const articulo = String(item.articulo || '').trim();
+
+              // Get cost from map, fallback to item's costoContable if available
+              let costPrice = costMap.get(articulo);
+              if (costPrice === undefined || costPrice === 0) {
+                costPrice = item.costoContable || 0;
+              }
+
+              return itemSum + (quantity * costPrice);
+            }, 0);
+          }
+          return sum;
+        }, 0);
         const totalProducts = orders.reduce((sum, order) => {
           if (order.items && Array.isArray(order.items)) {
             return sum + order.items.reduce((itemSum, item) => itemSum + (item.quantity || 0), 0);
@@ -503,11 +676,60 @@
           return sum;
         }, 0);
 
+        // Calculate profit
+        const totalProfit = totalRevenue - totalCost;
+
         // Update KPIs
         document.getElementById('totalOrders').textContent = totalOrders;
         document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+        document.getElementById('totalCost').textContent = '$' + totalCost.toFixed(2);
+        document.getElementById('totalProfit').textContent = '$' + totalProfit.toFixed(2);
         document.getElementById('totalClients').textContent = clients;
         document.getElementById('totalProducts').textContent = totalProducts;
+
+        // Color the profit value based on positive/negative
+        const profitElement = document.getElementById('totalProfit');
+        if (totalProfit >= 0) {
+          profitElement.style.color = '#4CAF50'; // Green for profit
+        } else {
+          profitElement.style.color = '#f44336'; // Red for loss
+        }
+
+        // Log cost calculation details
+        console.log(`💰 Cálculo de costos:`);
+        let itemsWithCost = 0;
+        let itemsWithoutCost = 0;
+        orders.forEach(order => {
+          if (order.items && Array.isArray(order.items)) {
+            order.items.forEach(item => {
+              const articulo = String(item.articulo || '').trim();
+              const cost = costMap.get(articulo);
+              if (cost && cost > 0) {
+                itemsWithCost++;
+              } else {
+                itemsWithoutCost++;
+                if (itemsWithoutCost <= 5) { // Log first 5 items without cost
+                  console.log(`   ⚠️ Producto sin costo: ${articulo} (${item.description || 'sin descripción'})`);
+                }
+              }
+            });
+          }
+        });
+        console.log(`   - Items con costo: ${itemsWithCost}`);
+        console.log(`   - Items sin costo: ${itemsWithoutCost}`);
+
+        console.log(`\n💰 KPIs calculados:`);
+        console.log(`   - Venta Total: $${totalRevenue.toFixed(2)}`);
+        console.log(`   - Costo de Venta: $${totalCost.toFixed(2)}`);
+        console.log(`   - Ganancia Total: $${totalProfit.toFixed(2)}`);
+        console.log(`   - Porcentaje de ganancia: ${(totalProfit / totalRevenue * 100).toFixed(2)}%`);
+
+        // Show first 5 costs from map
+        const first5Costs = Array.from(costMap.entries()).slice(0, 5);
+        console.log(`\n📋 Primeros 5 costos del mapa:`);
+        first5Costs.forEach(([articulo, cost]) => {
+          console.log(`   - ${articulo}: $${cost}`);
+        });
 
         // Generate charts
         generateStatusChart(orders);
@@ -523,6 +745,9 @@
         // Generate device and browser charts
         await generateDevicesChart();
         await generateBrowsersChart();
+
+        // Generate page visits chart
+        await generatePagesChart();
 
         // Hide loading and show content
         document.getElementById('loadingIndicator').style.display = 'none';
@@ -545,29 +770,46 @@
 
       const ctx = document.getElementById('statusChart').getContext('2d');
       new Chart(ctx, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
           labels: Object.keys(statusCount),
           datasets: [{
+            label: 'Cantidad de Órdenes',
             data: Object.values(statusCount),
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
               '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0'
-            ]
+            ],
+            borderColor: '#1a1a1a',
+            borderWidth: 2
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: 'white',
+                precision: 0
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            },
+            x: {
+              ticks: {
+                color: 'white'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
+            }
+          },
           plugins: {
             legend: {
-              position: 'bottom',
-              labels: {
-                color: 'white',
-                font: {
-                  size: 12
-                }
-              }
+              display: false
             }
           }
         }
@@ -1059,8 +1301,13 @@
 
     async function generateDevicesChart() {
       try {
+        // IMPORTANTE: Los datos son persistentes y permanentes en Firebase Firestore
+        // Cada vez que un usuario hace login, se actualiza su lastDevice y loginCount
+        // Esta estadística muestra el acumulado total desde octubre 2025
+        // Los datos NO se borran automáticamente y se mantienen indefinidamente
         const usuariosSnapshot = await getDocs(collection(db, 'usuarios'));
         const deviceCounts = {};
+        const deviceUserDetails = {}; // Para debugging
 
         // Lista de usuarios de prueba a excluir (misma que generateUsuariosRanking)
         const testUsers = [
@@ -1081,18 +1328,44 @@
           const isNotApproved = data.approved === false || data.role === 'pending';
 
           if (!isTestUser && !isNotApproved) {
-            // Contar todos los dispositivos únicos que ha usado este usuario
-            const usedDevices = data.usedDevices || [];
-            usedDevices.forEach(device => {
-              deviceCounts[device] = (deviceCounts[device] || 0) + 1;
-            });
+            const loginCount = data.loginCount || 0;
+            const lastDevice = data.lastDevice;
 
-            // Si no hay historial, usar el último dispositivo como fallback
-            if (usedDevices.length === 0 && data.lastDevice) {
-              deviceCounts[data.lastDevice] = (deviceCounts[data.lastDevice] || 0) + 1;
+            // Solo contar si tiene un dispositivo válido (no Unknown, no undefined, no null)
+            // Contar los logins totales usando el último dispositivo usado
+            // Nota: Esto asume que todos los logins fueron con el último dispositivo
+            // Para datos históricos más precisos, se necesitaría una colección de login_history
+            if (lastDevice && lastDevice !== 'Unknown' && lastDevice !== '' && loginCount > 0) {
+              deviceCounts[lastDevice] = (deviceCounts[lastDevice] || 0) + loginCount;
+
+              // Guardar detalles para debugging
+              if (!deviceUserDetails[lastDevice]) {
+                deviceUserDetails[lastDevice] = [];
+              }
+              deviceUserDetails[lastDevice].push({
+                email: email,
+                loginCount: loginCount,
+                lastDevice: lastDevice
+              });
             }
           }
         });
+
+        // Log detallado de dispositivos
+        console.log('📱 Total de conexiones por dispositivo (acumulado desde octubre 2025):');
+        Object.entries(deviceCounts).forEach(([device, count]) => {
+          console.log(`   - ${device}: ${count} logins`);
+        });
+
+        // Mostrar detalles de iPad si existe
+        if (deviceCounts['iPad']) {
+          console.log(`\n📱 Detalles de conexiones desde iPad:`);
+          deviceUserDetails['iPad'].forEach(user => {
+            console.log(`   - ${user.email}: ${user.loginCount} logins`);
+          });
+        } else {
+          console.log(`\n⚠️ No se encontraron conexiones desde iPad`);
+        }
 
         const labels = Object.keys(deviceCounts);
         const data = Object.values(deviceCounts);
@@ -1139,7 +1412,7 @@
                     const value = context.parsed || 0;
                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                     const percentage = ((value / total) * 100).toFixed(1);
-                    return `${label}: ${value} (${percentage}%)`;
+                    return `${label}: ${value} logins (${percentage}%)`;
                   }
                 }
               }
@@ -1177,17 +1450,20 @@
           const isNotApproved = data.approved === false || data.role === 'pending';
 
           if (!isTestUser && !isNotApproved) {
-            // Contar todos los navegadores únicos que ha usado este usuario
-            const usedBrowsers = data.usedBrowsers || [];
-            usedBrowsers.forEach(browser => {
-              browserCounts[browser] = (browserCounts[browser] || 0) + 1;
-            });
+            const loginCount = data.loginCount || 0;
+            const lastBrowser = data.lastBrowser;
 
-            // Si no hay historial, usar el último navegador como fallback
-            if (usedBrowsers.length === 0 && data.lastBrowser) {
-              browserCounts[data.lastBrowser] = (browserCounts[data.lastBrowser] || 0) + 1;
+            // Solo contar si tiene un navegador válido (no Unknown, no undefined, no null)
+            if (lastBrowser && lastBrowser !== 'Unknown' && lastBrowser !== '' && loginCount > 0) {
+              browserCounts[lastBrowser] = (browserCounts[lastBrowser] || 0) + loginCount;
             }
           }
+        });
+
+        // Log detallado de navegadores
+        console.log('\n🌐 Total de conexiones por navegador (acumulado desde octubre 2025):');
+        Object.entries(browserCounts).forEach(([browser, count]) => {
+          console.log(`   - ${browser}: ${count} logins`);
         });
 
         const labels = Object.keys(browserCounts);
@@ -1235,7 +1511,7 @@
                     const value = context.parsed || 0;
                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                     const percentage = ((value / total) * 100).toFixed(1);
-                    return `${label}: ${value} (${percentage}%)`;
+                    return `${label}: ${value} logins (${percentage}%)`;
                   }
                 }
               }
@@ -1246,6 +1522,122 @@
         console.log('🌐 Gráfico de navegadores generado:', browserCounts);
       } catch (error) {
         console.error('❌ Error generando gráfico de navegadores:', error);
+      }
+    }
+
+    async function generatePagesChart() {
+      try {
+        const pageVisitsSnapshot = await getDocs(collection(db, 'page_visits'));
+        const pageCounts = {};
+
+        pageVisitsSnapshot.forEach(doc => {
+          const data = doc.data();
+          const pageName = data.pageName || data.page || 'Unknown';
+
+          if (pageName && pageName !== 'Unknown') {
+            pageCounts[pageName] = (pageCounts[pageName] || 0) + 1;
+          }
+        });
+
+        // Verificar si hay suficientes datos
+        const totalVisits = Object.values(pageCounts).reduce((a, b) => a + b, 0);
+        const uniquePages = Object.keys(pageCounts).length;
+
+        // Log detallado de páginas visitadas
+        console.log('\n📊 Total de visitas por página (acumulado desde octubre 2025):');
+        console.log(`   📈 Total de visitas registradas: ${totalVisits}`);
+        console.log(`   📄 Páginas únicas visitadas: ${uniquePages}`);
+        Object.entries(pageCounts).sort((a, b) => b[1] - a[1]).forEach(([page, count]) => {
+          console.log(`   - ${page}: ${count} visitas`);
+        });
+
+        if (uniquePages < 3) {
+          console.log(`\n⚠️ Pocas páginas registradas. Visita más páginas (Marketplace, Carrito, Index, Ayuda, etc.) para ver estadísticas completas.`);
+
+          // Actualizar subtítulo con mensaje informativo
+          const subtitle = document.getElementById('pagesChartSubtitle');
+          if (subtitle) {
+            subtitle.innerHTML = `
+              Acumulado desde octubre 2025<br>
+              <span style="color: #FFC107; margin-top: 5px; display: inline-block;">
+                ⚠️ Visita más páginas para generar estadísticas completas
+              </span>
+            `;
+          }
+        }
+
+        const labels = Object.keys(pageCounts);
+        const data = Object.values(pageCounts);
+
+        const ctx = document.getElementById('pagesChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Visitas',
+              data: data,
+              backgroundColor: [
+                '#4CAF50', // Verde
+                '#2196F3', // Azul
+                '#FFC107', // Amarillo
+                '#FF5722', // Rojo-naranja
+                '#9C27B0', // Púrpura
+                '#00BCD4', // Cian
+                '#FF9800', // Naranja
+                '#607D8B', // Gris azulado
+                '#E91E63', // Rosa
+                '#795548'  // Marrón
+              ],
+              borderColor: '#1a1a1a',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: 'white',
+                  precision: 0
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              },
+              x: {
+                ticks: {
+                  color: 'white'
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed.y || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${label}: ${value} visitas (${percentage}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        console.log('📊 Gráfico de páginas visitadas generado:', pageCounts);
+      } catch (error) {
+        console.error('❌ Error generando gráfico de páginas visitadas:', error);
       }
     }
 

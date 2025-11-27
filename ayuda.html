@@ -984,10 +984,6 @@
       <span class="material-icons">smart_toy</span>
       Chatbot AI
     </button>
-    <button class="admin-btn logs" onclick="window.location.href='estadisticas.html'">
-      <span class="material-icons">bar_chart</span>
-      Estadísticas
-    </button>
     <button class="admin-btn logs error-logs" onclick="openErrorLogsModal()">
       <span class="material-icons">bug_report</span>
       Logs de Errores
@@ -1227,6 +1223,21 @@
       }
 
       currentUser = user;
+
+      // Track page visit
+      try {
+        const { addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+        await addDoc(collection(db, 'page_visits'), {
+          page: 'ayuda',
+          pageName: 'Ayuda / Soporte',
+          userId: user.uid,
+          userEmail: user.email,
+          timestamp: serverTimestamp()
+        });
+        console.log('📊 Page visit tracked: ayuda');
+      } catch (error) {
+        console.error('Error tracking page visit:', error);
+      }
 
       // Check if user is admin
       const userDoc = await getDocs(query(collection(db, 'usuarios'), where('email', '==', user.email)));
