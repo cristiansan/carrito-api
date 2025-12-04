@@ -453,6 +453,31 @@ function mapRow(raw) {
   return baseData;
 }
 
+// Función para actualizar la fila de totales dinámicamente
+function updateTotalsRow() {
+  const isMarketplace = window.location.pathname.includes('marketplace.html');
+  if (!isMarketplace) return; // Solo en marketplace
+
+  const tbody = document.getElementById('tbody');
+  if (!tbody) return;
+
+  // Buscar la primera fila (fila de totales que ahora está arriba)
+  const firstRow = tbody.firstElementChild;
+  if (!firstRow) return;
+
+  // Calcular total de cantidades
+  let totalQuantity = 0;
+  selectedItems.forEach(item => {
+    totalQuantity += item.quantity || 0;
+  });
+
+  // Actualizar la celda de cantidad (tercera columna en marketplace)
+  const quantityCell = firstRow.querySelector('td[data-column="quantity"]');
+  if (quantityCell) {
+    quantityCell.innerHTML = `<strong>${totalQuantity}</strong>`;
+  }
+}
+
 function renderRows() {
   const isMarketplace = window.location.pathname.includes('marketplace.html');
 
@@ -730,6 +755,18 @@ function renderRows() {
 
   // Fila de totales dinámica
   const trTotal = document.createElement('tr');
+  trTotal.style.fontWeight = 'bold';
+  trTotal.style.background = '#2a2a33';
+  trTotal.style.borderBottom = '2px solid #4CAF50';
+
+  // Calcular total de cantidades en el carrito para marketplace
+  let totalQuantity = 0;
+  if (isMarketplace) {
+    selectedItems.forEach(item => {
+      totalQuantity += item.quantity || 0;
+    });
+  }
+
   columnsToRender.forEach((col, index) => {
     const td = document.createElement('td');
 
@@ -739,30 +776,53 @@ function renderRows() {
     if (col.class) {
       td.classList.add(col.class);
     }
-    
-    if (index === 0) {
-      // Primera columna - vacía
-      td.innerHTML = '';
-    } else if (index === 1) {
-      // Segunda columna - vacía (sin etiqueta "Totals")
-      td.innerHTML = '';
-    } else if (numericColumns.includes(col.id)) {
-      // Columnas numéricas - mostrar total
-      td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
+
+    // Para marketplace: mostrar totales específicos
+    if (isMarketplace) {
+      if (col.id === 'articulo') {
+        // Número de productos
+        td.innerHTML = `<strong>${filtered.length}</strong>`;
+        td.style.textAlign = 'center';
+      } else if (col.id === 'description') {
+        // Número de productos
+        td.innerHTML = `<strong>${filtered.length}</strong>`;
+        td.style.textAlign = 'center';
+      } else if (col.id === 'quantity') {
+        // Total de cantidades en el carrito
+        td.innerHTML = `<strong>${totalQuantity}</strong>`;
+        td.style.textAlign = 'center';
+      } else if (col.id === 'teorico' || col.id === 'transito') {
+        // Totales de stock y tránsito
+        td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
+        td.style.textAlign = 'right';
+      } else {
+        // Precio y otras columnas vacías
+        td.innerHTML = '';
+      }
     } else {
-      // Columnas no numéricas - vacías
-      td.innerHTML = '';
+      // Para index.html: comportamiento original
+      if (index === 0) {
+        td.innerHTML = '';
+      } else if (index === 1) {
+        td.innerHTML = '';
+      } else if (numericColumns.includes(col.id)) {
+        td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
+      } else {
+        td.innerHTML = '';
+      }
     }
-    
+
     trTotal.appendChild(td);
   });
-  tbody.appendChild(trTotal);
+
+  // Insertar la fila de totales al PRINCIPIO del tbody (arriba del listado)
+  tbody.insertBefore(trTotal, tbody.firstChild);
 
   // Actualizar estadísticas KPI - using fixed function
   updateStatsFixed(filtered, totals);
 
-  // Update header KPIs
-  updateHeaderStats(filtered.length, totals);
+  // Header KPIs removed - now using totals row in table
+  // updateHeaderStats(filtered.length, totals);
 
   // Render products in card views if view mode is not table
   if (typeof window.renderProductsInCurrentView === 'function') {
@@ -882,6 +942,9 @@ window.handleTabClick = handleTabClick;
 
 // Make renderRows available globally for view mode changes
 window.renderRows = renderRows;
+
+// Make updateTotalsRow available globally for cart updates from grid view
+window.updateTotalsRow = updateTotalsRow;
 
 function setupAutoRefresh() {
   const checkbox = document.getElementById('autoToggle');
@@ -1147,6 +1210,7 @@ function setupUI() {
           const product = mappedStockData.find(p => p.articulo === itemId);
           if (product) {
             selectedItems.set(itemId, { product, quantity: qty });
+            updateTotalsRow(); // Actualizar totales
           }
         }
       }
@@ -1168,6 +1232,7 @@ function setupUI() {
           const product = mappedStockData.find(p => p.articulo === itemId);
           if (product) {
             selectedItems.set(itemId, { product, quantity: qty });
+            updateTotalsRow(); // Actualizar totales
           }
         }
       }
@@ -1190,6 +1255,7 @@ function setupUI() {
         } else if (qty === 0) {
           selectedItems.delete(itemId);
         }
+        updateTotalsRow(); // Actualizar totales
       }
     });
   }

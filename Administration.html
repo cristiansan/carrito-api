@@ -1862,55 +1862,35 @@
       <div class="mdc-tab-scroller">
         <div class="mdc-tab-scroller__scroll-area">
           <div class="mdc-tab-scroller__scroll-content">
-            <!-- MOVIDO A marketplace.html
-            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-tab="precios">
+            <!-- Tab button PRECIOS MOVIDO A marketplace.html -->
+            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-tab="admisiones">
               <span class="mdc-tab__content">
-                <span class="mdc-tab__text-label">Precios</span>
+                <span class="mdc-tab__text-label">Admisiones</span>
               </span>
               <span class="mdc-tab-indicator mdc-tab-indicator--active">
                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
-            -->
-            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-tab="clientes">
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="clientes">
               <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">Clientes</span>
               </span>
-              <span class="mdc-tab-indicator mdc-tab-indicator--active">
+              <span class="mdc-tab-indicator">
                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="vendedor">
               <span class="mdc-tab__content">
-                <span class="mdc-tab__text-label">Vendedor</span>
+                <span class="mdc-tab__text-label">Vendedores</span>
               </span>
               <span class="mdc-tab-indicator">
                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
-            <!-- MOVIDO A marketplace.html
-            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="master">
-              <span class="mdc-tab__content">
-                <span class="mdc-tab__text-label">Master</span>
-              </span>
-              <span class="mdc-tab-indicator">
-                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-              </span>
-              <span class="mdc-tab__ripple"></span>
-            </button>
-            -->
-            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="admisiones">
-              <span class="mdc-tab__content">
-                <span class="mdc-tab__text-label">Admisiones</span>
-              </span>
-              <span class="mdc-tab-indicator">
-                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-              </span>
-              <span class="mdc-tab__ripple"></span>
-            </button>
+            <!-- Tab button MASTER MOVIDO A marketplace.html -->
             <!-- TAB REMOVIDO - Logs de Errores movido a ayuda.html
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="errorlogs">
               <span class="mdc-tab__content">
@@ -1928,63 +1908,9 @@
     </div>
 
     <!-- Tab Contents -->
-    <!-- MOVIDO A marketplace.html
-    <div id="precios-content" class="tab-content">
-      <h2>💰 Gestión de Precios</h2>
-      <div class="admin-section">
-        <div class="prices-header">
-          <h3>Lista de Productos y Precios</h3>
-          <div class="prices-actions-buttons">
-            <button class="mdc-button mdc-button--outlined" id="importPricesBtn">
-              <span class="mdc-button__ripple"></span>
-              <i class="material-icons mdc-button__icon" aria-hidden="true">upload_file</i>
-              <span class="mdc-button__label">Importar Precios</span>
-            </button>
-            <button class="mdc-button mdc-button--outlined" id="exportCsvBtn">
-              <span class="mdc-button__ripple"></span>
-              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
-              <span class="mdc-button__label">Exportar CSV</span>
-            </button>
-            <button class="mdc-button mdc-button--outlined" id="exportExcelBtn">
-              <span class="mdc-button__ripple"></span>
-              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
-              <span class="mdc-button__label">Exportar Excel</span>
-            </button>
-            <button class="mdc-button mdc-button--raised" id="saveAllPricesBtn" style="display: none;">
-              <span class="mdc-button__ripple"></span>
-              <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
-              <span class="mdc-button__label">Guardar Todos los Precios</span>
-            </button>
-            <button class="mdc-button mdc-button--outlined" id="loadProductsBtn">
-              <span class="mdc-button__ripple"></span>
-              <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
-              <span class="mdc-button__label">Actualizar Productos</span>
-            </button>
-          </div>
-          <input type="file" id="pricesFileInput" accept=".csv,.xlsx,.xls" style="display: none;">
-        </div>
+    <!-- PRECIOS tab content MOVIDO A marketplace.html -->
 
-        <!-- Botón toggle para columna Artículo en móvil -->
-        <div class="mobile-articulo-toggle">
-          <button class="articulo-toggle-btn" id="articuloToggleBtn">
-            <span>+</span> Artículo
-          </button>
-        </div>
-
-        <div id="productsContainer">
-          <div class="loading-products">
-            <div class="loading-content">
-              <div class="loading-spinner"></div>
-              <p>Cargando productos...</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    -->
-
-    <div id="clientes-content" class="tab-content">
+    <div id="clientes-content" class="tab-content" style="display: none;">
       <h2>👥 Gestión de Clientes</h2>
 
       <!-- Estadísticas resumen -->
@@ -2122,160 +2048,10 @@
       </div>
     </div>
 
-    <!-- MOVIDO A marketplace.html
-    <div id="master-content" class="tab-content" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin: 0;">📋 Seguimiento de Pedidos - Admin</h2>
-        <div style="display: flex; gap: 10px;">
-          <button class="mdc-button mdc-button--outlined" id="refreshOrdersBtn">
-            <span class="mdc-button__ripple"></span>
-            <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
-            <span class="mdc-button__label">Actualizar</span>
-          </button>
-          <button class="mdc-button mdc-button--outlined" id="exportOrdersBtn" style="background-color: #4CAF50; color: white;">
-            <span class="mdc-button__ripple"></span>
-            <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
-            <span class="mdc-button__label">Exportar Excel</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Search Box -->
-      <div style="margin-bottom: 20px;">
-        <div style="display: flex; gap: 10px; align-items: center; background: #2a2a32; padding: 15px; border-radius: 8px;">
-          <i class="material-icons" style="color: #4CAF50;">search</i>
-          <input
-            type="text"
-            id="orderSearchInput"
-            placeholder="Buscar por número de orden, número de cliente o nombre de cliente..."
-            style="flex: 1; background: #1e1e24; border: 1px solid #3a3a42; color: #fff; padding: 12px; border-radius: 4px; font-size: 14px; outline: none;"
-          />
-          <button
-            id="clearSearchBtn"
-            class="mdc-button mdc-button--outlined"
-            style="display: none; min-width: auto; padding: 8px 16px;"
-          >
-            <span class="mdc-button__ripple"></span>
-            <i class="material-icons mdc-button__icon" aria-hidden="true">clear</i>
-            <span class="mdc-button__label">Limpiar</span>
-          </button>
-        </div>
-        <div id="searchResultsCount" style="margin-top: 8px; color: #888; font-size: 13px; display: none;"></div>
-      </div>
-
-      <div class="stats-grid" style="margin-bottom: 24px;">
-        <div class="stat-item">
-          <span class="stat-number" id="totalOrders">0</span>
-          <span class="stat-label">Total Órdenes</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="borradorOrders">0</span>
-          <span class="stat-label">Borrador</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="revisionOrders">0</span>
-          <span class="stat-label">En Revisión</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="aprobadaOrders">0</span>
-          <span class="stat-label">Aprobadas</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="preparacionOrders">0</span>
-          <span class="stat-label">En Preparación</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="listoOrders">0</span>
-          <span class="stat-label">Listo para Despacho</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="despachadaOrders">0</span>
-          <span class="stat-label">Despachadas</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="entregadaOrders">0</span>
-          <span class="stat-label">Entregadas</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="cerradaOrders">0</span>
-          <span class="stat-label">Cerradas</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" id="canceladaOrders">0</span>
-          <span class="stat-label">Canceladas</span>
-        </div>
-      </div>
-
-      <div class="logistics-content">
-        <div class="logistics-section">
-          <h4>📝 Borrador</h4>
-          <div class="logistics-orders" id="admin-borradorOrders">
-            <p class="no-orders">No hay pedidos en borrador</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>🔍 En Revisión</h4>
-          <div class="logistics-orders" id="admin-revisionOrders">
-            <p class="no-orders">No hay pedidos en revisión</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>✅ Aprobada</h4>
-          <div class="logistics-orders" id="admin-aprobadaOrders">
-            <p class="no-orders">No hay pedidos aprobados</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>📦 En Preparación</h4>
-          <div class="logistics-orders" id="admin-preparacionOrders">
-            <p class="no-orders">No hay pedidos en preparación</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>🚚 Listo para Retiro/Despacho</h4>
-          <div class="logistics-orders" id="admin-listoOrders">
-            <p class="no-orders">No hay pedidos listos</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>🚛 Despachada</h4>
-          <div class="logistics-orders" id="admin-despachadaOrders">
-            <p class="no-orders">No hay pedidos despachados</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>✅ Entregada</h4>
-          <div class="logistics-orders" id="admin-entregadaOrders">
-            <p class="no-orders">No hay pedidos entregados</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>🔒 Cerrada</h4>
-          <div class="logistics-orders" id="admin-cerradaOrders">
-            <p class="no-orders">No hay pedidos cerrados</p>
-          </div>
-        </div>
-
-        <div class="logistics-section">
-          <h4>❌ Cancelada</h4>
-          <div class="logistics-orders" id="admin-canceladaOrders">
-            <p class="no-orders">No hay pedidos cancelados</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  -->
+    <!-- MASTER tab content MOVIDO A marketplace.html -->
 
   <!-- Admisiones Content -->
-  <div id="admisiones-content" class="tab-content" style="display: none;">
+  <div id="admisiones-content" class="tab-content">
     <h2>👥 Gestión de Admisiones</h2>
     <div class="admin-section">
       <p style="color: #888; margin-bottom: 20px;">Usuarios pendientes de aprobación. Aprueba usuarios y asigna roles.</p>
@@ -7926,7 +7702,7 @@
               if (window.loadSellers) {
                 window.loadSellers();
               }
-            }, 100);
+            }, 300); // Aumentado de 100ms a 300ms para dar tiempo cuando se carga desde URL
           } else if (tabId === 'clientes') {
             setTimeout(() => {
               // Load sellers first to populate dropdown, then load clients
@@ -7939,7 +7715,7 @@
                   window.loadClients();
                 });
               }
-            }, 100);
+            }, 300); // Aumentado de 100ms a 300ms para dar tiempo cuando se carga desde URL
           } else if (tabId === 'master') {
             console.log('🎯 [MASTER TAB] Switching to Master tab, window.isUserAdmin:', window.isUserAdmin);
             setTimeout(() => {
@@ -7956,7 +7732,7 @@
               if (window.loadPendingUsers) {
                 window.loadPendingUsers();
               }
-            }, 100);
+            }, 300); // Aumentado de 100ms a 300ms para dar tiempo cuando se carga desde URL
           }
         });
 

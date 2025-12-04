@@ -225,35 +225,6 @@
     header { padding: 16px; border-bottom: 1px solid #2a2a2a; background: #121214; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; }
     .header-logo { height: auto; max-width: 195px; width: 100%; object-fit: contain; position: absolute; left: 80px; }
     h1 { margin: 0; font-size: 20px; color: #fafafa; }
-    .header-stats {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .header-stat-card {
-      text-align: center;
-      padding: 12px 20px;
-      background: #15151a;
-      border-radius: 8px;
-      border: 1px solid #2a2a2a;
-      min-width: 120px;
-    }
-
-    .header-stat-number {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #4CAF50;
-      margin-bottom: 4px;
-    }
-
-    .header-stat-label {
-      font-size: 0.85em;
-      color: #b5b5b5;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
 
     /* Notifications Bell */
     .notifications-container {
@@ -291,7 +262,7 @@
 
     .notifications-badge {
       position: absolute;
-      top: -4px;
+      bottom: -4px;
       right: -4px;
       background: #f44336;
       color: white;
@@ -1114,8 +1085,64 @@
     .menu-version:hover {
       color: #4CAF50;
     }
-    
-    
+
+    /* === CONFIG SUBMENU === */
+    .menu-btn-with-submenu {
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .submenu-arrow {
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-btn-with-submenu.active .submenu-arrow {
+      transform: rotate(90deg);
+    }
+
+    .config-submenu {
+      background: #1e1e26;
+      border-left: 3px solid #4CAF50;
+      margin-left: 20px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease, margin-bottom 0.3s ease;
+    }
+
+    .config-submenu.active {
+      max-height: 300px;
+    }
+
+    .submenu-btn {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      color: #d0d0d0;
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      text-align: left;
+      border-bottom: 1px solid #2a2a33;
+    }
+
+    .submenu-btn:last-child {
+      border-bottom: none;
+    }
+
+    .submenu-btn:hover {
+      background: #2a2a33;
+      color: #4CAF50;
+      padding-left: 25px;
+    }
+
+
     /* === CONFIG SECTION === */
     .menu-content h4 {
       color: #4CAF50;
@@ -3645,20 +3672,6 @@
       </div>
     </div>
 
-    <div class="header-stats" id="headerStats">
-      <div class="header-stat-card" id="headerTotalProducts">
-        <div class="header-stat-number">0</div>
-        <div class="header-stat-label">PRODUCTOS</div>
-      </div>
-      <div class="header-stat-card" id="headerStockTeorico">
-        <div class="header-stat-number">0</div>
-        <div class="header-stat-label">STOCK</div>
-      </div>
-      <div class="header-stat-card" id="headerStockTransito">
-        <div class="header-stat-number">0</div>
-        <div class="header-stat-label">TRÁNSITO</div>
-      </div>
-    </div>
   </header>
 
   <div class="container">
@@ -4120,18 +4133,31 @@
       </div>
       
       <div class="menu-sections">
-        <button class="menu-btn" id="profileModalBtn">
-          PROFILE
-        </button>
         <button class="menu-btn" id="historialModalBtn">
           HISTORIAL
         </button>
         <button class="menu-btn" id="logisticsModalBtn" style="display: none;">
           SEGUIMIENTO
         </button>
-        <button class="menu-btn" id="adminBtn" style="display: none;">
-          ADMIN
+        <button class="menu-btn menu-btn-with-submenu" id="configBtn" style="display: none;">
+          CONFIG
+          <span class="submenu-arrow">›</span>
         </button>
+        <!-- Submenú de CONFIG -->
+        <div class="config-submenu" id="configSubmenu" style="display: none;">
+          <button class="submenu-btn" id="configProfileBtn">
+            PROFILE
+          </button>
+          <button class="submenu-btn" id="configAdmisionesBtn">
+            ADMISIONES
+          </button>
+          <button class="submenu-btn" id="configClienteBtn">
+            CLIENTES
+          </button>
+          <button class="submenu-btn" id="configVendedorBtn">
+            VENDEDORES
+          </button>
+        </div>
         <button class="menu-btn" id="estadisticasBtn" style="display: none;">
           ESTADÍSTICAS
         </button>
@@ -4145,7 +4171,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.62
+          v0.64
         </div>
       </div>
       
@@ -5346,7 +5372,7 @@
             const statsModalBtn = document.getElementById('statsModalBtn');
             const historialModalBtn = document.getElementById('historialModalBtn');
             const logisticsModalBtn = document.getElementById('logisticsModalBtn');
-            const adminBtn = document.getElementById('adminBtn');
+            const configBtn = document.getElementById('configBtn');
             const estadisticasBtn = document.getElementById('estadisticasBtn');
 
             console.log('🔍 Elementos encontrados:');
@@ -5357,6 +5383,7 @@
             console.log('- statsModalBtn:', !!statsModalBtn);
             console.log('- historialModalBtn:', !!historialModalBtn);
             console.log('- logisticsModalBtn:', !!logisticsModalBtn);
+            console.log('- configBtn:', !!configBtn);
             
             if (!isAdmin) {
               console.log('🚫 Usuario NO-ADMIN: mostrando solo menú con historial');
@@ -5400,9 +5427,9 @@
                 historialModalBtn.style.display = 'block';
                 console.log('✅ HISTORIAL visible para usuario no-admin');
               }
-              if (adminBtn) {
-                adminBtn.style.display = 'none';
-                console.log('🚫 ADMIN ocultado para usuario no-admin');
+              if (configBtn) {
+                configBtn.style.display = 'none';
+                console.log('🚫 CONFIG ocultado para usuario no-admin');
               }
               if (estadisticasBtn) {
                 estadisticasBtn.style.display = 'none';
@@ -5455,9 +5482,9 @@
                 historialModalBtn.style.display = 'block';
                 console.log('✅ HISTORIAL visible');
               }
-              if (adminBtn) {
-                adminBtn.style.display = 'block';
-                console.log('✅ ADMIN visible para usuario admin');
+              if (configBtn) {
+                configBtn.style.display = 'block';
+                console.log('✅ CONFIG visible para usuario admin');
               }
               if (estadisticasBtn) {
                 estadisticasBtn.style.display = 'block';
@@ -6307,13 +6334,75 @@
         console.log('✅ Ayuda button handler added');
       }
 
-      const adminBtn = document.getElementById('adminBtn');
-      if (adminBtn) {
-        adminBtn.addEventListener('click', function() {
-          closeMenu();
-          window.location.href = 'Administration.html';
+      // CONFIG button - toggle submenu
+      const configBtn = document.getElementById('configBtn');
+      const configSubmenu = document.getElementById('configSubmenu');
+      if (configBtn && configSubmenu) {
+        configBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const isActive = configSubmenu.classList.contains('active');
+
+          if (isActive) {
+            configSubmenu.classList.remove('active');
+            configBtn.classList.remove('active');
+            configSubmenu.style.display = 'none';
+          } else {
+            configSubmenu.classList.add('active');
+            configBtn.classList.add('active');
+            configSubmenu.style.display = 'block';
+          }
         });
-        console.log('✅ Admin button handler added');
+        console.log('✅ Config button handler added');
+      }
+
+      // CONFIG submenu options
+      const configProfileBtn = document.getElementById('configProfileBtn');
+      if (configProfileBtn) {
+        configProfileBtn.addEventListener('click', function() {
+          closeMenu();
+          openModal('profileModal');
+          loadUserProfile();
+        });
+        console.log('✅ Config Profile button handler added');
+      }
+
+      const configClienteBtn = document.getElementById('configClienteBtn');
+      if (configClienteBtn) {
+        configClienteBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('🔄 Redirigiendo a CLIENTES...');
+          closeMenu();
+          // Redirect immediately
+          window.location.replace('Administration.html?tab=clientes');
+        });
+        console.log('✅ Config Cliente button handler added');
+      }
+
+      const configVendedorBtn = document.getElementById('configVendedorBtn');
+      if (configVendedorBtn) {
+        configVendedorBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('🔄 Redirigiendo a VENDEDORES...');
+          closeMenu();
+          // Redirect immediately
+          window.location.replace('Administration.html?tab=vendedor');
+        });
+        console.log('✅ Config Vendedor button handler added');
+      }
+
+      const configAdmisionesBtn = document.getElementById('configAdmisionesBtn');
+      if (configAdmisionesBtn) {
+        configAdmisionesBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('🔄 Redirigiendo a ADMISIONES...');
+          closeMenu();
+          // Redirect immediately
+          window.location.replace('Administration.html?tab=admisiones');
+        });
+        console.log('✅ Config Admisiones button handler added');
       }
 
       const estadisticasBtn = document.getElementById('estadisticasBtn');
@@ -6485,7 +6574,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, deleteDoc, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     // Firebase Storage removed - using only Firestore for photos
 
     // Configuración de Firebase
@@ -6524,7 +6613,9 @@
         orderBy,
         limit,
         getDocs,
-        deleteDoc
+        deleteDoc,
+        addDoc,
+        serverTimestamp
       },
       // Storage helpers removed - using only Firestore
       // Funciones de Auth que necesitamos
@@ -9811,6 +9902,11 @@
         }
 
         console.log(`Updated cart: ${itemId} = ${quantity}`);
+
+        // Actualizar totales en la tabla si existe la función
+        if (typeof window.updateTotalsRow === 'function') {
+          window.updateTotalsRow();
+        }
       }
 
       // ========================================
