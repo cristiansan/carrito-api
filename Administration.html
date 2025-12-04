@@ -1862,6 +1862,7 @@
       <div class="mdc-tab-scroller">
         <div class="mdc-tab-scroller__scroll-area">
           <div class="mdc-tab-scroller__scroll-content">
+            <!-- MOVIDO A marketplace.html
             <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-tab="precios">
               <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">Precios</span>
@@ -1871,11 +1872,12 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
-            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="clientes">
+            -->
+            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" data-tab="clientes">
               <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">Clientes</span>
               </span>
-              <span class="mdc-tab-indicator">
+              <span class="mdc-tab-indicator mdc-tab-indicator--active">
                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
               </span>
               <span class="mdc-tab__ripple"></span>
@@ -1889,6 +1891,7 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <!-- MOVIDO A marketplace.html
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="master">
               <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">Master</span>
@@ -1898,6 +1901,7 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            -->
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="admisiones">
               <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">Admisiones</span>
@@ -1924,6 +1928,7 @@
     </div>
 
     <!-- Tab Contents -->
+    <!-- MOVIDO A marketplace.html
     <div id="precios-content" class="tab-content">
       <h2>💰 Gestión de Precios</h2>
       <div class="admin-section">
@@ -1977,8 +1982,9 @@
 
       </div>
     </div>
+    -->
 
-    <div id="clientes-content" class="tab-content" style="display: none;">
+    <div id="clientes-content" class="tab-content">
       <h2>👥 Gestión de Clientes</h2>
 
       <!-- Estadísticas resumen -->
@@ -2116,6 +2122,7 @@
       </div>
     </div>
 
+    <!-- MOVIDO A marketplace.html
     <div id="master-content" class="tab-content" style="display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="margin: 0;">📋 Seguimiento de Pedidos - Admin</h2>
@@ -2265,6 +2272,7 @@
       </div>
     </div>
   </div>
+  -->
 
   <!-- Admisiones Content -->
   <div id="admisiones-content" class="tab-content" style="display: none;">
@@ -7237,7 +7245,10 @@
           const pendingUsers = [];
           querySnapshot.forEach((doc) => {
             const user = doc.data();
-            if (user.approved === false || user.role === 'pending') {
+            // Excluir usuarios cuya revisión fue cancelada
+            const isCancelledReview = user.reviewCancelled === true;
+
+            if (!isCancelledReview && (user.approved === false || user.role === 'pending')) {
               pendingUsers.push({ id: doc.id, ...user });
             }
           });
@@ -7721,31 +7732,46 @@
        * @param {string} userId - ID del usuario en Firestore
        * @version 0.39
        */
-      function cancelUserReview(userId) {
+      async function cancelUserReview(userId) {
         // Buscar el elemento padre que contiene toda la tarjeta del usuario
         const userCard = document.querySelector(`button[onclick*="'${userId}'"]`)?.closest('.admin-section');
 
         if (userCard) {
-          // Ocultar la tarjeta con una animación suave
-          userCard.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-          userCard.style.opacity = '0';
-          userCard.style.transform = 'translateX(-20px)';
+          try {
+            // Actualizar Firestore para marcar el usuario como cancelado
+            const { doc, updateDoc, serverTimestamp } = firebase.firestoreHelpers;
+            const db = firebase.firestore();
+            const userRef = doc(db, 'usuarios', userId);
 
-          setTimeout(() => {
-            userCard.style.display = 'none';
+            await updateDoc(userRef, {
+              reviewCancelled: true,
+              reviewCancelledAt: serverTimestamp()
+            });
 
-            // Verificar si quedan usuarios pendientes visibles
-            const pendingUsersList = document.getElementById('pendingUsersList');
-            const visibleCards = pendingUsersList.querySelectorAll('.admin-section[style*="display: none"]').length;
-            const totalCards = pendingUsersList.querySelectorAll('.admin-section').length;
+            // Ocultar la tarjeta con una animación suave
+            userCard.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+            userCard.style.opacity = '0';
+            userCard.style.transform = 'translateX(-20px)';
 
-            if (visibleCards === totalCards) {
-              // Si todos están ocultos, mostrar mensaje de "no hay usuarios pendientes"
-              document.getElementById('noPendingUsers').style.display = 'block';
-            }
-          }, 300);
+            setTimeout(() => {
+              userCard.style.display = 'none';
 
-          console.log(`🚫 Revisión de usuario ${userId} cancelada (usuario oculto)`);
+              // Verificar si quedan usuarios pendientes visibles
+              const pendingUsersList = document.getElementById('pendingUsersList');
+              const visibleCards = pendingUsersList.querySelectorAll('.admin-section[style*="display: none"]').length;
+              const totalCards = pendingUsersList.querySelectorAll('.admin-section').length;
+
+              if (visibleCards === totalCards) {
+                // Si todos están ocultos, mostrar mensaje de "no hay usuarios pendientes"
+                document.getElementById('noPendingUsers').style.display = 'block';
+              }
+            }, 300);
+
+            console.log(`✅ Revisión de usuario ${userId} cancelada y guardada en Firestore`);
+          } catch (error) {
+            console.error('❌ Error al cancelar revisión:', error);
+            alert('Error al cancelar la revisión. Por favor, intenta nuevamente.');
+          }
         }
       }
 
@@ -7933,6 +7959,20 @@
             }, 100);
           }
         });
+
+        // Check URL for tab parameter and activate that tab
+        const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+        if (tabParam) {
+          console.log(`🔗 URL parameter detected: tab=${tabParam}`);
+          // Find the tab index by data-tab attribute
+          const tabs = tabBar.querySelectorAll('.mdc-tab');
+          const tabIndex = Array.from(tabs).findIndex(tab => tab.getAttribute('data-tab') === tabParam);
+          if (tabIndex !== -1) {
+            console.log(`✅ Activating tab: ${tabParam} (index ${tabIndex})`);
+            mdcTabBar.activateTab(tabIndex);
+          }
+        }
       }
 
       // === PRODUCT PRICING EVENT LISTENERS ===

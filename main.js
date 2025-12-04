@@ -880,6 +880,9 @@ function handleTabClick(segmentOrEvent) {
 // Make handleTabClick available globally for Material Design tabs
 window.handleTabClick = handleTabClick;
 
+// Make renderRows available globally for view mode changes
+window.renderRows = renderRows;
+
 function setupAutoRefresh() {
   const checkbox = document.getElementById('autoToggle');
   const apply = () => {

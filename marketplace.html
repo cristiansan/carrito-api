@@ -620,12 +620,12 @@
     }
     .close-button {
       color: #aaa;
-      float: right;
+      float: left;
       font-size: 28px;
       font-weight: bold;
       position: absolute;
       top: 10px;
-      right: 20px;
+      left: 20px;
       cursor: pointer;
     }
     .close-button:hover,
@@ -1215,27 +1215,70 @@
       background: #5a6268;
     }
     
+    /* Ensure grid is completely hidden when not in use */
+    #productsGrid[style*="display: none"],
+    #productsGrid.grid-hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      position: absolute !important;
+      z-index: -1 !important;
+      pointer-events: none !important;
+    }
+
     /* === STATS SECTION === */
     .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 15px;
-      margin-bottom: 25px;
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+      gap: 16px !important;
+      margin-bottom: 24px !important;
+      width: 100% !important;
     }
-    
+
+    #master-content .stats-grid,
+    .stats-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+      gap: 16px !important;
+    }
+
+    #master-content .stat-item,
     .stat-item {
-      background: #2a2a2f;
-      padding: 15px;
-      border-radius: 6px;
-      border-left: 3px solid #4CAF50;
+      text-align: center !important;
+      background: #2a2a33 !important;
+      padding: 16px !important;
+      border-radius: 6px !important;
+      border: 1px solid #3a3a44 !important;
+      list-style: none !important;
+      min-height: 80px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
     }
-    
+
+    #master-content .stat-number,
+    .stat-number {
+      display: block !important;
+      font-size: 24px !important;
+      font-weight: bold !important;
+      color: #4CAF50 !important;
+      margin-bottom: 4px !important;
+      line-height: 1.2 !important;
+    }
+
+    #master-content .stat-label,
     .stat-label {
-      color: #b5b5b5;
-      font-size: 12px;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      display: block !important;
+      font-size: 12px !important;
+      color: #b5b5b5 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      line-height: 1.4 !important;
+      margin: 0 !important;
     }
     
     .stat-value {
@@ -1862,6 +1905,161 @@
       text-align: center;
       padding: 20px;
       margin: 0;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a33;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .order-info {
+      flex: 1;
+    }
+
+    .order-number {
+      font-weight: 600;
+      color: #4CAF50;
+      margin-bottom: 4px;
+    }
+
+    .order-details {
+      font-size: 12px;
+      color: #b5b5b5;
+    }
+
+    .editable-client, .editable-seller {
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      color: #4CAF50;
+      font-weight: 500;
+    }
+
+    .editable-client:hover, .editable-seller:hover {
+      background-color: rgba(76, 175, 80, 0.1);
+      border-color: #4CAF50;
+      transform: scale(1.02);
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .move-order-btn {
+      background: #4CAF50 !important;
+      border: none !important;
+      color: white !important;
+      padding: 8px 16px !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      font-size: 13px !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      display: inline-block !important;
+      min-width: 120px !important;
+      text-align: center !important;
+      line-height: 1.4 !important;
+    }
+
+    .move-order-btn:hover {
+      background: #45a049 !important;
+      transform: translateY(-2px) !important;
+    }
+
+    .move-order-btn-up {
+      background: #FF9800 !important;
+      border: none !important;
+      color: white !important;
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 50% !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 16px !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .move-order-btn-up:hover {
+      background: #F57C00 !important;
+      transform: translateY(-2px) !important;
+    }
+
+    .cancel-order-btn {
+      background: #F44336 !important;
+      border: none !important;
+      color: white !important;
+      padding: 6px 12px !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      font-size: 12px !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      display: inline-block !important;
+    }
+
+    .cancel-order-btn:hover {
+      background: #d32f2f !important;
+    }
+
+    .edit-order-btn {
+      background: #FF9800 !important;
+      border: none !important;
+      color: white !important;
+      padding: 6px 12px !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      font-size: 12px !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      display: inline-block !important;
+    }
+
+    .edit-order-btn:hover {
+      background: #F57C00 !important;
+    }
+
+    .delivered-status {
+      color: #4CAF50 !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      background: rgba(76, 175, 80, 0.15) !important;
+      padding: 6px 12px !important;
+      border-radius: 4px !important;
+      display: inline-block !important;
+      border: 1px solid #4CAF50 !important;
+    }
+
+    .closed-status {
+      color: #9E9E9E !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      background: rgba(158, 158, 158, 0.15) !important;
+      padding: 6px 12px !important;
+      border-radius: 4px !important;
+      display: inline-block !important;
+      border: 1px solid #9E9E9E !important;
+    }
+
+    .cancelled-status {
+      color: #F44336 !important;
+      font-size: 13px !important;
+      font-weight: bold !important;
+      background: rgba(244, 67, 54, 0.15) !important;
+      padding: 6px 12px !important;
+      border-radius: 4px !important;
+      display: inline-block !important;
+      border: 1px solid #F44336 !important;
     }
 
     /* Photo Upload Styles */
@@ -3504,6 +3702,24 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="precios" data-admin-only="true" style="display: none;">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">PRECIOS</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="master" data-admin-only="true" style="display: none;">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">MASTER</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -3609,6 +3825,211 @@
       <button class="column-toggle-btn" data-toggle="transito">
         <span>+</span> Tránsito
       </button>
+    </div>
+
+    <!-- PRECIOS TAB CONTENT (moved from Administration.html) -->
+    <div id="precios-content" class="tab-content" style="display: none;">
+      <h2>💰 Gestión de Precios</h2>
+      <div class="admin-section">
+        <div class="prices-header">
+          <h3>Lista de Productos y Precios</h3>
+          <div class="prices-actions-buttons">
+            <button class="mdc-button mdc-button--outlined" id="importPricesBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">upload_file</i>
+              <span class="mdc-button__label">Importar Precios</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="exportCsvBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+              <span class="mdc-button__label">Exportar CSV</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="exportExcelBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+              <span class="mdc-button__label">Exportar Excel</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" id="saveAllPricesBtn" style="display: none;">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+              <span class="mdc-button__label">Guardar Todos los Precios</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="loadProductsBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+              <span class="mdc-button__label">Actualizar Productos</span>
+            </button>
+          </div>
+          <input type="file" id="pricesFileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+        </div>
+
+        <!-- Botón toggle para columna Artículo en móvil -->
+        <div class="mobile-articulo-toggle">
+          <button class="articulo-toggle-btn" id="articuloToggleBtn">
+            <span>+</span> Artículo
+          </button>
+        </div>
+
+        <div id="productsContainer">
+          <div class="loading-products">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Cargando productos...</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MASTER TAB CONTENT (moved from Administration.html) -->
+    <div id="master-content" class="tab-content" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">📋 Seguimiento de Pedidos - Admin</h2>
+        <div style="display: flex; gap: 10px;">
+          <button class="mdc-button mdc-button--outlined" id="refreshOrdersBtn">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+            <span class="mdc-button__label">Actualizar</span>
+          </button>
+          <button class="mdc-button mdc-button--outlined" id="exportOrdersBtn" style="background-color: #4CAF50; color: white;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+            <span class="mdc-button__label">Exportar Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; align-items: center; background: #2a2a32; padding: 15px; border-radius: 8px;">
+          <i class="material-icons" style="color: #4CAF50;">search</i>
+          <input
+            type="text"
+            id="orderSearchInput"
+            placeholder="Buscar por número de orden, número de cliente o nombre de cliente..."
+            style="flex: 1; background: #1e1e24; border: 1px solid #3a3a42; color: #fff; padding: 12px; border-radius: 4px; font-size: 14px; outline: none;"
+          />
+          <button
+            id="clearSearchBtn"
+            class="mdc-button mdc-button--outlined"
+            style="display: none; min-width: auto; padding: 8px 16px;"
+          >
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">clear</i>
+            <span class="mdc-button__label">Limpiar</span>
+          </button>
+        </div>
+        <div id="searchResultsCount" style="margin-top: 8px; color: #888; font-size: 13px; display: none;"></div>
+      </div>
+
+      <div class="stats-grid" style="margin-bottom: 24px;">
+        <div class="stat-item">
+          <span class="stat-number" id="totalOrders">0</span>
+          <span class="stat-label">Total Órdenes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="borradorOrders">0</span>
+          <span class="stat-label">Borrador</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="revisionOrders">0</span>
+          <span class="stat-label">En Revisión</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="aprobadaOrders">0</span>
+          <span class="stat-label">Aprobadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="preparacionOrders">0</span>
+          <span class="stat-label">En Preparación</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="listoOrders">0</span>
+          <span class="stat-label">Listo para Despacho</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="despachadaOrders">0</span>
+          <span class="stat-label">Despachadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="entregadaOrders">0</span>
+          <span class="stat-label">Entregadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="cerradaOrders">0</span>
+          <span class="stat-label">Cerradas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="canceladaOrders">0</span>
+          <span class="stat-label">Canceladas</span>
+        </div>
+      </div>
+
+      <div class="logistics-content">
+        <div class="logistics-section">
+          <h4>📝 Borrador</h4>
+          <div class="logistics-orders" id="admin-borradorOrders">
+            <p class="no-orders">No hay pedidos en borrador</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🔍 En Revisión</h4>
+          <div class="logistics-orders" id="admin-revisionOrders">
+            <p class="no-orders">No hay pedidos en revisión</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>✅ Aprobada</h4>
+          <div class="logistics-orders" id="admin-aprobadaOrders">
+            <p class="no-orders">No hay pedidos aprobados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>📦 En Preparación</h4>
+          <div class="logistics-orders" id="admin-preparacionOrders">
+            <p class="no-orders">No hay pedidos en preparación</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚚 Listo para Retiro/Despacho</h4>
+          <div class="logistics-orders" id="admin-listoOrders">
+            <p class="no-orders">No hay pedidos listos</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚛 Despachada</h4>
+          <div class="logistics-orders" id="admin-despachadaOrders">
+            <p class="no-orders">No hay pedidos despachados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>✅ Entregada</h4>
+          <div class="logistics-orders" id="admin-entregadaOrders">
+            <p class="no-orders">No hay pedidos entregados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🔒 Cerrada</h4>
+          <div class="logistics-orders" id="admin-cerradaOrders">
+            <p class="no-orders">No hay pedidos cerrados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>❌ Cancelada</h4>
+          <div class="logistics-orders" id="admin-canceladaOrders">
+            <p class="no-orders">No hay pedidos cancelados</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Table View Container -->
@@ -5042,6 +5463,13 @@
                 estadisticasBtn.style.display = 'block';
                 console.log('✅ ESTADÍSTICAS visible para usuario admin');
               }
+
+              // Mostrar tabs de admin (PRECIOS y MASTER)
+              const adminTabs = document.querySelectorAll('[data-admin-only="true"]');
+              adminTabs.forEach(tab => {
+                tab.style.display = 'inline-flex';
+              });
+              console.log('✅ Tabs de admin (PRECIOS, MASTER) mostradas');
 
             }
           };
@@ -7947,14 +8375,95 @@
       if (tabBar) {
         const mdcTabBar = mdc.tabBar.MDCTabBar.attachTo(tabBar);
 
+        // Note: Admin tabs visibility is now handled in applyControlsVisibility()
+        // which is called after user permissions are verified
+
         // Handle tab activation
         mdcTabBar.listen('MDCTabBar:activated', (event) => {
           const tab = tabBar.querySelectorAll('.mdc-tab')[event.detail.index];
           const segment = tab.getAttribute('data-segment');
+          const tabId = tab.getAttribute('data-tab');
 
-          // Trigger the existing tab functionality
-          if (window.handleTabClick) {
-            window.handleTabClick(segment);
+          // Handle admin tabs (PRECIOS, MASTER)
+          if (tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+              content.style.display = 'none';
+            });
+
+            // Hide marketplace specific containers
+            const tableView = document.getElementById('tableViewContainer');
+            const gridView = document.getElementById('productsGrid');
+            if (tableView) tableView.style.display = 'none';
+            if (gridView) gridView.style.display = 'none';
+
+            // Hide view mode selector (table/list/grid buttons)
+            const viewModeSelector = document.querySelector('.view-mode-selector');
+            if (viewModeSelector) viewModeSelector.style.display = 'none';
+
+            // Hide mobile column toggles
+            const mobileColumnToggles = document.querySelector('.mobile-column-toggles');
+            if (mobileColumnToggles) mobileColumnToggles.style.display = 'none';
+
+            // Hide Add to Cart button
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            if (addToCartBtn) addToCartBtn.style.display = 'none';
+
+            // Hide filter checkboxes
+            const filterCheckboxes = document.getElementById('filterCheckboxes');
+            if (filterCheckboxes) filterCheckboxes.style.display = 'none';
+
+            // Hide error box
+            const errorBox = document.getElementById('errorBox');
+            if (errorBox) errorBox.style.display = 'none';
+
+            // Show the selected admin tab content
+            const content = document.getElementById(tabId + '-content');
+            if (content) {
+              content.style.display = 'block';
+              console.log(`📋 Showing admin tab: ${tabId}`);
+
+              // Load tab-specific data
+              if (tabId === 'precios' && window.loadProducts) {
+                window.loadProducts();
+              } else if (tabId === 'master' && window.loadOrders) {
+                window.loadOrders();
+              }
+            }
+          }
+          // Handle marketplace segment tabs (all, iphone, macbooks, samsung)
+          else if (segment) {
+            // Hide all admin tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+              content.style.display = 'none';
+            });
+
+            // Show marketplace containers based on current view mode
+            switchView(currentViewMode);
+
+            // Show view mode selector (table/list/grid buttons)
+            const viewModeSelector = document.querySelector('.view-mode-selector');
+            if (viewModeSelector) viewModeSelector.style.display = 'flex';
+
+            // Show mobile column toggles
+            const mobileColumnToggles = document.querySelector('.mobile-column-toggles');
+            if (mobileColumnToggles) mobileColumnToggles.style.display = '';
+
+            // Show Add to Cart button
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            if (addToCartBtn) addToCartBtn.style.display = '';
+
+            // Show filter checkboxes
+            const filterCheckboxes = document.getElementById('filterCheckboxes');
+            if (filterCheckboxes) filterCheckboxes.style.display = '';
+
+            // Error box stays hidden by default
+            // (will be shown only when needed)
+
+            // Trigger the existing tab functionality
+            if (window.handleTabClick) {
+              window.handleTabClick(segment);
+            }
           }
         });
       }
@@ -8966,26 +9475,13 @@
             switchView(newView);
             updateViewButtons();
 
-            // Re-render products in new view
-            const productsToRender = window.currentFilteredProducts || window.mappedStockData || [];
-            console.log('🔄 View changed to:', newView, '| Products available:', productsToRender.length);
-
-            if (productsToRender.length > 0) {
-              renderProductsInCurrentView(productsToRender);
+            // Re-render products in new view by calling renderRows from main.js
+            // This ensures all filters are applied correctly
+            console.log('🔄 View changed to:', newView);
+            if (typeof window.renderRows === 'function') {
+              window.renderRows();
             } else {
-              console.warn('⚠️ No products available yet. Waiting for data to load...');
-              // Retry after a short delay if data is not ready
-              const retryInterval = setInterval(() => {
-                const retryProducts = window.currentFilteredProducts || window.mappedStockData || [];
-                if (retryProducts.length > 0) {
-                  console.log('✅ Products now available, rendering...');
-                  renderProductsInCurrentView(retryProducts);
-                  clearInterval(retryInterval);
-                }
-              }, 100);
-
-              // Clear interval after 5 seconds to avoid infinite loop
-              setTimeout(() => clearInterval(retryInterval), 5000);
+              console.warn('⚠️ window.renderRows not available yet');
             }
           });
         });
@@ -9012,23 +9508,33 @@
         const mobileToggles = document.querySelector('.mobile-column-toggles');
 
         if (viewMode === 'table') {
-          // Show table, hide grid
-          tableContainer.style.display = '';
-          tableContainer.classList.add('active');
-          gridContainer.style.display = 'none';
-          gridContainer.classList.remove('active');
+          // Show table, hide grid completely
+          if (tableContainer) {
+            tableContainer.style.display = '';
+            tableContainer.classList.add('active');
+          }
+          if (gridContainer) {
+            gridContainer.style.display = 'none';
+            gridContainer.classList.remove('active');
+            gridContainer.classList.add('grid-hidden'); // Add hidden class for complete hiding
+            gridContainer.innerHTML = ''; // Clear grid content when switching to table
+          }
           if (mobileToggles) mobileToggles.style.display = 'flex';
         } else {
           // Hide table, show grid
-          tableContainer.style.display = 'none';
-          tableContainer.classList.remove('active');
-          gridContainer.style.display = ''; // Let CSS handle the display
-          gridContainer.classList.add('active');
+          if (tableContainer) {
+            tableContainer.style.display = 'none';
+            tableContainer.classList.remove('active');
+          }
+          if (gridContainer) {
+            gridContainer.style.display = '';
+            gridContainer.classList.add('active');
+            gridContainer.classList.remove('grid-hidden'); // Remove hidden class
+            // Apply view-specific class
+            gridContainer.className = 'view-container products-grid active';
+            gridContainer.classList.add(viewMode + '-view');
+          }
           if (mobileToggles) mobileToggles.style.display = 'none';
-
-          // Apply view-specific class
-          gridContainer.className = 'view-container products-grid active';
-          gridContainer.classList.add(viewMode + '-view');
         }
       }
 
@@ -9190,13 +9696,26 @@
 
       // Render products in the current view
       function renderProductsInCurrentView(products) {
+        const gridContainer = document.getElementById('productsGrid');
+
         if (currentViewMode === 'table') {
           // Table view is handled by main.js
+          // Make sure grid is completely hidden and cleared
+          if (gridContainer) {
+            gridContainer.style.display = 'none';
+            gridContainer.innerHTML = ''; // Clear grid content
+            gridContainer.classList.remove('active');
+            gridContainer.classList.add('grid-hidden'); // Add hidden class
+          }
           return;
         }
 
-        const gridContainer = document.getElementById('productsGrid');
         if (!gridContainer) return;
+
+        // Make sure grid is visible for non-table views
+        gridContainer.style.display = '';
+        gridContainer.classList.add('active');
+        gridContainer.classList.remove('grid-hidden'); // Remove hidden class
 
         // Clear existing content
         gridContainer.innerHTML = '';
@@ -9634,13 +10153,21 @@
         try {
           // Use Firebase helpers to query usuarios (Spanish collection name)
           const usersRef = window.firebase.firestoreHelpers.collection(db, 'usuarios');
-          const q = window.firebase.firestoreHelpers.query(
-            usersRef,
-            window.firebase.firestoreHelpers.where('approved', '==', false)
-          );
-          const pendingUsersSnapshot = await window.firebase.firestoreHelpers.getDocs(q);
+          const querySnapshot = await window.firebase.firestoreHelpers.getDocs(usersRef);
 
-          const pendingUsersCount = pendingUsersSnapshot.size;
+          // Filter on client side to exclude cancelled reviews
+          const pendingUsersDocs = [];
+          querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            const isCancelledReview = user.reviewCancelled === true;
+            const isPending = user.approved === false || user.role === 'pending';
+
+            if (!isCancelledReview && isPending) {
+              pendingUsersDocs.push(doc);
+            }
+          });
+
+          const pendingUsersCount = pendingUsersDocs.length;
 
           console.log(`👥 Usuarios pendientes encontrados: ${pendingUsersCount}`);
 
@@ -9651,7 +10178,7 @@
               title: 'Usuarios pendientes de aprobación',
               message: `${pendingUsersCount} usuario(s) esperando admisión`,
               count: pendingUsersCount,
-              data: pendingUsersSnapshot.docs,
+              data: pendingUsersDocs,
               action: 'pending-users'
             });
             console.log(`🔔 Notificación de usuarios pendientes agregada`);
@@ -9716,9 +10243,9 @@
             }, 2000);
           }
         } else if (action === 'pending-users') {
-          // Redirect to Administration page
-          console.log('🔄 Redirigiendo a Administration.html para revisar usuarios pendientes...');
-          window.location.href = 'Administration.html';
+          // Redirect to Administration page with admisiones tab active
+          console.log('🔄 Redirigiendo a Administration.html (Admisiones) para revisar usuarios pendientes...');
+          window.location.href = 'Administration.html?tab=admisiones';
         }
         closeNotifications();
       };
@@ -9777,6 +10304,3192 @@
         initNotifications();
       }
     })();
+  </script>
+
+  <!-- Admin Tabs JavaScript (PRECIOS and MASTER) - Moved from Administration.html -->
+  <script>
+    // Note: All the functions from Administration.html are already available globally
+    // as they are defined in the same scope. The tab switching logic above will call
+    // window.loadProducts() and window.loadOrders() when admin tabs are activated.
+
+    // Setup event listeners for PRECIOS tab buttons
+    document.addEventListener('DOMContentLoaded', () => {
+      // PRECIOS tab event listeners
+      const importPricesBtn = document.getElementById('importPricesBtn');
+      if (importPricesBtn) {
+        importPricesBtn.addEventListener('click', () => {
+          if (window.importPrices) {
+            window.importPrices();
+          }
+        });
+      }
+
+      const exportCsvBtn = document.getElementById('exportCsvBtn');
+      if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', () => {
+          if (window.exportPricesToCSV) {
+            window.exportPricesToCSV();
+          }
+        });
+      }
+
+      const exportExcelBtn = document.getElementById('exportExcelBtn');
+      if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', () => {
+          if (window.exportPricesToExcel) {
+            window.exportPricesToExcel();
+          }
+        });
+      }
+
+      const saveAllPricesBtn = document.getElementById('saveAllPricesBtn');
+      if (saveAllPricesBtn) {
+        saveAllPricesBtn.addEventListener('click', () => {
+          if (window.saveAllPrices) {
+            window.saveAllPrices();
+          }
+        });
+      }
+
+      const loadProductsBtn = document.getElementById('loadProductsBtn');
+      if (loadProductsBtn) {
+        loadProductsBtn.addEventListener('click', () => {
+          if (window.loadProducts) {
+            window.loadProducts();
+          }
+        });
+      }
+
+      const pricesFileInput = document.getElementById('pricesFileInput');
+      if (pricesFileInput) {
+        pricesFileInput.addEventListener('change', (event) => {
+          const file = event.target.files[0];
+          if (file && window.processPriceFile) {
+            window.processPriceFile(file);
+          }
+          // Reset file input so the same file can be selected again
+          event.target.value = '';
+        });
+      }
+
+      // MASTER tab event listeners
+      const refreshOrdersBtn = document.getElementById('refreshOrdersBtn');
+      if (refreshOrdersBtn) {
+        refreshOrdersBtn.addEventListener('click', () => {
+          if (window.loadOrders) {
+            window.loadOrders();
+          }
+        });
+      }
+
+      const exportOrdersBtn = document.getElementById('exportOrdersBtn');
+      if (exportOrdersBtn) {
+        exportOrdersBtn.addEventListener('click', () => {
+          if (window.exportOrders) {
+            window.exportOrders();
+          }
+        });
+      }
+
+      const orderSearchInput = document.getElementById('orderSearchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      if (orderSearchInput) {
+        orderSearchInput.addEventListener('input', (e) => {
+          const searchTerm = e.target.value.trim();
+          if (clearSearchBtn) {
+            clearSearchBtn.style.display = searchTerm ? 'inline-flex' : 'none';
+          }
+          if (window.displayOrders) {
+            window.displayOrders(searchTerm);
+          }
+        });
+      }
+
+      if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+          if (orderSearchInput) {
+            orderSearchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+          }
+          if (window.displayOrders) {
+            window.displayOrders('');
+          }
+        });
+      }
+
+      console.log('✅ Admin tabs event listeners initialized');
+
+    // === COPIED FUNCTIONS FROM ADMINISTRATION.HTML ===
+    // PRECIOS and MASTER tabs functions
+
+    let priceTableSort = {
+      column: 'articulo',
+      direction: 'asc'
+    };
+    // === PRODUCT PRICING FUNCTIONS ===
+
+    // Load products from API (same endpoint as used in main.js)
+    async function loadProducts() {
+      console.log('🚀 loadProducts called');
+      try {
+        // Check if we're already loading
+        if (window.productsLoading) {
+          console.log('⏳ Products already loading, skipping...');
+          return;
+        }
+
+        window.productsLoading = true;
+
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for products, waiting...');
+          window.productsLoading = false;
+          setTimeout(() => {
+            console.log('🔄 Retrying loadProducts after Firebase delay');
+            loadProducts();
+          }, 1000);
+          return;
+        }
+
+        console.log('📦 Cargando productos desde API...');
+
+        // Show loading state in button
+        const loadBtn = document.getElementById('loadProductsBtn');
+        const originalLoadText = loadBtn ? loadBtn.querySelector('.mdc-button__label').textContent : '';
+        if (loadBtn) {
+          loadBtn.querySelector('.mdc-button__label').innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px;"></div>Cargando...';
+          loadBtn.disabled = true;
+        }
+
+        // Show loading state
+        const container = document.getElementById('productsContainer');
+        container.innerHTML = `
+          <div class="loading-products">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Cargando productos desde la API...</p>
+            </div>
+          </div>
+        `;
+
+        // Use same API configuration as main.js
+        const API_BASE = '/api';
+        const AUTH_URL = `${API_BASE}/authenticate`;
+        const STOCK_URL = `${API_BASE}/stock`;
+
+        const CREDENTIALS = {
+          username: 'Api',
+          md5password: 'e10adc3949ba59abbe56e057f20f883e'
+        };
+
+        // Authenticate
+        const authResp = await fetch(AUTH_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(CREDENTIALS)
+        });
+
+        if (!authResp.ok) {
+          throw new Error(`Authentication failed (${authResp.status})`);
+        }
+
+        const authData = await authResp.json();
+        if (!authData.ok || !authData.token) {
+          throw new Error('Invalid authentication response');
+        }
+
+        // Fetch stock data
+        const query = new URLSearchParams({ format: 'JSON', ViewOption: 0 }).toString();
+        const stockResp = await fetch(`${STOCK_URL}?${query}`, {
+          headers: { Authorization: `Bearer ${authData.token}` }
+        });
+
+        if (!stockResp.ok) {
+          throw new Error(`Error fetching stock (${stockResp.status})`);
+        }
+
+        const stockData = await stockResp.json();
+        const products = Array.isArray(stockData) ? stockData : (stockData.data || stockData.list || []);
+
+        // Process and store products with existing prices
+        window.products = await processProductsWithPrices(products);
+
+        console.log('✅ Productos cargados:', window.products.length);
+        displayProducts();
+
+        // Restore button state
+        if (loadBtn) {
+          loadBtn.querySelector('.mdc-button__label').textContent = originalLoadText;
+          loadBtn.disabled = false;
+        }
+
+        // Reset loading flag
+        window.productsLoading = false;
+
+      } catch (error) {
+        console.error('❌ Error cargando productos:', error);
+
+        // Restore button state on error
+        const loadBtn = document.getElementById('loadProductsBtn');
+        const originalLoadText = loadBtn ? loadBtn.querySelector('.mdc-button__label').textContent.replace(/.*Cargando.../, 'Actualizar Productos') : 'Actualizar Productos';
+        if (loadBtn) {
+          loadBtn.querySelector('.mdc-button__label').textContent = originalLoadText;
+          loadBtn.disabled = false;
+        }
+
+        // Reset loading flag
+        window.productsLoading = false;
+
+        document.getElementById('productsContainer').innerHTML = `
+          <div class="no-products">
+            Error cargando productos: ${error.message}
+            <br><br>
+            <button class="mdc-button mdc-button--outlined" onclick="loadProducts()">
+              <span class="mdc-button__label">Reintentar</span>
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Process products and merge with existing price data from Firebase
+    async function processProductsWithPrices(rawProducts) {
+      const { collection, getDocs } = firebase.firestoreHelpers;
+      const db = firebase.firestore();
+
+      // Load existing prices from Firebase
+      const pricesCollection = collection(db, 'precios');
+      const pricesSnapshot = await getDocs(pricesCollection);
+
+      const existingPrices = new Map();
+      pricesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        existingPrices.set(data.articulo, {
+          id: doc.id,
+          precio1: data.precio1 || 0,
+          precio2: data.precio2 || 0,
+          precio3: data.precio3 || 0,
+          precio4: data.precio4 || 0
+        });
+      });
+
+      // Process and normalize product data
+      return rawProducts.map(raw => {
+        // Extract articulo and description using same logic as main.js
+        const articulo = getFirstExisting(raw, ['Artículo', 'Articulo', 'item', 'Item', 'Codigo', 'Código']) || '';
+        const description = getFirstExisting(raw, ['Descripción', 'Descripcion', 'description', 'Description', 'Detalle']) || '';
+
+        // Get existing prices or set defaults
+        const prices = existingPrices.get(articulo) || {
+          precio1: 0,
+          precio2: 0,
+          precio3: 0,
+          precio4: 0
+        };
+
+        return {
+          articulo,
+          description,
+          ...prices,
+          modified: false
+        };
+      }).filter(product => product.articulo && product.description); // Only include products with both fields
+    }
+
+    // Helper function from main.js for extracting fields
+    function normalizeKey(key) {
+      return String(key)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // quitar acentos
+        .replace(/[^a-z0-9]/g, '');
+    }
+
+    function getFirstExisting(row, candidateKeys) {
+      const normalizedMap = new Map();
+      for (const k of Object.keys(row || {})) {
+        normalizedMap.set(normalizeKey(k), k);
+      }
+      for (const c of candidateKeys) {
+        const nk = normalizeKey(c);
+        if (normalizedMap.has(nk)) {
+          const originalKey = normalizedMap.get(nk);
+          return row[originalKey];
+        }
+      }
+      return undefined;
+    }
+
+    // Display products in pricing table
+    function displayProducts() {
+      const container = document.getElementById('productsContainer');
+
+      if (!window.products || window.products.length === 0) {
+        container.innerHTML = `
+          <div class="no-products">
+            No se encontraron productos.
+            <br><br>
+            <button class="mdc-button mdc-button--outlined" onclick="loadProducts()">
+              <span class="mdc-button__label">Cargar Productos</span>
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Sort products based on current sort state
+      const sortedProducts = [...window.products].sort((a, b) => {
+        const col = priceTableSort.column;
+        const dir = priceTableSort.direction === 'asc' ? 1 : -1;
+        let aVal = a[col];
+        let bVal = b[col];
+
+        // Handle null/undefined values - push them to the end
+        if (aVal === null || aVal === undefined) return 1;
+        if (bVal === null || bVal === undefined) return -1;
+
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          return aVal.localeCompare(bVal, 'es', { numeric: true, sensitivity: 'base' }) * dir;
+        }
+
+        // Numeric comparison
+        const aNum = Number(aVal);
+        const bNum = Number(bVal);
+        return (aNum - bNum) * dir;
+      });
+
+      // Helper function to generate sort indicator
+      const getSortIndicator = (columnId) => {
+        if (priceTableSort.column === columnId) {
+          return priceTableSort.direction === 'asc' ? ' ▲' : ' ▼';
+        }
+        return ' ⇅';
+      };
+
+      // Helper function to get sorted class
+      const getSortedClass = (columnId) => {
+        return priceTableSort.column === columnId ? 'sorted' : '';
+      };
+
+      const productsHTML = `
+        <div class="price-stats">
+          <div class="price-stat">
+            Total productos: <span class="price-stat-number">${window.products.length}</span>
+          </div>
+          <div class="price-stat">
+            Con precios: <span class="price-stat-number">${window.products.filter(p => p.precio1 > 0 || p.precio2 > 0 || p.precio3 > 0 || p.precio4 > 0).length}</span>
+          </div>
+        </div>
+
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th class="sortable ${getSortedClass('articulo')}" data-sort="articulo">Artículo${getSortIndicator('articulo')}</th>
+              <th class="sortable ${getSortedClass('description')}" data-sort="description">Descripción${getSortIndicator('description')}</th>
+              <th class="sortable ${getSortedClass('precio1')}" data-sort="precio1">Precio 1${getSortIndicator('precio1')}</th>
+              <th class="sortable ${getSortedClass('precio2')}" data-sort="precio2">Precio 2${getSortIndicator('precio2')}</th>
+              <th class="sortable ${getSortedClass('precio3')}" data-sort="precio3">Precio 3${getSortIndicator('precio3')}</th>
+              <th class="sortable ${getSortedClass('precio4')}" data-sort="precio4">Precio 4${getSortIndicator('precio4')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedProducts.map(product => `
+              <tr data-articulo="${product.articulo}">
+                <td>
+                  <span class="product-code">${product.articulo}</span>
+                </td>
+                <td>
+                  <span class="product-description">${product.description}</span>
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio1"
+                         value="${product.precio1}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio2"
+                         value="${product.precio2}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio3"
+                         value="${product.precio3}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+                <td>
+                  <input type="number"
+                         class="price-input"
+                         data-articulo="${product.articulo}"
+                         data-price="precio4"
+                         value="${product.precio4}"
+                         step="0.01"
+                         min="0"
+                         placeholder="0.00">
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = productsHTML;
+
+      // Show save button
+      const saveBtn = document.getElementById('saveAllPricesBtn');
+      if (saveBtn) {
+        saveBtn.style.display = 'inline-flex';
+      }
+
+      // Add event listeners to price inputs
+      setupPriceInputListeners();
+
+      // Add event listeners to sortable headers
+      setupSortableHeaders();
+    }
+
+    // Setup event listeners for sortable table headers
+    function setupSortableHeaders() {
+      const sortableHeaders = document.querySelectorAll('.products-table th.sortable');
+      sortableHeaders.forEach(th => {
+        th.addEventListener('click', function() {
+          const column = this.dataset.sort;
+
+          if (priceTableSort.column === column) {
+            // Toggle direction if same column clicked
+            priceTableSort.direction = priceTableSort.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            // Set new column and default to ascending
+            priceTableSort.column = column;
+            priceTableSort.direction = 'asc';
+          }
+
+          // Re-render the table with new sort
+          displayProducts();
+        });
+      });
+    }
+
+    // Setup event listeners for price inputs
+    function setupPriceInputListeners() {
+      const priceInputs = document.querySelectorAll('.price-input');
+      priceInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          const articulo = this.dataset.articulo;
+          const priceField = this.dataset.price;
+          const value = parseFloat(this.value) || 0;
+
+          // Find and update the product in memory
+          const product = window.products.find(p => p.articulo === articulo);
+          if (product) {
+            product[priceField] = value;
+            product.modified = true;
+            this.classList.add('modified');
+          }
+        });
+
+        input.addEventListener('blur', function() {
+          // Format the value on blur
+          const value = parseFloat(this.value) || 0;
+          this.value = value.toFixed(2);
+        });
+      });
+    }
+
+    // Save all prices to Firebase
+    async function saveAllPrices() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          throw new Error('Firebase not available');
+        }
+
+        if (!window.products) {
+          throw new Error('No products loaded');
+        }
+
+        const { collection, doc, setDoc, updateDoc, addDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+        const pricesCollection = collection(db, 'precios');
+
+        console.log('💾 Guardando precios...');
+
+        // Show saving indicator
+        const saveBtn = document.getElementById('saveAllPricesBtn');
+        const originalText = saveBtn.querySelector('.mdc-button__label').textContent;
+        saveBtn.querySelector('.mdc-button__label').innerHTML = '<div class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px; margin-right: 8px;"></div>Guardando...';
+        saveBtn.disabled = true;
+
+        let savedCount = 0;
+
+        for (const product of window.products) {
+          const priceData = {
+            articulo: product.articulo,
+            description: product.description,
+            precio1: product.precio1 || 0,
+            precio2: product.precio2 || 0,
+            precio3: product.precio3 || 0,
+            precio4: product.precio4 || 0,
+            updatedAt: new Date()
+          };
+
+          if (product.id) {
+            // Update existing price record
+            const priceRef = doc(db, 'precios', product.id);
+            await updateDoc(priceRef, priceData);
+          } else {
+            // Create new price record
+            const docRef = await addDoc(pricesCollection, {
+              ...priceData,
+              createdAt: new Date()
+            });
+            product.id = docRef.id;
+          }
+
+          product.modified = false;
+          savedCount++;
+        }
+
+        // Remove modified styling from all inputs
+        document.querySelectorAll('.price-input.modified').forEach(input => {
+          input.classList.remove('modified');
+        });
+
+        console.log(`✅ Precios guardados: ${savedCount} productos`);
+        alert(`Precios guardados exitosamente para ${savedCount} productos`);
+
+        // Restore button
+        saveBtn.querySelector('.mdc-button__label').textContent = originalText;
+        saveBtn.disabled = false;
+
+      } catch (error) {
+        console.error('❌ Error guardando precios:', error);
+        alert('Error guardando precios. Inténtalo de nuevo.');
+
+        // Restore button
+        const saveBtn = document.getElementById('saveAllPricesBtn');
+        saveBtn.querySelector('.mdc-button__label').textContent = 'Guardar Todos los Precios';
+        saveBtn.disabled = false;
+      }
+    }
+
+    // Import prices from CSV/Excel file
+    async function importPrices() {
+      const fileInput = document.getElementById('pricesFileInput');
+      fileInput.click();
+    }
+
+    // Process imported price file
+    async function processPriceFile(file) {
+      try {
+        console.log('📁 Procesando archivo de precios:', file.name);
+
+        let data;
+        const fileName = file.name.toLowerCase();
+
+        if (fileName.endsWith('.csv')) {
+          data = await parseCSV(file);
+        } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+          data = await parseExcel(file);
+        } else {
+          throw new Error('Formato de archivo no soportado. Use CSV (.csv) o Excel (.xlsx, .xls)');
+        }
+
+        // Validate and process data
+        const processedPrices = validateAndProcessPriceData(data);
+
+        if (processedPrices.length === 0) {
+          throw new Error('No se encontraron datos válidos en el archivo');
+        }
+
+        // Show preview and confirm import
+        const confirmMessage = `¿Desea importar ${processedPrices.length} precios desde el archivo "${file.name}"?\n\nPrimeros 3 registros:\n${processedPrices.slice(0, 3).map(p => `• ${p.articulo}: ${p.description} (Precios: ${p.precio1}, ${p.precio2}, ${p.precio3}, ${p.precio4})`).join('\n')}`;
+
+        if (confirm(confirmMessage)) {
+          // Show progress
+          const container = document.getElementById('productsContainer');
+          container.innerHTML = `
+            <div class="loading-products">
+              <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>Importando ${processedPrices.length} precios...</p>
+              </div>
+            </div>
+          `;
+
+          await importPriceData(processedPrices);
+          alert(`✅ Precios importados exitosamente: ${processedPrices.length} registros`);
+
+          // Reload products to show updated prices (with small delay to ensure Firebase propagation)
+          setTimeout(() => {
+            if (window.loadProducts) {
+              console.log('🔄 Reloading products after import...');
+              window.loadProducts();
+            }
+          }, 500);
+        }
+
+      } catch (error) {
+        console.error('❌ Error importando precios:', error);
+        alert(`Error importando precios: ${error.message}`);
+      }
+    }
+
+    // Parse CSV file
+    function parseCSV(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+              const line = lines[i].trim();
+              if (!line) continue;
+
+              const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+              const row = {};
+              headers.forEach((header, index) => {
+                row[header] = values[index] || '';
+              });
+              data.push(row);
+            }
+            resolve(data);
+          } catch (error) {
+            reject(new Error('Error parsing CSV: ' + error.message));
+          }
+        };
+        reader.onerror = () => reject(new Error('Error reading file'));
+        reader.readAsText(file, 'UTF-8');
+      });
+    }
+
+    // Parse Excel file using SheetJS
+    function parseExcel(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            // Check if XLSX library is loaded
+            if (typeof XLSX === 'undefined') {
+              throw new Error('SheetJS library not loaded. Please refresh the page and try again.');
+            }
+
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            // Get first worksheet
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert to JSON
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+              header: 1, // Use first row as header
+              defval: '' // Default value for empty cells
+            });
+
+            if (jsonData.length < 2) {
+              throw new Error('El archivo Excel debe tener al menos una fila de encabezados y una fila de datos');
+            }
+
+            // Convert to same format as CSV parser
+            const headers = jsonData[0].map(h => String(h).trim());
+            const processedData = [];
+
+            for (let i = 1; i < jsonData.length; i++) {
+              const row = jsonData[i];
+              const rowObj = {};
+
+              headers.forEach((header, index) => {
+                rowObj[header] = row[index] ? String(row[index]).trim() : '';
+              });
+
+              // Skip empty rows
+              const hasData = Object.values(rowObj).some(value => value && value.trim());
+              if (hasData) {
+                processedData.push(rowObj);
+              }
+            }
+
+            console.log(`📊 Excel procesado: ${processedData.length} filas, Columnas: ${headers.join(', ')}`);
+            resolve(processedData);
+
+          } catch (error) {
+            reject(new Error('Error parsing Excel file: ' + error.message));
+          }
+        };
+
+        reader.onerror = () => reject(new Error('Error reading Excel file'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    // Validate and process price data
+    function validateAndProcessPriceData(data) {
+      const processedPrices = [];
+
+      for (const row of data) {
+        // Look for common column names (case insensitive)
+        const articulo = findColumnValue(row, ['articulo', 'codigo', 'item', 'article', 'code']);
+        const description = findColumnValue(row, ['descripcion', 'description', 'detalle', 'nombre', 'name']);
+        const precio1 = parseFloat(findColumnValue(row, ['precio1', 'precio_1', 'price1', 'price_1']) || 0);
+        const precio2 = parseFloat(findColumnValue(row, ['precio2', 'precio_2', 'price2', 'price_2']) || 0);
+        const precio3 = parseFloat(findColumnValue(row, ['precio3', 'precio_3', 'price3', 'price_3']) || 0);
+        const precio4 = parseFloat(findColumnValue(row, ['precio4', 'precio_4', 'price4', 'price_4']) || 0);
+
+        if (articulo && articulo.trim()) {
+          processedPrices.push({
+            articulo: articulo.trim(),
+            description: description ? description.trim() : '',
+            precio1,
+            precio2,
+            precio3,
+            precio4
+          });
+        }
+      }
+
+      return processedPrices;
+    }
+
+    // Helper function to find column value by different possible names
+    function findColumnValue(row, possibleNames) {
+      for (const name of possibleNames) {
+        for (const key in row) {
+          if (key.toLowerCase().includes(name.toLowerCase())) {
+            return row[key];
+          }
+        }
+      }
+      return null;
+    }
+
+    // Import price data to Firebase
+    async function importPriceData(pricesData) {
+      if (!window.firebase || !firebase.firestoreHelpers) {
+        throw new Error('Firebase not available');
+      }
+
+      const { collection, doc, setDoc, addDoc, getDocs, query, where } = firebase.firestoreHelpers;
+      const db = firebase.firestore();
+      const pricesCollection = collection(db, 'precios');
+
+      let importedCount = 0;
+      let updatedCount = 0;
+
+      for (const priceData of pricesData) {
+        try {
+          // Check if price record already exists
+          const q = query(pricesCollection, where('articulo', '==', priceData.articulo));
+          const existingDocs = await getDocs(q);
+
+          const dataToSave = {
+            articulo: priceData.articulo,
+            description: priceData.description,
+            precio1: priceData.precio1 || 0,
+            precio2: priceData.precio2 || 0,
+            precio3: priceData.precio3 || 0,
+            precio4: priceData.precio4 || 0,
+            updatedAt: new Date()
+          };
+
+          if (existingDocs.empty) {
+            // Create new price record
+            await addDoc(pricesCollection, {
+              ...dataToSave,
+              createdAt: new Date()
+            });
+            importedCount++;
+            console.log(`✅ Created price for: ${priceData.articulo}`);
+          } else {
+            // Update existing price record
+            const existingDoc = existingDocs.docs[0];
+            const priceRef = doc(db, 'precios', existingDoc.id);
+            await updateDoc(priceRef, dataToSave);
+            updatedCount++;
+            console.log(`✅ Updated price for: ${priceData.articulo}`);
+          }
+        } catch (error) {
+          console.warn('Error importing price for', priceData.articulo, error);
+        }
+      }
+
+      console.log(`✅ Importación completada: ${importedCount} nuevos, ${updatedCount} actualizados`);
+    }
+
+    // Export prices to CSV
+    function exportPricesToCSV() {
+      try {
+        if (!window.products || window.products.length === 0) {
+          alert('No hay productos cargados para exportar');
+          return;
+        }
+
+        // Prepare CSV data
+        const headers = ['Articulo', 'Descripcion', 'Precio1', 'Precio2', 'Precio3', 'Precio4'];
+        const csvData = [headers];
+
+        // Add product data
+        window.products.forEach(product => {
+          csvData.push([
+            product.articulo || '',
+            product.description || '',
+            product.precio1 || 0,
+            product.precio2 || 0,
+            product.precio3 || 0,
+            product.precio4 || 0
+          ]);
+        });
+
+        // Convert to CSV string
+        const csvContent = csvData.map(row =>
+          row.map(field => `"${String(field).replace(/"/g, '""')}"`)
+             .join(',')
+        ).join('\n');
+
+        // Create and download file
+        const fileName = `precios_${getCurrentDateString()}.csv`;
+        downloadFile(csvContent, fileName, 'text/csv;charset=utf-8;');
+
+        console.log(`✅ CSV exportado: ${window.products.length} productos`);
+        alert(`CSV exportado exitosamente: ${window.products.length} productos`);
+
+      } catch (error) {
+        console.error('❌ Error exportando CSV:', error);
+        alert('Error exportando CSV: ' + error.message);
+      }
+    }
+
+    // Export prices to Excel
+    function exportPricesToExcel() {
+      try {
+        if (!window.products || window.products.length === 0) {
+          alert('No hay productos cargados para exportar');
+          return;
+        }
+
+        // Check if XLSX library is loaded
+        if (typeof XLSX === 'undefined') {
+          alert('SheetJS library not loaded. Please refresh the page and try again.');
+          return;
+        }
+
+        // Prepare Excel data
+        const headers = ['Articulo', 'Descripcion', 'Precio1', 'Precio2', 'Precio3', 'Precio4'];
+        const excelData = [headers];
+
+        // Add product data
+        window.products.forEach(product => {
+          excelData.push([
+            product.articulo || '',
+            product.description || '',
+            product.precio1 || 0,
+            product.precio2 || 0,
+            product.precio3 || 0,
+            product.precio4 || 0
+          ]);
+        });
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+        // Set column widths
+        ws['!cols'] = [
+          { width: 15 }, // Articulo
+          { width: 40 }, // Descripcion
+          { width: 12 }, // Precio1
+          { width: 12 }, // Precio2
+          { width: 12 }, // Precio3
+          { width: 12 }  // Precio4
+        ];
+
+        // Format header row
+        const headerStyle = {
+          font: { bold: true, color: { rgb: "FFFFFF" } },
+          fill: { fgColor: { rgb: "4CAF50" } },
+          alignment: { horizontal: "center", vertical: "center" }
+        };
+
+        // Apply header style
+        for (let col = 0; col < headers.length; col++) {
+          const cellRef = XLSX.utils.encode_cell({ r: 0, c: col });
+          if (!ws[cellRef]) ws[cellRef] = { t: 's', v: '' };
+          ws[cellRef].s = headerStyle;
+        }
+
+        // Format price columns as currency
+        for (let row = 1; row <= window.products.length; row++) {
+          for (let col = 2; col < 6; col++) { // Columns C to F (Precio1-4)
+            const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+            if (ws[cellRef]) {
+              ws[cellRef].z = '#,##0.00';
+              ws[cellRef].t = 'n';
+            }
+          }
+        }
+
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Precios');
+
+        // Generate and download file
+        const fileName = `precios_${getCurrentDateString()}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        console.log(`✅ Excel exportado: ${window.products.length} productos`);
+        alert(`Excel exportado exitosamente: ${window.products.length} productos`);
+
+      } catch (error) {
+        console.error('❌ Error exportando Excel:', error);
+        alert('Error exportando Excel: ' + error.message);
+      }
+    }
+
+    // Helper function to get current date string
+    function getCurrentDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      return `${year}${month}${day}_${hours}${minutes}`;
+    }
+
+    // Helper function to download file
+    function downloadFile(content, fileName, contentType) {
+      const blob = new Blob([content], { type: contentType });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+
+    // Expose functions globally
+    window.loadProducts = loadProducts;
+    window.saveAllPrices = saveAllPrices;
+    window.importPrices = importPrices;
+    window.processPriceFile = processPriceFile;
+    window.exportPricesToCSV = exportPricesToCSV;
+    window.exportPricesToExcel = exportPricesToExcel;
+
+    // === ORDER MANAGEMENT FUNCTIONS ===
+
+    // Order status options - Sincronizado con SEGUIMIENTO
+    const ORDER_STATUS_OPTIONS = [
+      { value: 'borrador', label: 'BORRADOR', class: 'status-borrador' },
+      { value: 'revision', label: 'EN REVISIÓN', class: 'status-revision' },
+      { value: 'aprobada', label: 'APROBADA', class: 'status-aprobada' },
+      { value: 'preparacion', label: 'EN PREPARACIÓN', class: 'status-preparacion' },
+      { value: 'listo', label: 'LISTO PARA RETIRO/DESPACHO', class: 'status-listo' },
+      { value: 'despachada', label: 'DESPACHADA', class: 'status-despachada' },
+      { value: 'entregada', label: 'ENTREGADA', class: 'status-entregada' },
+      { value: 'cerrada', label: 'CERRADA', class: 'status-cerrada' },
+      { value: 'cancelada', label: 'CANCELADA', class: 'status-cancelada' }
+    ];
+
+    // Load orders from Firebase
+    async function loadOrders() {
+      try {
+        console.log('🔄 [MASTER] loadOrders() called');
+
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for orders, waiting...');
+          setTimeout(loadOrders, 1000);
+          return;
+        }
+
+        const { collection, getDocs, orderBy, query, updateDoc, doc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        console.log('📋 [MASTER] Cargando órdenes desde colección "pedidos"...');
+
+        const pedidosCollection = collection(db, 'pedidos');
+        const q = query(pedidosCollection, orderBy('timestamp', 'desc'));
+        const querySnapshot = await getDocs(q);
+
+        console.log(`📦 [MASTER] Query ejecutada, documentos encontrados: ${querySnapshot.size}`);
+
+        window.orders = [];
+        const updatePromises = [];
+
+        querySnapshot.forEach((docSnapshot) => {
+          const data = docSnapshot.data();
+          console.log(`📄 [MASTER] Procesando orden ${docSnapshot.id}:`, {
+            logisticsState: data.logisticsState,
+            numeroOrden: data.numeroOrden,
+            total: data.total
+          });
+
+          // Check if logisticsState exists, if not, set it to 'borrador'
+          if (!data.logisticsState) {
+            console.log(`🔄 Setting logisticsState to 'borrador' for order ${docSnapshot.id}`);
+            const orderRef = doc(db, 'pedidos', docSnapshot.id);
+            updatePromises.push(updateDoc(orderRef, { logisticsState: 'borrador' }));
+          }
+
+          window.orders.push({
+            id: docSnapshot.id,
+            ...data,
+            logisticsState: data.logisticsState || 'borrador', // Default state
+            // Convert timestamp to date string
+            fechaLocal: data.fechaLocal || (data.timestamp && data.timestamp.toDate ?
+              data.timestamp.toDate().toLocaleDateString('es-AR') : 'No date'),
+            fecha: data.fecha && data.fecha.toDate ? data.fecha.toDate().toISOString().split('T')[0] :
+                   data.timestamp && data.timestamp.toDate ? data.timestamp.toDate().toISOString().split('T')[0] :
+                   (data.fecha || new Date().toISOString().split('T')[0]),
+            modified: false
+          });
+        });
+
+        // Update orders that don't have logisticsState
+        if (updatePromises.length > 0) {
+          await Promise.all(updatePromises);
+          console.log(`✅ Updated ${updatePromises.length} orders with logisticsState`);
+        }
+
+        console.log('✅ [MASTER] Órdenes cargadas desde pedidos:', window.orders.length);
+        console.log('📊 [MASTER] Desglose por estado:', {
+          borrador: window.orders.filter(o => o.logisticsState === 'borrador').length,
+          revision: window.orders.filter(o => o.logisticsState === 'revision').length,
+          aprobada: window.orders.filter(o => o.logisticsState === 'aprobada').length,
+          preparacion: window.orders.filter(o => o.logisticsState === 'preparacion').length,
+          listo: window.orders.filter(o => o.logisticsState === 'listo').length,
+          despachada: window.orders.filter(o => o.logisticsState === 'despachada').length,
+          entregada: window.orders.filter(o => o.logisticsState === 'entregada').length,
+          cerrada: window.orders.filter(o => o.logisticsState === 'cerrada').length,
+          cancelada: window.orders.filter(o => o.logisticsState === 'cancelada').length
+        });
+
+        console.log('🎨 [MASTER] Llamando a displayOrders()...');
+        await displayOrders();
+
+        console.log('📊 [MASTER] Llamando a updateOrderStats()...');
+        updateOrderStats();
+
+      } catch (error) {
+        console.error('❌ [MASTER] Error cargando órdenes:', error);
+        const borradorContainer = document.getElementById('admin-borradorOrders');
+        if (borradorContainer) {
+          borradorContainer.innerHTML = `
+            <div class="no-orders">
+              Error cargando órdenes: ${error.message}
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Display orders in their respective sections (same as SEGUIMIENTO)
+    async function displayOrders(searchTerm = '') {
+      console.log('🎨 [MASTER] displayOrders() called with', window.orders?.length || 0, 'orders', searchTerm ? `(searching: "${searchTerm}")` : '');
+
+      const containers = {
+        borrador: document.getElementById('admin-borradorOrders'),
+        revision: document.getElementById('admin-revisionOrders'),
+        aprobada: document.getElementById('admin-aprobadaOrders'),
+        preparacion: document.getElementById('admin-preparacionOrders'),
+        listo: document.getElementById('admin-listoOrders'),
+        despachada: document.getElementById('admin-despachadaOrders'),
+        entregada: document.getElementById('admin-entregadaOrders'),
+        cerrada: document.getElementById('admin-cerradaOrders'),
+        cancelada: document.getElementById('admin-canceladaOrders')
+      };
+
+      // Check if all containers exist
+      const missingContainers = Object.entries(containers).filter(([key, val]) => !val).map(([key]) => key);
+      if (missingContainers.length > 0) {
+        console.error('❌ [MASTER] Admin MASTER containers not found:', missingContainers);
+        return;
+      }
+
+      console.log('✅ [MASTER] Todos los contenedores encontrados');
+
+      // Define state flow: bidirectional movement with prev and next
+      const stateFlow = {
+        borrador: { next: 'revision', prev: null },
+        revision: { next: 'aprobada', prev: 'borrador' },
+        aprobada: { next: 'preparacion', prev: 'revision' },
+        preparacion: { next: 'listo', prev: 'aprobada' },
+        listo: { next: 'despachada', prev: 'preparacion' },
+        despachada: { next: 'entregada', prev: 'listo' },
+        entregada: { next: 'cerrada', prev: 'despachada' },
+        cerrada: { next: null, prev: 'entregada' },
+        cancelada: { next: null, prev: null }
+      };
+
+      // Filter orders by search term if provided
+      let filteredOrders = window.orders;
+      if (searchTerm && searchTerm.trim()) {
+        const search = searchTerm.trim().toLowerCase();
+        filteredOrders = window.orders.filter(order => {
+          // Search by order number (manual or automatic)
+          const orderNumber = String(order.manualOrderNumber || order.numeroOrden || '').toLowerCase();
+          if (orderNumber.includes(search)) return true;
+
+          // Search by client name
+          const clientName = String(order.clienteNombre || '').toLowerCase();
+          if (clientName.includes(search)) return true;
+
+          // Search by client email (could contain client number)
+          const clientEmail = String(order.clienteEmail || '').toLowerCase();
+          if (clientEmail.includes(search)) return true;
+
+          // Search by user email
+          const userEmail = String(order.usuarioEmail || '').toLowerCase();
+          if (userEmail.includes(search)) return true;
+
+          // Search by client code (assuming it's in clienteData)
+          const clientCode = String(order.clienteData?.codigo || order.codigo || '').toLowerCase();
+          if (clientCode.includes(search)) return true;
+
+          return false;
+        });
+
+        // Update search results count
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        if (searchResultsCount) {
+          searchResultsCount.style.display = 'block';
+          searchResultsCount.textContent = `📊 Mostrando ${filteredOrders.length} de ${window.orders.length} órdenes`;
+        }
+
+        // Show clear button
+        const clearBtn = document.getElementById('clearSearchBtn');
+        if (clearBtn) clearBtn.style.display = 'flex';
+      } else {
+        // Hide search results count and clear button
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        if (searchResultsCount) searchResultsCount.style.display = 'none';
+
+        const clearBtn = document.getElementById('clearSearchBtn');
+        if (clearBtn) clearBtn.style.display = 'none';
+      }
+
+      // Separate orders by state
+      const ordersByState = {
+        borrador: filteredOrders.filter(order => order.logisticsState === 'borrador'),
+        revision: filteredOrders.filter(order => order.logisticsState === 'revision'),
+        aprobada: filteredOrders.filter(order => order.logisticsState === 'aprobada'),
+        preparacion: filteredOrders.filter(order => order.logisticsState === 'preparacion'),
+        listo: filteredOrders.filter(order => order.logisticsState === 'listo'),
+        despachada: filteredOrders.filter(order => order.logisticsState === 'despachada'),
+        entregada: filteredOrders.filter(order => order.logisticsState === 'entregada'),
+        cerrada: filteredOrders.filter(order => order.logisticsState === 'cerrada'),
+        cancelada: filteredOrders.filter(order => order.logisticsState === 'cancelada')
+      };
+
+      console.log('📊 [MASTER] Órdenes por estado:', {
+        borrador: ordersByState.borrador.length,
+        revision: ordersByState.revision.length,
+        aprobada: ordersByState.aprobada.length,
+        preparacion: ordersByState.preparacion.length,
+        listo: ordersByState.listo.length,
+        despachada: ordersByState.despachada.length,
+        entregada: ordersByState.entregada.length,
+        cerrada: ordersByState.cerrada.length,
+        cancelada: ordersByState.cancelada.length
+      });
+
+      // Display orders in each section
+      for (const [state, stateOrders] of Object.entries(ordersByState)) {
+        const container = containers[state];
+        const currentFlow = stateFlow[state];
+
+        console.log(`🎨 [MASTER] Renderizando ${stateOrders.length} órdenes para estado "${state}"`);
+
+        if (stateOrders.length > 0) {
+          const htmlPromises = stateOrders.map(order => createAdminOrderHTML(order, currentFlow, state));
+          const htmlArray = await Promise.all(htmlPromises);
+          const html = htmlArray.join('');
+          console.log(`📝 [MASTER] HTML generado para ${state}:`, html.substring(0, 100) + '...');
+          container.innerHTML = html;
+        } else {
+          const messages = {
+            borrador: 'No hay pedidos en borrador',
+            revision: 'No hay pedidos en revisión',
+            aprobada: 'No hay pedidos aprobados',
+            preparacion: 'No hay pedidos en preparación',
+            listo: 'No hay pedidos listos',
+            despachada: 'No hay pedidos despachados',
+            entregada: 'No hay pedidos entregados',
+            cerrada: 'No hay pedidos cerrados',
+            cancelada: 'No hay pedidos cancelados'
+          };
+          container.innerHTML = `<p class="no-orders">${messages[state]}</p>`;
+        }
+      }
+
+      console.log('✅ [MASTER] displayOrders() completado');
+    }
+
+    // Create HTML for an order item (admin version with edit capabilities)
+    async function createAdminOrderHTML(order, currentFlow, currentState) {
+      const canEdit = window.isUserAdmin;
+      const hasNext = currentFlow && currentFlow.next !== null;
+      const hasPrev = currentFlow && currentFlow.prev !== null;
+      let buttonHtml = '';
+
+      const stateLabels = {
+        borrador: 'Borrador',
+        revision: 'En Revisión',
+        aprobada: 'Aprobada',
+        preparacion: 'En Preparación',
+        listo: 'Listo para Retiro/Despacho',
+        despachada: 'Despachada',
+        entregada: 'Entregada',
+        cerrada: 'Cerrada',
+        cancelada: 'Cancelada'
+      };
+
+      // Short labels for buttons (to fit in button space)
+      const shortLabels = {
+        borrador: 'Borrador',
+        revision: 'En Revisión',
+        aprobada: 'Aprobada',
+        preparacion: 'En Preparación',
+        listo: 'Listo',
+        despachada: 'Despachada',
+        entregada: 'Entregada',
+        cerrada: 'Cerrada',
+        cancelada: 'Cancelada'
+      };
+
+      // Admin can move orders and has additional controls
+      if (canEdit) {
+        // Flecha hacia arriba (volver al estado anterior) - solo permitido en estado "revision"
+        if (hasPrev && currentState === 'revision') {
+          const prevStateLabel = stateLabels[currentFlow.prev] || currentFlow.prev;
+          buttonHtml += `<button class="move-order-btn-up" onclick="adminMoveOrder('${order.id}', '${currentFlow.prev}')" title="Volver a ${prevStateLabel}">↑</button>`;
+        }
+
+        // Flecha hacia abajo (avanzar al siguiente estado)
+        if (hasNext) {
+          const nextStateLabel = stateLabels[currentFlow.next] || currentFlow.next;
+          const shortLabel = shortLabels[currentFlow.next] || currentFlow.next;
+          buttonHtml += `
+            <button class="move-order-btn" onclick="adminMoveOrder('${order.id}', '${currentFlow.next}')" title="Mover a ${nextStateLabel}">
+              ↓ ${shortLabel}
+            </button>
+          `;
+        }
+
+        // Add cancel button for non-cancelled orders
+        if (currentState !== 'cancelada' && currentState !== 'cerrada') {
+          buttonHtml += `
+            <button class="cancel-order-btn" onclick="adminMoveOrder('${order.id}', 'cancelada')" title="Cancelar pedido">
+              ❌ Cancelar
+            </button>
+          `;
+        }
+      }
+
+      // Final states display
+      if (!hasNext && !hasPrev) {
+        // Final states (cerrada, cancelada)
+        if (currentState === 'entregada') {
+          buttonHtml = `<span class="delivered-status">✓ Entregada</span>`;
+        } else if (currentState === 'cerrada') {
+          buttonHtml = `<span class="closed-status">🔒 Cerrada</span>`;
+        } else if (currentState === 'cancelada') {
+          buttonHtml = `<span class="cancelled-status">❌ Cancelada</span>`;
+        }
+      }
+
+      // Add edit button for admin
+      if (canEdit) {
+        buttonHtml += `
+          <button class="edit-order-btn" onclick="adminEditOrder('${order.id}')" title="Editar orden">
+            ✏️ Editar
+          </button>
+        `;
+      }
+
+      // Add photo and weight buttons for preparacion state (v0.40)
+      let preparacionButtonsHtml = '';
+      if (currentState === 'preparacion' && canEdit) {
+        const photoUrl = order.fotoPreparacion || '';
+        const peso = order.pesoPreparacion || '';
+
+        // Botón de foto: si ya hay foto, muestra ✓ y permite ver o actualizar
+        const photoButtonLabel = photoUrl ? '📸 ✓' : '📸 Foto';
+        const photoButtonAction = `handleFotoButton('${order.id}', '${photoUrl}')`;
+
+        preparacionButtonsHtml = `
+          <input type="file"
+                 id="photo-input-${order.id}"
+                 accept="image/*"
+                 onchange="handlePreparacionPhoto('${order.id}', this)"
+                 style="display: none;">
+          <input type="file"
+                 id="camera-input-${order.id}"
+                 accept="image/*"
+                 capture
+                 onchange="handlePreparacionPhoto('${order.id}', this)"
+                 style="display: none;">
+          <button class="edit-order-btn"
+                  onclick="${photoButtonAction}"
+                  title="${photoUrl ? 'Foto subida - Click para ver o actualizar' : 'Subir foto de preparación'}">
+            ${photoButtonLabel}
+          </button>
+          <button class="edit-order-btn"
+                  onclick="promptPesoPreparacion('${order.id}', '${peso}')"
+                  title="Ingresar peso de preparación">
+            ⚖️ ${peso ? peso + ' kg' : 'Peso'}
+          </button>
+        `;
+      }
+
+      // Get cliente principal name and vendedor name
+      const clientePrincipal = getClientePrincipalName(order);
+      const vendedorName = getVendedorName(order);
+
+      return `
+        <div class="order-item" data-order-id="${order.id}" onclick="handleOrderClick('${order.id}')" style="cursor: pointer;" title="Click para ver detalles">
+          <div class="order-info">
+            <div class="order-number">#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}</div>
+            <div class="order-details">
+              ${order.fechaLocal || order.fecha || 'No date'} • ${order.cantidadItems || order.items?.length || 0} items • $${formatNumber(order.total || order.montoTotal || 0)}
+              <br><strong>Cliente:</strong> <span class="editable-client" onclick="event.stopPropagation(); editOrderClient('${order.id}')" title="Click para editar">${clientePrincipal}</span>
+              <br><strong>Vendedor:</strong> <span class="editable-seller" onclick="event.stopPropagation(); editOrderSeller('${order.id}')" title="Click para editar">${vendedorName}</span>
+            </div>
+          </div>
+          <div class="order-actions" onclick="event.stopPropagation();">
+            ${preparacionButtonsHtml}
+            ${buttonHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper function to get cliente principal name
+    function getClientePrincipalName(order) {
+      console.log('🔍 [CLIENT DEBUG] Getting client name for order:', order.id);
+      console.log('🔍 [CLIENT DEBUG] Order clienteCodigo:', order.clienteCodigo);
+      console.log('🔍 [CLIENT DEBUG] Order clienteNombre:', order.clienteNombre);
+      console.log('🔍 [CLIENT DEBUG] Order usuarioEmail:', order.usuarioEmail);
+      console.log('🔍 [CLIENT DEBUG] Order clienteEmail:', order.clienteEmail);
+      console.log('🔍 [CLIENT DEBUG] Order vendedorEmail:', order.vendedorEmail);
+
+      // SPECIAL CASE FIRST: Handle cortizjctech specifically
+      if (order.usuarioEmail === 'cortizjctech@gmail.com' || order.clienteEmail === 'cortizjctech@gmail.com') {
+        console.log('🔧 [CLIENT DEBUG] *** SPECIAL CASE: cortizjctech detected, returning Trading Next USA Black ***');
+        return 'TRADING NEXT USA BLACK (407)';
+      }
+
+      if (!window.allClients) {
+        console.log('❌ [CLIENT DEBUG] No allClients available');
+        // Priorizar clienteNombre sobre emails
+        return `⚠️ ${order.clienteNombre || order.clienteEmail || order.usuarioEmail || 'Sin cliente'} (datos no cargados)`;
+      }
+
+      console.log('🔍 [CLIENT DEBUG] Available clients:', window.allClients.map(c => ({ codigo: c.codigo, nombre: c.nombre, email: c.email })));
+
+      // Strategy 1: Direct match by clienteCodigo
+      if (order.clienteCodigo && window.allClients) {
+        const cliente = window.allClients.find(c => c.codigo === order.clienteCodigo);
+        if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by clienteCodigo:', cliente.nombre);
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // Strategy 2: Extract base code from vendedor codes like "407_rmpNpzeT" -> "407"
+      if (order.clienteCodigo && order.clienteCodigo.includes('_')) {
+        const baseCode = order.clienteCodigo.split('_')[0];
+        console.log('🔍 [CLIENT DEBUG] Extracted base code:', baseCode);
+
+        const cliente = window.allClients.find(c => c.codigo === baseCode);
+        if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by base code:', cliente.nombre);
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // Strategy 3: Try to find by clienteNombre first (prioritize over emails)
+      if (order.clienteNombre && order.clienteNombre !== order.usuarioEmail && order.clienteNombre !== order.clienteEmail && window.allClients) {
+        const cliente = window.allClients.find(c =>
+          c.nombre.toLowerCase().includes(order.clienteNombre.toLowerCase()) ||
+          order.clienteNombre.toLowerCase().includes(c.nombre.toLowerCase())
+        );
+        if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by clienteNombre:', cliente.nombre);
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+        // Si no se encuentra en allClients pero clienteNombre existe y no es un email, usarlo directamente
+        if (!order.clienteNombre.includes('@')) {
+          console.log('✅ [CLIENT DEBUG] Using clienteNombre directly:', order.clienteNombre);
+          return order.clienteNombre;
+        }
+      }
+
+      // Strategy 4: Search by clienteEmail (not usuarioEmail - admin might have created for a client)
+      if (order.clienteEmail && window.allClients) {
+        const emailDomain = order.clienteEmail.split('@')[0];
+        const cliente = window.allClients.find(c =>
+          c.email && c.email.toLowerCase() === order.clienteEmail.toLowerCase() ||
+          c.nombre.toLowerCase().includes(emailDomain.toLowerCase()) ||
+          emailDomain.toLowerCase().includes(c.nombre.toLowerCase().split(' ')[0])
+        );
+        if (cliente) {
+          console.log('✅ [CLIENT DEBUG] Found by clienteEmail match:', cliente.nombre);
+          return `${cliente.nombre} (${cliente.codigo})`;
+        }
+      }
+
+      // Final fallback - Priorizar clienteNombre sobre emails
+      console.log('❌ [CLIENT DEBUG] No client match found, using fallback');
+      return `⚠️ ${order.clienteNombre || order.clienteEmail || order.usuarioEmail || 'Sin cliente'} (click para asignar)`;
+    }
+
+    // Helper function to get vendedor name
+    function getVendedorName(order) {
+      if (order.vendedorId && window.sellers) {
+        const vendedor = window.sellers.find(v => v.id === order.vendedorId);
+        if (vendedor) {
+          return vendedor.name || vendedor.nombre || 'Sin nombre';
+        }
+      }
+      return 'Sin vendedor';
+    }
+
+    // Edit order client
+    function editOrderClient(orderId) {
+      const order = window.orders?.find(o => o.id === orderId);
+      if (!order || !window.allClients) return;
+
+      // Create modal for client selection
+      const modalHTML = `
+        <div id="editClientModal" class="modal">
+          <div class="modal-content" style="max-width: 600px;">
+            <span class="close-button" onclick="closeEditClientModal()">&times;</span>
+            <h2>📋 Cambiar Cliente Principal</h2>
+            <p>Orden: <strong>#${order.manualOrderNumber || order.numeroOrden}</strong></p>
+
+            <div style="margin: 20px 0;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                Cliente Principal:
+              </label>
+              <select id="clientSelect" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px;">
+                <option value="">-- Seleccionar Cliente --</option>
+                ${window.allClients.map(cliente => `
+                  <option value="${cliente.codigo}" ${order.clienteCodigo === cliente.codigo ? 'selected' : ''}>
+                    ${cliente.nombre} (${cliente.codigo})
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+              <button type="button" class="mdc-button mdc-button--outlined" onclick="closeEditClientModal()">
+                <span class="mdc-button__label">Cancelar</span>
+              </button>
+              <button type="button" class="mdc-button mdc-button--raised" onclick="saveOrderClient('${orderId}')" style="background-color: #4CAF50;">
+                <span class="mdc-button__label">✅ Guardar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove existing modal if any
+      const existingModal = document.getElementById('editClientModal');
+      if (existingModal) existingModal.remove();
+
+      // Add modal to document
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      document.getElementById('editClientModal').classList.remove('hidden');
+    }
+
+    // Edit order seller
+    function editOrderSeller(orderId) {
+      const order = window.orders?.find(o => o.id === orderId);
+      if (!order || !window.sellers) return;
+
+      // Create modal for seller selection
+      const modalHTML = `
+        <div id="editSellerModal" class="modal">
+          <div class="modal-content" style="max-width: 600px;">
+            <span class="close-button" onclick="closeEditSellerModal()">&times;</span>
+            <h2>👤 Cambiar Vendedor</h2>
+            <p>Orden: <strong>#${order.manualOrderNumber || order.numeroOrden}</strong></p>
+
+            <div style="margin: 20px 0;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                Vendedor:
+              </label>
+              <select id="sellerSelect" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px;">
+                <option value="">-- Seleccionar Vendedor --</option>
+                ${window.sellers.map(vendedor => `
+                  <option value="${vendedor.id}" ${order.vendedorId === vendedor.id ? 'selected' : ''}>
+                    ${vendedor.name || vendedor.nombre}
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+              <button type="button" class="mdc-button mdc-button--outlined" onclick="closeEditSellerModal()">
+                <span class="mdc-button__label">Cancelar</span>
+              </button>
+              <button type="button" class="mdc-button mdc-button--raised" onclick="saveOrderSeller('${orderId}')" style="background-color: #4CAF50;">
+                <span class="mdc-button__label">✅ Guardar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Remove existing modal if any
+      const existingModal = document.getElementById('editSellerModal');
+      if (existingModal) existingModal.remove();
+
+      // Add modal to document
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      document.getElementById('editSellerModal').classList.remove('hidden');
+    }
+
+    // Close modals
+    function closeEditClientModal() {
+      const modal = document.getElementById('editClientModal');
+      if (modal) modal.remove();
+    }
+
+    function closeEditSellerModal() {
+      const modal = document.getElementById('editSellerModal');
+      if (modal) modal.remove();
+    }
+
+    // Save order client changes
+    async function saveOrderClient(orderId) {
+      const clientSelect = document.getElementById('clientSelect');
+      const selectedClientCode = clientSelect.value;
+
+      if (!selectedClientCode) {
+        alert('⚠️ Por favor selecciona un cliente');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        // Find the selected client
+        const selectedClient = window.allClients.find(c => c.codigo === selectedClientCode);
+        if (!selectedClient) {
+          alert('❌ Cliente no encontrado');
+          return;
+        }
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          clienteCodigo: selectedClientCode,
+          clienteNombre: selectedClient.nombre,
+          clienteUpdatedAt: new Date(),
+          clienteUpdatedBy: firebase.auth().currentUser?.uid
+        });
+
+        console.log(`✅ Cliente actualizado para orden ${orderId}: ${selectedClient.nombre} (${selectedClientCode})`);
+
+        // Update local order data
+        const order = window.orders.find(o => o.id === orderId);
+        if (order) {
+          order.clienteCodigo = selectedClientCode;
+          order.clienteNombre = selectedClient.nombre;
+        }
+
+        // Close modal and refresh display
+        closeEditClientModal();
+        await loadOrders();
+
+        alert(`✅ Cliente actualizado: ${selectedClient.nombre}`);
+
+      } catch (error) {
+        console.error('❌ Error updating order client:', error);
+        alert('Error al actualizar el cliente: ' + error.message);
+      }
+    }
+
+    // Save order seller changes
+    async function saveOrderSeller(orderId) {
+      const sellerSelect = document.getElementById('sellerSelect');
+      const selectedSellerId = sellerSelect.value;
+
+      if (!selectedSellerId) {
+        alert('⚠️ Por favor selecciona un vendedor');
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        // Find the selected seller
+        const selectedSeller = window.sellers.find(s => s.id === selectedSellerId);
+        if (!selectedSeller) {
+          alert('❌ Vendedor no encontrado');
+          return;
+        }
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          vendedorId: selectedSellerId,
+          vendedorUpdatedAt: new Date(),
+          vendedorUpdatedBy: firebase.auth().currentUser?.uid
+        });
+
+        console.log(`✅ Vendedor actualizado para orden ${orderId}: ${selectedSeller.name || selectedSeller.nombre}`);
+
+        // Update local order data
+        const order = window.orders.find(o => o.id === orderId);
+        if (order) {
+          order.vendedorId = selectedSellerId;
+        }
+
+        // Close modal and refresh display
+        closeEditSellerModal();
+        await loadOrders();
+
+        alert(`✅ Vendedor actualizado: ${selectedSeller.name || selectedSeller.nombre}`);
+
+      } catch (error) {
+        console.error('❌ Error updating order seller:', error);
+        alert('Error al actualizar el vendedor: ' + error.message);
+      }
+    }
+
+    // Helper function to format numbers
+    function formatNumber(num) {
+      return Number(num).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Generar PDF de la orden
+    async function generateOrderPDF(orderData, orderNumber, clienteNombre) {
+      try {
+        console.log('📄 [PDF] Generando PDF para orden #', orderNumber);
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Colores
+        const primaryColor = [76, 175, 80]; // Verde
+        const textColor = [51, 51, 51]; // Gris oscuro
+        const lightGray = [240, 240, 240];
+
+        // Header con fondo verde
+        doc.setFillColor(...primaryColor);
+        doc.rect(0, 0, 210, 40, 'F');
+
+        // Logo (cargar desde la URL del sitio)
+        try {
+          const logoUrl = window.location.origin + '/logo.png';
+          doc.addImage(logoUrl, 'PNG', 14, 12, 15, 12.5);
+        } catch (error) {
+          console.warn('⚠️ No se pudo cargar el logo:', error);
+        }
+
+        // Título
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont(undefined, 'bold');
+        doc.text('ORDEN DE COMPRA', 105, 18, { align: 'center' });
+
+        doc.setFontSize(18);
+        doc.text(`#${orderNumber}`, 105, 28, { align: 'center' });
+
+        // Información del cliente
+        let yPos = 50;
+        doc.setTextColor(...textColor);
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text('INFORMACIÓN DEL CLIENTE', 14, yPos);
+
+        yPos += 8;
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(10);
+        // Formato: Cliente NOMBRE, CODIGO XXX
+        const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
+        doc.text(`Cliente: ${clienteTexto}`, 14, yPos);
+        yPos += 6;
+        // Mostrar email del usuario que hizo la orden
+        const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
+        doc.text(`Email: ${emailUsuario}`, 14, yPos);
+        yPos += 6;
+        doc.text(`Fecha: ${orderData.fechaLocal || orderData.fechaEdicionLocal || new Date().toLocaleString('es-AR')}`, 14, yPos);
+
+        if (orderData.creadoPorAdmin) {
+          yPos += 6;
+          doc.setTextColor(255, 152, 0); // Naranja
+          doc.text(`Creada por: ${orderData.usuarioEmail} (Admin)`, 14, yPos);
+          doc.setTextColor(...textColor);
+        }
+
+        if (orderData.editadaPorNombre) {
+          yPos += 6;
+          doc.setTextColor(255, 152, 0); // Naranja
+          doc.text(`Modificada por: ${orderData.editadaPorNombre}`, 14, yPos);
+          doc.setTextColor(...textColor);
+        }
+
+        // Tabla de productos
+        yPos += 12;
+
+        const tableData = orderData.items.map((item, index) => [
+          index + 1,
+          item.articulo || '',
+          item.description || '',
+          item.quantity,
+          '$' + formatNumber(item.price),
+          '$' + formatNumber(item.quantity * item.price)
+        ]);
+
+        doc.autoTable({
+          startY: yPos,
+          head: [['#', 'Código', 'Descripción', 'Cant.', 'Precio Unit.', 'Subtotal']],
+          body: tableData,
+          theme: 'grid',
+          headStyles: {
+            fillColor: primaryColor,
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            halign: 'center'
+          },
+          columnStyles: {
+            0: { halign: 'center', cellWidth: 10 },
+            1: { halign: 'left', cellWidth: 25 },
+            2: { halign: 'left', cellWidth: 80 },
+            3: { halign: 'center', cellWidth: 20 },
+            4: { halign: 'right', cellWidth: 30 },
+            5: { halign: 'right', cellWidth: 30 }
+          },
+          styles: {
+            fontSize: 9,
+            cellPadding: 3
+          }
+        });
+
+        // Total
+        const finalY = doc.lastAutoTable.finalY || yPos;
+        yPos = finalY + 10;
+
+        doc.setFillColor(...lightGray);
+        doc.rect(125, yPos - 5, 71, 12, 'F');
+
+        doc.setFont(undefined, 'bold');
+        doc.setFontSize(14);
+        doc.setTextColor(...textColor);
+        doc.text('TOTAL:', 130, yPos + 2);
+        doc.setFontSize(16);
+        doc.setTextColor(...primaryColor);
+        doc.text('$' + formatNumber(orderData.total), 191, yPos + 2, { align: 'right' });
+
+        // Footer
+        doc.setTextColor(150, 150, 150);
+        doc.setFontSize(8);
+        doc.setFont(undefined, 'normal');
+        doc.text('Generado automáticamente por el sistema', 105, 285, { align: 'center' });
+        doc.text(new Date().toLocaleString('es-AR'), 105, 290, { align: 'center' });
+
+        console.log('✅ [PDF] PDF generado exitosamente');
+        return doc;
+
+      } catch (error) {
+        console.error('❌ [PDF] Error generando PDF:', error);
+        throw error;
+      }
+    }
+
+    /**
+     * Subir PDF a Firebase Storage y obtener URL de descarga
+     * @param {jsPDF} pdfDoc - Documento PDF generado con jsPDF
+     * @param {string} orderNumber - Número de orden para nombrar el archivo
+     * @returns {Promise<string>} URL de descarga del PDF o placeholder en localhost
+     * @version 0.39
+     *
+     * Funcionalidad:
+     * - En localhost: Descarga el PDF directamente (evita CORS)
+     * - En producción: Sube el PDF a Firebase Storage y retorna URL pública
+     * - Usa bucket: carrito-138c3.firebasestorage.app
+     * - CORS configurado para: localhost:3002, stock.south-traders.com, *.vercel.app
+     */
+    async function uploadOrderPDF(pdfDoc, orderNumber) {
+      try {
+        // Detectar si estamos en localhost (evita errores CORS en desarrollo)
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+        if (isLocalhost) {
+          console.log('⚠️ [Storage] Detectado localhost - Descargando PDF localmente (CORS bloqueado)');
+
+          // Descargar PDF directamente al dispositivo del usuario
+          pdfDoc.save(`orden-${orderNumber}.pdf`);
+
+          // Retornar URL placeholder para mensaje WhatsApp
+          return `[PDF descargado localmente - orden-${orderNumber}.pdf]`;
+        }
+
+        console.log('☁️ [Storage] Subiendo PDF a Firebase Storage...');
+
+        const { ref, uploadBytes, getDownloadURL } = window.firebase.storageHelpers;
+        const storage = window.firebase.storage();
+
+        // Convertir PDF a blob
+        const pdfBlob = pdfDoc.output('blob');
+
+        // Crear referencia en Storage
+        const fileName = `orders/orden-${orderNumber}-${Date.now()}.pdf`;
+        const storageRef = ref(storage, fileName);
+
+        // Subir archivo
+        const snapshot = await uploadBytes(storageRef, pdfBlob, {
+          contentType: 'application/pdf'
+        });
+
+        console.log('✅ [Storage] PDF subido exitosamente');
+
+        // Obtener URL de descarga
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        console.log('✅ [Storage] URL de descarga obtenida:', downloadURL);
+
+        return downloadURL;
+
+      } catch (error) {
+        console.error('❌ [Storage] Error subiendo PDF:', error);
+        throw error;
+      }
+    }
+
+    // Enviar orden al vendedor por WhatsApp
+    async function sendOrderToSellerWhatsApp(orderData, orderNumber, clienteNombre) {
+      try {
+        console.log('📱 [WhatsApp] Iniciando envío...');
+        console.log('📱 [WhatsApp] orderData.vendedorId:', orderData.vendedorId);
+        console.log('📱 [WhatsApp] orderNumber:', orderNumber);
+        console.log('📱 [WhatsApp] clienteNombre:', clienteNombre);
+
+        const { doc, getDoc, collection, query, where, getDocs } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+
+        let vendedorData = null;
+        let vendedorId = orderData.vendedorId;
+
+        // Si no hay vendedor asignado, buscar a Santiago como vendedor por defecto
+        if (!vendedorId) {
+          console.log('⚠️ [WhatsApp] No hay vendedor asignado, buscando a Santiago Fernandez...');
+          const vendedoresRef = collection(db, 'vendedores');
+          const q = query(vendedoresRef, where('email', '==', 'santifn.axp@gmail.com'));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const santiagoDoc = querySnapshot.docs[0];
+            vendedorId = santiagoDoc.id;
+            vendedorData = santiagoDoc.data();
+            console.log('✅ [WhatsApp] Santiago Fernandez encontrado como vendedor por defecto:', vendedorId);
+          } else {
+            console.log('❌ [WhatsApp] No se encontró a Santiago Fernandez (santifn.axp@gmail.com) en la BD');
+            return;
+          }
+        } else {
+          console.log('📱 [WhatsApp] Buscando vendedor:', vendedorId);
+          const vendedorRef = doc(db, 'vendedores', vendedorId);
+          const vendedorDoc = await getDoc(vendedorRef);
+
+          if (!vendedorDoc.exists()) {
+            console.log('⚠️ [WhatsApp] Vendedor no encontrado en BD');
+            return;
+          }
+
+          vendedorData = vendedorDoc.data();
+        }
+
+        console.log('📱 [WhatsApp] Vendedor encontrado:', vendedorData.name);
+        console.log('📱 [WhatsApp] Teléfonos:', { phone: vendedorData.phone, phone2: vendedorData.phone2 });
+
+        // Obtener ambos teléfonos del vendedor
+        const phones = [];
+        if (vendedorData.phone || vendedorData.telefono) {
+          phones.push((vendedorData.phone || vendedorData.telefono).replace(/\D/g, ''));
+        }
+        if (vendedorData.phone2) {
+          phones.push(vendedorData.phone2.replace(/\D/g, ''));
+        }
+
+        console.log('📱 [WhatsApp] Teléfonos procesados:', phones);
+
+        if (phones.length === 0) {
+          console.log('⚠️ [WhatsApp] Vendedor sin teléfono válido');
+          return;
+        }
+
+        // Generar PDF
+        console.log('📄 [WhatsApp] Generando PDF de la orden...');
+        const pdfDoc = await generateOrderPDF(orderData, orderNumber, clienteNombre);
+
+        // Subir PDF a Firebase Storage
+        console.log('☁️ [WhatsApp] Subiendo PDF a Firebase Storage...');
+        const pdfUrl = await uploadOrderPDF(pdfDoc, orderNumber);
+
+        // Detectar si estamos en localhost
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+        // Construir mensaje con enlace al PDF
+        let mensaje = `🔄 *ORDEN MODIFICADA #${orderNumber}*\n\n`;
+
+        if (isLocalhost) {
+          mensaje += `⚠️ *MODO DESARROLLO (localhost)*\n`;
+          mensaje += `📋 PDF descargado localmente: ${pdfUrl}\n`;
+          mensaje += `ℹ️ En producción se enviará el enlace al PDF\n\n`;
+        } else {
+          mensaje += `📄 *ORDEN COMPLETA EN PDF - CLICK AQUÍ:*\n`;
+          mensaje += `${pdfUrl}\n`;
+          mensaje += `👆 _Hace clic en el enlace para ver/descargar el PDF completo_\n\n`;
+        }
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const clienteTexto = orderData.clienteCodigo ? `${clienteNombre}, CODIGO ${orderData.clienteCodigo}` : clienteNombre;
+        const emailUsuario = orderData.creadoPorAdmin ? orderData.usuarioEmail : (orderData.clienteEmail || orderData.usuarioEmail);
+        mensaje += `👤 *Cliente:* ${clienteTexto}\n`;
+        mensaje += `📧 *Email:* ${emailUsuario}\n`;
+        if (orderData.editadaPorNombre) {
+          mensaje += `✏️ *Modificada por:* ${orderData.editadaPorNombre}\n`;
+        }
+        mensaje += `📅 *Fecha:* ${orderData.fechaLocal || new Date().toLocaleString('es-AR')}\n\n`;
+        mensaje += `📦 *Productos:* ${orderData.cantidadItems || orderData.items?.length || 0} items\n`;
+        mensaje += `💰 *TOTAL: $${formatNumber(orderData.total)}*\n\n`;
+        mensaje += `✅ Descargá el PDF para ver el detalle completo`;
+
+        // Enviar WhatsApp a todos los teléfonos del vendedor
+        console.log('📱 [WhatsApp] Preparando para enviar a', phones.length, 'teléfono(s)');
+
+        phones.forEach((phone, index) => {
+          const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+          console.log(`📱 [WhatsApp] URL ${index + 1}:`, whatsappUrl.substring(0, 100) + '...');
+
+          // Pequeño delay entre aperturas para evitar que se bloqueen
+          setTimeout(() => {
+            console.log(`📱 [WhatsApp] Abriendo ventana ${index + 1}/${phones.length} para ${phone}`);
+            window.open(whatsappUrl, '_blank');
+            console.log(`✅ [WhatsApp] Ventana ${index + 1}/${phones.length} abierta para ${phone}`);
+          }, index * 500);
+        });
+
+        console.log(`✅ [WhatsApp] Proceso completado - ${phones.length} teléfono(s)`);
+
+      } catch (error) {
+        console.error('❌ Error enviando WhatsApp:', error);
+      }
+    }
+
+    /**
+     * Maneja el click en el botón de foto (v0.42)
+     * @param {string} orderId - ID de la orden
+     * @param {string} photoUrl - URL de la foto actual (vacío si no hay)
+     */
+    window.handleFotoButton = function(orderId, photoUrl) {
+      if (!photoUrl) {
+        // No hay foto, mostrar opciones de galería o cámara
+        showPhotoOptionsModal(orderId);
+      } else {
+        // Ya hay foto, preguntar si quiere ver o actualizar
+        const accion = confirm('Ya hay una foto subida.\n\n✅ OK = Subir nueva foto\n❌ Cancelar = Ver foto actual');
+
+        if (accion) {
+          // Usuario eligió OK: mostrar opciones para nueva foto
+          showPhotoOptionsModal(orderId);
+        } else {
+          // Usuario eligió Cancelar: ver foto actual
+          window.open(photoUrl, '_blank');
+        }
+      }
+    }
+
+    /**
+     * Muestra modal con opciones de galería o cámara
+     * @param {string} orderId - ID de la orden
+     */
+    function showPhotoOptionsModal(orderId) {
+      // Crear modal con opciones
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+      `;
+
+      const content = document.createElement('div');
+      content.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 350px;
+        width: 90%;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      `;
+
+      content.innerHTML = `
+        <h3 style="margin: 0 0 20px 0; color: #333;">📸 Seleccionar Foto</h3>
+        <p style="margin: 0 0 25px 0; color: #666;">¿Cómo quieres agregar la foto?</p>
+        <div style="display: flex; gap: 15px; flex-direction: column;">
+          <button onclick="selectFromGallery('${orderId}'); closePhotoModal()"
+                  style="padding: 15px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            📁 Cargar Foto Guardada
+          </button>
+          <button onclick="captureWithCamera('${orderId}'); closePhotoModal()"
+                  style="padding: 15px; border: none; background: #2196F3; color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            📷 Abrir Cámara
+          </button>
+          <button onclick="closePhotoModal()"
+                  style="padding: 10px; border: 1px solid #ddd; background: white; color: #666; border-radius: 8px; cursor: pointer;">
+            Cancelar
+          </button>
+        </div>
+      `;
+
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+      modal.photoModal = true;
+
+      // Cerrar modal al hacer click fuera
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closePhotoModal();
+        }
+      });
+    }
+
+    /**
+     * Cierra el modal de opciones de foto
+     */
+    window.closePhotoModal = function() {
+      const modal = document.querySelector('[style*="z-index: 10000"]');
+      if (modal && modal.photoModal) {
+        modal.remove();
+      }
+    }
+
+    /**
+     * Abre galería para seleccionar foto
+     * @param {string} orderId - ID de la orden
+     */
+    window.selectFromGallery = function(orderId) {
+      document.getElementById('photo-input-' + orderId).click();
+    }
+
+    /**
+     * Abre cámara para capturar foto
+     * @param {string} orderId - ID de la orden
+     */
+    window.captureWithCamera = async function(orderId) {
+      try {
+        // Check if getUserMedia is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('❌ Tu navegador no soporta acceso directo a la cámara.\n\nUsando selector de archivos como alternativa.');
+          document.getElementById('camera-input-' + orderId).click();
+          return;
+        }
+
+        // Request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }, // Prefer back camera on mobile
+          audio: false
+        });
+
+        // Create camera modal
+        const cameraModal = document.createElement('div');
+        cameraModal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.95);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          padding: 20px;
+          box-sizing: border-box;
+        `;
+
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+        video.style.cssText = `
+          max-width: 100%;
+          max-height: 70vh;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        `;
+        video.srcObject = stream;
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.cssText = `
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+          justify-content: center;
+        `;
+
+        const captureBtn = document.createElement('button');
+        captureBtn.textContent = '📸 Capturar Foto';
+        captureBtn.style.cssText = `
+          padding: 15px 30px;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        `;
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = '❌ Cancelar';
+        cancelBtn.style.cssText = `
+          padding: 15px 30px;
+          background: #f44336;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        `;
+
+        // Capture photo
+        captureBtn.addEventListener('click', () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0);
+
+          // Convert canvas to blob
+          canvas.toBlob(async (blob) => {
+            // Stop camera
+            stream.getTracks().forEach(track => track.stop());
+            document.body.removeChild(cameraModal);
+
+            // Create file from blob
+            const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+
+            // Create a temporary input to trigger handlePreparacionPhoto
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            const input = document.getElementById('camera-input-' + orderId);
+            if (input) {
+              input.files = dataTransfer.files;
+              await handlePreparacionPhoto(orderId, input);
+            }
+          }, 'image/jpeg', 0.95);
+        });
+
+        // Cancel camera
+        cancelBtn.addEventListener('click', () => {
+          stream.getTracks().forEach(track => track.stop());
+          document.body.removeChild(cameraModal);
+        });
+
+        buttonContainer.appendChild(captureBtn);
+        buttonContainer.appendChild(cancelBtn);
+        cameraModal.appendChild(video);
+        cameraModal.appendChild(buttonContainer);
+        document.body.appendChild(cameraModal);
+
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          alert('❌ Permiso de cámara denegado.\n\nPor favor permite el acceso a la cámara en la configuración de tu navegador.');
+        } else if (error.name === 'NotFoundError') {
+          alert('❌ No se encontró ninguna cámara en tu dispositivo.');
+        } else {
+          alert('❌ Error al acceder a la cámara: ' + error.message);
+        }
+        // Fallback to file input
+        document.getElementById('camera-input-' + orderId).click();
+      }
+    }
+
+    /**
+     * Maneja la subida de foto para orden en preparación (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {HTMLInputElement} inputElement - Elemento input[type=file]
+     */
+    window.handlePreparacionPhoto = async function(orderId, inputElement) {
+      if (!window.isUserAdmin) {
+        alert('⚠️ No tienes permisos para actualizar fotos');
+        return;
+      }
+
+      const file = inputElement.files[0];
+      if (!file) return;
+
+      // Validar que sea una imagen
+      if (!file.type.startsWith('image/')) {
+        alert('❌ Por favor selecciona un archivo de imagen válido');
+        inputElement.value = '';
+        return;
+      }
+
+      // Validar tamaño (máximo 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert('❌ La imagen es muy grande. Máximo 5MB permitido.');
+        inputElement.value = '';
+        return;
+      }
+
+      try {
+        console.log('📸 [Preparación] Subiendo foto para orden:', orderId);
+
+        // Mostrar indicador de carga
+        const loadingMsg = document.createElement('div');
+        loadingMsg.textContent = '⏳ Subiendo foto...';
+        loadingMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 4px; z-index: 10000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);';
+        document.body.appendChild(loadingMsg);
+
+        const { ref, uploadBytes, getDownloadURL } = window.firebase.storageHelpers;
+        const storage = window.firebase.storage();
+
+        // Subir foto a Storage
+        const fileName = `preparacion/orden-${orderId}-${Date.now()}.${file.name.split('.').pop()}`;
+        const storageRef = ref(storage, fileName);
+
+        const snapshot = await uploadBytes(storageRef, file, {
+          contentType: file.type
+        });
+
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // Actualizar Firestore
+        const { doc, updateDoc, serverTimestamp } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+        const orderRef = doc(db, 'pedidos', orderId);
+
+        await updateDoc(orderRef, {
+          fotoPreparacion: downloadURL,
+          fotoPreparacionUpdatedAt: serverTimestamp(),
+          fotoPreparacionUpdatedBy: window.firebase.auth().currentUser?.email || 'admin'
+        });
+
+        console.log('✅ [Preparación] Foto subida exitosamente:', downloadURL);
+
+        // Remover mensaje de carga
+        loadingMsg.textContent = '✅ Foto guardada';
+        setTimeout(() => loadingMsg.remove(), 2000);
+
+        // Recargar órdenes para mostrar la foto
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ [Preparación] Error al subir foto:', error);
+        alert('❌ Error al subir la foto: ' + error.message);
+        inputElement.value = '';
+
+        // Remover mensaje de carga si existe
+        const loadingMsg = document.querySelector('div[style*="fixed"]');
+        if (loadingMsg) loadingMsg.remove();
+      }
+    }
+
+    /**
+     * Muestra prompt para ingresar peso de preparación (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {string} pesoActual - Peso actual (puede estar vacío)
+     */
+    window.promptPesoPreparacion = function(orderId, pesoActual) {
+      const mensaje = pesoActual
+        ? `Peso actual: ${pesoActual} kg\n\nIngresa el nuevo peso en kg (o deja vacío para borrar):`
+        : 'Ingresa el peso en kg:';
+
+      const peso = prompt(mensaje, pesoActual || '');
+
+      // Si el usuario cancela, no hacer nada
+      if (peso === null) return;
+
+      // Llamar a la función que guarda el peso
+      window.handlePreparacionPeso(orderId, peso);
+    }
+
+    /**
+     * Maneja la actualización del peso para orden en preparación (v0.40)
+     * @param {string} orderId - ID de la orden
+     * @param {string} peso - Peso en kg
+     */
+    window.handlePreparacionPeso = async function(orderId, peso) {
+      if (!window.isUserAdmin) {
+        alert('⚠️ No tienes permisos para actualizar el peso');
+        return;
+      }
+
+      // Validar que sea un número válido
+      const pesoNum = parseFloat(peso);
+      if (peso && (isNaN(pesoNum) || pesoNum < 0)) {
+        alert('❌ Por favor ingresa un peso válido (número positivo)');
+        return;
+      }
+
+      try {
+        console.log('⚖️ [Preparación] Actualizando peso para orden:', orderId, '→', peso, 'kg');
+
+        const { doc, updateDoc, serverTimestamp } = window.firebase.firestoreHelpers;
+        const db = window.firebase.firestore();
+        const orderRef = doc(db, 'pedidos', orderId);
+
+        await updateDoc(orderRef, {
+          pesoPreparacion: peso ? pesoNum : null,
+          pesoPreparacionUpdatedAt: serverTimestamp(),
+          pesoPreparacionUpdatedBy: window.firebase.auth().currentUser?.email || 'admin'
+        });
+
+        console.log('✅ [Preparación] Peso actualizado exitosamente');
+
+        // Mostrar confirmación breve
+        const successMsg = document.createElement('div');
+        successMsg.textContent = '✅ Peso guardado';
+        successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 10px 15px; border-radius: 4px; z-index: 10000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);';
+        document.body.appendChild(successMsg);
+        setTimeout(() => successMsg.remove(), 1500);
+
+        // Recargar órdenes para mostrar el peso actualizado
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ [Preparación] Error al actualizar peso:', error);
+        alert('❌ Error al guardar el peso: ' + error.message);
+      }
+    }
+
+    // Admin move order to next state
+    async function adminMoveOrder(orderId, nextState) {
+      if (!window.isUserAdmin) {
+        alert('⚠️ No tienes permisos para cambiar el estado de las órdenes');
+        return;
+      }
+
+      if (!firebase || !firebase.firestore) {
+        console.error('❌ Firebase not available');
+        return;
+      }
+
+      // Special case: moving from revision to aprobada requires manual order number
+      if (nextState === 'aprobada') {
+        const order = window.orders?.find(o => o.id === orderId);
+        if (order && order.logisticsState === 'revision') {
+          showManualOrderNumberModal(orderId);
+          return;
+        }
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          logisticsState: nextState,
+          lastStateUpdate: new Date()
+        });
+
+        console.log(`✅ Order ${orderId} moved to ${nextState}`);
+
+        // Reload orders to reflect changes
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ Error moving order:', error);
+        alert('Error al cambiar el estado de la orden');
+      }
+    }
+
+    // Show manual order number modal
+    function showManualOrderNumberModal(orderId) {
+      const modal = document.getElementById('manualOrderNumberModal');
+      const input = document.getElementById('manualOrderNumber');
+
+      // Clear previous input
+      input.value = '';
+      input.style.borderColor = '#ddd';
+
+      // Store orderId for later use
+      modal.dataset.orderId = orderId;
+
+      // Show modal
+      modal.classList.remove('hidden');
+
+      // Focus on input
+      setTimeout(() => input.focus(), 100);
+
+      console.log(`📋 Manual order number modal shown for order ${orderId}`);
+    }
+
+
+
+    // Show order details in modal for all users (read-only for non-admins)
+    window.showOrderDetails = async function(orderId) {
+      try {
+        console.log('🔍 [MODAL] Searching for order:', orderId);
+
+        // First try to find in current orders
+        let order = window.currentOrders?.find(o => o.id === orderId);
+
+        // If not found in cache, search in Firebase
+        if (!order) {
+          console.log('⚠️ Order not found in cache, searching in Firebase...');
+          const { doc, getDoc } = window.firebase.firestoreHelpers;
+          const db = window.firebase.firestore();
+          const orderRef = doc(db, 'pedidos', orderId);
+          const orderDoc = await getDoc(orderRef);
+
+          if (orderDoc.exists()) {
+            order = { id: orderDoc.id, ...orderDoc.data() };
+            console.log('✅ Order found in Firebase:', orderId);
+          } else {
+            console.error('❌ Order not found in Firebase:', orderId);
+            alert('Error: Orden no encontrada');
+            return;
+          }
+        }
+
+        console.log('🔍 [MODAL] Showing order details for:', orderId);
+
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Llenar información general
+        let orderNumberText = `#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}`;
+        if (order.editadaPor && order.editadaPorNombre) {
+          orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
+        }
+        document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        const emailUsuario = order.creadoPorAdmin ? order.usuarioEmail : (order.clienteEmail || order.usuarioEmail);
+        const infoCliente = order.clienteNombre || order.usuarioEmail || '-';
+        const codigoCliente = order.clienteCodigo ? `, CODIGO ${order.clienteCodigo}` : '';
+        document.getElementById('detailClientName').textContent = `${infoCliente}${codigoCliente}`;
+        document.getElementById('detailClientEmail').textContent = emailUsuario || '-';
+        document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
+        document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
+
+        // Mostrar si fue creada por admin
+        if (order.creadoPorAdmin) {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'grid';
+          document.getElementById('detailAdminCreated').textContent = order.usuarioEmail || '-';
+        } else {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'none';
+        }
+
+        // Mostrar foto y peso de preparación para todos los usuarios
+        const photoWeightContainer = document.getElementById('detailPhotoWeightContainer');
+        const photoContainer = document.getElementById('detailPhotoContainer');
+        const weightContainer = document.getElementById('detailWeightContainer');
+        const noPhotoWeight = document.getElementById('detailNoPhotoWeight');
+        const photoImg = document.getElementById('detailPhotoImg');
+        const photoDate = document.getElementById('detailPhotoDate');
+        const weightSpan = document.getElementById('detailWeight');
+
+        let hasPhotoOrWeight = false;
+
+        // Mostrar foto si existe
+        if (order.fotoPreparacion) {
+          photoImg.src = order.fotoPreparacion;
+
+          // Mostrar fecha de actualización si existe
+          if (order.fotoPreparacionUpdatedAt) {
+            const fecha = new Date(order.fotoPreparacionUpdatedAt.seconds * 1000);
+            photoDate.textContent = `Subida el: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+          } else {
+            photoDate.textContent = '';
+          }
+
+          photoContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          photoContainer.style.display = 'none';
+        }
+
+        // Mostrar peso si existe
+        if (order.pesoPreparacion) {
+          weightSpan.textContent = `${order.pesoPreparacion} kg`;
+          weightContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          weightContainer.style.display = 'none';
+        }
+
+        // Mostrar la sección completa si hay foto o peso
+        if (hasPhotoOrWeight) {
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'none';
+        } else {
+          // Mostrar mensaje si no hay foto ni peso
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'block';
+        }
+
+        // Llenar tabla de items (solo lectura para no-admins)
+        const itemsTableBody = document.getElementById('detailOrderItems');
+        itemsTableBody.innerHTML = '';
+
+        if (order.items && order.items.length > 0) {
+          order.items.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.articulo || '-'}</td>
+              <td>${item.description || '-'}</td>
+              <td style="text-align: center;">${item.quantity || 0}</td>
+              <td style="text-align: right;">$${formatNumber(item.price || 0)}</td>
+              <td style="text-align: right;">$${formatNumber((item.price || 0) * (item.quantity || 0))}</td>
+            `;
+            itemsTableBody.appendChild(row);
+          });
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td colspan="5" style="text-align: center;">No hay items</td>`;
+          itemsTableBody.appendChild(row);
+        }
+
+        // Mostrar total
+        document.getElementById('detailOrderTotal').textContent = `$${formatNumber(order.total || order.montoTotal || 0)}`;
+
+        // Hide admin-only controls for non-admin users
+        document.getElementById('detailSaveOrderContainer').style.display = 'none';
+        document.getElementById('detailSendWhatsAppContainer').style.display = 'none';
+        document.getElementById('detailCopyOppenContainer').style.display = 'none';
+        document.getElementById('detailEditOrderContainer').style.display = 'none';
+
+        // Show modal
+        document.getElementById('orderDetailsModal').style.display = 'block';
+
+      } catch (error) {
+        console.error('❌ Error showing order details:', error);
+        alert('Error al cargar detalles de la orden');
+      }
+    };
+
+    // Show admin order details in modal with editable quantities
+    window.adminEditOrder = async function(orderId) {
+      if (!window.isUserAdmin) {
+        alert('⚠️ No tienes permisos para editar órdenes');
+        return;
+      }
+
+      try {
+        console.log('📋 Mostrando detalles de orden:', orderId);
+
+        const { doc, getDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        const orderDoc = await getDoc(orderRef);
+
+        if (!orderDoc.exists()) {
+          alert('❌ Orden no encontrada');
+          return;
+        }
+
+        const order = { id: orderDoc.id, ...orderDoc.data() };
+
+        // Mapeo de estados
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Llenar información general
+        let orderNumberText = `#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}`;
+        if (order.editadaPor && order.editadaPorNombre) {
+          orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${order.editadaPorNombre})</span>`;
+        }
+        document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+        // Formato: Cliente NOMBRE, CODIGO XXX, EMAIL: usuario@email.com
+        // SIEMPRE mostrar el cliente real (clienteEmail), no el admin (usuarioEmail)
+        const emailUsuario = order.clienteEmail || order.usuarioEmail;
+        const infoCliente = order.clienteNombre || order.clienteEmail || order.usuarioEmail || '-';
+        const codigoCliente = order.clienteCodigo ? `, CODIGO ${order.clienteCodigo}` : '';
+
+        // Agregar botón para cambiar cliente
+        const clientNameElement = document.getElementById('detailClientName');
+        clientNameElement.innerHTML = `
+          <span>${infoCliente}${codigoCliente}</span>
+          <button onclick="event.stopPropagation(); editOrderClient('${order.id}')"
+                  class="mdc-button mdc-button--outlined"
+                  style="margin-left: 12px; padding: 4px 12px; font-size: 12px; height: auto; min-height: 28px;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" style="font-size: 16px;">swap_horiz</i>
+            <span class="mdc-button__label">Cambiar Cliente</span>
+          </button>
+        `;
+
+        document.getElementById('detailClientEmail').textContent = emailUsuario || '-';
+        document.getElementById('detailOrderDate').textContent = order.fechaLocal || '-';
+        document.getElementById('detailOrderState').textContent = stateLabels[order.logisticsState] || order.logisticsState || 'Sin estado';
+
+        // Mostrar si fue creada por admin
+        if (order.creadoPorAdmin) {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'grid';
+          document.getElementById('detailAdminCreated').textContent = order.usuarioEmail || '-';
+        } else {
+          document.getElementById('detailAdminCreatedContainer').style.display = 'none';
+        }
+
+        // Mostrar foto y peso de preparación para todos los usuarios
+        const photoWeightContainer = document.getElementById('detailPhotoWeightContainer');
+        const photoContainer = document.getElementById('detailPhotoContainer');
+        const weightContainer = document.getElementById('detailWeightContainer');
+        const noPhotoWeight = document.getElementById('detailNoPhotoWeight');
+        const photoImg = document.getElementById('detailPhotoImg');
+        const photoDate = document.getElementById('detailPhotoDate');
+        const weightSpan = document.getElementById('detailWeight');
+
+        let hasPhotoOrWeight = false;
+
+        // Mostrar foto si existe
+        if (order.fotoPreparacion) {
+          photoImg.src = order.fotoPreparacion;
+
+          // Mostrar fecha de actualización si existe
+          if (order.fotoPreparacionUpdatedAt) {
+            const fecha = new Date(order.fotoPreparacionUpdatedAt.seconds * 1000);
+            photoDate.textContent = `Subida el: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+          } else {
+            photoDate.textContent = '';
+          }
+
+          photoContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          photoContainer.style.display = 'none';
+        }
+
+        // Mostrar peso si existe
+        if (order.pesoPreparacion) {
+          weightSpan.textContent = `${order.pesoPreparacion} kg`;
+          weightContainer.style.display = 'grid';
+          hasPhotoOrWeight = true;
+        } else {
+          weightContainer.style.display = 'none';
+        }
+
+        // Mostrar la sección completa si hay foto o peso
+        if (hasPhotoOrWeight) {
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'none';
+        } else {
+          // Mostrar mensaje si no hay foto ni peso
+          photoWeightContainer.style.display = 'block';
+          noPhotoWeight.style.display = 'block';
+        }
+
+        // Llenar tabla de items con campos editables
+        const itemsTableBody = document.getElementById('detailOrderItems');
+        itemsTableBody.innerHTML = '';
+
+        let hasChanges = false;
+
+        if (order.items && order.items.length > 0) {
+          order.items.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-item-index', index);
+            row.innerHTML = `
+              <td>${item.articulo || '-'}</td>
+              <td>${item.description || '-'}</td>
+              <td style="text-align: center;">
+                <input type="number"
+                       class="editable-quantity"
+                       value="${item.quantity || 0}"
+                       min="0"
+                       data-item-index="${index}"
+                       style="width: 70px; padding: 4px; text-align: center; border: 1px solid #ddd; border-radius: 4px;">
+              </td>
+              <td style="text-align: right;">
+                $<input type="number"
+                       class="editable-price"
+                       value="${(item.price || 0).toFixed(2)}"
+                       min="0"
+                       step="0.01"
+                       data-item-index="${index}"
+                       style="width: 80px; padding: 4px; text-align: right; border: 1px solid #ddd; border-radius: 4px;">
+              </td>
+              <td class="item-subtotal" style="text-align: right;">$${(item.subtotal || 0).toFixed(2)}</td>
+            `;
+            itemsTableBody.appendChild(row);
+          });
+
+          // Función para recalcular subtotal y total
+          const updateSubtotalAndTotal = (row, index) => {
+            const quantityInput = row.querySelector('.editable-quantity');
+            const priceInput = row.querySelector('.editable-price');
+            const quantity = parseInt(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const subtotal = price * quantity;
+
+            // Actualizar el item en el array
+            order.items[index].quantity = quantity;
+            order.items[index].price = price;
+            order.items[index].subtotal = subtotal;
+
+            // Actualizar subtotal en la fila
+            const subtotalCell = row.querySelector('.item-subtotal');
+            subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+
+            // Recalcular total
+            const newTotal = order.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+            order.total = newTotal;
+            document.getElementById('detailOrderTotal').textContent = `$${newTotal.toFixed(2)}`;
+
+            // Detectar si hubo cambios
+            hasChanges = true;
+            const saveContainer = document.getElementById('detailSaveOrderContainer');
+            if (saveContainer) {
+              saveContainer.style.display = 'block';
+            }
+          };
+
+          // Agregar event listeners para cantidad
+          const quantityInputs = itemsTableBody.querySelectorAll('.editable-quantity');
+          quantityInputs.forEach(input => {
+            input.addEventListener('change', function() {
+              const row = this.closest('tr');
+              const index = parseInt(this.getAttribute('data-item-index'));
+              updateSubtotalAndTotal(row, index);
+            });
+          });
+
+          // Agregar event listeners para precio
+          const priceInputs = itemsTableBody.querySelectorAll('.editable-price');
+          priceInputs.forEach(input => {
+            input.addEventListener('change', function() {
+              const row = this.closest('tr');
+              const index = parseInt(this.getAttribute('data-item-index'));
+              console.log('💰 Precio cambiado en modal para item', index, ':', this.value);
+              updateSubtotalAndTotal(row, index);
+            });
+          });
+        } else {
+          itemsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay items</td></tr>';
+        }
+
+        // Mostrar total
+        document.getElementById('detailOrderTotal').textContent = `$${(order.total || 0).toFixed(2)}`;
+
+        // Configurar botón Guardar
+        const saveOrderContainer = document.getElementById('detailSaveOrderContainer');
+        const saveOrderBtn = document.getElementById('detailSaveOrderBtn');
+
+        // Mostrar botón Guardar siempre (no esperar a que haya cambios)
+        if (saveOrderContainer) {
+          saveOrderContainer.style.display = 'block';
+        }
+
+        // Remover event listeners previos del botón Guardar
+        if (saveOrderBtn) {
+          const newSaveBtn = saveOrderBtn.cloneNode(true);
+          saveOrderBtn.parentNode.replaceChild(newSaveBtn, saveOrderBtn);
+
+          // Agregar nuevo event listener para Guardar
+          newSaveBtn.addEventListener('click', async () => {
+            try {
+              console.log('💾 Guardando cambios en la orden...');
+
+              const currentUser = firebase.auth().currentUser;
+              if (!currentUser) {
+                alert('❌ Debes estar autenticado para guardar cambios');
+                return;
+              }
+
+              // Obtener email y nombre del usuario actual
+              const userEmail = currentUser.email;
+              let userName = userEmail;
+
+              // Intentar obtener el nombre del vendedor desde Firestore
+              try {
+                const { doc, getDoc } = firebase.firestoreHelpers;
+                const db = firebase.firestore();
+                const userRef = doc(db, 'usuarios', currentUser.uid);
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists()) {
+                  const userData = userDoc.data();
+                  userName = userData.nombre || userData.email || userEmail;
+                }
+              } catch (e) {
+                console.warn('⚠️ No se pudo obtener nombre de usuario:', e);
+              }
+
+              // Limpiar y validar items antes de guardar
+              const cleanedItems = order.items.map(item => ({
+                articulo: item.articulo || '',
+                description: item.description || '',
+                quantity: parseInt(item.quantity) || 0,
+                price: parseFloat(item.price) || 0,
+                subtotal: parseFloat(item.subtotal) || 0
+              }));
+
+              // Validar total
+              const cleanedTotal = parseFloat(order.total) || 0;
+
+              console.log('📦 Items a guardar:', cleanedItems);
+              console.log('💰 Total a guardar:', cleanedTotal);
+
+              // Actualizar orden en Firebase con información de quién editó
+              const { doc, updateDoc } = firebase.firestoreHelpers;
+              const db = firebase.firestore();
+              const orderRef = doc(db, 'pedidos', order.id);
+
+              await updateDoc(orderRef, {
+                items: cleanedItems,
+                total: cleanedTotal,
+                montoTotal: cleanedTotal, // Agregar también montoTotal para compatibilidad
+                editadaPor: currentUser.uid,
+                editadaPorEmail: userEmail,
+                editadaPorNombre: userName,
+                fechaEdicion: new Date().toISOString(),
+                fechaEdicionLocal: new Date().toLocaleString('es-AR')
+              });
+
+              console.log('✅ Orden guardada exitosamente en Firebase');
+
+              // Actualizar orden local
+              order.items = cleanedItems;
+              order.total = cleanedTotal;
+
+              // Enviar WhatsApp al vendedor (si no hay vendedor, se usa Santiago por defecto)
+              console.log('📱 Preparando WhatsApp para vendedor:', order.vendedorId || 'Santiago (por defecto)');
+              const updatedOrderData = {
+                ...order,
+                editadaPorNombre: userName,
+                cantidadItems: order.items?.length || 0
+              };
+              await sendOrderToSellerWhatsApp(updatedOrderData, order.manualOrderNumber || order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+
+              // Actualizar el número de orden con el indicador de edición
+              let orderNumberText = `#${order.manualOrderNumber || order.numeroOrden || order.id.slice(-6)}`;
+              orderNumberText += ` <span style="color: #FF9800; font-size: 0.85em;">(editada por ${userName})</span>`;
+              document.getElementById('detailOrderNumber').innerHTML = orderNumberText;
+
+              // Mantener botón Guardar visible
+              hasChanges = false;
+
+              // Recargar órdenes para reflejar cambios
+              await loadOrders();
+
+              alert('✅ Cambios guardados exitosamente');
+            } catch (error) {
+              console.error('❌ Error guardando cambios:', error);
+              console.error('❌ Detalles del error:', {
+                message: error.message,
+                code: error.code,
+                stack: error.stack
+              });
+
+              let errorMessage = 'Error al guardar cambios. ';
+              if (error.code === 'permission-denied') {
+                errorMessage += 'No tienes permisos para realizar esta acción.';
+              } else if (error.code === 'unavailable') {
+                errorMessage += 'Firestore no está disponible. Verifica tu conexión a internet.';
+              } else if (error.message) {
+                errorMessage += error.message;
+              } else {
+                errorMessage += 'Por favor intenta nuevamente.';
+              }
+
+              alert('❌ ' + errorMessage);
+            }
+          });
+        }
+
+        // Configurar botón "Seguir Comprando / Editar Orden"
+        const editOrderContainer = document.getElementById('detailEditOrderContainer');
+        const editOrderBtn = document.getElementById('detailEditOrderBtn');
+
+        // Siempre mostrar el botón
+        editOrderContainer.style.display = 'block';
+
+        // Remover event listeners previos
+        const newEditBtn = editOrderBtn.cloneNode(true);
+        editOrderBtn.parentNode.replaceChild(newEditBtn, editOrderBtn);
+
+        // Agregar nuevo event listener
+        newEditBtn.addEventListener('click', () => {
+          // Guardar orden en localStorage y redirigir a marketplace
+          const cartItems = order.items.map(item => ({
+            item: item.articulo,
+            description: item.description,
+            price: item.price,
+            quantity: item.quantity
+          }));
+          localStorage.setItem('cart', JSON.stringify(cartItems));
+          localStorage.setItem('editingOrderId', order.id);
+
+          // Guardar datos del cliente de la orden para edición
+          const clienteData = {
+            nombre: order.clienteNombre || order.clienteEmail || order.usuarioEmail,
+            email: order.clienteEmail || order.usuarioEmail,
+            codigo: order.clienteCodigo || '',
+            vendedorId: order.vendedorId || null
+          };
+          localStorage.setItem('editingOrderClienteData', JSON.stringify(clienteData));
+
+          console.log('📦 Orden guardada en localStorage, redirigiendo a marketplace...');
+          console.log('👤 Cliente de la orden:', clienteData);
+          window.location.href = 'marketplace.html';
+        });
+
+        // Configurar botón "Enviar WhatsApp" (siempre visible, usa Santiago si no hay vendedor)
+        const whatsAppContainer = document.getElementById('detailSendWhatsAppContainer');
+        const whatsAppBtn = document.getElementById('detailSendWhatsAppBtn');
+
+        whatsAppContainer.style.display = 'block';
+
+        // Remover event listeners previos
+        const newWhatsAppBtn = whatsAppBtn.cloneNode(true);
+        whatsAppBtn.parentNode.replaceChild(newWhatsAppBtn, whatsAppBtn);
+
+        // Agregar event listener para enviar WhatsApp
+        newWhatsAppBtn.addEventListener('click', async () => {
+          console.log('📱 [Manual] Enviando WhatsApp...');
+          const orderData = {
+            ...order,
+            cantidadItems: order.items?.length || 0
+          };
+          await sendOrderToSellerWhatsApp(orderData, order.manualOrderNumber || order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+        });
+
+        // Configurar botón "Copiar a Oppen"
+        const copyOppenContainer = document.getElementById('detailCopyOppenContainer');
+        const copyOppenBtn = document.getElementById('detailCopyOppenBtn');
+
+        copyOppenContainer.style.display = 'block';
+
+        // Remover event listeners previos
+        const newCopyOppenBtn = copyOppenBtn.cloneNode(true);
+        copyOppenBtn.parentNode.replaceChild(newCopyOppenBtn, copyOppenBtn);
+
+        // Agregar event listener para copiar a Oppen
+        newCopyOppenBtn.addEventListener('click', async () => {
+          try {
+            console.log('📋 Copiando orden a formato Oppen...');
+
+            // Construir texto en formato de tabla con tabulaciones
+            // Formato: CODIGO [TAB] DESCRIPCION [TAB] [VACIO] [TAB] CANTIDAD [TAB] UNI [TAB] [VACIO] [TAB] PRECIO
+            let clipboardText = '';
+
+            order.items.forEach(item => {
+              const codigo = item.articulo || '';
+              const descripcion = item.description || '';
+              const cantidad = item.quantity || 0;
+              const precioSinSigno = (item.price || 0).toFixed(2);
+
+              // Agregar fila con tabulaciones
+              // CODIGO [TAB] DESCRIPCION [TAB] [TAB] CANTIDAD [TAB] UNI [TAB] [TAB] PRECIO
+              clipboardText += `${codigo}\t${descripcion}\t\t${cantidad}\tUNI\t\t${precioSinSigno}\n`;
+            });
+
+            // Copiar al portapapeles
+            await navigator.clipboard.writeText(clipboardText);
+
+            console.log('✅ Orden copiada al portapapeles');
+            alert('✅ Orden copiada exitosamente. Ahora puedes pegarla en Oppen.');
+          } catch (error) {
+            console.error('❌ Error copiando a Oppen:', error);
+            alert('❌ Error al copiar. Por favor intenta nuevamente.');
+          }
+        });
+
+        // Mostrar modal
+        document.getElementById('orderDetailsModal').style.display = 'block';
+
+      } catch (error) {
+        console.error('❌ Error mostrando detalles de orden:', error);
+        alert('Error al cargar detalles de la orden');
+      }
+    };
+
+    window.adminMoveOrder = adminMoveOrder;
+
+    // Update order statistics
+    function updateOrderStats() {
+      if (!window.orders) return;
+
+      console.log('📊 [MASTER] Actualizando estadísticas KPI...');
+
+      const totalOrders = window.orders.length;
+      const borradorOrders = window.orders.filter(o => o.logisticsState === 'borrador').length;
+      const revisionOrders = window.orders.filter(o => o.logisticsState === 'revision').length;
+      const aprobadaOrders = window.orders.filter(o => o.logisticsState === 'aprobada').length;
+      const preparacionOrders = window.orders.filter(o => o.logisticsState === 'preparacion').length;
+      const listoOrders = window.orders.filter(o => o.logisticsState === 'listo').length;
+      const despachadaOrders = window.orders.filter(o => o.logisticsState === 'despachada').length;
+      const entregadaOrders = window.orders.filter(o => o.logisticsState === 'entregada').length;
+      const cerradaOrders = window.orders.filter(o => o.logisticsState === 'cerrada').length;
+      const canceladaOrders = window.orders.filter(o => o.logisticsState === 'cancelada').length;
+
+      console.log('📊 [MASTER] KPI:', {
+        total: totalOrders,
+        borrador: borradorOrders,
+        revision: revisionOrders,
+        aprobada: aprobadaOrders,
+        preparacion: preparacionOrders,
+        listo: listoOrders,
+        despachada: despachadaOrders,
+        entregada: entregadaOrders,
+        cerrada: cerradaOrders,
+        cancelada: canceladaOrders
+      });
+
+      // Actualizar los elementos del DOM
+      const totalEl = document.getElementById('totalOrders');
+      const borradorEl = document.getElementById('borradorOrders');
+      const revisionEl = document.getElementById('revisionOrders');
+      const aprobadaEl = document.getElementById('aprobadaOrders');
+      const preparacionEl = document.getElementById('preparacionOrders');
+      const listoEl = document.getElementById('listoOrders');
+      const despachadaEl = document.getElementById('despachadaOrders');
+      const entregadaEl = document.getElementById('entregadaOrders');
+      const cerradaEl = document.getElementById('cerradaOrders');
+      const canceladaEl = document.getElementById('canceladaOrders');
+
+      if (totalEl) totalEl.textContent = totalOrders;
+      if (borradorEl) borradorEl.textContent = borradorOrders;
+      if (revisionEl) revisionEl.textContent = revisionOrders;
+      if (aprobadaEl) aprobadaEl.textContent = aprobadaOrders;
+      if (preparacionEl) preparacionEl.textContent = preparacionOrders;
+      if (listoEl) listoEl.textContent = listoOrders;
+      if (despachadaEl) despachadaEl.textContent = despachadaOrders;
+      if (entregadaEl) entregadaEl.textContent = entregadaOrders;
+      if (cerradaEl) cerradaEl.textContent = cerradaOrders;
+      if (canceladaEl) canceladaEl.textContent = canceladaOrders;
+
+      console.log('✅ [MASTER] Estadísticas KPI actualizadas');
+    }
+
+    // Export orders to Excel
+    async function exportOrders() {
+      if (!window.orders || window.orders.length === 0) {
+        alert('⚠️ No hay órdenes para exportar');
+        return;
+      }
+
+      try {
+        console.log('📤 Exportando órdenes a Excel...');
+
+        const stateLabels = {
+          borrador: 'Borrador',
+          revision: 'En Revisión',
+          aprobada: 'Aprobada',
+          preparacion: 'En Preparación',
+          listo: 'Listo para Retiro/Despacho',
+          despachada: 'Despachada',
+          entregada: 'Entregada',
+          cerrada: 'Cerrada',
+          cancelada: 'Cancelada'
+        };
+
+        // Preparar datos para Excel
+        const ordersData = window.orders.map(order => {
+          // Calcular cantidad total de items
+          const totalItems = order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
+
+          return {
+            'Número de Orden': order.manualOrderNumber || order.numeroOrden || order.id.slice(-6),
+            'Fecha': order.fechaLocal || order.fecha || '',
+            'Cliente': order.clienteNombre || order.usuarioEmail || '',
+            'Email': order.clienteEmail || order.usuarioEmail || '',
+            'Estado': stateLabels[order.logisticsState] || order.logisticsState || '',
+            'Cantidad Items': order.cantidadItems || totalItems,
+            'Total': order.total || order.montoTotal || 0,
+            'Creada por Admin': order.creadoPorAdmin ? 'Sí' : 'No',
+            'Vendedor': order.usuarioEmail || '',
+            'Editada por': order.editadaPorNombre || '',
+            'Fecha Edición': order.fechaEdicionLocal || ''
+          };
+        });
+
+        // Crear libro de Excel
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(ordersData);
+
+        // Ajustar ancho de columnas
+        const colWidths = [
+          { wch: 15 }, // Número de Orden
+          { wch: 20 }, // Fecha
+          { wch: 30 }, // Cliente
+          { wch: 30 }, // Email
+          { wch: 25 }, // Estado
+          { wch: 12 }, // Cantidad Items
+          { wch: 15 }, // Total
+          { wch: 15 }, // Creada por Admin
+          { wch: 30 }, // Vendedor
+          { wch: 25 }, // Editada por
+          { wch: 20 }  // Fecha Edición
+        ];
+        ws['!cols'] = colWidths;
+
+        XLSX.utils.book_append_sheet(wb, ws, 'Órdenes');
+
+        // Generar nombre de archivo con fecha
+        const fecha = new Date().toISOString().split('T')[0];
+        XLSX.writeFile(wb, `Ordenes_${fecha}.xlsx`);
+
+        console.log(`✅ Exportadas ${ordersData.length} órdenes a Excel`);
+        alert(`✅ Exportadas ${ordersData.length} órdenes correctamente`);
+
+      } catch (error) {
+        console.error('❌ Error exportando órdenes:', error);
+        alert('❌ Error exportando órdenes: ' + error.message);
+      }
+    }
+
+    // Expose functions globally
+    window.loadOrders = loadOrders;
+    window.exportOrders = exportOrders;
+
+
+    });
   </script>
 
   <!-- Chatbot JavaScript REMOVIDO (ahora en ayuda.html) -->
