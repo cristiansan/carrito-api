@@ -785,21 +785,37 @@
 
       .mdc-tab-scroller__scroll-area {
         overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important;
+      }
+
+      .mdc-tab-scroller__scroll-area::-webkit-scrollbar {
+        height: 3px !important;
+      }
+
+      .mdc-tab-scroller__scroll-area::-webkit-scrollbar-track {
+        background: #1b1b1f !important;
+      }
+
+      .mdc-tab-scroller__scroll-area::-webkit-scrollbar-thumb {
+        background: #4CAF50 !important;
+        border-radius: 3px !important;
       }
 
       .mdc-tab-scroller__scroll-content {
         display: flex !important;
         flex-direction: row !important;
         gap: 0 !important;
-        width: 100% !important;
+        width: auto !important;
       }
 
       .mdc-tab {
         border-radius: 6px 6px 0 0 !important;
         margin-right: 0 !important;
-        flex: 1 !important;
+        flex: 0 0 auto !important;
         width: auto !important;
-        min-width: 0 !important;
+        min-width: 80px !important;
+        padding: 0 16px !important;
         justify-content: center !important;
         text-align: center !important;
         border-bottom: none !important;
