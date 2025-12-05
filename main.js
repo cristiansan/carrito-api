@@ -747,11 +747,17 @@ function renderRows() {
             td.textContent = '$' + formatNumber(value);
           }
         } else {
-          td.textContent = value;
-          // Add red color class for zero values in numeric columns
+          // Format numeric columns
           const numericColumns = ['disponible', 'ordenVenta', 'ordenCompra', 'stockTeorico', 'teorico', 'transito', 'costoContable', 'totalCostoContable', 'costoContableUnidadAlternativa'];
-          if (numericColumns.includes(col.id) && Number(value) === 0) {
-            td.classList.add('zero-value');
+          if (numericColumns.includes(col.id)) {
+            const numValue = Number(value ?? 0);
+            td.textContent = formatNumber(numValue);
+            // Add red color class for zero values
+            if (numValue === 0) {
+              td.classList.add('zero-value');
+            }
+          } else {
+            td.textContent = value;
           }
         }
       }
@@ -795,8 +801,8 @@ function renderRows() {
       } else if (col.id === 'quantity') {
         // Total de cantidades en el carrito
         td.innerHTML = `<strong>${totalQuantity}</strong>`;
-      } else if (col.id === 'teorico' || col.id === 'transito') {
-        // Totales de stock y tránsito
+      } else if (numericColumns.includes(col.id)) {
+        // Totales para todas las columnas numéricas (stock, tránsito, ordenCompra, etc)
         td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
       } else {
         // Precio y otras columnas vacías
