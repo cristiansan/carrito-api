@@ -162,6 +162,8 @@ function segmentFilterPredicate(segment) {
   if (segment === 'iphone') return r => /iphone/i.test(r.description || r.articulo || '');
   if (segment === 'macbooks') return r => /macbook/i.test(r.description || r.articulo || '');
   if (segment === 'samsung') return r => /samsung/i.test(r.description || r.articulo || '');
+  if (segment === 'accesorios') return r => /accesorio|cable|cargador|funda|protector/i.test(r.description || r.articulo || '');
+  if (segment === 'puregear') return r => /puregear|pure gear/i.test(r.description || r.articulo || '');
   return () => true;
 }
 

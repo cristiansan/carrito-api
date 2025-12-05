@@ -838,6 +838,20 @@
         bottom: 0 !important;
         top: auto !important;
       }
+
+      /* Segunda fila de tabs - admin */
+      .admin-tab-bar {
+        margin-top: 8px !important;
+      }
+
+      .admin-tab-bar .mdc-tab {
+        background: #2a2a33 !important;
+        border-radius: 6px 6px 0 0 !important;
+      }
+
+      .admin-tab-bar .mdc-tab--active {
+        background: #1e1e24 !important;
+      }
     }
 
     /* Extra small devices (phones, less than 480px) */
@@ -3765,6 +3779,7 @@
   </header>
 
   <div class="container">
+    <!-- Primera fila de tabs: Marketplace segments -->
     <div class="mdc-tab-bar" role="tablist" id="tabs">
       <div class="mdc-tab-scroller">
         <div class="mdc-tab-scroller__scroll-area">
@@ -3805,6 +3820,34 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="accesorios">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Accesorios</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="puregear">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">PureGear</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Segunda fila de tabs: Admin tabs -->
+    <div class="mdc-tab-bar admin-tab-bar" role="tablist" id="adminTabs" style="margin-top: 8px;">
+      <div class="mdc-tab-scroller">
+        <div class="mdc-tab-scroller__scroll-area">
+          <div class="mdc-tab-scroller__scroll-content">
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="precios" data-admin-only="true" style="display: none;">
               <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">PRECIOS</span>
@@ -8559,10 +8602,13 @@
       const textFields = document.querySelectorAll('.mdc-text-field');
       textFields.forEach(textField => mdc.textField.MDCTextField.attachTo(textField));
       
-      // Initialize tab bar
-      const tabBar = document.querySelector('.mdc-tab-bar');
-      if (tabBar) {
+      // Initialize both tab bars
+      const tabBars = document.querySelectorAll('.mdc-tab-bar');
+      const mdcTabBars = [];
+
+      tabBars.forEach((tabBar, barIndex) => {
         const mdcTabBar = mdc.tabBar.MDCTabBar.attachTo(tabBar);
+        mdcTabBars.push(mdcTabBar);
 
         // Note: Admin tabs visibility is now handled in applyControlsVisibility()
         // which is called after user permissions are verified
@@ -8572,6 +8618,18 @@
           const tab = tabBar.querySelectorAll('.mdc-tab')[event.detail.index];
           const segment = tab.getAttribute('data-segment');
           const tabId = tab.getAttribute('data-tab');
+
+          // Deactivate tabs in the other tab bar
+          tabBars.forEach((otherBar, otherIndex) => {
+            if (otherIndex !== barIndex) {
+              otherBar.querySelectorAll('.mdc-tab').forEach(t => {
+                t.classList.remove('mdc-tab--active');
+                t.setAttribute('aria-selected', 'false');
+                const indicator = t.querySelector('.mdc-tab-indicator');
+                if (indicator) indicator.classList.remove('mdc-tab-indicator--active');
+              });
+            }
+          });
 
           // Handle admin tabs (PRECIOS, MASTER)
           if (tabId) {
@@ -8647,7 +8705,7 @@
             }
           }
         });
-      }
+      });
 
       // Load cart from localStorage and populate selectedItems (for "Seguir Comprando" functionality)
       const cartData = localStorage.getItem('cart');
