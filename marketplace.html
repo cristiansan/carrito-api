@@ -4765,6 +4765,14 @@
         </button>
       </div>
 
+      <div class="order-details-section" id="detailCopyOppenContainer" style="display: none;">
+        <button class="mdc-button mdc-button--raised" id="detailCopyOppenBtn" style="width: 100%; background-color: #2196F3 !important;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">content_copy</i>
+          <span class="mdc-button__label">Copiar a Oppen</span>
+        </button>
+      </div>
+
       <div class="order-details-section" id="detailEditOrderContainer" style="display: none;">
         <button class="mdc-button mdc-button--raised" id="detailEditOrderBtn" style="width: 100%; background-color: #4CAF50 !important;">
           <span class="mdc-button__ripple"></span>
@@ -13430,62 +13438,70 @@
         const whatsAppContainer = document.getElementById('detailSendWhatsAppContainer');
         const whatsAppBtn = document.getElementById('detailSendWhatsAppBtn');
 
-        whatsAppContainer.style.display = 'block';
+        if (whatsAppContainer && whatsAppBtn) {
+          whatsAppContainer.style.display = 'block';
 
-        // Remover event listeners previos
-        const newWhatsAppBtn = whatsAppBtn.cloneNode(true);
-        whatsAppBtn.parentNode.replaceChild(newWhatsAppBtn, whatsAppBtn);
+          // Remover event listeners previos
+          const newWhatsAppBtn = whatsAppBtn.cloneNode(true);
+          whatsAppBtn.parentNode.replaceChild(newWhatsAppBtn, whatsAppBtn);
 
-        // Agregar event listener para enviar WhatsApp
-        newWhatsAppBtn.addEventListener('click', async () => {
-          console.log('📱 [Manual] Enviando WhatsApp...');
-          const orderData = {
-            ...order,
-            cantidadItems: order.items?.length || 0
-          };
-          await sendOrderToSellerWhatsApp(orderData, order.manualOrderNumber || order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
-        });
+          // Agregar event listener para enviar WhatsApp
+          newWhatsAppBtn.addEventListener('click', async () => {
+            console.log('📱 [Manual] Enviando WhatsApp...');
+            const orderData = {
+              ...order,
+              cantidadItems: order.items?.length || 0
+            };
+            await sendOrderToSellerWhatsApp(orderData, order.manualOrderNumber || order.numeroOrden, order.clienteNombre || order.clienteEmail || order.usuarioEmail);
+          });
+        } else {
+          console.warn('⚠️ Elementos de WhatsApp no encontrados en el DOM');
+        }
 
         // Configurar botón "Copiar a Oppen"
         const copyOppenContainer = document.getElementById('detailCopyOppenContainer');
         const copyOppenBtn = document.getElementById('detailCopyOppenBtn');
 
-        copyOppenContainer.style.display = 'block';
+        if (copyOppenContainer && copyOppenBtn) {
+          copyOppenContainer.style.display = 'block';
 
-        // Remover event listeners previos
-        const newCopyOppenBtn = copyOppenBtn.cloneNode(true);
-        copyOppenBtn.parentNode.replaceChild(newCopyOppenBtn, copyOppenBtn);
+          // Remover event listeners previos
+          const newCopyOppenBtn = copyOppenBtn.cloneNode(true);
+          copyOppenBtn.parentNode.replaceChild(newCopyOppenBtn, copyOppenBtn);
 
-        // Agregar event listener para copiar a Oppen
-        newCopyOppenBtn.addEventListener('click', async () => {
-          try {
-            console.log('📋 Copiando orden a formato Oppen...');
+          // Agregar event listener para copiar a Oppen
+          newCopyOppenBtn.addEventListener('click', async () => {
+            try {
+              console.log('📋 Copiando orden a formato Oppen...');
 
-            // Construir texto en formato de tabla con tabulaciones
-            // Formato: CODIGO [TAB] DESCRIPCION [TAB] [VACIO] [TAB] CANTIDAD [TAB] UNI [TAB] [VACIO] [TAB] PRECIO
-            let clipboardText = '';
+              // Construir texto en formato de tabla con tabulaciones
+              // Formato: CODIGO [TAB] DESCRIPCION [TAB] [VACIO] [TAB] CANTIDAD [TAB] UNI [TAB] [VACIO] [TAB] PRECIO
+              let clipboardText = '';
 
-            order.items.forEach(item => {
-              const codigo = item.articulo || '';
-              const descripcion = item.description || '';
-              const cantidad = item.quantity || 0;
-              const precioSinSigno = (item.price || 0).toFixed(2);
+              order.items.forEach(item => {
+                const codigo = item.articulo || '';
+                const descripcion = item.description || '';
+                const cantidad = item.quantity || 0;
+                const precioSinSigno = (item.price || 0).toFixed(2);
 
-              // Agregar fila con tabulaciones
-              // CODIGO [TAB] DESCRIPCION [TAB] [TAB] CANTIDAD [TAB] UNI [TAB] [TAB] PRECIO
-              clipboardText += `${codigo}\t${descripcion}\t\t${cantidad}\tUNI\t\t${precioSinSigno}\n`;
-            });
+                // Agregar fila con tabulaciones
+                // CODIGO [TAB] DESCRIPCION [TAB] [TAB] CANTIDAD [TAB] UNI [TAB] [TAB] PRECIO
+                clipboardText += `${codigo}\t${descripcion}\t\t${cantidad}\tUNI\t\t${precioSinSigno}\n`;
+              });
 
-            // Copiar al portapapeles
-            await navigator.clipboard.writeText(clipboardText);
+              // Copiar al portapapeles
+              await navigator.clipboard.writeText(clipboardText);
 
-            console.log('✅ Orden copiada al portapapeles');
-            alert('✅ Orden copiada exitosamente. Ahora puedes pegarla en Oppen.');
-          } catch (error) {
-            console.error('❌ Error copiando a Oppen:', error);
-            alert('❌ Error al copiar. Por favor intenta nuevamente.');
-          }
-        });
+              console.log('✅ Orden copiada al portapapeles');
+              alert('✅ Orden copiada exitosamente. Ahora puedes pegarla en Oppen.');
+            } catch (error) {
+              console.error('❌ Error copiando a Oppen:', error);
+              alert('❌ Error al copiar. Por favor intenta nuevamente.');
+            }
+          });
+        } else {
+          console.warn('⚠️ Elementos de Copiar a Oppen no encontrados en el DOM');
+        }
 
         // Mostrar modal
         document.getElementById('orderDetailsModal').style.display = 'block';
