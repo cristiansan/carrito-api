@@ -609,16 +609,21 @@ function renderRows() {
     }
   }
 
-  // En marketplace redefinimos las columnas con orden específico
+  // En marketplace agregamos columnas específicas que no están en la lista principal
   if (isMarketplace) {
-    columns = [
-      { id: 'articulo', label: 'Artículo', sortable: true, class: '', width: '15%' },
-      { id: 'description', label: 'Descripción', sortable: true, class: '', width: '30%' },
-      { id: 'quantity', label: 'Cantidad', sortable: false, class: '', width: '15%' },
-      { id: 'price', label: 'Precio', sortable: true, class: 'right', width: '12%' },
-      { id: 'teorico', label: 'Stock', sortable: true, class: 'right', width: '12%' },
-      { id: 'transito', label: 'Tránsito', sortable: true, class: 'right', width: '12%' }
-    ];
+    // Add quantity and price columns for marketplace
+    const quantityCol = { id: 'quantity', label: 'Cantidad', sortable: false, class: '', width: '15%' };
+    const priceCol = { id: 'price', label: 'Precio', sortable: true, class: 'right', width: '12%' };
+
+    // Insert quantity after description and price after quantity
+    const descIndex = columns.findIndex(c => c.id === 'description');
+    if (descIndex >= 0 && !columns.find(c => c.id === 'quantity')) {
+      columns.splice(descIndex + 1, 0, quantityCol);
+    }
+    const qtyIndex = columns.findIndex(c => c.id === 'quantity');
+    if (qtyIndex >= 0 && !columns.find(c => c.id === 'price')) {
+      columns.splice(qtyIndex + 1, 0, priceCol);
+    }
   }
 
   let columnsToRender = columns.filter(col => columnVisibility[col.id] !== false);
