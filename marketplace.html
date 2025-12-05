@@ -742,8 +742,8 @@
         display: table-cell;
       }
 
-      /* Botones de toggle de columnas en móvil */
-      .mobile-column-toggles {
+      /* Botones de toggle de columnas en móvil - solo en vista tabla */
+      .container.table-view-active .mobile-column-toggles {
         display: flex;
         gap: 8px;
         margin-bottom: 12px;
@@ -8492,10 +8492,6 @@
             const viewModeSelector = document.querySelector('.view-mode-selector');
             if (viewModeSelector) viewModeSelector.style.display = 'none';
 
-            // Hide mobile column toggles
-            const mobileColumnToggles = document.querySelector('.mobile-column-toggles');
-            if (mobileColumnToggles) mobileColumnToggles.style.display = 'none';
-
             // Hide Add to Cart button
             const addToCartBtn = document.getElementById('addToCartBtn');
             if (addToCartBtn) addToCartBtn.style.display = 'none';
@@ -8535,10 +8531,6 @@
             // Show view mode selector (table/list/grid buttons)
             const viewModeSelector = document.querySelector('.view-mode-selector');
             if (viewModeSelector) viewModeSelector.style.display = 'flex';
-
-            // Show mobile column toggles
-            const mobileColumnToggles = document.querySelector('.mobile-column-toggles');
-            if (mobileColumnToggles) mobileColumnToggles.style.display = '';
 
             // Show Add to Cart button
             const addToCartBtn = document.getElementById('addToCartBtn');
@@ -9637,6 +9629,7 @@
         const tableContainer = document.getElementById('tableViewContainer');
         const gridContainer = document.getElementById('productsGrid');
         const mobileToggles = document.querySelector('.mobile-column-toggles');
+        const container = document.querySelector('.container');
 
         if (viewMode === 'table') {
           // Show table, hide grid completely
@@ -9650,7 +9643,8 @@
             gridContainer.classList.add('grid-hidden'); // Add hidden class for complete hiding
             gridContainer.innerHTML = ''; // Clear grid content when switching to table
           }
-          if (mobileToggles) mobileToggles.style.display = 'flex';
+          // Add class to container to indicate table view
+          if (container) container.classList.add('table-view-active');
         } else {
           // Hide table, show grid
           if (tableContainer) {
@@ -9665,7 +9659,8 @@
             gridContainer.className = 'view-container products-grid active';
             gridContainer.classList.add(viewMode + '-view');
           }
-          if (mobileToggles) mobileToggles.style.display = 'none';
+          // Remove class from container when not in table view
+          if (container) container.classList.remove('table-view-active');
         }
       }
 
