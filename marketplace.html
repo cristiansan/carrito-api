@@ -2348,7 +2348,7 @@
       padding: 30px;
       border-radius: 12px;
       width: 90%;
-      max-width: 700px;
+      max-width: 1000px;
       border: 2px solid #4CAF50;
       position: relative;
     }
@@ -2426,30 +2426,32 @@
     /* Column widths */
     .order-items-table th:nth-child(1),
     .order-items-table td:nth-child(1) {
-      width: 15%;
+      width: 18%;
     }
 
     .order-items-table th:nth-child(2),
     .order-items-table td:nth-child(2) {
-      width: 35%;
-      max-width: 200px;
+      width: 40%;
       word-break: break-word;
       overflow-wrap: break-word;
     }
 
     .order-items-table th:nth-child(3),
     .order-items-table td:nth-child(3) {
-      width: 15%;
+      width: 12%;
+      text-align: center;
     }
 
     .order-items-table th:nth-child(4),
     .order-items-table td:nth-child(4) {
-      width: 17.5%;
+      width: 15%;
+      text-align: right;
     }
 
     .order-items-table th:nth-child(5),
     .order-items-table td:nth-child(5) {
-      width: 17.5%;
+      width: 15%;
+      text-align: right;
     }
 
     .order-items-table td {
@@ -2464,18 +2466,43 @@
 
     /* Responsive table for mobile */
     @media (max-width: 768px) {
+      .order-details-modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+
       .order-items-table {
-        font-size: 12px;
+        font-size: 11px;
       }
 
       .order-items-table th,
       .order-items-table td {
-        padding: 6px;
+        padding: 5px;
+      }
+
+      .order-items-table th:nth-child(1),
+      .order-items-table td:nth-child(1) {
+        width: 20%;
       }
 
       .order-items-table th:nth-child(2),
       .order-items-table td:nth-child(2) {
-        max-width: 120px;
+        width: 35%;
+      }
+
+      .order-items-table th:nth-child(3),
+      .order-items-table td:nth-child(3) {
+        width: 15%;
+      }
+
+      .order-items-table th:nth-child(4),
+      .order-items-table td:nth-child(4) {
+        width: 15%;
+      }
+
+      .order-items-table th:nth-child(5),
+      .order-items-table td:nth-child(5) {
+        width: 15%;
       }
     }
 
