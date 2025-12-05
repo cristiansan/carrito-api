@@ -782,15 +782,12 @@ function renderRows() {
       if (col.id === 'articulo') {
         // Número de productos
         td.innerHTML = `<strong>${filtered.length}</strong>`;
-        td.style.textAlign = 'center';
       } else if (col.id === 'description') {
         // Número de productos
         td.innerHTML = `<strong>${filtered.length}</strong>`;
-        td.style.textAlign = 'center';
       } else if (col.id === 'quantity') {
         // Total de cantidades en el carrito
         td.innerHTML = `<strong>${totalQuantity}</strong>`;
-        td.style.textAlign = 'center';
       } else if (col.id === 'teorico' || col.id === 'transito') {
         // Totales de stock y tránsito
         td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
