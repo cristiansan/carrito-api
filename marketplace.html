@@ -7199,6 +7199,15 @@
         console.error('❌ Firebase not available');
         return;
       }
+      // Special case: moving from revision to aprobada requires manual order number
+      if (nextState === 'aprobada') {
+        const order = window.orders?.find(o => o.id === orderId);
+        if (order && order.logisticsState === 'revision') {
+          showManualOrderNumberModal(orderId);
+          return;
+        }
+      }
+
 
       try {
         const { doc, updateDoc } = firebase.firestoreHelpers;
@@ -13120,7 +13129,7 @@
         modal.classList.add('hidden');
 
         // Reload orders to reflect changes
-        await loadOrders();
+        loadLogisticsOrders();
 
       } catch (error) {
         console.error('❌ Error approving order:', error);
