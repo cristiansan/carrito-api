@@ -791,7 +791,6 @@ function renderRows() {
       } else if (col.id === 'teorico' || col.id === 'transito') {
         // Totales de stock y tránsito
         td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
-        td.style.textAlign = 'right';
       } else {
         // Precio y otras columnas vacías
         td.innerHTML = '';
