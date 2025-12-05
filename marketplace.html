@@ -4900,6 +4900,43 @@
     </div>
   </div>
 
+  <!-- Manual Order Number Modal -->
+  <div id="manualOrderNumberModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+      <span class="close-button" onclick="document.getElementById('manualOrderNumberModal').classList.add('hidden')">&times;</span>
+      <h2>📋 Número de Orden Manual</h2>
+      <p style="margin-bottom: 20px; color: #b0b0b0;">Ingresa el número de orden manual para aprobar este pedido:</p>
+
+      <div style="margin-bottom: 20px;">
+        <input
+          type="text"
+          id="manualOrderNumber"
+          placeholder="Ej: 12345"
+          style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; background: #2a2a33; color: #f0f0f0;"
+          autocomplete="off"
+        >
+        <p id="manualOrderNumberError" style="color: #f44336; font-size: 12px; margin-top: 8px; display: none;"></p>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button
+          class="mdc-button mdc-button--outlined"
+          onclick="document.getElementById('manualOrderNumberModal').classList.add('hidden')"
+          style="color: #f0f0f0; border-color: #f0f0f0;">
+          <span class="mdc-button__ripple"></span>
+          <span class="mdc-button__label">Cancelar</span>
+        </button>
+        <button
+          class="mdc-button mdc-button--raised"
+          id="confirmManualOrderNumber"
+          style="background-color: #4CAF50 !important;">
+          <span class="mdc-button__ripple"></span>
+          <span class="mdc-button__label">Confirmar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Limpiar consola al cargar la página
     console.clear();
@@ -13036,7 +13073,73 @@
       console.log(`📋 Manual order number modal shown for order ${orderId}`);
     }
 
+    // Confirm manual order number and approve order
+    async function confirmManualOrderNumber() {
+      const modal = document.getElementById('manualOrderNumberModal');
+      const input = document.getElementById('manualOrderNumber');
+      const errorMsg = document.getElementById('manualOrderNumberError');
+      const orderId = modal.dataset.orderId;
 
+      // Validate input
+      const manualNumber = input.value.trim();
+      if (!manualNumber) {
+        input.style.borderColor = '#f44336';
+        errorMsg.textContent = 'Por favor ingresa un número de orden';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const orderRef = doc(db, 'pedidos', orderId);
+        await updateDoc(orderRef, {
+          logisticsState: 'aprobada',
+          lastStateUpdate: new Date(),
+          manualOrderNumber: manualNumber
+        });
+
+        console.log(`✅ Order ${orderId} approved with manual number ${manualNumber}`);
+
+        // Hide modal
+        modal.classList.add('hidden');
+
+        // Reload orders to reflect changes
+        await loadOrders();
+
+      } catch (error) {
+        console.error('❌ Error approving order:', error);
+        errorMsg.textContent = 'Error al aprobar la orden: ' + error.message;
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    // Setup event listeners for manual order number modal
+    document.addEventListener('DOMContentLoaded', function() {
+      const confirmBtn = document.getElementById('confirmManualOrderNumber');
+      const input = document.getElementById('manualOrderNumber');
+
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmManualOrderNumber);
+      }
+
+      if (input) {
+        // Allow Enter key to confirm
+        input.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            confirmManualOrderNumber();
+          }
+        });
+
+        // Clear error on input change
+        input.addEventListener('input', function() {
+          input.style.borderColor = '#ddd';
+          const errorMsg = document.getElementById('manualOrderNumberError');
+          if (errorMsg) errorMsg.style.display = 'none';
+        });
+      }
+    });
 
     // Show order details in modal for all users (read-only for non-admins)
     window.showOrderDetails = async function(orderId) {
