@@ -8735,7 +8735,7 @@
             });
 
             // Show marketplace containers based on current view mode
-            switchView(currentViewMode);
+            window.switchView(currentViewMode);
 
             // Show view mode selector (table/list/grid buttons)
             const viewModeSelector = document.querySelector('.view-mode-selector');
@@ -9818,7 +9818,7 @@
         updateViewButtons();
 
         // Show the appropriate container
-        switchView(currentViewMode);
+        window.switchView(currentViewMode);
 
         // Add event listeners to view mode buttons
         const viewButtons = document.querySelectorAll('.view-mode-btn');
@@ -9827,7 +9827,7 @@
             const newView = this.getAttribute('data-view');
             currentViewMode = newView;
             localStorage.setItem('viewMode', newView);
-            switchView(newView);
+            window.switchView(newView);
             updateViewButtons();
 
             // Re-render products in new view by calling renderRows from main.js
@@ -9895,6 +9895,9 @@
           if (container) container.classList.remove('table-view-active');
         }
       }
+      // Make switchView globally accessible
+      window.switchView = switchView;
+
 
       // Format number for display
       function formatNumber(num) {
