@@ -956,18 +956,12 @@ window.renderRows = renderRows;
 window.updateTotalsRow = updateTotalsRow;
 
 function setupAutoRefresh() {
-  const checkbox = document.getElementById('autoToggle');
-  const apply = () => {
-    if (autoIntervalId) {
-      clearInterval(autoIntervalId);
-      autoIntervalId = null;
-    }
-    if (checkbox.checked) {
-      autoIntervalId = setInterval(refresh, 90_000);
-    }
-  };
-  checkbox.addEventListener('change', apply);
-  apply();
+  // Auto-refresh enabled by default (checkbox UI removed)
+  if (autoIntervalId) {
+    clearInterval(autoIntervalId);
+    autoIntervalId = null;
+  }
+  autoIntervalId = setInterval(refresh, 90_000);
 }
 
 function exportToExcel() {
@@ -1140,10 +1134,8 @@ function setupUI() {
     exportBtn.addEventListener('click', exportToExcel);
   }
 
-  const autoToggle = document.getElementById('autoToggle');
-  if (autoToggle) {
-    setupAutoRefresh();
-  }
+  // Setup auto-refresh (always enabled)
+  setupAutoRefresh();
 
   const hideZeroValues = document.getElementById('hideZeroValues');
 
