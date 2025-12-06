@@ -794,16 +794,16 @@ function renderRows() {
     if (isMarketplace) {
       if (col.id === 'articulo') {
         // Número de productos
-        td.innerHTML = `<strong>${filtered.length}</strong>`;
+        td.innerHTML = `<strong>(${filtered.length})</strong>`;
       } else if (col.id === 'description') {
         // Número de productos
-        td.innerHTML = `<strong>${filtered.length}</strong>`;
+        td.innerHTML = `<strong>(${filtered.length})</strong>`;
       } else if (col.id === 'quantity') {
         // Total de cantidades en el carrito
-        td.innerHTML = `<strong>${totalQuantity}</strong>`;
+        td.innerHTML = `<strong>(${totalQuantity})</strong>`;
       } else if (numericColumns.includes(col.id)) {
         // Totales para todas las columnas numéricas (stock, tránsito, ordenCompra, etc)
-        td.innerHTML = `<strong>${formatNumber(totals[col.id] || 0)}</strong>`;
+        td.innerHTML = `<strong>(${formatNumber(totals[col.id] || 0)})</strong>`;
       } else {
         // Precio y otras columnas vacías
         td.innerHTML = '';
