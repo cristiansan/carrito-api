@@ -8569,6 +8569,9 @@
   <script src="https://unpkg.com/material-components-web@14.0.0/dist/material-components-web.min.js"></script>
   <script>
     // Initialize Material Design Components
+    // Current view mode (default: table)
+    let currentViewMode = localStorage.getItem('viewMode') || 'table';
+
     document.addEventListener('DOMContentLoaded', () => {
       // Initialize all buttons
       const buttons = document.querySelectorAll('.mdc-button');
@@ -9724,8 +9727,6 @@
     (function() {
       'use strict';
 
-      // Current view mode (default: table)
-      let currentViewMode = localStorage.getItem('viewMode') || 'table';
 
       // Store filtered products data for re-rendering
       window.currentFilteredProducts = [];
