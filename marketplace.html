@@ -772,11 +772,6 @@
         border-color: #4CAF50;
       }
 
-      /* Ocultar tab ALL en móviles */
-      .mdc-tab[data-segment="all"] {
-        display: none !important;
-      }
-
       /* Tabs horizontales en móviles - estirar a ancho completo */
       .mdc-tab-bar {
         max-width: 100% !important;
@@ -3886,6 +3881,15 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="pausar" data-admin-only="true" style="display: none;">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">PAUSAR</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -3912,7 +3916,7 @@
           <div class="mdc-notched-outline__trailing"></div>
         </div>
       </div>
-      <span class="status" id="statusText"></span>
+      <span class="status" id="statusText" style="display: none;"></span>
       <div style="flex: 1;"></div> <!-- Spacer -->
     </div>
 
@@ -4185,6 +4189,40 @@
       </div>
     </div>
 
+    <!-- PAUSAR TAB CONTENT -->
+    <div id="pausar-content" class="tab-content" style="display: none;">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 20px;">
+        <h2 style="margin: 0;">⏸️ Control de Precios</h2>
+        <p style="text-align: center; color: #888; max-width: 600px;">
+          Utiliza este control para pausar o despausar la visualización de precios en el marketplace.
+          Cuando los precios están pausados, los usuarios podrán ver los productos pero no los precios.
+        </p>
+
+        <div id="pauseStatusIndicator" style="padding: 12px 24px; border-radius: 8px; font-weight: bold; margin: 20px 0;">
+          <!-- Status will be updated by JavaScript -->
+        </div>
+
+        <button
+          class="mdc-button mdc-button--raised"
+          id="togglePauseBtn"
+          style="padding: 20px 60px; font-size: 18px; background: #FF9800; color: white;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true" id="pauseIcon">pause_circle</i>
+          <span class="mdc-button__label" id="pauseBtnLabel">PAUSAR PRECIOS</span>
+        </button>
+
+        <div style="background: #2a2a32; padding: 20px; border-radius: 8px; margin-top: 20px; max-width: 600px;">
+          <h4 style="margin-top: 0; color: #4CAF50;">ℹ️ Información</h4>
+          <ul style="color: #ccc; line-height: 1.8;">
+            <li><strong>PAUSAR:</strong> Los precios se mostrarán como "x" en todo el marketplace</li>
+            <li><strong>DESPAUSAR:</strong> Los precios originales se restaurarán automáticamente</li>
+            <li>Los usuarios podrán seguir navegando y añadiendo productos al carrito</li>
+            <li>Esta acción afecta a todos los usuarios del marketplace</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <!-- Table View Container -->
     <div id="tableViewContainer" class="view-container active" style="overflow: auto; max-height: 70vh; border: 1px solid #eee; border-radius: 6px; width: 100%;">
       <table id="productsTable">
@@ -4252,6 +4290,34 @@
     <div class="modal-total">Total: <span id="modalTotalPrice"></span></div>
   </div>
 </div>
+
+  <!-- Pause Confirmation Modal -->
+  <div id="pauseConfirmModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 500px;">
+      <span class="close-button" id="closePauseModal">&times;</span>
+      <div style="text-align: center; padding: 20px;">
+        <i class="material-icons" style="font-size: 64px; color: #FF9800; margin-bottom: 20px;">warning</i>
+        <h2 style="color: #FF9800; margin-bottom: 16px;">⚠️ Advertencia</h2>
+        <p style="font-size: 16px; line-height: 1.6; color: #ccc; margin-bottom: 24px;">
+          Estás a punto de <strong>PAUSAR</strong> todos los precios del marketplace.
+          Los usuarios podrán ver los productos pero no verán los precios hasta que se despause.
+        </p>
+        <p style="font-size: 14px; color: #888; margin-bottom: 24px;">
+          ¿Estás seguro de que deseas continuar?
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button class="mdc-button mdc-button--outlined" id="cancelPauseBtn" style="min-width: 120px;">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label">Cancelar</span>
+          </button>
+          <button class="mdc-button mdc-button--raised" id="confirmPauseBtn" style="min-width: 120px; background: #FF9800;">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label">Confirmar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="main.js"></script>
   <!-- Hamburger Menu Button -->
@@ -8892,7 +8958,20 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.68 - Actual</h3>
+          <h3>v0.69 - Actual</h3>
+          <ul>
+            <li>🌟 <strong>Tab ALL Visible:</strong> El tab "ALL" del marketplace ahora es visible en todos los dispositivos (antes oculto en móviles)</li>
+            <li>⏸️ <strong>Nueva Tab PAUSAR:</strong> Admins pueden pausar/despausar precios - cuando están pausados, todos los precios se muestran como "x"</li>
+            <li>⚠️ <strong>Modal de Confirmación:</strong> Al pausar precios aparece advertencia confirmando la acción</li>
+            <li>✏️ <strong>Nombres de Columnas Editables:</strong> En tab PRECIOS, nombres de columnas (Precio 1, 2, 3, 4) son editables con un clic</li>
+            <li>📊 <strong>Columnas con Porcentaje:</strong> Agregadas 2 columnas nuevas con cálculo automático de porcentaje sobre Precio 1</li>
+            <li>🔢 <strong>Cálculo en Tiempo Real:</strong> Al cambiar Precio 1 o el porcentaje, las columnas calculadas se actualizan instantáneamente</li>
+            <li>🙈 <strong>Timestamp Oculto:</strong> Mensaje "Updated" con timestamp ahora está oculto</li>
+          </ul>
+        </div>
+
+        <div class="version-section">
+          <h3>v0.68</h3>
           <ul>
             <li>🎨 <strong>Paréntesis en Totales:</strong> Valores de totales ahora se muestran entre paréntesis (ej: Stock (2,361) en lugar de Stock 2,361)</li>
             <li>📱 <strong>Órdenes Responsive:</strong> En MASTER tab, botones de órdenes ahora aparecen debajo del texto en móviles para mejor uso del espacio</li>
@@ -9994,7 +10073,12 @@
 
         // Format price display
         let priceDisplay = '';
-        if (price === null || price === undefined) {
+        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+
+        if (isPaused) {
+          // Show 'x' when prices are paused
+          priceDisplay = '<span style="color: #888; font-size: 24px; font-weight: bold;">x</span>';
+        } else if (price === null || price === undefined) {
           priceDisplay = '<span style="color: #ff9800;">?</span>';
         } else if (Number(price) === 0) {
           priceDisplay = '<span style="color: #f44336;">$' + formatNumber(price) + '</span>';
@@ -10229,7 +10313,12 @@
 
         // Update price
         const priceElement = document.getElementById('modalProductPrice');
-        if (price === null || price === undefined) {
+        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+
+        if (isPaused) {
+          // Show 'x' when prices are paused
+          priceElement.innerHTML = '<span style="color: #888; font-size: 48px; font-weight: bold;">x</span>';
+        } else if (price === null || price === undefined) {
           priceElement.innerHTML = '<span style="color: #ff9800;">Precio no disponible</span>';
         } else if (Number(price) === 0) {
           priceElement.innerHTML = '<span style="color: #f44336;">$' + formatNumber(price) + '</span>';
@@ -10806,6 +10895,57 @@
       column: 'articulo',
       direction: 'asc'
     };
+
+    // Price column names configuration (editable by admins)
+    let priceColumnNames = {
+      precio1: 'Precio 1',
+      precio2: 'Precio 2',
+      precio3: 'Precio 3',
+      precio4: 'Precio 4',
+      precio5: '% Col5',
+      precio6: '% Col6'
+    };
+
+    // Price column percentages for calculated columns
+    let priceColumnPercents = {
+      precio5: 0,
+      precio6: 0
+    };
+
+    // Load column names from localStorage
+    function loadPriceColumnNames() {
+      const saved = localStorage.getItem('priceColumnNames');
+      if (saved) {
+        try {
+          priceColumnNames = { ...priceColumnNames, ...JSON.parse(saved) };
+        } catch (e) {
+          console.error('Error loading price column names:', e);
+        }
+      }
+
+      const savedPercents = localStorage.getItem('priceColumnPercents');
+      if (savedPercents) {
+        try {
+          priceColumnPercents = { ...priceColumnPercents, ...JSON.parse(savedPercents) };
+        } catch (e) {
+          console.error('Error loading price column percents:', e);
+        }
+      }
+    }
+
+    // Save column names to localStorage
+    function savePriceColumnNames() {
+      localStorage.setItem('priceColumnNames', JSON.stringify(priceColumnNames));
+    }
+
+    // Save column percents to localStorage
+    function savePriceColumnPercents() {
+      localStorage.setItem('priceColumnPercents', JSON.stringify(priceColumnPercents));
+    }
+
+    // Load initial configuration
+    loadPriceColumnNames();
+
     // === PRODUCT PRICING FUNCTIONS ===
 
     // Load products from API (same endpoint as used in main.js)
@@ -11058,6 +11198,9 @@
           <div class="price-stat">
             Con precios: <span class="price-stat-number">${window.products.filter(p => p.precio1 > 0 || p.precio2 > 0 || p.precio3 > 0 || p.precio4 > 0).length}</span>
           </div>
+          <div class="price-stat" style="color: #888; font-size: 12px;">
+            💡 Clic en nombres de columnas de precios para editar
+          </div>
         </div>
 
         <table class="products-table">
@@ -11065,14 +11208,57 @@
             <tr>
               <th class="sortable ${getSortedClass('articulo')}" data-sort="articulo">Artículo${getSortIndicator('articulo')}</th>
               <th class="sortable ${getSortedClass('description')}" data-sort="description">Descripción${getSortIndicator('description')}</th>
-              <th class="sortable ${getSortedClass('precio1')}" data-sort="precio1">Precio 1${getSortIndicator('precio1')}</th>
-              <th class="sortable ${getSortedClass('precio2')}" data-sort="precio2">Precio 2${getSortIndicator('precio2')}</th>
-              <th class="sortable ${getSortedClass('precio3')}" data-sort="precio3">Precio 3${getSortIndicator('precio3')}</th>
-              <th class="sortable ${getSortedClass('precio4')}" data-sort="precio4">Precio 4${getSortIndicator('precio4')}</th>
+              <th class="sortable editable-header ${getSortedClass('precio1')}" data-sort="precio1" data-column="precio1">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio1}</span>
+                  <span class="sort-indicator">${getSortIndicator('precio1')}</span>
+                </div>
+              </th>
+              <th class="sortable editable-header ${getSortedClass('precio2')}" data-sort="precio2" data-column="precio2">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio2}</span>
+                  <span class="sort-indicator">${getSortIndicator('precio2')}</span>
+                </div>
+              </th>
+              <th class="sortable editable-header ${getSortedClass('precio3')}" data-sort="precio3" data-column="precio3">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio3}</span>
+                  <span class="sort-indicator">${getSortIndicator('precio3')}</span>
+                </div>
+              </th>
+              <th class="sortable editable-header ${getSortedClass('precio4')}" data-sort="precio4" data-column="precio4">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio4}</span>
+                  <span class="sort-indicator">${getSortIndicator('precio4')}</span>
+                </div>
+              </th>
+              <th class="editable-header" data-column="precio5">
+                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
+                  <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio5}</span>
+                  <input type="number" class="percent-input" data-column="precio5" value="${priceColumnPercents.precio5}"
+                         step="0.1" min="0" max="100" placeholder="%"
+                         style="width: 60px; padding: 4px; text-align: center; border: 1px solid #3a3a44; background: #2a2a33; color: #fff; border-radius: 4px;"
+                         title="Porcentaje sobre ${priceColumnNames.precio1}">
+                </div>
+              </th>
+              <th class="editable-header" data-column="precio6">
+                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
+                  <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio6}</span>
+                  <input type="number" class="percent-input" data-column="precio6" value="${priceColumnPercents.precio6}"
+                         step="0.1" min="0" max="100" placeholder="%"
+                         style="width: 60px; padding: 4px; text-align: center; border: 1px solid #3a3a44; background: #2a2a33; color: #fff; border-radius: 4px;"
+                         title="Porcentaje sobre ${priceColumnNames.precio1}">
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            ${sortedProducts.map(product => `
+            ${sortedProducts.map(product => {
+              // Calculate prices with percentage
+              const precio5 = product.precio1 * (1 + priceColumnPercents.precio5 / 100);
+              const precio6 = product.precio1 * (1 + priceColumnPercents.precio6 / 100);
+
+              return `
               <tr data-articulo="${product.articulo}">
                 <td>
                   <span class="product-code">${product.articulo}</span>
@@ -11120,8 +11306,19 @@
                          min="0"
                          placeholder="0.00">
                 </td>
+                <td>
+                  <div class="calculated-price" style="padding: 8px; text-align: center; color: #4CAF50; font-weight: bold;">
+                    $${precio5.toFixed(2)}
+                  </div>
+                </td>
+                <td>
+                  <div class="calculated-price" style="padding: 8px; text-align: center; color: #4CAF50; font-weight: bold;">
+                    $${precio6.toFixed(2)}
+                  </div>
+                </td>
               </tr>
-            `).join('')}
+            `;
+            }).join('')}
           </tbody>
         </table>
       `;
@@ -11139,13 +11336,27 @@
 
       // Add event listeners to sortable headers
       setupSortableHeaders();
+
+      // Add event listeners to editable headers
+      setupEditableHeaders();
+
+      // Add event listeners to percent inputs
+      setupPercentInputListeners();
     }
 
     // Setup event listeners for sortable table headers
     function setupSortableHeaders() {
       const sortableHeaders = document.querySelectorAll('.products-table th.sortable');
       sortableHeaders.forEach(th => {
-        th.addEventListener('click', function() {
+        th.addEventListener('click', function(e) {
+          // Don't sort if clicking on editable header text
+          if (e.target.classList.contains('header-text')) {
+            return;
+          }
+
+          // If clicking on sort indicator, allow sorting
+          // (sort indicator has class 'sort-indicator')
+
           const column = this.dataset.sort;
 
           if (priceTableSort.column === column) {
@@ -11178,6 +11389,21 @@
             product[priceField] = value;
             product.modified = true;
             this.classList.add('modified');
+
+            // If precio1 changed, update calculated prices in same row
+            if (priceField === 'precio1') {
+              const row = this.closest('tr');
+              const precio5 = value * (1 + priceColumnPercents.precio5 / 100);
+              const precio6 = value * (1 + priceColumnPercents.precio6 / 100);
+
+              const cells = row.querySelectorAll('td');
+              if (cells.length >= 8) {
+                const precio5Cell = cells[6].querySelector('.calculated-price');
+                const precio6Cell = cells[7].querySelector('.calculated-price');
+                if (precio5Cell) precio5Cell.textContent = '$' + precio5.toFixed(2);
+                if (precio6Cell) precio6Cell.textContent = '$' + precio6.toFixed(2);
+              }
+            }
           }
         });
 
@@ -11186,6 +11412,118 @@
           const value = parseFloat(this.value) || 0;
           this.value = value.toFixed(2);
         });
+      });
+    }
+
+    // Setup event listeners for editable column headers
+    function setupEditableHeaders() {
+      const editableHeaders = document.querySelectorAll('.products-table th.editable-header');
+      editableHeaders.forEach(th => {
+        const headerText = th.querySelector('.header-text');
+        if (!headerText) return;
+
+        // Use click instead of dblclick for better UX
+        headerText.addEventListener('click', function(e) {
+          e.stopPropagation(); // Prevent sort/other events from firing
+
+          // Check if already editing
+          if (headerText.contentEditable === 'true') return;
+
+          const columnId = th.dataset.column;
+          const currentName = priceColumnNames[columnId];
+
+          // Make the span editable
+          headerText.contentEditable = 'true';
+          headerText.style.border = '1px solid #4CAF50';
+          headerText.style.borderRadius = '4px';
+          headerText.style.background = '#2a2a33';
+          headerText.style.outline = 'none';
+
+          // Select all text
+          const range = document.createRange();
+          range.selectNodeContents(headerText);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+
+          // Save on blur or Enter
+          const saveEdit = () => {
+            const newName = headerText.textContent.trim() || currentName;
+            priceColumnNames[columnId] = newName;
+            savePriceColumnNames();
+
+            // Reset editable state
+            headerText.contentEditable = 'false';
+            headerText.style.border = '';
+            headerText.style.borderRadius = '';
+            headerText.style.background = '';
+            headerText.style.borderBottom = '1px dashed #666';
+
+            // Update the text
+            headerText.textContent = newName;
+          };
+
+          // Listen for blur (click outside)
+          headerText.addEventListener('blur', saveEdit, { once: true });
+
+          // Listen for Enter/Escape
+          headerText.addEventListener('keydown', function handleKeydown(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              headerText.blur(); // Trigger save
+            } else if (e.key === 'Escape') {
+              headerText.textContent = currentName; // Reset text
+              headerText.blur();
+            }
+          }, { once: true });
+        });
+      });
+    }
+
+    // Setup event listeners for percent inputs
+    function setupPercentInputListeners() {
+      const percentInputs = document.querySelectorAll('.percent-input');
+      percentInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+          e.stopPropagation(); // Prevent event bubbling
+
+          const columnId = this.dataset.column;
+          const value = parseFloat(this.value) || 0;
+
+          // Update the percentage
+          priceColumnPercents[columnId] = value;
+          savePriceColumnPercents();
+
+          // Re-calculate and update all calculated prices in the table
+          updateCalculatedPrices();
+        });
+
+        // Prevent sorting when clicking on percent input
+        input.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      });
+    }
+
+    // Update calculated prices without re-rendering entire table
+    function updateCalculatedPrices() {
+      const rows = document.querySelectorAll('.products-table tbody tr');
+      rows.forEach(row => {
+        const articulo = row.dataset.articulo;
+        const product = window.products.find(p => p.articulo === articulo);
+
+        if (product) {
+          // Calculate new prices
+          const precio5 = product.precio1 * (1 + priceColumnPercents.precio5 / 100);
+          const precio6 = product.precio1 * (1 + priceColumnPercents.precio6 / 100);
+
+          // Update the displayed values
+          const cells = row.querySelectorAll('td');
+          if (cells.length >= 8) {
+            cells[6].querySelector('.calculated-price').textContent = '$' + precio5.toFixed(2);
+            cells[7].querySelector('.calculated-price').textContent = '$' + precio6.toFixed(2);
+          }
+        }
       });
     }
 
@@ -13942,6 +14280,128 @@
     window.exportOrders = exportOrders;
 
 
+    });
+  </script>
+
+  <!-- Pause/Unpause Prices Functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const togglePauseBtn = document.getElementById('togglePauseBtn');
+      const pauseBtnLabel = document.getElementById('pauseBtnLabel');
+      const pauseIcon = document.getElementById('pauseIcon');
+      const pauseStatusIndicator = document.getElementById('pauseStatusIndicator');
+      const pauseConfirmModal = document.getElementById('pauseConfirmModal');
+      const closePauseModal = document.getElementById('closePauseModal');
+      const cancelPauseBtn = document.getElementById('cancelPauseBtn');
+      const confirmPauseBtn = document.getElementById('confirmPauseBtn');
+
+      // Check initial pause state
+      function updatePauseUI() {
+        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+
+        if (isPaused) {
+          pauseBtnLabel.textContent = 'DESPAUSAR PRECIOS';
+          pauseIcon.textContent = 'play_circle';
+          togglePauseBtn.style.background = '#4CAF50';
+          pauseStatusIndicator.textContent = '⏸️ PRECIOS PAUSADOS';
+          pauseStatusIndicator.style.background = '#FF9800';
+          pauseStatusIndicator.style.color = 'white';
+        } else {
+          pauseBtnLabel.textContent = 'PAUSAR PRECIOS';
+          pauseIcon.textContent = 'pause_circle';
+          togglePauseBtn.style.background = '#FF9800';
+          pauseStatusIndicator.textContent = '▶️ PRECIOS ACTIVOS';
+          pauseStatusIndicator.style.background = '#4CAF50';
+          pauseStatusIndicator.style.color = 'white';
+        }
+      }
+
+      // Initialize UI
+      updatePauseUI();
+
+      // Toggle pause button click
+      togglePauseBtn.addEventListener('click', function() {
+        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+
+        if (isPaused) {
+          // Unpause directly without confirmation
+          unpausePrices();
+        } else {
+          // Show confirmation modal for pausing
+          pauseConfirmModal.classList.remove('hidden');
+        }
+      });
+
+      // Close modal handlers
+      closePauseModal.addEventListener('click', function() {
+        pauseConfirmModal.classList.add('hidden');
+      });
+
+      cancelPauseBtn.addEventListener('click', function() {
+        pauseConfirmModal.classList.add('hidden');
+      });
+
+      // Confirm pause
+      confirmPauseBtn.addEventListener('click', function() {
+        pausePrices();
+        pauseConfirmModal.classList.add('hidden');
+      });
+
+      // Pause prices function
+      function pausePrices() {
+        // Save original prices if not already saved
+        if (!localStorage.getItem('originalPrices')) {
+          const products = window.allProducts || [];
+          const originalPrices = {};
+
+          products.forEach(product => {
+            if (product.ARTICULO) {
+              originalPrices[product.ARTICULO] = {
+                PRECIO: product.PRECIO,
+                PRECIO_OFERTA: product.PRECIO_OFERTA
+              };
+            }
+          });
+
+          localStorage.setItem('originalPrices', JSON.stringify(originalPrices));
+        }
+
+        // Mark as paused
+        localStorage.setItem('pricesPaused', 'true');
+
+        // Update UI
+        updatePauseUI();
+
+        // Reload products to apply changes
+        if (window.loadProducts) {
+          window.loadProducts();
+        }
+
+        console.log('✅ Precios pausados');
+      }
+
+      // Unpause prices function
+      function unpausePrices() {
+        // Remove pause flag
+        localStorage.setItem('pricesPaused', 'false');
+
+        // Update UI
+        updatePauseUI();
+
+        // Reload products to restore prices
+        if (window.loadProducts) {
+          window.loadProducts();
+        }
+
+        console.log('✅ Precios despausados');
+      }
+
+      // Close modal when clicking outside
+      pauseConfirmModal.addEventListener('click', function(e) {
+        if (e.target === pauseConfirmModal) {
+          pauseConfirmModal.classList.add('hidden');
+        }
+      });
     });
   </script>
 

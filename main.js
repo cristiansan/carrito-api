@@ -735,7 +735,15 @@ function renderRows() {
 
         // Special handling for price column
         if (col.id === 'price') {
-          if (value === null || value === undefined) {
+          const isPaused = localStorage.getItem('pricesPaused') === 'true';
+
+          if (isPaused) {
+            // Show 'x' when prices are paused
+            td.textContent = 'x';
+            td.style.fontWeight = 'bold';
+            td.style.color = '#888';
+            td.style.fontSize = '20px';
+          } else if (value === null || value === undefined) {
             td.textContent = '?';
             td.style.fontWeight = 'bold';
             td.style.color = '#ff9800'; // Orange color for unknown price
