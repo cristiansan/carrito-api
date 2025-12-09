@@ -837,7 +837,7 @@
         <div class="header-stat-label">Tránsito</div>
       </div>
     </div>
-    <span id="versionBtn" class="version-btn">v0.68</span>
+    <span id="versionBtn" class="version-btn">v0.70</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -860,7 +860,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.68</button>
+      <button id="mobileVersionBtn">v0.70</button>
     </div>
   </div>
 
@@ -1076,7 +1076,14 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.68 - Actual</h3>
+          <h3>v0.70 - Actual</h3>
+          <ul>
+            <li>✅ <strong>Fix Aprobación de Órdenes en MASTER:</strong> Corregido botón "Confirmar" en modal de número de orden manual - ahora funciona correctamente sin romper el layout</li>
+            <li>🔧 <strong>Mejoras de Estabilidad:</strong> Función confirmManualOrderNumber ahora usa window.loadOrders() para recargar correctamente después de aprobar</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.68</h3>
           <ul>
             <li>🎨 <strong>Paréntesis en Totales:</strong> Valores de totales ahora se muestran entre paréntesis (ej: Stock (2,361) en lugar de Stock 2,361)</li>
             <li>📱 <strong>Órdenes Responsive:</strong> En MASTER tab, botones de órdenes ahora aparecen debajo del texto en móviles para mejor uso del espacio</li>

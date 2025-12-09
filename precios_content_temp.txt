@@ -1,0 +1,53 @@
+    <div id="precios-content" class="tab-content">
+      <h2>💰 Gestión de Precios</h2>
+      <div class="admin-section">
+        <div class="prices-header">
+          <h3>Lista de Productos y Precios</h3>
+          <div class="prices-actions-buttons">
+            <button class="mdc-button mdc-button--outlined" id="importPricesBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">upload_file</i>
+              <span class="mdc-button__label">Importar Precios</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="exportCsvBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+              <span class="mdc-button__label">Exportar CSV</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="exportExcelBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+              <span class="mdc-button__label">Exportar Excel</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" id="saveAllPricesBtn" style="display: none;">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+              <span class="mdc-button__label">Guardar Todos los Precios</span>
+            </button>
+            <button class="mdc-button mdc-button--outlined" id="loadProductsBtn">
+              <span class="mdc-button__ripple"></span>
+              <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+              <span class="mdc-button__label">Actualizar Productos</span>
+            </button>
+          </div>
+          <input type="file" id="pricesFileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+        </div>
+
+        <!-- Botón toggle para columna Artículo en móvil -->
+        <div class="mobile-articulo-toggle">
+          <button class="articulo-toggle-btn" id="articuloToggleBtn">
+            <span>+</span> Artículo
+          </button>
+        </div>
+
+        <div id="productsContainer">
+          <div class="loading-products">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Cargando productos...</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>

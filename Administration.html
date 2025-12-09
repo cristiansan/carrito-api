@@ -2331,7 +2331,7 @@
         <button type="button" class="mdc-button mdc-button--outlined" id="cancelOrderNumberBtn">
           <span class="mdc-button__label">Cancelar</span>
         </button>
-        <button type="button" class="mdc-button mdc-button--raised" id="confirmOrderNumberBtn" style="background-color: #4CAF50;">
+        <button type="button" class="mdc-button mdc-button--raised" id="confirmOrderNumberBtn" style="background-color: #4CAF50;" onclick="window.confirmManualOrderNumber()">
           <span class="mdc-button__label">✅ Confirmar y Aprobar</span>
         </button>
       </div>
@@ -2384,7 +2384,9 @@
 
     // === ADMIN ACCESS CONTROL ===
     // Variable global para almacenar el estado de admin
-    window.window.isUserAdmin = false;
+    window.isUserAdmin = false;
+    console.log('🚀 [ADMINISTRATION.HTML] Script loaded and executing!');
+    console.log('📍 [ADMINISTRATION.HTML] Current page:', window.location.href);
 
     // === PRICE TABLE SORTING STATE ===
     let priceTableSort = {
@@ -4946,8 +4948,19 @@
 
     // Show manual order number modal
     function showManualOrderNumberModal(orderId) {
+      console.log(`🔍 [DEBUG] showManualOrderNumberModal called with orderId: ${orderId}`);
+
       const modal = document.getElementById('manualOrderNumberModal');
       const input = document.getElementById('manualOrderNumber');
+
+      console.log('🔍 [DEBUG] Modal element:', modal);
+      console.log('🔍 [DEBUG] Input element:', input);
+
+      if (!modal || !input) {
+        console.error('❌ [DEBUG] Modal or input not found!');
+        alert('Error: No se pudo abrir el modal. Elementos no encontrados.');
+        return;
+      }
 
       // Clear previous input
       input.value = '';
@@ -4955,12 +4968,17 @@
 
       // Store orderId for later use
       modal.dataset.orderId = orderId;
+      console.log('🔍 [DEBUG] Stored orderId in modal.dataset:', modal.dataset.orderId);
 
       // Show modal
       modal.classList.remove('hidden');
+      console.log('🔍 [DEBUG] Modal classes after show:', modal.className);
 
       // Focus on input
-      setTimeout(() => input.focus(), 100);
+      setTimeout(() => {
+        input.focus();
+        console.log('🔍 [DEBUG] Input focused');
+      }, 100);
 
       console.log(`📋 Manual order number modal shown for order ${orderId}`);
     }
@@ -6765,13 +6783,26 @@
     };
 
     // === GLOBAL ORDER NUMBER MODAL FUNCTIONS ===
+    console.log('🔧 [INIT] Defining confirmManualOrderNumber function...');
     window.confirmManualOrderNumber = async function() {
+      console.log('🔍 [DEBUG] confirmManualOrderNumber function called');
+
       const modal = document.getElementById('manualOrderNumberModal');
       const input = document.getElementById('manualOrderNumber');
       const orderId = modal?.dataset.orderId;
       const manualNumber = input?.value.trim();
 
+      console.log('🔍 [DEBUG] Modal:', modal);
+      console.log('🔍 [DEBUG] Input:', input);
+      console.log('🔍 [DEBUG] Order ID:', orderId);
+      console.log('🔍 [DEBUG] Manual Number:', manualNumber);
+
       // Validation
+      if (!orderId) {
+        alert('❌ Error: No se encontró el ID de la orden');
+        return;
+      }
+
       if (!manualNumber) {
         if (input) {
           input.style.borderColor = '#f44336';
@@ -6819,6 +6850,29 @@
         alert('Error al actualizar la orden: ' + error.message);
       }
     };
+    console.log('✅ [INIT] confirmManualOrderNumber function defined successfully');
+    console.log('🔍 [TEST] window.confirmManualOrderNumber is:', typeof window.confirmManualOrderNumber);
+
+    console.log('🔧 [INIT] Defining hideManualOrderNumberModal function...');
+    window.hideManualOrderNumberModal = function() {
+      const modal = document.getElementById('manualOrderNumberModal');
+      const input = document.getElementById('manualOrderNumber');
+
+      // Hide modal
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.dataset.orderId = '';
+      }
+
+      // Clear and reset input
+      if (input) {
+        input.value = '';
+        input.style.borderColor = '#ddd';
+      }
+
+      console.log('📋 Manual order number modal hidden');
+    };
+    console.log('✅ [INIT] hideManualOrderNumberModal function defined successfully');
 
     window.sellerToDelete = null;
     window.clientToDelete = null;
@@ -8056,7 +8110,13 @@
         cancelOrderNumberBtn.addEventListener('click', window.hideManualOrderNumberModal);
       }
       if (confirmOrderNumberBtn) {
-        confirmOrderNumberBtn.addEventListener('click', window.confirmManualOrderNumber);
+        console.log('✅ [DEBUG] Confirm order number button found, attaching listener');
+        confirmOrderNumberBtn.addEventListener('click', function() {
+          console.log('🖱️ [DEBUG] Confirm button clicked');
+          window.confirmManualOrderNumber();
+        });
+      } else {
+        console.error('❌ [DEBUG] Confirm order number button NOT found');
       }
       if (manualOrderInput) {
         manualOrderInput.addEventListener('keypress', function(e) {

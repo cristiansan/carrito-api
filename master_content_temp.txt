@@ -1,0 +1,148 @@
+    <div id="master-content" class="tab-content" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">📋 Seguimiento de Pedidos - Admin</h2>
+        <div style="display: flex; gap: 10px;">
+          <button class="mdc-button mdc-button--outlined" id="refreshOrdersBtn">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">refresh</i>
+            <span class="mdc-button__label">Actualizar</span>
+          </button>
+          <button class="mdc-button mdc-button--outlined" id="exportOrdersBtn" style="background-color: #4CAF50; color: white;">
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">download</i>
+            <span class="mdc-button__label">Exportar Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 10px; align-items: center; background: #2a2a32; padding: 15px; border-radius: 8px;">
+          <i class="material-icons" style="color: #4CAF50;">search</i>
+          <input
+            type="text"
+            id="orderSearchInput"
+            placeholder="Buscar por número de orden, número de cliente o nombre de cliente..."
+            style="flex: 1; background: #1e1e24; border: 1px solid #3a3a42; color: #fff; padding: 12px; border-radius: 4px; font-size: 14px; outline: none;"
+          />
+          <button
+            id="clearSearchBtn"
+            class="mdc-button mdc-button--outlined"
+            style="display: none; min-width: auto; padding: 8px 16px;"
+          >
+            <span class="mdc-button__ripple"></span>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">clear</i>
+            <span class="mdc-button__label">Limpiar</span>
+          </button>
+        </div>
+        <div id="searchResultsCount" style="margin-top: 8px; color: #888; font-size: 13px; display: none;"></div>
+      </div>
+
+      <div class="stats-grid" style="margin-bottom: 24px;">
+        <div class="stat-item">
+          <span class="stat-number" id="totalOrders">0</span>
+          <span class="stat-label">Total Órdenes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="borradorOrders">0</span>
+          <span class="stat-label">Borrador</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="revisionOrders">0</span>
+          <span class="stat-label">En Revisión</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="aprobadaOrders">0</span>
+          <span class="stat-label">Aprobadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="preparacionOrders">0</span>
+          <span class="stat-label">En Preparación</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="listoOrders">0</span>
+          <span class="stat-label">Listo para Despacho</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="despachadaOrders">0</span>
+          <span class="stat-label">Despachadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="entregadaOrders">0</span>
+          <span class="stat-label">Entregadas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="cerradaOrders">0</span>
+          <span class="stat-label">Cerradas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="canceladaOrders">0</span>
+          <span class="stat-label">Canceladas</span>
+        </div>
+      </div>
+
+      <div class="logistics-content">
+        <div class="logistics-section">
+          <h4>📝 Borrador</h4>
+          <div class="logistics-orders" id="admin-borradorOrders">
+            <p class="no-orders">No hay pedidos en borrador</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🔍 En Revisión</h4>
+          <div class="logistics-orders" id="admin-revisionOrders">
+            <p class="no-orders">No hay pedidos en revisión</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>✅ Aprobada</h4>
+          <div class="logistics-orders" id="admin-aprobadaOrders">
+            <p class="no-orders">No hay pedidos aprobados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>📦 En Preparación</h4>
+          <div class="logistics-orders" id="admin-preparacionOrders">
+            <p class="no-orders">No hay pedidos en preparación</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚚 Listo para Retiro/Despacho</h4>
+          <div class="logistics-orders" id="admin-listoOrders">
+            <p class="no-orders">No hay pedidos listos</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🚛 Despachada</h4>
+          <div class="logistics-orders" id="admin-despachadaOrders">
+            <p class="no-orders">No hay pedidos despachados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>✅ Entregada</h4>
+          <div class="logistics-orders" id="admin-entregadaOrders">
+            <p class="no-orders">No hay pedidos entregados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>🔒 Cerrada</h4>
+          <div class="logistics-orders" id="admin-cerradaOrders">
+            <p class="no-orders">No hay pedidos cerrados</p>
+          </div>
+        </div>
+
+        <div class="logistics-section">
+          <h4>❌ Cancelada</h4>
+          <div class="logistics-orders" id="admin-canceladaOrders">
+            <p class="no-orders">No hay pedidos cancelados</p>
+          </div>
+        </div>
+      </div>
+    </div>
