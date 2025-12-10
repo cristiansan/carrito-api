@@ -325,35 +325,6 @@
     #columnFilterDropdown input[type="checkbox"] {
       accent-color: #2a2a33;
     }
-    .header-stats {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .header-stat-card {
-      text-align: center;
-      padding: 6px 12px;
-      background: #15151a;
-      border-radius: 6px;
-      border: 1px solid #2a2a2a;
-      min-width: 100px;
-    }
-
-    .header-stat-number {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #4CAF50;
-      margin-bottom: 2px;
-    }
-
-    .header-stat-label {
-      font-size: 0.7em;
-      color: #b5b5b5;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      white-space: nowrap;
-    }
 
     .stats-container {
       display: none !important;
@@ -458,11 +429,6 @@
       font-weight: bold;
       font-size: 1.2em;
       text-align: right;
-    }
-
-    /* Mobile KPIs container */
-    .mobile-kpis {
-      display: none;
     }
 
     /* Mobile Menu Styles */
@@ -756,14 +722,6 @@
       .version-btn {
         display: none !important;
       }
-
-      .header-stats {
-        display: none !important;
-      }
-
-      .mobile-kpis {
-        display: none !important;
-      }
       th, td {
         padding: 4px;
         font-size: 12px;
@@ -823,21 +781,7 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
-    <div class="header-stats" id="headerStats">
-      <div class="header-stat-card" id="headerTotalProducts">
-        <div class="header-stat-number">0</div>
-        <div class="header-stat-label">Productos</div>
-      </div>
-      <div class="header-stat-card" id="headerStockTeorico">
-        <div class="header-stat-number">0</div>
-        <div class="header-stat-label">Stock</div>
-      </div>
-      <div class="header-stat-card" id="headerStockTransito">
-        <div class="header-stat-number">0</div>
-        <div class="header-stat-label">Tránsito</div>
-      </div>
-    </div>
-    <span id="versionBtn" class="version-btn">v0.70</span>
+    <span id="versionBtn" class="version-btn">v0.71</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -860,7 +804,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.70</button>
+      <button id="mobileVersionBtn">v0.71</button>
     </div>
   </div>
 
@@ -905,6 +849,24 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="accesorios">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">ACCESORIOS</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-segment="puregear">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">PUREGEAR</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
           </div>
         </div>
       </div>
@@ -930,19 +892,6 @@
           </div>
           <div class="mdc-notched-outline__trailing"></div>
         </div>
-      </div>
-      <div class="mdc-form-field">
-        <div class="mdc-checkbox">
-          <input type="checkbox" class="mdc-checkbox__native-control" id="autoToggle" checked>
-          <div class="mdc-checkbox__background">
-            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-              <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-            </svg>
-            <div class="mdc-checkbox__mixedmark"></div>
-          </div>
-          <div class="mdc-checkbox__ripple"></div>
-        </div>
-        <label for="autoToggle">Auto-refresh 90s</label>
       </div>
 
       <div class="mdc-form-field">
@@ -995,22 +944,6 @@
     <div id="errorBox" class="error hidden"></div>
 
     <div class="stats-container" id="statsContainer" style="display: none;"></div>
-
-    <!-- Mobile KPIs -->
-    <div class="mobile-kpis" id="mobileKpis">
-      <div class="header-stat-card" id="mobileHeaderTotalProducts">
-        <div class="header-stat-label">Productos</div>
-        <div class="header-stat-number">0</div>
-      </div>
-      <div class="header-stat-card" id="mobileHeaderStockTeorico">
-        <div class="header-stat-label">Stock</div>
-        <div class="header-stat-number">0</div>
-      </div>
-      <div class="header-stat-card" id="mobileHeaderStockTransito">
-        <div class="header-stat-label">Tránsito</div>
-        <div class="header-stat-number">0</div>
-      </div>
-    </div>
 
     <!-- Add to Cart button (top only) -->
     <div style="text-align: right; margin-bottom: 12px; display: none;" id="addToCartContainer">
@@ -1076,7 +1009,18 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.70 - Actual</h3>
+          <h3>v0.71 - Actual</h3>
+          <ul>
+            <li>🎨 <strong>Header Simplificado:</strong> Removidos KPI de productos, stock y tránsito del header superior</li>
+            <li>📊 <strong>Nuevas Tabs:</strong> Agregadas tabs ACCESORIOS (Apple 20W USB-C Power Adapter) y PUREGEAR</li>
+            <li>🔕 <strong>Auto-refresh Silencioso:</strong> Removido checkbox y mensajes de auto-refresh - funciona silenciosamente cada 90s</li>
+            <li>💰 <strong>Fix Columnas PRECIOS:</strong> Corregido bug donde nombres de columnas cambiaban a Cantidad/Stock/Tránsito</li>
+            <li>🧹 <strong>PRECIOS Limpieza:</strong> Removido botón +Artículo sin función en sección PRECIOS</li>
+            <li>🛡️ <strong>Validación PRECIOS:</strong> Auto-detección y limpieza de nombres corruptos en localStorage</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.70</h3>
           <ul>
             <li>✅ <strong>Fix Aprobación de Órdenes en MASTER:</strong> Corregido botón "Confirmar" en modal de número de orden manual - ahora funciona correctamente sin romper el layout</li>
             <li>🔧 <strong>Mejoras de Estabilidad:</strong> Función confirmManualOrderNumber ahora usa window.loadOrders() para recargar correctamente después de aprobar</li>

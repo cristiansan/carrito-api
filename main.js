@@ -555,17 +555,23 @@ function renderRows() {
   const iphoneCount = mapped.filter(segmentFilterPredicate('iphone')).length;
   const macbooksCount = mapped.filter(segmentFilterPredicate('macbooks')).length;
   const samsungCount = mapped.filter(segmentFilterPredicate('samsung')).length;
+  const accesoriosCount = mapped.filter(segmentFilterPredicate('accesorios')).length;
+  const puregearCount = mapped.filter(segmentFilterPredicate('puregear')).length;
 
   // Update tab counts with Material Design structure
   const allTab = document.querySelector('.mdc-tab[data-segment="all"] .mdc-tab__text-label');
   const iphoneTab = document.querySelector('.mdc-tab[data-segment="iphone"] .mdc-tab__text-label');
   const macbooksTab = document.querySelector('.mdc-tab[data-segment="macbooks"] .mdc-tab__text-label');
   const samsungTab = document.querySelector('.mdc-tab[data-segment="samsung"] .mdc-tab__text-label');
+  const accesoriosTab = document.querySelector('.mdc-tab[data-segment="accesorios"] .mdc-tab__text-label');
+  const puregearTab = document.querySelector('.mdc-tab[data-segment="puregear"] .mdc-tab__text-label');
 
   if (allTab) allTab.textContent = `All (${allCount})`;
   if (iphoneTab) iphoneTab.textContent = `iPhone (${iphoneCount})`;
   if (macbooksTab) macbooksTab.textContent = `MacBooks (${macbooksCount})`;
   if (samsungTab) samsungTab.textContent = `Samsung (${samsungCount})`;
+  if (accesoriosTab) accesoriosTab.textContent = `ACCESORIOS (${accesoriosCount})`;
+  if (puregearTab) puregearTab.textContent = `PUREGEAR (${puregearCount})`;
 
   const table = document.querySelector('table');
   const thead = table.querySelector('thead');
@@ -838,9 +844,6 @@ function renderRows() {
   // Actualizar estadísticas KPI - using fixed function
   updateStatsFixed(filtered, totals);
 
-  // Header KPIs removed - now using totals row in table
-  // updateHeaderStats(filtered.length, totals);
-
   // Render products in card views if view mode is not table
   if (typeof window.renderProductsInCurrentView === 'function') {
     window.renderProductsInCurrentView(filtered);
@@ -856,7 +859,6 @@ async function forceReconnect() {
 async function refresh() {
   try {
     showError('');
-    setStatus('Updating...');
     allStockData = await fetchStock();
     
     if (Array.isArray(allStockData) && allStockData.length > 0) {
@@ -900,9 +902,7 @@ async function refresh() {
     
     renderRows();
     lastFetchAt = Date.now();
-    const dt = new Date(lastFetchAt);
-    setStatus(`Updated: ${dt.toLocaleTimeString()}`);
-    
+
     // Log the first few mapped items for verification
     if (mappedStockData && mappedStockData.length > 0) {
       console.log('First 3 mapped items:', mappedStockData.slice(0, 3));
@@ -1395,50 +1395,6 @@ function updateStats(filteredData, totals) {
     statsContainerDisplay: statsContainer.style.display,
     statsContainerHTML: statsContainer.innerHTML.length
   });
-}
-
-
-// Update header KPIs (desktop and mobile)
-function updateHeaderStats(totalProducts, totals) {
-  // Update desktop header KPIs
-  const headerTotalProducts = document.getElementById('headerTotalProducts');
-  const headerStockTeorico = document.getElementById('headerStockTeorico');
-  const headerStockTransito = document.getElementById('headerStockTransito');
-
-  if (headerTotalProducts) {
-    const numberEl = headerTotalProducts.querySelector('.header-stat-number');
-    if (numberEl) numberEl.textContent = totalProducts.toLocaleString();
-  }
-
-  if (headerStockTeorico) {
-    const numberEl = headerStockTeorico.querySelector('.header-stat-number');
-    if (numberEl) numberEl.textContent = (totals.teorico || 0).toLocaleString();
-  }
-
-  if (headerStockTransito) {
-    const numberEl = headerStockTransito.querySelector('.header-stat-number');
-    if (numberEl) numberEl.textContent = (totals.transito || 0).toLocaleString();
-  }
-
-  // Update mobile KPIs
-  const mobileHeaderTotalProducts = document.getElementById('mobileHeaderTotalProducts');
-  const mobileHeaderStockTeorico = document.getElementById('mobileHeaderStockTeorico');
-  const mobileHeaderStockTransito = document.getElementById('mobileHeaderStockTransito');
-
-  if (mobileHeaderTotalProducts) {
-    const numberEl = mobileHeaderTotalProducts.querySelector('.header-stat-number');
-    if (numberEl) numberEl.textContent = totalProducts.toLocaleString();
-  }
-
-  if (mobileHeaderStockTeorico) {
-    const numberEl = mobileHeaderStockTeorico.querySelector('.header-stat-number');
-    if (numberEl) numberEl.textContent = (totals.teorico || 0).toLocaleString();
-  }
-
-  if (mobileHeaderStockTransito) {
-    const numberEl = mobileHeaderStockTransito.querySelector('.header-stat-number');
-    if (numberEl) numberEl.textContent = (totals.transito || 0).toLocaleString();
-  }
 }
 
 // Fixed updateStats function using compatible syntax

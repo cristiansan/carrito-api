@@ -4020,13 +4020,6 @@
           <input type="file" id="pricesFileInput" accept=".csv,.xlsx,.xls" style="display: none;">
         </div>
 
-        <!-- Botón toggle para columna Artículo en móvil -->
-        <div class="mobile-articulo-toggle">
-          <button class="articulo-toggle-btn" id="articuloToggleBtn">
-            <span>+</span> Artículo
-          </button>
-        </div>
-
         <div id="productsContainer">
           <div class="loading-products">
             <div class="loading-content">
@@ -4377,7 +4370,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.70
+          v0.71
         </div>
       </div>
       
@@ -8966,7 +8959,17 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.70 - Actual</h3>
+          <h3>v0.71 - Actual</h3>
+          <ul>
+            <li>💰 <strong>Fix Columnas PRECIOS:</strong> Corregido bug donde nombres de columnas cambiaban a Cantidad/Stock/Tránsito</li>
+            <li>🧹 <strong>PRECIOS Limpieza:</strong> Removido botón +Artículo sin función en sección PRECIOS</li>
+            <li>🛡️ <strong>Validación PRECIOS:</strong> Auto-detección y limpieza de nombres corruptos en localStorage</li>
+            <li>📝 <strong>Logging Mejorado:</strong> Logs detallados para debugging de cambios en nombres de columnas</li>
+            <li>🔒 <strong>Prevención de Sorting:</strong> No se permite ordenar mientras se edita un nombre de columna</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.70</h3>
           <ul>
             <li>✅ <strong>Fix Aprobación de Órdenes en MASTER:</strong> Corregido botón "Confirmar" en modal de número de orden manual - ahora funciona correctamente sin romper el layout</li>
             <li>🔧 <strong>Mejoras de Estabilidad:</strong> Función confirmManualOrderNumber ahora usa window.loadOrders() para recargar correctamente después de aprobar</li>
@@ -10933,10 +10936,15 @@
       const saved = localStorage.getItem('priceColumnNames');
       if (saved) {
         try {
-          priceColumnNames = { ...priceColumnNames, ...JSON.parse(saved) };
+          const loadedNames = JSON.parse(saved);
+          console.log('📋 Loading saved price column names from localStorage:', loadedNames);
+          priceColumnNames = { ...priceColumnNames, ...loadedNames };
+          console.log('📋 Final priceColumnNames after loading:', priceColumnNames);
         } catch (e) {
           console.error('Error loading price column names:', e);
         }
+      } else {
+        console.log('📋 No saved price column names found, using defaults:', priceColumnNames);
       }
 
       const savedPercents = localStorage.getItem('priceColumnPercents');
@@ -10951,6 +10959,7 @@
 
     // Save column names to localStorage
     function savePriceColumnNames() {
+      console.log('💾 Saving priceColumnNames to localStorage:', priceColumnNames);
       localStorage.setItem('priceColumnNames', JSON.stringify(priceColumnNames));
     }
 
@@ -10959,8 +10968,37 @@
       localStorage.setItem('priceColumnPercents', JSON.stringify(priceColumnPercents));
     }
 
+    // Validate and clean corrupted localStorage values
+    function validatePriceColumnNames() {
+      const invalidNames = ['Cantidad', 'Precio', 'Stock', 'Tránsito', 'Transito', 'Articulo', 'Artículo', 'Descripción', 'Descripcion'];
+      let hasInvalidNames = false;
+
+      for (const key in priceColumnNames) {
+        if (invalidNames.includes(priceColumnNames[key])) {
+          console.warn(`⚠️ Detected invalid column name "${priceColumnNames[key]}" for ${key}, resetting to default`);
+          hasInvalidNames = true;
+        }
+      }
+
+      if (hasInvalidNames) {
+        console.warn('⚠️ Corrupted priceColumnNames detected, clearing localStorage and resetting to defaults');
+        localStorage.removeItem('priceColumnNames');
+        priceColumnNames = {
+          precio1: 'Precio 1',
+          precio2: 'Precio 2',
+          precio3: 'Precio 3',
+          precio4: 'Precio 4',
+          precio5: '% Col5',
+          precio6: '% Col6'
+        };
+        savePriceColumnNames();
+        console.log('✅ priceColumnNames reset to defaults:', priceColumnNames);
+      }
+    }
+
     // Load initial configuration
     loadPriceColumnNames();
+    validatePriceColumnNames();
 
     // === PRODUCT PRICING FUNCTIONS ===
 
@@ -11158,6 +11196,12 @@
     // Display products in pricing table
     function displayProducts() {
       const container = document.getElementById('productsContainer');
+
+      // Finalize any header being edited before re-rendering
+      const headerBeingEdited = document.querySelector('.products-table .header-text[contenteditable="true"]');
+      if (headerBeingEdited) {
+        headerBeingEdited.blur(); // This will trigger the save
+      }
 
       if (!window.products || window.products.length === 0) {
         container.innerHTML = `
@@ -11370,6 +11414,12 @@
             return;
           }
 
+          // Don't sort if any header is currently being edited
+          const anyHeaderBeingEdited = document.querySelector('.products-table .header-text[contenteditable="true"]');
+          if (anyHeaderBeingEdited) {
+            return;
+          }
+
           // If clicking on sort indicator, allow sorting
           // (sort indicator has class 'sort-indicator')
 
@@ -11464,19 +11514,38 @@
 
           // Save on blur or Enter
           const saveEdit = () => {
-            const newName = headerText.textContent.trim() || currentName;
-            priceColumnNames[columnId] = newName;
-            savePriceColumnNames();
+            try {
+              // Get the new name and clean it
+              let newName = headerText.textContent.trim();
 
-            // Reset editable state
-            headerText.contentEditable = 'false';
-            headerText.style.border = '';
-            headerText.style.borderRadius = '';
-            headerText.style.background = '';
-            headerText.style.borderBottom = '1px dashed #666';
+              // Validate the new name
+              if (!newName || newName === '') {
+                console.warn('Empty column name, keeping original:', currentName);
+                newName = currentName;
+              }
 
-            // Update the text
-            headerText.textContent = newName;
+              // Check if the name actually changed
+              if (newName === currentName) {
+                console.log('Column name unchanged:', columnId, '=', currentName);
+                headerText.textContent = currentName;
+              } else {
+                console.log('Saving column name change:', columnId, currentName, '->', newName);
+                priceColumnNames[columnId] = newName;
+                savePriceColumnNames();
+                headerText.textContent = newName;
+              }
+            } catch (error) {
+              console.error('Error saving column name for', columnId, ':', error);
+              // Reset to original name on error
+              headerText.textContent = currentName;
+            } finally {
+              // Always reset editable state, even if there was an error
+              headerText.contentEditable = 'false';
+              headerText.style.border = '';
+              headerText.style.borderRadius = '';
+              headerText.style.background = '';
+              headerText.style.borderBottom = '1px dashed #666';
+            }
           };
 
           // Listen for blur (click outside)
