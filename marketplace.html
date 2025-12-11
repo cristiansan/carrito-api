@@ -6976,11 +6976,15 @@
         if (orderData.items && orderData.items.length > 0) {
           orderData.items.forEach((item, index) => {
             mensaje += `${index + 1}. ${item.description || item.articulo}\n`;
-            mensaje += `   Cantidad: ${item.quantity} x ${formatNumber(item.price)}\n`;
+            // Show 'x' if prices are paused globally
+            const priceDisplay = window.pricesPausedGlobal ? 'x' : formatNumber(item.price);
+            mensaje += `   Cantidad: ${item.quantity} x ${priceDisplay}\n`;
           });
         }
 
-        mensaje += `\n💰 *TOTAL: ${formatNumber(orderData.total)}*\n\n`;
+        // Show 'x' for total if prices are paused globally
+        const totalDisplay = window.pricesPausedGlobal ? 'x' : formatNumber(orderData.total);
+        mensaje += `\n💰 *TOTAL: ${totalDisplay}*\n\n`;
 
         // Enviar WhatsApp a todos los teléfonos del vendedor
         console.log('📱 [WhatsApp] Preparando para enviar a', phones.length, 'teléfono(s)');
@@ -9847,6 +9851,32 @@
       // Product specifications mapping
       let productSpecsMapping = null;
 
+      // Global price pause state (loaded from Firebase)
+      window.pricesPausedGlobal = false;
+
+      // Initialize global price pause state from Firebase
+      async function initPricePauseState() {
+        try {
+          const { doc, getDoc } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+          const settingsRef = doc(db, 'settings', 'pricesPaused');
+          const settingsDoc = await getDoc(settingsRef);
+
+          if (settingsDoc.exists()) {
+            window.pricesPausedGlobal = settingsDoc.data().paused === true;
+          } else {
+            window.pricesPausedGlobal = false;
+          }
+          console.log('📋 Global price pause state loaded:', window.pricesPausedGlobal);
+        } catch (error) {
+          console.error('❌ Error loading global price pause state:', error);
+          window.pricesPausedGlobal = false;
+        }
+      }
+
+      // Load price pause state immediately
+      initPricePauseState();
+
       // Load product image mapping
       async function loadProductImageMapping() {
         try {
@@ -10092,10 +10122,10 @@
 
         // Format price display
         let priceDisplay = '';
-        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+        const isPaused = window.pricesPausedGlobal;
 
         if (isPaused) {
-          // Show 'x' when prices are paused
+          // Show 'x' when prices are paused GLOBALLY
           priceDisplay = '<span style="color: #888; font-size: 24px; font-weight: bold;">x</span>';
         } else if (price === null || price === undefined) {
           priceDisplay = '<span style="color: #ff9800;">?</span>';
@@ -10332,10 +10362,10 @@
 
         // Update price
         const priceElement = document.getElementById('modalProductPrice');
-        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+        const isPaused = window.pricesPausedGlobal;
 
         if (isPaused) {
-          // Show 'x' when prices are paused
+          // Show 'x' when prices are paused GLOBALLY
           priceElement.innerHTML = '<span style="color: #888; font-size: 48px; font-weight: bold;">x</span>';
         } else if (price === null || price === undefined) {
           priceElement.innerHTML = '<span style="color: #ff9800;">Precio no disponible</span>';
@@ -12855,14 +12885,20 @@
         // Tabla de productos
         yPos += 12;
 
-        const tableData = orderData.items.map((item, index) => [
-          index + 1,
-          item.articulo || '',
-          item.description || '',
-          item.quantity,
-          '$' + formatNumber(item.price),
-          '$' + formatNumber(item.quantity * item.price)
-        ]);
+        const tableData = orderData.items.map((item, index) => {
+          // Show 'x' if prices are paused globally
+          const priceDisplay = window.pricesPausedGlobal ? 'x' : '$' + formatNumber(item.price);
+          const subtotalDisplay = window.pricesPausedGlobal ? 'x' : '$' + formatNumber(item.quantity * item.price);
+
+          return [
+            index + 1,
+            item.articulo || '',
+            item.description || '',
+            item.quantity,
+            priceDisplay,
+            subtotalDisplay
+          ];
+        });
 
         doc.autoTable({
           startY: yPos,
@@ -12902,7 +12938,9 @@
         doc.text('TOTAL:', 130, yPos + 2);
         doc.setFontSize(16);
         doc.setTextColor(...primaryColor);
-        doc.text('$' + formatNumber(orderData.total), 191, yPos + 2, { align: 'right' });
+        // Show 'x' for total if prices are paused globally
+        const totalDisplay = window.pricesPausedGlobal ? 'x' : '$' + formatNumber(orderData.total);
+        doc.text(totalDisplay, 191, yPos + 2, { align: 'right' });
 
         // Footer
         doc.setTextColor(150, 150, 150);
@@ -13074,7 +13112,9 @@
         }
         mensaje += `📅 *Fecha:* ${orderData.fechaLocal || new Date().toLocaleString('es-AR')}\n\n`;
         mensaje += `📦 *Productos:* ${orderData.cantidadItems || orderData.items?.length || 0} items\n`;
-        mensaje += `💰 *TOTAL: $${formatNumber(orderData.total)}*\n\n`;
+        // Show 'x' for total if prices are paused globally
+        const totalDisplay = window.pricesPausedGlobal ? 'x' : '$' + formatNumber(orderData.total);
+        mensaje += `💰 *TOTAL: ${totalDisplay}*\n\n`;
         mensaje += `✅ Descargá el PDF para ver el detalle completo`;
 
         // Enviar WhatsApp a todos los teléfonos del vendedor
@@ -13774,12 +13814,16 @@
         if (order.items && order.items.length > 0) {
           order.items.forEach((item, index) => {
             const row = document.createElement('tr');
+            // Show 'x' if prices are paused globally
+            const priceDisplay = window.pricesPausedGlobal ? 'x' : formatNumber(item.price || 0);
+            const subtotalDisplay = window.pricesPausedGlobal ? 'x' : formatNumber((item.price || 0) * (item.quantity || 0));
+
             row.innerHTML = `
               <td>${item.articulo || '-'}</td>
               <td>${item.description || '-'}</td>
               <td style="text-align: center;">${item.quantity || 0}</td>
-              <td style="text-align: right;">$${formatNumber(item.price || 0)}</td>
-              <td style="text-align: right;">$${formatNumber((item.price || 0) * (item.quantity || 0))}</td>
+              <td style="text-align: right;">${window.pricesPausedGlobal ? priceDisplay : '$' + priceDisplay}</td>
+              <td style="text-align: right;">${window.pricesPausedGlobal ? subtotalDisplay : '$' + subtotalDisplay}</td>
             `;
             itemsTableBody.appendChild(row);
           });
@@ -13789,8 +13833,9 @@
           itemsTableBody.appendChild(row);
         }
 
-        // Mostrar total
-        document.getElementById('detailOrderTotal').textContent = `$${formatNumber(order.total || order.montoTotal || 0)}`;
+        // Mostrar total - Show 'x' if prices are paused globally
+        const totalDisplay = window.pricesPausedGlobal ? 'x' : '$' + formatNumber(order.total || order.montoTotal || 0);
+        document.getElementById('detailOrderTotal').textContent = totalDisplay;
 
         // Hide admin-only controls for non-admin users
         document.getElementById('detailSaveOrderContainer').style.display = 'none';
@@ -14416,22 +14461,58 @@
       const cancelPauseBtn = document.getElementById('cancelPauseBtn');
       const confirmPauseBtn = document.getElementById('confirmPauseBtn');
 
+      // Firebase functions for global price pause state
+      async function getPricePauseState() {
+        try {
+          const { doc, getDoc } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+          const settingsRef = doc(db, 'settings', 'pricesPaused');
+          const settingsDoc = await getDoc(settingsRef);
+
+          if (settingsDoc.exists()) {
+            return settingsDoc.data().paused === true;
+          }
+          return false;
+        } catch (error) {
+          console.error('Error reading price pause state from Firebase:', error);
+          return false;
+        }
+      }
+
+      async function setPricePauseState(paused) {
+        try {
+          const { doc, setDoc } = firebase.firestoreHelpers;
+          const db = firebase.firestore();
+          const settingsRef = doc(db, 'settings', 'pricesPaused');
+          await setDoc(settingsRef, {
+            paused: paused,
+            updatedAt: new Date().toISOString(),
+            updatedBy: window.currentUserEmail || 'unknown'
+          });
+          console.log('✅ Price pause state saved to Firebase:', paused);
+          return true;
+        } catch (error) {
+          console.error('❌ Error saving price pause state to Firebase:', error);
+          return false;
+        }
+      }
+
       // Check initial pause state
-      function updatePauseUI() {
-        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+      async function updatePauseUI() {
+        const isPaused = await getPricePauseState();
 
         if (isPaused) {
           pauseBtnLabel.textContent = 'DESPAUSAR PRECIOS';
           pauseIcon.textContent = 'play_circle';
           togglePauseBtn.style.background = '#4CAF50';
-          pauseStatusIndicator.textContent = '⏸️ PRECIOS PAUSADOS';
+          pauseStatusIndicator.textContent = '⏸️ PRECIOS PAUSADOS (GLOBAL)';
           pauseStatusIndicator.style.background = '#FF9800';
           pauseStatusIndicator.style.color = 'white';
         } else {
           pauseBtnLabel.textContent = 'PAUSAR PRECIOS';
           pauseIcon.textContent = 'pause_circle';
           togglePauseBtn.style.background = '#FF9800';
-          pauseStatusIndicator.textContent = '▶️ PRECIOS ACTIVOS';
+          pauseStatusIndicator.textContent = '▶️ PRECIOS ACTIVOS (GLOBAL)';
           pauseStatusIndicator.style.background = '#4CAF50';
           pauseStatusIndicator.style.color = 'white';
         }
@@ -14441,12 +14522,12 @@
       updatePauseUI();
 
       // Toggle pause button click
-      togglePauseBtn.addEventListener('click', function() {
-        const isPaused = localStorage.getItem('pricesPaused') === 'true';
+      togglePauseBtn.addEventListener('click', async function() {
+        const isPaused = await getPricePauseState();
 
         if (isPaused) {
           // Unpause directly without confirmation
-          unpausePrices();
+          await unpausePrices();
         } else {
           // Show confirmation modal for pausing
           pauseConfirmModal.classList.remove('hidden');
@@ -14463,58 +14544,61 @@
       });
 
       // Confirm pause
-      confirmPauseBtn.addEventListener('click', function() {
-        pausePrices();
+      confirmPauseBtn.addEventListener('click', async function() {
+        await pausePrices();
         pauseConfirmModal.classList.add('hidden');
       });
 
       // Pause prices function
-      function pausePrices() {
-        // Save original prices if not already saved
-        if (!localStorage.getItem('originalPrices')) {
-          const products = window.allProducts || [];
-          const originalPrices = {};
+      async function pausePrices() {
+        console.log('⏸️ Pausando precios globalmente...');
 
-          products.forEach(product => {
-            if (product.ARTICULO) {
-              originalPrices[product.ARTICULO] = {
-                PRECIO: product.PRECIO,
-                PRECIO_OFERTA: product.PRECIO_OFERTA
-              };
-            }
-          });
+        // Save pause state to Firebase (global for all users)
+        const success = await setPricePauseState(true);
 
-          localStorage.setItem('originalPrices', JSON.stringify(originalPrices));
+        if (success) {
+          // Update global variable immediately
+          window.pricesPausedGlobal = true;
+
+          // Update UI
+          await updatePauseUI();
+
+          // Reload products to apply changes
+          if (window.loadProducts) {
+            window.loadProducts();
+          }
+
+          console.log('✅ Precios pausados GLOBALMENTE - Todos los usuarios verán "x"');
+        } else {
+          console.error('❌ Error al pausar precios');
+          alert('Error al pausar precios. Por favor intenta de nuevo.');
         }
-
-        // Mark as paused
-        localStorage.setItem('pricesPaused', 'true');
-
-        // Update UI
-        updatePauseUI();
-
-        // Reload products to apply changes
-        if (window.loadProducts) {
-          window.loadProducts();
-        }
-
-        console.log('✅ Precios pausados');
       }
 
       // Unpause prices function
-      function unpausePrices() {
-        // Remove pause flag
-        localStorage.setItem('pricesPaused', 'false');
+      async function unpausePrices() {
+        console.log('▶️ Despausando precios globalmente...');
 
-        // Update UI
-        updatePauseUI();
+        // Remove pause flag from Firebase (global for all users)
+        const success = await setPricePauseState(false);
 
-        // Reload products to restore prices
-        if (window.loadProducts) {
-          window.loadProducts();
+        if (success) {
+          // Update global variable immediately
+          window.pricesPausedGlobal = false;
+
+          // Update UI
+          await updatePauseUI();
+
+          // Reload products to restore prices
+          if (window.loadProducts) {
+            window.loadProducts();
+          }
+
+          console.log('✅ Precios despausados GLOBALMENTE - Todos los usuarios verán precios normales');
+        } else {
+          console.error('❌ Error al despausar precios');
+          alert('Error al despausar precios. Por favor intenta de nuevo.');
         }
-
-        console.log('✅ Precios despausados');
       }
 
       // Close modal when clicking outside
