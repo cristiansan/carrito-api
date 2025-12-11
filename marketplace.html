@@ -4204,6 +4204,16 @@
           <span class="mdc-button__label" id="pauseBtnLabel">PAUSAR PRECIOS</span>
         </button>
 
+        <!-- Force Sync Button (only for troubleshooting) -->
+        <button
+          class="mdc-button mdc-button--outlined"
+          id="forceSyncPauseBtn"
+          style="padding: 12px 30px; font-size: 14px; border: 2px solid #2196F3; color: #2196F3; margin-top: 10px;">
+          <span class="mdc-button__ripple"></span>
+          <i class="material-icons mdc-button__icon" aria-hidden="true">sync</i>
+          <span class="mdc-button__label">Forzar Sincronización</span>
+        </button>
+
         <div style="background: #2a2a32; padding: 20px; border-radius: 8px; margin-top: 20px; max-width: 600px;">
           <h4 style="margin-top: 0; color: #4CAF50;">ℹ️ Información</h4>
           <ul style="color: #ccc; line-height: 1.8;">
@@ -4370,7 +4380,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.71
+          v0.73
         </div>
       </div>
       
@@ -5618,6 +5628,7 @@
             const historialModalBtn = document.getElementById('historialModalBtn');
             const logisticsModalBtn = document.getElementById('logisticsModalBtn');
             const configBtn = document.getElementById('configBtn');
+            const configSubmenu = document.getElementById('configSubmenu');
             const estadisticasBtn = document.getElementById('estadisticasBtn');
 
             console.log('🔍 Elementos encontrados:');
@@ -5674,7 +5685,12 @@
               }
               if (configBtn) {
                 configBtn.style.display = 'none';
-                console.log('🚫 CONFIG ocultado para usuario no-admin');
+                console.log('🚫 CONFIG botón ocultado para usuario no-admin');
+              }
+              if (configSubmenu) {
+                configSubmenu.style.display = 'none';
+                configSubmenu.classList.remove('active');
+                console.log('🚫 CONFIG submenu ocultado para usuario no-admin');
               }
               if (estadisticasBtn) {
                 estadisticasBtn.style.display = 'none';
@@ -6527,6 +6543,19 @@
           closeMenu();
           console.log('🚪 Cerrando sesión desde menu...');
 
+          // Clean up price pause listener
+          if (window.pricePauseListener && typeof window.pricePauseListener === 'function') {
+            console.log('🧹 Cleaning up price pause listener...');
+            window.pricePauseListener();
+            window.pricePauseListener = null;
+          }
+
+          // Reset global states
+          window.pricesPausedGlobal = false;
+          window.isUserLoggedIn = false;
+          window.isUserAdmin = false;
+          console.log('🧹 Global states reset');
+
           if (typeof firebase !== 'undefined' && firebase.auth()) {
             // Cerrar sesión en Firebase
             firebase.authHelpers.signOut(firebase.auth()).then(() => {
@@ -6541,11 +6570,18 @@
 
               console.log('🧹 localStorage limpiado');
 
-              // Redirigir al login
-              window.location.href = 'login.html';
+              // Force redirect after a small delay to ensure cleanup
+              setTimeout(() => {
+                window.location.href = 'login.html';
+              }, 100);
             }).catch((error) => {
               console.error('❌ Error cerrando sesión:', error);
-              // Redirigir de todas formas
+              // Limpiar localStorage y redirigir de todas formas
+              localStorage.removeItem('userAuthenticated');
+              localStorage.removeItem('userEmail');
+              localStorage.removeItem('userDisplayName');
+              localStorage.removeItem('userPhotoURL');
+              localStorage.removeItem('cart');
               window.location.href = 'login.html';
             });
           } else {
@@ -6579,11 +6615,17 @@
         console.log('✅ Ayuda button handler added');
       }
 
-      // CONFIG button - toggle submenu
+      // CONFIG button - toggle submenu (ADMIN ONLY)
       const configBtn = document.getElementById('configBtn');
       const configSubmenu = document.getElementById('configSubmenu');
       if (configBtn && configSubmenu) {
         configBtn.addEventListener('click', function(e) {
+          // Validar permisos de admin
+          if (!window.isUserAdmin) {
+            console.warn('🚫 Acceso denegado: CONFIG solo para admins');
+            return;
+          }
+
           e.stopPropagation();
           const isActive = configSubmenu.classList.contains('active');
 
@@ -6597,23 +6639,33 @@
             configSubmenu.style.display = 'block';
           }
         });
-        console.log('✅ Config button handler added');
+        console.log('✅ Config button handler added (admin only)');
       }
 
-      // CONFIG submenu options
+      // CONFIG submenu options (ADMIN ONLY)
       const configProfileBtn = document.getElementById('configProfileBtn');
       if (configProfileBtn) {
         configProfileBtn.addEventListener('click', function() {
+          // Validar permisos de admin
+          if (!window.isUserAdmin) {
+            console.warn('🚫 Acceso denegado: PROFILE solo para admins');
+            return;
+          }
           closeMenu();
           openModal('profileModal');
           loadUserProfile();
         });
-        console.log('✅ Config Profile button handler added');
+        console.log('✅ Config Profile button handler added (admin only)');
       }
 
       const configClienteBtn = document.getElementById('configClienteBtn');
       if (configClienteBtn) {
         configClienteBtn.addEventListener('click', function(e) {
+          // Validar permisos de admin
+          if (!window.isUserAdmin) {
+            console.warn('🚫 Acceso denegado: CLIENTES solo para admins');
+            return;
+          }
           e.preventDefault();
           e.stopPropagation();
           console.log('🔄 Redirigiendo a CLIENTES...');
@@ -6621,12 +6673,17 @@
           // Redirect immediately
           window.location.replace('Administration.html?tab=clientes');
         });
-        console.log('✅ Config Cliente button handler added');
+        console.log('✅ Config Cliente button handler added (admin only)');
       }
 
       const configVendedorBtn = document.getElementById('configVendedorBtn');
       if (configVendedorBtn) {
         configVendedorBtn.addEventListener('click', function(e) {
+          // Validar permisos de admin
+          if (!window.isUserAdmin) {
+            console.warn('🚫 Acceso denegado: VENDEDORES solo para admins');
+            return;
+          }
           e.preventDefault();
           e.stopPropagation();
           console.log('🔄 Redirigiendo a VENDEDORES...');
@@ -6640,6 +6697,11 @@
       const configAdmisionesBtn = document.getElementById('configAdmisionesBtn');
       if (configAdmisionesBtn) {
         configAdmisionesBtn.addEventListener('click', function(e) {
+          // Validar permisos de admin
+          if (!window.isUserAdmin) {
+            console.warn('🚫 Acceso denegado: ADMISIONES solo para admins');
+            return;
+          }
           e.preventDefault();
           e.stopPropagation();
           console.log('🔄 Redirigiendo a ADMISIONES...');
@@ -6647,7 +6709,7 @@
           // Redirect immediately
           window.location.replace('Administration.html?tab=admisiones');
         });
-        console.log('✅ Config Admisiones button handler added');
+        console.log('✅ Config Admisiones button handler added (admin only)');
       }
 
       const estadisticasBtn = document.getElementById('estadisticasBtn');
@@ -6819,7 +6881,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, deleteDoc, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, limit, getDocs, deleteDoc, addDoc, serverTimestamp, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     // Firebase Storage removed - using only Firestore for photos
 
     // Configuración de Firebase
@@ -6860,7 +6922,8 @@
         getDocs,
         deleteDoc,
         addDoc,
-        serverTimestamp
+        serverTimestamp,
+        onSnapshot
       },
       // Storage helpers removed - using only Firestore
       // Funciones de Auth que necesitamos
@@ -8963,7 +9026,25 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.71 - Actual</h3>
+          <h3>v0.73 - Actual</h3>
+          <ul>
+            <li>🔒 <strong>Fix Seguridad CONFIG:</strong> Menú CONFIG y submenu (PROFILE, ADMISIONES, CLIENTES, VENDEDORES) ahora restringido exclusivamente a usuarios admin</li>
+            <li>🛡️ <strong>Validación Múltiple:</strong> Validación de permisos en UI y en event listeners para prevenir accesos no autorizados</li>
+            <li>✅ <strong>Visibilidad Controlada:</strong> CONFIG completamente oculto para usuarios no-admin, visible solo para administradores</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.72</h3>
+          <ul>
+            <li>🔄 <strong>Sincronización en Tiempo Real:</strong> Sistema de pausa de precios ahora se sincroniza automáticamente en tiempo real entre todos los usuarios</li>
+            <li>🐛 <strong>Fix Estado Corrupto PAUSAR:</strong> Resuelto problema donde usuarios admin veían precios con "x" permanentemente después de despausar</li>
+            <li>🧹 <strong>Logout Mejorado:</strong> Limpieza completa de listeners y estados globales al hacer logout, previniendo estados corruptos</li>
+            <li>🔧 <strong>Botón Forzar Sincronización:</strong> Nuevo botón en tab PAUSAR para resolver manualmente problemas de sincronización</li>
+            <li>✅ <strong>Prevención Automática:</strong> Listener en tiempo real previene desincronización entre navegador y Firebase</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.71</h3>
           <ul>
             <li>💰 <strong>Fix Columnas PRECIOS:</strong> Corregido bug donde nombres de columnas cambiaban a Cantidad/Stock/Tránsito</li>
             <li>🧹 <strong>PRECIOS Limpieza:</strong> Removido botón +Artículo sin función en sección PRECIOS</li>
@@ -9853,28 +9934,50 @@
 
       // Global price pause state (loaded from Firebase)
       window.pricesPausedGlobal = false;
+      window.pricePauseListener = null; // Store listener reference for cleanup
 
-      // Initialize global price pause state from Firebase
-      async function initPricePauseState() {
+      // Initialize global price pause state from Firebase with real-time listener
+      function initPricePauseState() {
         try {
-          const { doc, getDoc } = firebase.firestoreHelpers;
+          const { doc, onSnapshot } = firebase.firestoreHelpers;
           const db = firebase.firestore();
           const settingsRef = doc(db, 'settings', 'pricesPaused');
-          const settingsDoc = await getDoc(settingsRef);
 
-          if (settingsDoc.exists()) {
-            window.pricesPausedGlobal = settingsDoc.data().paused === true;
-          } else {
-            window.pricesPausedGlobal = false;
-          }
-          console.log('📋 Global price pause state loaded:', window.pricesPausedGlobal);
+          // Set up real-time listener to auto-sync pause state
+          window.pricePauseListener = onSnapshot(settingsRef,
+            (settingsDoc) => {
+              const previousState = window.pricesPausedGlobal;
+
+              if (settingsDoc.exists()) {
+                window.pricesPausedGlobal = settingsDoc.data().paused === true;
+              } else {
+                window.pricesPausedGlobal = false;
+              }
+
+              console.log('📋 Global price pause state synced:', window.pricesPausedGlobal);
+
+              // If state changed, reload products automatically
+              if (previousState !== window.pricesPausedGlobal) {
+                console.log('🔄 Pause state changed - reloading products automatically');
+                if (window.loadProducts) {
+                  window.loadProducts();
+                }
+              }
+            },
+            (error) => {
+              console.error('❌ Error in price pause listener:', error);
+              window.pricesPausedGlobal = false;
+            }
+          );
+
+          console.log('✅ Real-time price pause listener initialized');
         } catch (error) {
-          console.error('❌ Error loading global price pause state:', error);
+          console.error('❌ Error setting up price pause listener:', error);
           window.pricesPausedGlobal = false;
         }
       }
 
-      // Load price pause state immediately
+      // Load price pause state immediately with real-time sync
       initPricePauseState();
 
       // Load product image mapping
@@ -14548,6 +14651,32 @@
         await pausePrices();
         pauseConfirmModal.classList.add('hidden');
       });
+
+      // Force sync button - for troubleshooting state issues
+      const forceSyncPauseBtn = document.getElementById('forceSyncPauseBtn');
+      if (forceSyncPauseBtn) {
+        forceSyncPauseBtn.addEventListener('click', async function() {
+          console.log('🔄 Forzando sincronización del estado de pausa...');
+
+          // Get fresh state from Firebase
+          const freshState = await getPricePauseState();
+
+          // Update global variable
+          window.pricesPausedGlobal = freshState;
+          console.log('✅ Estado sincronizado desde Firebase:', freshState);
+
+          // Update UI
+          await updatePauseUI();
+
+          // Reload products
+          if (window.loadProducts) {
+            window.loadProducts();
+          }
+
+          // Show confirmation
+          alert('✅ Sincronización completada.\nEstado actual: ' + (freshState ? 'PAUSADO' : 'ACTIVO'));
+        });
+      }
 
       // Pause prices function
       async function pausePrices() {
