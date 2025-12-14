@@ -4380,7 +4380,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.73
+          v0.74
         </div>
       </div>
       
@@ -9026,7 +9026,15 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.73 - Actual</h3>
+          <h3>v0.74 - Actual</h3>
+          <ul>
+            <li>🐛 <strong>Fix Crítico Carga de Productos:</strong> Resuelto problema donde productos no cargaban al iniciar sesión</li>
+            <li>🔧 <strong>Listener Optimizado:</strong> Listener de tiempo real ahora ignora la primera ejecución para evitar recargas innecesarias</li>
+            <li>✅ <strong>Inicialización Mejorada:</strong> Productos se cargan correctamente sin interferencias del listener de pausa</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.73</h3>
           <ul>
             <li>🔒 <strong>Fix Seguridad CONFIG:</strong> Menú CONFIG y submenu (PROFILE, ADMISIONES, CLIENTES, VENDEDORES) ahora restringido exclusivamente a usuarios admin</li>
             <li>🛡️ <strong>Validación Múltiple:</strong> Validación de permisos en UI y en event listeners para prevenir accesos no autorizados</li>
@@ -9942,6 +9950,7 @@
           const { doc, onSnapshot } = firebase.firestoreHelpers;
           const db = firebase.firestore();
           const settingsRef = doc(db, 'settings', 'pricesPaused');
+          let isFirstLoad = true;
 
           // Set up real-time listener to auto-sync pause state
           window.pricePauseListener = onSnapshot(settingsRef,
@@ -9956,13 +9965,15 @@
 
               console.log('📋 Global price pause state synced:', window.pricesPausedGlobal);
 
-              // If state changed, reload products automatically
-              if (previousState !== window.pricesPausedGlobal) {
+              // Only reload products if state actually changed (and not on first load)
+              if (!isFirstLoad && previousState !== window.pricesPausedGlobal) {
                 console.log('🔄 Pause state changed - reloading products automatically');
                 if (window.loadProducts) {
                   window.loadProducts();
                 }
               }
+
+              isFirstLoad = false;
             },
             (error) => {
               console.error('❌ Error in price pause listener:', error);
