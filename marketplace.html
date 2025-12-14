@@ -4380,7 +4380,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.74
+          v0.75
         </div>
       </div>
       
@@ -5593,6 +5593,112 @@
     // Variable global para almacenar permisos de admin
     window.isUserAdmin = false;
 
+    // Intentar cargar estado de admin desde caché (mientras Firebase carga)
+    const cachedIsAdmin = localStorage.getItem('cachedIsAdmin');
+    const cachedEmail = localStorage.getItem('cachedAdminEmail');
+    if (cachedIsAdmin === 'true' && cachedEmail) {
+      window.isUserAdmin = true;
+      console.log('⚡ Estado admin cargado desde caché:', cachedEmail);
+
+      // Aplicar controles basándose en el caché (mientras Firebase valida)
+      setTimeout(() => {
+        if (window.applyControlsVisibility) {
+          window.applyControlsVisibility();
+          console.log('✅ Controles aplicados desde caché (validación de Firebase en curso)');
+        }
+      }, 500); // Pequeño delay para asegurar que el DOM esté listo
+    }
+
+    // Función global para aplicar visibilidad de controles basada en isUserAdmin
+    window.applyControlsVisibility = function() {
+      const isAdmin = window.isUserAdmin;
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const filterBtn = document.getElementById('filterBtn');
+      const columnFilterDropdown = document.getElementById('columnFilterDropdown');
+
+      // Elementos del menú
+      const configModalBtn = document.getElementById('configModalBtn');
+      const statsModalBtn = document.getElementById('statsModalBtn');
+      const historialModalBtn = document.getElementById('historialModalBtn');
+      const logisticsModalBtn = document.getElementById('logisticsModalBtn');
+      const configBtn = document.getElementById('configBtn');
+      const configSubmenu = document.getElementById('configSubmenu');
+      const estadisticasBtn = document.getElementById('estadisticasBtn');
+
+      console.log('🔍 Aplicando visibilidad de controles (isAdmin:', isAdmin, ')');
+
+      if (!isAdmin) {
+        console.log('🚫 Usuario NO-ADMIN: mostrando solo menú con historial');
+
+        // Mostrar menú hamburguesa (pero con opciones limitadas)
+        if (hamburgerBtn) {
+          hamburgerBtn.style.display = 'block';
+          hamburgerBtn.style.visibility = 'visible';
+        }
+
+        // Ocultar filtros completamente para no-admin
+        if (filterBtn) {
+          filterBtn.style.display = 'none !important';
+          filterBtn.style.visibility = 'hidden';
+          filterBtn.style.pointerEvents = 'none';
+        }
+        if (columnFilterDropdown) {
+          columnFilterDropdown.style.display = 'none !important';
+          columnFilterDropdown.style.visibility = 'hidden';
+          columnFilterDropdown.style.pointerEvents = 'none';
+          columnFilterDropdown.classList.add('hidden');
+        }
+
+        // Ocultar opciones administrativas del menú
+        if (configModalBtn) configModalBtn.style.display = 'none';
+        if (statsModalBtn) statsModalBtn.style.display = 'none';
+        if (logisticsModalBtn) logisticsModalBtn.style.display = 'block';
+        if (historialModalBtn) historialModalBtn.style.display = 'block';
+        if (configBtn) configBtn.style.display = 'none';
+        if (configSubmenu) {
+          configSubmenu.style.display = 'none';
+          configSubmenu.classList.remove('active');
+        }
+        if (estadisticasBtn) estadisticasBtn.style.display = 'none';
+
+      } else {
+        console.log('✅ Usuario ADMIN: mostrando todos los controles');
+
+        // Mostrar todos los controles
+        if (hamburgerBtn) {
+          hamburgerBtn.style.display = 'block';
+          hamburgerBtn.style.visibility = 'visible';
+        }
+        if (filterBtn) {
+          filterBtn.style.display = '';
+          filterBtn.style.visibility = '';
+          filterBtn.style.pointerEvents = '';
+        }
+        if (columnFilterDropdown) {
+          columnFilterDropdown.style.display = '';
+          columnFilterDropdown.style.visibility = '';
+          columnFilterDropdown.style.pointerEvents = '';
+          if (!columnFilterDropdown.classList.contains('hidden')) {
+            columnFilterDropdown.classList.add('hidden');
+          }
+        }
+
+        // Mostrar todas las opciones del menú
+        if (configModalBtn) configModalBtn.style.display = 'block';
+        if (statsModalBtn) statsModalBtn.style.display = 'block';
+        if (logisticsModalBtn) logisticsModalBtn.style.display = 'none';
+        if (historialModalBtn) historialModalBtn.style.display = 'block';
+        if (configBtn) configBtn.style.display = 'block';
+        if (estadisticasBtn) estadisticasBtn.style.display = 'block';
+
+        // Mostrar tabs de admin
+        const adminTabs = document.querySelectorAll('[data-admin-only="true"]');
+        adminTabs.forEach(tab => {
+          tab.style.display = 'inline-flex';
+        });
+      }
+    };
+
     // === USER PERMISSIONS CHECK ===
     async function checkUserPermissions(user) {
       try {
@@ -5613,160 +5719,17 @@
             console.log('⚠️ Usuario no encontrado en Firestore, asumiendo no-admin');
           }
 
-          // Guardar globalmente
+          // Guardar globalmente y en localStorage para caché
           window.isUserAdmin = isAdmin;
-          
-          // Función para aplicar visibilidad de controles
-          const applyControlsVisibility = () => {
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const filterBtn = document.getElementById('filterBtn');
-            const columnFilterDropdown = document.getElementById('columnFilterDropdown');
-            
-            // Elementos del menú
-            const configModalBtn = document.getElementById('configModalBtn');
-            const statsModalBtn = document.getElementById('statsModalBtn');
-            const historialModalBtn = document.getElementById('historialModalBtn');
-            const logisticsModalBtn = document.getElementById('logisticsModalBtn');
-            const configBtn = document.getElementById('configBtn');
-            const configSubmenu = document.getElementById('configSubmenu');
-            const estadisticasBtn = document.getElementById('estadisticasBtn');
+          localStorage.setItem('cachedIsAdmin', isAdmin.toString());
+          localStorage.setItem('cachedAdminEmail', user.email);
+          console.log('💾 Estado admin guardado en caché:', isAdmin);
 
-            console.log('🔍 Elementos encontrados:');
-            console.log('- hamburgerBtn:', !!hamburgerBtn);
-            console.log('- filterBtn:', !!filterBtn);
-            console.log('- columnFilterDropdown:', !!columnFilterDropdown);
-            console.log('- configModalBtn:', !!configModalBtn);
-            console.log('- statsModalBtn:', !!statsModalBtn);
-            console.log('- historialModalBtn:', !!historialModalBtn);
-            console.log('- logisticsModalBtn:', !!logisticsModalBtn);
-            console.log('- configBtn:', !!configBtn);
-            
-            if (!isAdmin) {
-              console.log('🚫 Usuario NO-ADMIN: mostrando solo menú con historial');
-
-              // Mostrar menú hamburguesa (pero con opciones limitadas)
-              if (hamburgerBtn) {
-                hamburgerBtn.style.display = 'block';
-                hamburgerBtn.style.visibility = 'visible';
-                console.log('✅ Menú hamburguesa visible');
-              }
-
-              // Ocultar filtros completamente para no-admin
-              if (filterBtn) {
-                filterBtn.style.display = 'none !important';
-                filterBtn.style.visibility = 'hidden';
-                filterBtn.style.pointerEvents = 'none';
-                console.log('✅ Botón de filtro ocultado completamente');
-              }
-              if (columnFilterDropdown) {
-                columnFilterDropdown.style.display = 'none !important';
-                columnFilterDropdown.style.visibility = 'hidden';
-                columnFilterDropdown.style.pointerEvents = 'none';
-                columnFilterDropdown.classList.add('hidden');
-                console.log('✅ Dropdown de filtros ocultado completamente');
-              }
-
-              // Ocultar opciones administrativas del menú (mostrar HISTORIAL y LOGISTICS)
-              if (configModalBtn) {
-                configModalBtn.style.display = 'none';
-                console.log('✅ CONFIG ocultado');
-              }
-              if (statsModalBtn) {
-                statsModalBtn.style.display = 'none';
-                console.log('✅ STATS ocultado');
-              }
-              if (logisticsModalBtn) {
-                logisticsModalBtn.style.display = 'block';
-                console.log('✅ LOGISTICS visible para usuario no-admin');
-              }
-              if (historialModalBtn) {
-                historialModalBtn.style.display = 'block';
-                console.log('✅ HISTORIAL visible para usuario no-admin');
-              }
-              if (configBtn) {
-                configBtn.style.display = 'none';
-                console.log('🚫 CONFIG botón ocultado para usuario no-admin');
-              }
-              if (configSubmenu) {
-                configSubmenu.style.display = 'none';
-                configSubmenu.classList.remove('active');
-                console.log('🚫 CONFIG submenu ocultado para usuario no-admin');
-              }
-              if (estadisticasBtn) {
-                estadisticasBtn.style.display = 'none';
-                console.log('🚫 ESTADÍSTICAS ocultado para usuario no-admin');
-              }
-
-
-            } else {
-              console.log('✅ Usuario ADMIN: mostrando todos los controles');
-
-              // Mostrar todos los controles
-              if (hamburgerBtn) {
-                hamburgerBtn.style.display = 'block';
-                hamburgerBtn.style.visibility = 'visible';
-                console.log('✅ Menú hamburguesa visible');
-              }
-              if (filterBtn) {
-                // Restaurar completamente el estado normal para admin
-                filterBtn.style.display = '';
-                filterBtn.style.visibility = '';
-                filterBtn.style.pointerEvents = '';
-                console.log('✅ Botón de filtro completamente restaurado y funcional');
-              }
-              if (columnFilterDropdown) {
-                // Para admin, restaurar completamente el estado normal
-                columnFilterDropdown.style.display = '';
-                columnFilterDropdown.style.visibility = '';
-                columnFilterDropdown.style.pointerEvents = '';
-                // Asegurar que esté cerrado por defecto pero funcional
-                if (!columnFilterDropdown.classList.contains('hidden')) {
-                  columnFilterDropdown.classList.add('hidden');
-                }
-                console.log('✅ Dropdown de filtros completamente restaurado y funcional');
-              }
-
-              // Mostrar todas las opciones del menú
-              if (configModalBtn) {
-                configModalBtn.style.display = 'block';
-                console.log('✅ CONFIG visible');
-              }
-              if (statsModalBtn) {
-                statsModalBtn.style.display = 'block';
-                console.log('✅ STATS visible');
-              }
-              if (logisticsModalBtn) {
-                logisticsModalBtn.style.display = 'none';
-                console.log('✅ SEGUIMIENTO oculto para admin (disponible en ADMIN/MASTER)');
-              }
-              if (historialModalBtn) {
-                historialModalBtn.style.display = 'block';
-                console.log('✅ HISTORIAL visible');
-              }
-              if (configBtn) {
-                configBtn.style.display = 'block';
-                console.log('✅ CONFIG visible para usuario admin');
-              }
-              if (estadisticasBtn) {
-                estadisticasBtn.style.display = 'block';
-                console.log('✅ ESTADÍSTICAS visible para usuario admin');
-              }
-
-              // Mostrar tabs de admin (PRECIOS y MASTER)
-              const adminTabs = document.querySelectorAll('[data-admin-only="true"]');
-              adminTabs.forEach(tab => {
-                tab.style.display = 'inline-flex';
-              });
-              console.log('✅ Tabs de admin (PRECIOS, MASTER) mostradas');
-
-            }
-          };
-          
-          // Aplicar inmediatamente
-          applyControlsVisibility();
+          // Aplicar visibilidad usando la función global
+          window.applyControlsVisibility();
 
           // También aplicar después de un pequeño delay para asegurar que el DOM esté listo
-          setTimeout(applyControlsVisibility, 100);
+          setTimeout(() => window.applyControlsVisibility(), 100);
           
           // Para usuarios no-admin, asegurar que los KPIs se muestren con columnas básicas
           if (!isAdmin) {
@@ -6554,7 +6517,11 @@
           window.pricesPausedGlobal = false;
           window.isUserLoggedIn = false;
           window.isUserAdmin = false;
-          console.log('🧹 Global states reset');
+
+          // Clear admin cache
+          localStorage.removeItem('cachedIsAdmin');
+          localStorage.removeItem('cachedAdminEmail');
+          console.log('🧹 Global states and admin cache reset');
 
           if (typeof firebase !== 'undefined' && firebase.auth()) {
             // Cerrar sesión en Firebase
@@ -9026,7 +8993,17 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.74 - Actual</h3>
+          <h3>v0.75 - Actual</h3>
+          <ul>
+            <li>⚡ <strong>Fix Retraso en Autenticación:</strong> Resuelto problema donde CONFIG y precios tardaban ~20 segundos en aparecer para admins</li>
+            <li>💾 <strong>Caché de Estado Admin:</strong> Estado de admin se guarda en localStorage para aplicar controles instantáneamente</li>
+            <li>🚀 <strong>Carga Instantánea:</strong> Controles de admin visibles desde 0.5s mientras Firebase valida en segundo plano</li>
+            <li>🧹 <strong>Limpieza Automática:</strong> Caché se limpia automáticamente al hacer logout</li>
+            <li>✅ <strong>UX Mejorada:</strong> No más esperas de 20 segundos - experiencia fluida para admins</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.74</h3>
           <ul>
             <li>🐛 <strong>Fix Crítico Carga de Productos:</strong> Resuelto problema donde productos no cargaban al iniciar sesión</li>
             <li>🔧 <strong>Listener Optimizado:</strong> Listener de tiempo real ahora ignora la primera ejecución para evitar recargas innecesarias</li>
