@@ -7801,6 +7801,31 @@
           if (tabIndex !== -1) {
             console.log(`✅ Activating tab: ${tabParam} (index ${tabIndex})`);
             mdcTabBar.activateTab(tabIndex);
+
+            // Manually trigger data loading for the activated tab (since programmatic activation may not fire event)
+            setTimeout(() => {
+              console.log(`🔄 Manually loading data for tab: ${tabParam}`);
+              if (tabParam === 'admisiones' && window.loadPendingUsers) {
+                window.loadPendingUsers();
+              } else if (tabParam === 'vendedores' && window.loadSellers) {
+                window.loadSellers();
+              } else if (tabParam === 'clientes') {
+                if (window.loadSellers && window.loadClients) {
+                  window.loadSellers().then(() => {
+                    if (window.assignDefaultSellerToAllClients) {
+                      window.assignDefaultSellerToAllClients();
+                    }
+                    window.loadClients();
+                  });
+                }
+              } else if (tabParam === 'master') {
+                if (window.loadSellers && window.loadOrders) {
+                  window.loadSellers().then(() => {
+                    window.loadOrders();
+                  });
+                }
+              }
+            }, 350); // Slightly longer than tab switch delay to ensure everything is ready
           }
         }
       }

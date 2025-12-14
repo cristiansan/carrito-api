@@ -4380,7 +4380,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.75
+          v0.76
         </div>
       </div>
       
@@ -8993,7 +8993,15 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.75 - Actual</h3>
+          <h3>v0.76 - Actual</h3>
+          <ul>
+            <li>🐛 <strong>Fix ADMISIONES Vacío:</strong> Resuelto problema donde ADMISIONES no mostraba usuarios pendientes al acceder directamente</li>
+            <li>🔄 <strong>Carga Manual de Tabs:</strong> Al acceder con URL ?tab=admisiones ahora se dispara la carga de datos automáticamente</li>
+            <li>✅ <strong>Todos los Tabs Afectados:</strong> Fix aplicado también a VENDEDORES, CLIENTES y MASTER para consistencia</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.75</h3>
           <ul>
             <li>⚡ <strong>Fix Retraso en Autenticación:</strong> Resuelto problema donde CONFIG y precios tardaban ~20 segundos en aparecer para admins</li>
             <li>💾 <strong>Caché de Estado Admin:</strong> Estado de admin se guarda en localStorage para aplicar controles instantáneamente</li>
