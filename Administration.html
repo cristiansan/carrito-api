@@ -1890,6 +1890,15 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
+            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="listas-precios">
+              <span class="mdc-tab__content">
+                <span class="mdc-tab__text-label">Listas de Precios</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+              <span class="mdc-tab__ripple"></span>
+            </button>
             <!-- Tab button MASTER MOVIDO A marketplace.html -->
             <!-- TAB REMOVIDO - Logs de Errores movido a ayuda.html
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="errorlogs">
@@ -2043,6 +2052,141 @@
           <div class="stat-item">
             <span class="stat-number" id="activeSellers">0</span>
             <span class="stat-label">Activos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="listas-precios-content" class="tab-content" style="display: none;">
+      <h2>💰 Gestión de Listas de Precios</h2>
+
+      <div class="admin-section">
+        <p style="color: #888; margin-bottom: 20px;">Personaliza los nombres de las listas de precios. Los cambios se aplicarán automáticamente para todos los administradores.</p>
+
+        <div id="priceListsContainer" style="display: grid; gap: 16px;">
+          <div class="price-list-item" data-list-id="precios1" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+              <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
+                <input type="text" class="price-list-name-input" data-list-id="precios1"
+                       placeholder="Nombre de la lista..."
+                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+              </div>
+              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios1"
+                      style="min-width: 100px;">
+                <span class="mdc-button__label">Guardar</span>
+              </button>
+            </div>
+            <div style="margin-top: 12px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
+              <input type="text" class="price-list-desc-input" data-list-id="precios1"
+                     placeholder="Descripción de la lista..."
+                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+            </div>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
+              <i class="material-icons" style="font-size: 16px;">info</i>
+              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios1</code></span>
+            </div>
+          </div>
+
+          <div class="price-list-item" data-list-id="precios2" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+              <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
+                <input type="text" class="price-list-name-input" data-list-id="precios2"
+                       placeholder="Nombre de la lista..."
+                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+              </div>
+              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios2"
+                      style="min-width: 100px;">
+                <span class="mdc-button__label">Guardar</span>
+              </button>
+            </div>
+            <div style="margin-top: 12px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
+              <input type="text" class="price-list-desc-input" data-list-id="precios2"
+                     placeholder="Descripción de la lista..."
+                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+            </div>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
+              <i class="material-icons" style="font-size: 16px;">info</i>
+              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios2</code></span>
+            </div>
+          </div>
+
+          <div class="price-list-item" data-list-id="precios3" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+              <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
+                <input type="text" class="price-list-name-input" data-list-id="precios3"
+                       placeholder="Nombre de la lista..."
+                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+              </div>
+              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios3"
+                      style="min-width: 100px;">
+                <span class="mdc-button__label">Guardar</span>
+              </button>
+            </div>
+            <div style="margin-top: 12px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
+              <input type="text" class="price-list-desc-input" data-list-id="precios3"
+                     placeholder="Descripción de la lista..."
+                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+            </div>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
+              <i class="material-icons" style="font-size: 16px;">info</i>
+              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios3</code></span>
+            </div>
+          </div>
+
+          <div class="price-list-item" data-list-id="precios4" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+              <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
+                <input type="text" class="price-list-name-input" data-list-id="precios4"
+                       placeholder="Nombre de la lista..."
+                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+              </div>
+              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios4"
+                      style="min-width: 100px;">
+                <span class="mdc-button__label">Guardar</span>
+              </button>
+            </div>
+            <div style="margin-top: 12px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
+              <input type="text" class="price-list-desc-input" data-list-id="precios4"
+                     placeholder="Descripción de la lista..."
+                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+            </div>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
+              <i class="material-icons" style="font-size: 16px;">info</i>
+              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios4</code></span>
+            </div>
+          </div>
+
+          <div class="price-list-item" data-list-id="precios5" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+              <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
+                <input type="text" class="price-list-name-input" data-list-id="precios5"
+                       placeholder="Nombre de la lista..."
+                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+              </div>
+              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios5"
+                      style="min-width: 100px;">
+                <span class="mdc-button__label">Guardar</span>
+              </button>
+            </div>
+            <div style="margin-top: 12px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
+              <input type="text" class="price-list-desc-input" data-list-id="precios5"
+                     placeholder="Descripción de la lista..."
+                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
+            </div>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
+              <i class="material-icons" style="font-size: 16px;">info</i>
+              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios5</code></span>
+            </div>
           </div>
         </div>
       </div>
@@ -2267,11 +2411,7 @@
         <div class="form-group">
           <label for="clientListaPrecio">Lista de Precios</label>
           <select id="clientListaPrecio" style="padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0; width: 100%; font-size: 14px;">
-            <option value="precios1">Precios 1 (Por defecto)</option>
-            <option value="precios2">Precios 2</option>
-            <option value="precios3">Precios 3</option>
-            <option value="precios4">Precios 4</option>
-            <option value="precios5">Precios 5</option>
+            <!-- Opciones cargadas dinámicamente -->
           </select>
         </div>
 
@@ -2348,7 +2488,7 @@
     // === FIREBASE CONFIGURATION ===
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch, serverTimestamp, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
     const firebaseConfig = {
@@ -2372,7 +2512,7 @@
       firestore: () => db,
       storage: () => storage,
       firestoreHelpers: {
-        doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch, serverTimestamp
+        doc, getDoc, setDoc, updateDoc, addDoc, deleteDoc, collection, query, orderBy, getDocs, where, writeBatch, serverTimestamp, onSnapshot
       },
       storageHelpers: {
         ref, uploadBytes, getDownloadURL
@@ -2498,6 +2638,272 @@
     }, 1000); // Mismo delay que marketplace.html
 
     console.log('✅ Firebase inicializado en Administration.html');
+
+    // === PRICE LIST NAMES MANAGEMENT ===
+    // Variable global para almacenar los nombres de las listas de precios
+    window.priceListNames = new Map();
+
+    // Inicializar colección de listas de precios con valores por defecto
+    async function initializePriceListsCollection() {
+      try {
+        const { doc, getDoc, setDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const defaultLists = [
+          { id: 'precios1', nombre: 'Precios 1 (Por defecto)', descripcion: 'Lista de precios por defecto' },
+          { id: 'precios2', nombre: 'Precios 2', descripcion: '' },
+          { id: 'precios3', nombre: 'Precios 3', descripcion: '' },
+          { id: 'precios4', nombre: 'Precios 4', descripcion: '' },
+          { id: 'precios5', nombre: 'Precios 5', descripcion: '' }
+        ];
+
+        for (const list of defaultLists) {
+          const listRef = doc(db, 'listasPrecios', list.id);
+          const listDoc = await getDoc(listRef);
+
+          if (!listDoc.exists()) {
+            await setDoc(listRef, {
+              nombre: list.nombre,
+              descripcion: list.descripcion,
+              activo: true,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            });
+            console.log(`✅ Lista de precios creada: ${list.id}`);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error inicializando listas de precios:', error);
+      }
+    }
+
+    // Cargar nombres de listas de precios desde Firebase
+    async function loadPriceListNames() {
+      try {
+        if (!window.firebase || !firebase.firestoreHelpers) {
+          console.log('⚠️ Firebase not ready for price lists, waiting...');
+          setTimeout(loadPriceListNames, 1000);
+          return;
+        }
+
+        const { collection, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const priceListsCollection = collection(db, 'listasPrecios');
+        const snapshot = await getDocs(priceListsCollection);
+
+        window.priceListNames.clear();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          window.priceListNames.set(doc.id, data.nombre);
+        });
+
+        console.log('✅ Nombres de listas de precios cargados:', Array.from(window.priceListNames.entries()));
+
+        // Renderizar todos los dropdowns con los nuevos nombres
+        renderAllPriceListDropdowns();
+      } catch (error) {
+        console.error('❌ Error cargando nombres de listas de precios:', error);
+      }
+    }
+
+    // Actualizar nombre de lista de precios
+    async function updatePriceListName(priceListId, newName, newDescription = '') {
+      try {
+        const { doc, updateDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const listRef = doc(db, 'listasPrecios', priceListId);
+        await updateDoc(listRef, {
+          nombre: newName,
+          descripcion: newDescription,
+          updatedAt: new Date()
+        });
+
+        // Actualizar localmente
+        window.priceListNames.set(priceListId, newName);
+
+        console.log(`✅ Nombre de lista actualizado: ${priceListId} -> ${newName}`);
+
+        // Renderizar todos los dropdowns con los nuevos nombres
+        renderAllPriceListDropdowns();
+
+        return true;
+      } catch (error) {
+        console.error('❌ Error actualizando nombre de lista:', error);
+        return false;
+      }
+    }
+
+    // Generar opciones de listas de precios dinámicamente
+    function getPriceListOptions(selectedListId = 'precios1') {
+      if (window.priceListNames.size === 0) {
+        // Fallback en caso de que no se hayan cargado aún
+        return `
+          <option value="precios1" ${selectedListId === 'precios1' ? 'selected' : ''}>Precios 1 (Por defecto)</option>
+          <option value="precios2" ${selectedListId === 'precios2' ? 'selected' : ''}>Precios 2</option>
+          <option value="precios3" ${selectedListId === 'precios3' ? 'selected' : ''}>Precios 3</option>
+          <option value="precios4" ${selectedListId === 'precios4' ? 'selected' : ''}>Precios 4</option>
+          <option value="precios5" ${selectedListId === 'precios5' ? 'selected' : ''}>Precios 5</option>
+        `;
+      }
+
+      return Array.from(window.priceListNames.entries())
+        .map(([id, nombre]) => `<option value="${id}" ${selectedListId === id ? 'selected' : ''}>${nombre}</option>`)
+        .join('');
+    }
+
+    // Hacer función global para uso en displayClients
+    window.getPriceListOptions = getPriceListOptions;
+
+    // Renderizar todos los dropdowns de listas de precios
+    function renderAllPriceListDropdowns() {
+      // Actualizar dropdown en modal de agregar/editar cliente
+      const clientListaPrecioSelect = document.getElementById('clientListaPrecio');
+      if (clientListaPrecioSelect && window.priceListNames.size > 0) {
+        const currentValue = clientListaPrecioSelect.value;
+        clientListaPrecioSelect.innerHTML = Array.from(window.priceListNames.entries())
+          .map(([id, nombre]) => `<option value="${id}">${nombre}</option>`)
+          .join('');
+        if (currentValue) {
+          clientListaPrecioSelect.value = currentValue;
+        }
+      }
+
+      // Actualizar todos los dropdowns en la tabla de clientes
+      document.querySelectorAll('.client-price-list-select').forEach(select => {
+        if (window.priceListNames.size > 0) {
+          const currentValue = select.value;
+          select.innerHTML = Array.from(window.priceListNames.entries())
+            .map(([id, nombre]) => `<option value="${id}">${nombre}</option>`)
+            .join('');
+          if (currentValue) {
+            select.value = currentValue;
+          }
+        }
+      });
+
+      // Actualizar dropdown en modal de vendedores
+      const sellerListaPrecioSelect = document.getElementById('sellerListaPrecio');
+      if (sellerListaPrecioSelect && window.priceListNames.size > 0) {
+        const currentValue = sellerListaPrecioSelect.value;
+        sellerListaPrecioSelect.innerHTML = Array.from(window.priceListNames.entries())
+          .map(([id, nombre]) => `<option value="${id}">💰 ${nombre}</option>`)
+          .join('');
+        if (currentValue) {
+          sellerListaPrecioSelect.value = currentValue;
+        }
+      }
+    }
+
+    // Listener en tiempo real para cambios en listas de precios
+    function setupPriceListsListener() {
+      try {
+        const { collection, onSnapshot } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const priceListsCollection = collection(db, 'listasPrecios');
+
+        onSnapshot(priceListsCollection, (snapshot) => {
+          window.priceListNames.clear();
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            window.priceListNames.set(doc.id, data.nombre);
+          });
+
+          console.log('🔄 Listas de precios actualizadas en tiempo real');
+          renderAllPriceListDropdowns();
+        });
+      } catch (error) {
+        console.error('❌ Error configurando listener de listas de precios:', error);
+      }
+    }
+
+    // Cargar datos de listas de precios para la interfaz de edición
+    async function loadPriceListsForEditing() {
+      try {
+        const { collection, getDocs } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+
+        const priceListsCollection = collection(db, 'listasPrecios');
+        const snapshot = await getDocs(priceListsCollection);
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const listId = doc.id;
+
+          // Actualizar inputs con datos de Firebase
+          const nameInput = document.querySelector(`.price-list-name-input[data-list-id="${listId}"]`);
+          const descInput = document.querySelector(`.price-list-desc-input[data-list-id="${listId}"]`);
+
+          if (nameInput) {
+            nameInput.value = data.nombre || '';
+          }
+          if (descInput) {
+            descInput.value = data.descripcion || '';
+          }
+        });
+
+        console.log('✅ Datos de listas de precios cargados en UI');
+      } catch (error) {
+        console.error('❌ Error cargando datos de listas para edición:', error);
+      }
+    }
+
+    // Hacer función global
+    window.loadPriceListsForEditing = loadPriceListsForEditing;
+
+    // Event listeners para botones de guardar
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.save-price-list-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const listId = e.target.closest('.save-price-list-btn').getAttribute('data-list-id');
+          const nameInput = document.querySelector(`.price-list-name-input[data-list-id="${listId}"]`);
+          const descInput = document.querySelector(`.price-list-desc-input[data-list-id="${listId}"]`);
+
+          const newName = nameInput.value.trim();
+          const newDesc = descInput.value.trim();
+
+          if (!newName) {
+            alert('Por favor ingresa un nombre para la lista.');
+            return;
+          }
+
+          // Deshabilitar botón y cambiar texto
+          btn.disabled = true;
+          const originalText = btn.querySelector('.mdc-button__label').textContent;
+          btn.querySelector('.mdc-button__label').textContent = 'Guardando...';
+
+          const success = await updatePriceListName(listId, newName, newDesc);
+
+          if (success) {
+            btn.querySelector('.mdc-button__label').textContent = '✓ Guardado';
+            setTimeout(() => {
+              btn.querySelector('.mdc-button__label').textContent = originalText;
+              btn.disabled = false;
+            }, 2000);
+          } else {
+            alert('Error al guardar. Por favor intenta de nuevo.');
+            btn.querySelector('.mdc-button__label').textContent = originalText;
+            btn.disabled = false;
+          }
+        });
+      });
+    });
+
+    // Inicializar sistema de listas de precios al cargar la página
+    setTimeout(async () => {
+      if (window.firebase && window.firebase.firestoreHelpers) {
+        // Primero inicializar la colección si no existe
+        await initializePriceListsCollection();
+
+        // Luego cargar los nombres
+        await loadPriceListNames();
+
+        // Configurar listener en tiempo real
+        setupPriceListsListener();
+      }
+    }, 1500);
 
     // === SELLER MANAGEMENT FUNCTIONS ===
 
@@ -5893,11 +6299,7 @@
                       data-client-id="${cliente.id}"
                       onchange="updateClientPriceList('${cliente.id}', this.value)"
                       style="padding: 4px 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0; min-width: 100px;">
-                <option value="precios1" ${(cliente.listaPrecio || 'precios1') === 'precios1' ? 'selected' : ''}>Precios 1</option>
-                <option value="precios2" ${cliente.listaPrecio === 'precios2' ? 'selected' : ''}>Precios 2</option>
-                <option value="precios3" ${cliente.listaPrecio === 'precios3' ? 'selected' : ''}>Precios 3</option>
-                <option value="precios4" ${cliente.listaPrecio === 'precios4' ? 'selected' : ''}>Precios 4</option>
-                <option value="precios5" ${cliente.listaPrecio === 'precios5' ? 'selected' : ''}>Precios 5</option>
+                ${window.getPriceListOptions(cliente.listaPrecio || 'precios1')}
               </select>
             </td>
             <td data-column="saldoCredito" style="text-align: right;">-</td>
@@ -5943,11 +6345,7 @@
                     data-client-id="${cliente.id}"
                     onchange="updateClientPriceList('${cliente.id}', this.value)"
                     style="padding: 4px 8px; border: 1px solid #3a3a44; border-radius: 4px; background: #1b1b1f; color: #f0f0f0; min-width: 100px;">
-              <option value="precios1" ${(cliente.listaPrecio || 'precios1') === 'precios1' ? 'selected' : ''}>Precios 1</option>
-              <option value="precios2" ${cliente.listaPrecio === 'precios2' ? 'selected' : ''}>Precios 2</option>
-              <option value="precios3" ${cliente.listaPrecio === 'precios3' ? 'selected' : ''}>Precios 3</option>
-              <option value="precios4" ${cliente.listaPrecio === 'precios4' ? 'selected' : ''}>Precios 4</option>
-              <option value="precios5" ${cliente.listaPrecio === 'precios5' ? 'selected' : ''}>Precios 5</option>
+              ${window.getPriceListOptions(cliente.listaPrecio || 'precios1')}
             </select>
           </td>
           <td data-column="saldoCredito" style="text-align: right;">${cliente.saldoCredito ? parseFloat(cliente.saldoCredito).toFixed(2) : '0.00'}</td>
@@ -7787,6 +8185,12 @@
                 window.loadPendingUsers();
               }
             }, 300); // Aumentado de 100ms a 300ms para dar tiempo cuando se carga desde URL
+          } else if (tabId === 'listas-precios') {
+            setTimeout(() => {
+              if (window.loadPriceListsForEditing) {
+                window.loadPriceListsForEditing();
+              }
+            }, 300);
           }
         });
 

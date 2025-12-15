@@ -4380,7 +4380,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.76
+          v0.77
         </div>
       </div>
       
@@ -8993,7 +8993,7 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.76 - Actual</h3>
+          <h3>v0.77 - Actual</h3>
           <ul>
             <li>🐛 <strong>Fix ADMISIONES Vacío:</strong> Resuelto problema donde ADMISIONES no mostraba usuarios pendientes al acceder directamente</li>
             <li>🔄 <strong>Carga Manual de Tabs:</strong> Al acceder con URL ?tab=admisiones ahora se dispara la carga de datos automáticamente</li>
@@ -11045,7 +11045,11 @@
     };
 
     // Price column names configuration (editable by admins)
-    let priceColumnNames = {
+    // Lista de nombres inválidos que NO se pueden usar
+    const INVALID_COLUMN_NAMES = ['Cantidad', 'Precio', 'Stock', 'Tránsito', 'Transito', 'Articulo', 'Artículo', 'Descripción', 'Descripcion'];
+
+    // Usar un objeto básico protegido con Object.seal
+    const _rawInternalNames = {
       precio1: 'Precio 1',
       precio2: 'Precio 2',
       precio3: 'Precio 3',
@@ -11053,6 +11057,128 @@
       precio5: '% Col5',
       precio6: '% Col6'
     };
+
+    // Crear un Proxy para el objeto interno también
+    let _internalPriceColumnNames = new Proxy(_rawInternalNames, {
+      set(target, prop, value) {
+        console.log('🔍 INTENTO DE MODIFICAR _internalPriceColumnNames:', {
+          propiedad: prop,
+          valorAnterior: target[prop],
+          valorNuevo: value,
+          stackTrace: new Error().stack
+        });
+
+        // Validar que el nombre no sea inválido
+        if (INVALID_COLUMN_NAMES.includes(value)) {
+          console.error('❌ BLOQUEADO EN _internal - Nombre inválido:', value);
+          return false;
+        }
+
+        // Validar que la propiedad sea válida
+        if (!['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'].includes(prop)) {
+          console.error('❌ BLOQUEADO EN _internal - Propiedad inválida:', prop);
+          return false;
+        }
+
+        console.log('✅ Modificación autorizada en _internal:', prop, '=', value);
+        target[prop] = value;
+        return true;
+      },
+      get(target, prop) {
+        const value = target[prop];
+
+        // También proteger en el nivel interno
+        if (INVALID_COLUMN_NAMES.includes(value)) {
+          console.error('❌ VALOR CORRUPTO EN _internal GET:', {
+            propiedad: prop,
+            valorCorrupto: value
+          });
+
+          const defaults = {
+            precio1: 'Precio 1',
+            precio2: 'Precio 2',
+            precio3: 'Precio 3',
+            precio4: 'Precio 4',
+            precio5: '% Col5',
+            precio6: '% Col6'
+          };
+
+          target[prop] = defaults[prop] || `Precio ${prop.replace('precio', '')}`;
+          return target[prop];
+        }
+
+        return value;
+      }
+    });
+
+    // Crear un Proxy para priceColumnNames que usa _internalPriceColumnNames
+    let priceColumnNames = new Proxy(_internalPriceColumnNames, {
+      set(target, prop, value) {
+        console.log('🔍 INTENTO DE MODIFICAR priceColumnNames (Proxy público):', {
+          propiedad: prop,
+          valorAnterior: target[prop],
+          valorNuevo: value,
+          stackTrace: new Error().stack
+        });
+
+        // Validar que el nombre no sea inválido
+        if (INVALID_COLUMN_NAMES.includes(value)) {
+          console.error('❌ INTENTO DE MODIFICACIÓN BLOQUEADO - Nombre inválido:', {
+            propiedad: prop,
+            valorInvalido: value,
+            stackTrace: new Error().stack
+          });
+          alert(`⚠️ MODIFICACIÓN BLOQUEADA: Se intentó cambiar "${prop}" a "${value}", que es un nombre reservado del marketplace.`);
+          return false; // Rechazar la modificación
+        }
+
+        // Validar que la propiedad sea una de las columnas válidas
+        if (!['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'].includes(prop)) {
+          console.error('❌ Intento de modificar propiedad inválida:', prop);
+          return false;
+        }
+
+        console.log('✅ Modificación autorizada de priceColumnNames:', prop, '=', value);
+        target[prop] = value;
+        return true;
+      },
+      get(target, prop) {
+        const value = target[prop];
+
+        // ÚLTIMA LÍNEA DE DEFENSA: Si alguien logró corromper el valor, retornar default
+        if (INVALID_COLUMN_NAMES.includes(value)) {
+          console.error('❌ VALOR CORRUPTO DETECTADO EN GET:', {
+            propiedad: prop,
+            valorCorrupto: value,
+            stackTrace: new Error().stack
+          });
+
+          // Retornar valor por defecto según la columna
+          const defaults = {
+            precio1: 'Precio 1',
+            precio2: 'Precio 2',
+            precio3: 'Precio 3',
+            precio4: 'Precio 4',
+            precio5: '% Col5',
+            precio6: '% Col6'
+          };
+
+          // Restaurar el valor corrupto inmediatamente
+          target[prop] = defaults[prop] || `Precio ${prop.replace('precio', '')}`;
+          console.log('✅ Valor restaurado automáticamente:', prop, '=', target[prop]);
+
+          // Limpiar localStorage corrupto
+          localStorage.removeItem('priceColumnNames');
+
+          return target[prop];
+        }
+
+        return value;
+      }
+    });
+
+    // Congelar las claves para prevenir que se agreguen o eliminen propiedades
+    Object.seal(_rawInternalNames);
 
     // Price column percentages for calculated columns
     let priceColumnPercents = {
@@ -11062,18 +11188,49 @@
 
     // Load column names from localStorage
     function loadPriceColumnNames() {
+      console.log('🔄 loadPriceColumnNames() called - INICIO');
+      console.log('📋 Estado actual de _internalPriceColumnNames ANTES de cargar:', JSON.stringify(_rawInternalNames));
+
       const saved = localStorage.getItem('priceColumnNames');
+      console.log('📋 Raw localStorage value:', saved);
+
       if (saved) {
         try {
           const loadedNames = JSON.parse(saved);
-          console.log('📋 Loading saved price column names from localStorage:', loadedNames);
-          priceColumnNames = { ...priceColumnNames, ...loadedNames };
-          console.log('📋 Final priceColumnNames after loading:', priceColumnNames);
+          console.log('📋 Intentando cargar desde localStorage:', loadedNames);
+
+          // Validar cada nombre antes de aplicarlo
+          let hasInvalidValues = false;
+          for (const key in loadedNames) {
+            const value = loadedNames[key];
+            console.log(`🔍 Validando ${key}: "${value}"`);
+
+            if (INVALID_COLUMN_NAMES.includes(value)) {
+              console.error('❌ ¡VALOR INVÁLIDO DETECTADO EN LOCALSTORAGE!', {
+                key: key,
+                invalidValue: value,
+                willSkip: true
+              });
+              hasInvalidValues = true;
+              continue; // Saltar nombres inválidos
+            }
+
+            console.log(`✅ Asignando ${key} = "${value}"`);
+            _internalPriceColumnNames[key] = value;
+          }
+
+          if (hasInvalidValues) {
+            console.error('⚠️ Se detectaron valores inválidos en localStorage. Limpiando localStorage...');
+            localStorage.removeItem('priceColumnNames');
+            console.log('✅ localStorage limpiado');
+          }
+
+          console.log('📋 Estado FINAL de _internalPriceColumnNames después de cargar:', JSON.stringify(_rawInternalNames));
         } catch (e) {
-          console.error('Error loading price column names:', e);
+          console.error('❌ Error parsing localStorage:', e);
         }
       } else {
-        console.log('📋 No saved price column names found, using defaults:', priceColumnNames);
+        console.log('📋 No saved price column names found, usando defaults');
       }
 
       const savedPercents = localStorage.getItem('priceColumnPercents');
@@ -11084,12 +11241,28 @@
           console.error('Error loading price column percents:', e);
         }
       }
+
+      console.log('🔄 loadPriceColumnNames() - FIN');
     }
 
     // Save column names to localStorage
     function savePriceColumnNames() {
-      console.log('💾 Saving priceColumnNames to localStorage:', priceColumnNames);
-      localStorage.setItem('priceColumnNames', JSON.stringify(priceColumnNames));
+      console.log('💾 Saving priceColumnNames to localStorage:', _internalPriceColumnNames);
+
+      // Validar que no se estén guardando nombres inválidos
+      for (const key in _internalPriceColumnNames) {
+        if (INVALID_COLUMN_NAMES.includes(_internalPriceColumnNames[key])) {
+          console.error('❌ ¡INTENTO DE GUARDAR NOMBRE INVÁLIDO DETECTADO!', {
+            key: key,
+            invalidValue: _internalPriceColumnNames[key],
+            stackTrace: new Error().stack
+          });
+          // NO guardar si hay valores inválidos
+          return;
+        }
+      }
+
+      localStorage.setItem('priceColumnNames', JSON.stringify(_internalPriceColumnNames));
     }
 
     // Save column percents to localStorage
@@ -11099,12 +11272,11 @@
 
     // Validate and clean corrupted localStorage values
     function validatePriceColumnNames() {
-      const invalidNames = ['Cantidad', 'Precio', 'Stock', 'Tránsito', 'Transito', 'Articulo', 'Artículo', 'Descripción', 'Descripcion'];
       let hasInvalidNames = false;
 
-      for (const key in priceColumnNames) {
-        if (invalidNames.includes(priceColumnNames[key])) {
-          console.warn(`⚠️ Detected invalid column name "${priceColumnNames[key]}" for ${key}, resetting to default`);
+      for (const key in _internalPriceColumnNames) {
+        if (INVALID_COLUMN_NAMES.includes(_internalPriceColumnNames[key])) {
+          console.warn(`⚠️ Detected invalid column name "${_internalPriceColumnNames[key]}" for ${key}, resetting to default`);
           hasInvalidNames = true;
         }
       }
@@ -11112,22 +11284,78 @@
       if (hasInvalidNames) {
         console.warn('⚠️ Corrupted priceColumnNames detected, clearing localStorage and resetting to defaults');
         localStorage.removeItem('priceColumnNames');
-        priceColumnNames = {
-          precio1: 'Precio 1',
-          precio2: 'Precio 2',
-          precio3: 'Precio 3',
-          precio4: 'Precio 4',
-          precio5: '% Col5',
-          precio6: '% Col6'
-        };
+        _internalPriceColumnNames.precio1 = 'Precio 1';
+        _internalPriceColumnNames.precio2 = 'Precio 2';
+        _internalPriceColumnNames.precio3 = 'Precio 3';
+        _internalPriceColumnNames.precio4 = 'Precio 4';
+        _internalPriceColumnNames.precio5 = '% Col5';
+        _internalPriceColumnNames.precio6 = '% Col6';
         savePriceColumnNames();
-        console.log('✅ priceColumnNames reset to defaults:', priceColumnNames);
+        console.log('✅ priceColumnNames reset to defaults:', _internalPriceColumnNames);
       }
     }
 
     // Load initial configuration
     loadPriceColumnNames();
     validatePriceColumnNames();
+
+    // Interceptar setItem de localStorage para detectar modificaciones
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+      if (key === 'priceColumnNames') {
+        console.warn('⚠️ INTERCEPTADO: Intento de modificar localStorage.priceColumnNames', {
+          newValue: value,
+          parsedValue: (() => {
+            try {
+              return JSON.parse(value);
+            } catch {
+              return 'Error parsing';
+            }
+          })(),
+          stackTrace: new Error().stack
+        });
+
+        // Validar que el valor no contenga nombres inválidos
+        try {
+          const parsed = JSON.parse(value);
+          for (const key in parsed) {
+            if (INVALID_COLUMN_NAMES.includes(parsed[key])) {
+              console.error('❌ BLOQUEADO: Intento de guardar valor inválido en localStorage:', {
+                key: key,
+                invalidValue: parsed[key]
+              });
+              alert(`⚠️ BLOQUEADO: Se intentó guardar "${parsed[key]}" en localStorage, que es un nombre reservado.`);
+              return; // NO guardar
+            }
+          }
+        } catch (e) {
+          console.error('Error validando valor para localStorage:', e);
+        }
+      }
+      originalSetItem.call(localStorage, key, value);
+    };
+
+    // Monitorear cambios en localStorage que puedan corromper los nombres
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'priceColumnNames') {
+        console.warn('⚠️ localStorage "priceColumnNames" modificado externamente:', {
+          oldValue: e.oldValue,
+          newValue: e.newValue,
+          url: e.url
+        });
+
+        // Recargar y validar
+        loadPriceColumnNames();
+        validatePriceColumnNames();
+
+        // Si estamos en la tab de PRECIOS, re-renderizar
+        const preciosContent = document.getElementById('precios-content');
+        if (preciosContent && preciosContent.style.display !== 'none') {
+          console.log('🔄 Re-renderizando tabla de precios debido a cambio en localStorage');
+          displayProducts();
+        }
+      }
+    });
 
     // === PRODUCT PRICING FUNCTIONS ===
 
@@ -11326,11 +11554,14 @@
     function displayProducts() {
       const container = document.getElementById('productsContainer');
 
-      // Finalize any header being edited before re-rendering
-      const headerBeingEdited = document.querySelector('.products-table .header-text[contenteditable="true"]');
+      // Finalize any header being edited before re-rendering (solo dentro de productsContainer)
+      const headerBeingEdited = container ? container.querySelector('.products-table .header-text[contenteditable="true"]') : null;
       if (headerBeingEdited) {
         headerBeingEdited.blur(); // This will trigger the save
       }
+
+      // Validar nombres de columnas antes de renderizar para prevenir corrupción
+      validatePriceColumnNames();
 
       if (!window.products || window.products.length === 0) {
         container.innerHTML = `
@@ -11543,8 +11774,9 @@
             return;
           }
 
-          // Don't sort if any header is currently being edited
-          const anyHeaderBeingEdited = document.querySelector('.products-table .header-text[contenteditable="true"]');
+          // Don't sort if any header is currently being edited (solo dentro de productsContainer)
+          const preciosContainer = document.getElementById('productsContainer');
+          const anyHeaderBeingEdited = preciosContainer ? preciosContainer.querySelector('.products-table .header-text[contenteditable="true"]') : null;
           if (anyHeaderBeingEdited) {
             return;
           }
@@ -11612,7 +11844,11 @@
 
     // Setup event listeners for editable column headers
     function setupEditableHeaders() {
-      const editableHeaders = document.querySelectorAll('.products-table th.editable-header');
+      // IMPORTANTE: Solo buscar headers dentro del contenedor de PRECIOS
+      const preciosContainer = document.getElementById('productsContainer');
+      if (!preciosContainer) return;
+
+      const editableHeaders = preciosContainer.querySelectorAll('.products-table th.editable-header');
       editableHeaders.forEach(th => {
         const headerText = th.querySelector('.header-text');
         if (!headerText) return;
@@ -11625,6 +11861,13 @@
           if (headerText.contentEditable === 'true') return;
 
           const columnId = th.dataset.column;
+
+          // Verificar que el columnId sea válido (precio1-6)
+          if (!['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'].includes(columnId)) {
+            console.warn('⚠️ Invalid columnId for price column:', columnId);
+            return;
+          }
+
           const currentName = priceColumnNames[columnId];
 
           // Make the span editable
@@ -11651,6 +11894,14 @@
               if (!newName || newName === '') {
                 console.warn('Empty column name, keeping original:', currentName);
                 newName = currentName;
+              }
+
+              // Validar que no sea un nombre inválido (nombres de columnas del marketplace)
+              if (INVALID_COLUMN_NAMES.includes(newName)) {
+                console.error('❌ Intento de usar nombre inválido:', newName);
+                alert(`❌ El nombre "${newName}" no está permitido. Por favor usa un nombre diferente.`);
+                headerText.textContent = currentName;
+                return;
               }
 
               // Check if the name actually changed
