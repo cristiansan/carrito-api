@@ -11201,10 +11201,20 @@
 
           // Validar cada nombre antes de aplicarlo
           let hasInvalidValues = false;
+          const validKeys = ['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'];
+
           for (const key in loadedNames) {
             const value = loadedNames[key];
             console.log(`🔍 Validando ${key}: "${value}"`);
 
+            // Validar que la key sea válida
+            if (!validKeys.includes(key)) {
+              console.error('❌ ¡KEY INVÁLIDA EN LOCALSTORAGE!', { invalidKey: key });
+              hasInvalidValues = true;
+              continue;
+            }
+
+            // Validar que el valor no sea inválido
             if (INVALID_COLUMN_NAMES.includes(value)) {
               console.error('❌ ¡VALOR INVÁLIDO DETECTADO EN LOCALSTORAGE!', {
                 key: key,
@@ -11220,9 +11230,18 @@
           }
 
           if (hasInvalidValues) {
-            console.error('⚠️ Se detectaron valores inválidos en localStorage. Limpiando localStorage...');
+            console.error('⚠️ Se detectaron valores inválidos en localStorage. Limpiando localStorage y restaurando defaults...');
             localStorage.removeItem('priceColumnNames');
-            console.log('✅ localStorage limpiado');
+
+            // Restaurar TODOS los valores a los defaults
+            _internalPriceColumnNames.precio1 = 'Precio 1';
+            _internalPriceColumnNames.precio2 = 'Precio 2';
+            _internalPriceColumnNames.precio3 = 'Precio 3';
+            _internalPriceColumnNames.precio4 = 'Precio 4';
+            _internalPriceColumnNames.precio5 = '% Col5';
+            _internalPriceColumnNames.precio6 = '% Col6';
+
+            console.log('✅ localStorage limpiado y valores restaurados a defaults');
           }
 
           console.log('📋 Estado FINAL de _internalPriceColumnNames después de cargar:', JSON.stringify(_rawInternalNames));
