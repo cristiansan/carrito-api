@@ -858,6 +858,13 @@ async function forceReconnect() {
 
 async function refresh() {
   try {
+    // NO hacer refresh si estamos en el tab PRECIOS de marketplace
+    const preciosContent = document.getElementById('precios-content');
+    if (preciosContent && preciosContent.style.display !== 'none') {
+      console.log('⏸️ Refresh pausado - usuario en tab PRECIOS');
+      return;
+    }
+
     showError('');
     allStockData = await fetchStock();
     
