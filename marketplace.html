@@ -11576,6 +11576,11 @@
     function displayProducts() {
       const container = document.getElementById('productsContainer');
 
+      // DEBUG: Log para rastrear cuándo se llama displayProducts
+      console.log('🎨 displayProducts() LLAMADO');
+      console.log('📋 priceColumnNames actual:', JSON.parse(JSON.stringify(priceColumnNames)));
+      console.log('📋 localStorage actual:', localStorage.getItem('priceColumnNames'));
+
       // Finalize any header being edited before re-rendering (solo dentro de productsContainer)
       const headerBeingEdited = container ? container.querySelector('.products-table .header-text[contenteditable="true"]') : null;
       if (headerBeingEdited) {
