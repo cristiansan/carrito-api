@@ -4380,7 +4380,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.78
+          v0.79
         </div>
       </div>
       
@@ -8993,7 +8993,15 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.78 - Actual</h3>
+          <h3>v0.79 - Actual</h3>
+          <ul>
+            <li>📊 <strong>Cálculo PRECIOS Mejorado:</strong> Columnas 5 y 6 ahora calculan sobre columna 4 (Costo) en vez de columna 1</li>
+            <li>💵 <strong>Columna 6 - Suma Fija:</strong> Columna 6 ahora suma un valor fijo en u$s en vez de porcentaje (ej: Costo $1600 + $30 = $1630)</li>
+            <li>📈 <strong>Columna 5 - Porcentaje:</strong> Columna 5 sigue calculando porcentaje sobre columna 4</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.78</h3>
           <ul>
             <li>✅ <strong>Fix Definitivo Nombres PRECIOS:</strong> Auto-refresh se pausa automáticamente cuando estás en tab PRECIOS</li>
             <li>🛡️ <strong>Protección Total:</strong> Los nombres de columnas personalizados nunca más se sobrescriben</li>
@@ -11693,16 +11701,16 @@
                   <input type="number" class="percent-input" data-column="precio5" value="${priceColumnPercents.precio5}"
                          step="0.1" min="0" max="100" placeholder="%"
                          style="width: 60px; padding: 4px; text-align: center; border: 1px solid #3a3a44; background: #2a2a33; color: #fff; border-radius: 4px;"
-                         title="Porcentaje sobre ${priceColumnNames.precio1}">
+                         title="Porcentaje sobre ${priceColumnNames.precio4}">
                 </div>
               </th>
               <th class="editable-header" data-column="precio6">
                 <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
                   <span class="header-text" contenteditable="false" style="cursor: text; border-bottom: 1px dashed #666; padding: 2px 4px;" title="Clic para editar">${priceColumnNames.precio6}</span>
                   <input type="number" class="percent-input" data-column="precio6" value="${priceColumnPercents.precio6}"
-                         step="0.1" min="0" max="100" placeholder="%"
-                         style="width: 60px; padding: 4px; text-align: center; border: 1px solid #3a3a44; background: #2a2a33; color: #fff; border-radius: 4px;"
-                         title="Porcentaje sobre ${priceColumnNames.precio1}">
+                         step="1" min="0" placeholder="$"
+                         style="width: 70px; padding: 4px; text-align: center; border: 1px solid #3a3a44; background: #2a2a33; color: #fff; border-radius: 4px;"
+                         title="$ a sumar sobre ${priceColumnNames.precio4}">
                 </div>
               </th>
             </tr>
@@ -11710,8 +11718,8 @@
           <tbody>
             ${sortedProducts.map(product => {
               // Calculate prices with percentage
-              const precio5 = product.precio1 * (1 + priceColumnPercents.precio5 / 100);
-              const precio6 = product.precio1 * (1 + priceColumnPercents.precio6 / 100);
+              const precio5 = product.precio4 * (1 + priceColumnPercents.precio5 / 100);
+              const precio6 = product.precio4 + priceColumnPercents.precio6;
 
               return `
               <tr data-articulo="${product.articulo}">
@@ -11852,11 +11860,11 @@
             product.modified = true;
             this.classList.add('modified');
 
-            // If precio1 changed, update calculated prices in same row
-            if (priceField === 'precio1') {
+            // If precio4 changed, update calculated prices in same row
+            if (priceField === 'precio4') {
               const row = this.closest('tr');
               const precio5 = value * (1 + priceColumnPercents.precio5 / 100);
-              const precio6 = value * (1 + priceColumnPercents.precio6 / 100);
+              const precio6 = value + priceColumnPercents.precio6;
 
               const cells = row.querySelectorAll('td');
               if (cells.length >= 8) {
@@ -12014,8 +12022,8 @@
 
         if (product) {
           // Calculate new prices
-          const precio5 = product.precio1 * (1 + priceColumnPercents.precio5 / 100);
-          const precio6 = product.precio1 * (1 + priceColumnPercents.precio6 / 100);
+          const precio5 = product.precio4 * (1 + priceColumnPercents.precio5 / 100);
+          const precio6 = product.precio4 + priceColumnPercents.precio6;
 
           // Update the displayed values
           const cells = row.querySelectorAll('td');
