@@ -11199,7 +11199,7 @@
           const loadedNames = JSON.parse(saved);
           console.log('📋 Intentando cargar desde localStorage:', loadedNames);
 
-          // Validar cada nombre antes de aplicarlo
+          // PRIMERO: Validar TODO antes de aplicar NADA
           let hasInvalidValues = false;
           const validKeys = ['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'];
 
@@ -11211,24 +11211,19 @@
             if (!validKeys.includes(key)) {
               console.error('❌ ¡KEY INVÁLIDA EN LOCALSTORAGE!', { invalidKey: key });
               hasInvalidValues = true;
-              continue;
             }
 
             // Validar que el valor no sea inválido
             if (INVALID_COLUMN_NAMES.includes(value)) {
               console.error('❌ ¡VALOR INVÁLIDO DETECTADO EN LOCALSTORAGE!', {
                 key: key,
-                invalidValue: value,
-                willSkip: true
+                invalidValue: value
               });
               hasInvalidValues = true;
-              continue; // Saltar nombres inválidos
             }
-
-            console.log(`✅ Asignando ${key} = "${value}"`);
-            _internalPriceColumnNames[key] = value;
           }
 
+          // Si hay valores inválidos, limpiar TODO y restaurar defaults
           if (hasInvalidValues) {
             console.error('⚠️ Se detectaron valores inválidos en localStorage. Limpiando localStorage y restaurando defaults...');
             localStorage.removeItem('priceColumnNames');
@@ -11242,6 +11237,14 @@
             _internalPriceColumnNames.precio6 = '% Col6';
 
             console.log('✅ localStorage limpiado y valores restaurados a defaults');
+          } else {
+            // Solo si TODO es válido, aplicar los valores
+            for (const key in loadedNames) {
+              if (validKeys.includes(key)) {
+                console.log(`✅ Asignando ${key} = "${loadedNames[key]}"`);
+                _internalPriceColumnNames[key] = loadedNames[key];
+              }
+            }
           }
 
           console.log('📋 Estado FINAL de _internalPriceColumnNames después de cargar:', JSON.stringify(_rawInternalNames));
