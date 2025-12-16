@@ -4358,13 +4358,7 @@
             PROFILE
           </button>
           <button class="submenu-btn" id="configAdmisionesBtn">
-            ADMISIONES
-          </button>
-          <button class="submenu-btn" id="configClienteBtn">
-            CLIENTES
-          </button>
-          <button class="submenu-btn" id="configVendedorBtn">
-            VENDEDORES
+            Adm/Cli/Ven
           </button>
         </div>
         <button class="menu-btn" id="estadisticasBtn" style="display: none;">
@@ -4380,7 +4374,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.79
+          v0.80
         </div>
       </div>
       
@@ -6625,58 +6619,22 @@
         console.log('✅ Config Profile button handler added (admin only)');
       }
 
-      const configClienteBtn = document.getElementById('configClienteBtn');
-      if (configClienteBtn) {
-        configClienteBtn.addEventListener('click', function(e) {
-          // Validar permisos de admin
-          if (!window.isUserAdmin) {
-            console.warn('🚫 Acceso denegado: CLIENTES solo para admins');
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('🔄 Redirigiendo a CLIENTES...');
-          closeMenu();
-          // Redirect immediately
-          window.location.replace('Administration.html?tab=clientes');
-        });
-        console.log('✅ Config Cliente button handler added (admin only)');
-      }
-
-      const configVendedorBtn = document.getElementById('configVendedorBtn');
-      if (configVendedorBtn) {
-        configVendedorBtn.addEventListener('click', function(e) {
-          // Validar permisos de admin
-          if (!window.isUserAdmin) {
-            console.warn('🚫 Acceso denegado: VENDEDORES solo para admins');
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('🔄 Redirigiendo a VENDEDORES...');
-          closeMenu();
-          // Redirect immediately
-          window.location.replace('Administration.html?tab=vendedor');
-        });
-        console.log('✅ Config Vendedor button handler added');
-      }
-
       const configAdmisionesBtn = document.getElementById('configAdmisionesBtn');
       if (configAdmisionesBtn) {
         configAdmisionesBtn.addEventListener('click', function(e) {
           // Validar permisos de admin
           if (!window.isUserAdmin) {
-            console.warn('🚫 Acceso denegado: ADMISIONES solo para admins');
+            console.warn('🚫 Acceso denegado: Adm/Cli/Ven solo para admins');
             return;
           }
           e.preventDefault();
           e.stopPropagation();
-          console.log('🔄 Redirigiendo a ADMISIONES...');
+          console.log('🔄 Redirigiendo a Admisiones (Adm/Cli/Ven)...');
           closeMenu();
           // Redirect immediately
           window.location.replace('Administration.html?tab=admisiones');
         });
-        console.log('✅ Config Admisiones button handler added (admin only)');
+        console.log('✅ Config Adm/Cli/Ven button handler added (admin only)');
       }
 
       const estadisticasBtn = document.getElementById('estadisticasBtn');
@@ -8993,7 +8951,16 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.79 - Actual</h3>
+          <h3>v0.80 - Actual</h3>
+          <ul>
+            <li>🔄 <strong>Nombres de Columnas Sincronizados:</strong> Los nombres personalizados de columnas en PRECIOS ahora se guardan en Firestore y se sincronizan entre todos los admins en tiempo real</li>
+            <li>👥 <strong>Cambios Instantáneos:</strong> Cuando un admin cambia el nombre de una columna, todos los demás admins lo ven inmediatamente</li>
+            <li>🗑️ <strong>Tab PRECIOS Simplificado:</strong> Eliminado el tab "Lista de Precios" de Administration.html ya que está en Marketplace</li>
+            <li>⚙️ <strong>Menú CONFIG Consolidado:</strong> Submenú CONFIG ahora tiene solo PROFILE y "Adm/Cli/Ven" que va a Administration con los 3 tabs</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.79</h3>
           <ul>
             <li>📊 <strong>Cálculo PRECIOS Mejorado:</strong> Columnas 5 y 6 ahora calculan sobre columna 4 (Costo) en vez de columna 1</li>
             <li>💵 <strong>Columna 6 - Suma Fija:</strong> Columna 6 ahora suma un valor fijo en u$s en vez de porcentaje (ej: Costo $1600 + $30 = $1630)</li>
@@ -11202,18 +11169,21 @@
       precio6: 0
     };
 
-    // Load column names from localStorage
-    function loadPriceColumnNames() {
+    // Load column names from Firestore (compartido entre todos los admins)
+    async function loadPriceColumnNames() {
       console.log('🔄 loadPriceColumnNames() called - INICIO');
       console.log('📋 Estado actual de _internalPriceColumnNames ANTES de cargar:', JSON.stringify(_rawInternalNames));
 
-      const saved = localStorage.getItem('priceColumnNames');
-      console.log('📋 Raw localStorage value:', saved);
+      try {
+        const { doc, getDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+        const configRef = doc(db, 'configuracion', 'columnasPrecios');
+        const docSnap = await getDoc(configRef);
 
-      if (saved) {
-        try {
-          const loadedNames = JSON.parse(saved);
-          console.log('📋 Intentando cargar desde localStorage:', loadedNames);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const loadedNames = data.nombres;
+          console.log('📋 Cargando nombres desde Firestore:', loadedNames);
 
           // PRIMERO: Validar TODO antes de aplicar NADA
           let hasInvalidValues = false;
@@ -11225,13 +11195,13 @@
 
             // Validar que la key sea válida
             if (!validKeys.includes(key)) {
-              console.error('❌ ¡KEY INVÁLIDA EN LOCALSTORAGE!', { invalidKey: key });
+              console.error('❌ ¡KEY INVÁLIDA EN FIRESTORE!', { invalidKey: key });
               hasInvalidValues = true;
             }
 
             // Validar que el valor no sea inválido
             if (INVALID_COLUMN_NAMES.includes(value)) {
-              console.error('❌ ¡VALOR INVÁLIDO DETECTADO EN LOCALSTORAGE!', {
+              console.error('❌ ¡VALOR INVÁLIDO DETECTADO EN FIRESTORE!', {
                 key: key,
                 invalidValue: value
               });
@@ -11239,10 +11209,9 @@
             }
           }
 
-          // Si hay valores inválidos, limpiar TODO y restaurar defaults
+          // Si hay valores inválidos, restaurar defaults (pero no guardar aún)
           if (hasInvalidValues) {
-            console.error('⚠️ Se detectaron valores inválidos en localStorage. Limpiando localStorage y restaurando defaults...');
-            localStorage.removeItem('priceColumnNames');
+            console.error('⚠️ Se detectaron valores inválidos en Firestore. Restaurando defaults...');
 
             // Restaurar TODOS los valores a los defaults
             _internalPriceColumnNames.precio1 = 'Precio 1';
@@ -11252,7 +11221,7 @@
             _internalPriceColumnNames.precio5 = '% Col5';
             _internalPriceColumnNames.precio6 = '% Col6';
 
-            console.log('✅ localStorage limpiado y valores restaurados a defaults');
+            console.log('✅ Valores restaurados a defaults');
           } else {
             // Solo si TODO es válido, aplicar los valores
             for (const key in loadedNames) {
@@ -11264,13 +11233,29 @@
           }
 
           console.log('📋 Estado FINAL de _internalPriceColumnNames después de cargar:', JSON.stringify(_rawInternalNames));
-        } catch (e) {
-          console.error('❌ Error parsing localStorage:', e);
+        } else {
+          console.log('📋 No saved price column names found in Firestore, usando defaults');
         }
-      } else {
-        console.log('📋 No saved price column names found, usando defaults');
+      } catch (error) {
+        console.error('❌ Error cargando desde Firestore:', error);
+        // Intentar fallback a localStorage
+        const saved = localStorage.getItem('priceColumnNames');
+        if (saved) {
+          try {
+            const loadedNames = JSON.parse(saved);
+            console.log('📋 Fallback: cargando desde localStorage:', loadedNames);
+            for (const key in loadedNames) {
+              if (['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'].includes(key)) {
+                _internalPriceColumnNames[key] = loadedNames[key];
+              }
+            }
+          } catch (e) {
+            console.error('❌ Error parsing localStorage:', e);
+          }
+        }
       }
 
+      // Cargar porcentajes desde localStorage (estos siguen siendo locales)
       const savedPercents = localStorage.getItem('priceColumnPercents');
       if (savedPercents) {
         try {
@@ -11283,9 +11268,9 @@
       console.log('🔄 loadPriceColumnNames() - FIN');
     }
 
-    // Save column names to localStorage
-    function savePriceColumnNames() {
-      console.log('💾 Saving priceColumnNames to localStorage:', _internalPriceColumnNames);
+    // Save column names to Firestore (compartido entre todos los admins)
+    async function savePriceColumnNames() {
+      console.log('💾 Saving priceColumnNames to Firestore:', _internalPriceColumnNames);
 
       // Validar que no se estén guardando nombres inválidos
       for (const key in _internalPriceColumnNames) {
@@ -11300,7 +11285,23 @@
         }
       }
 
-      localStorage.setItem('priceColumnNames', JSON.stringify(_internalPriceColumnNames));
+      try {
+        const { doc, setDoc } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+        const configRef = doc(db, 'configuracion', 'columnasPrecios');
+
+        await setDoc(configRef, {
+          nombres: JSON.parse(JSON.stringify(_internalPriceColumnNames)),
+          updatedAt: new Date(),
+          updatedBy: firebase.auth().currentUser?.email || 'unknown'
+        });
+
+        console.log('✅ Nombres de columnas guardados en Firestore');
+      } catch (error) {
+        console.error('❌ Error guardando nombres de columnas en Firestore:', error);
+        // Fallback a localStorage si falla Firestore
+        localStorage.setItem('priceColumnNames', JSON.stringify(_internalPriceColumnNames));
+      }
     }
 
     // Save column percents to localStorage
@@ -11333,9 +11334,62 @@
       }
     }
 
+    // Listener en tiempo real para nombres de columnas (sincronización entre admins)
+    function setupColumnNamesListener() {
+      try {
+        const { doc, onSnapshot } = firebase.firestoreHelpers;
+        const db = firebase.firestore();
+        const configRef = doc(db, 'configuracion', 'columnasPrecios');
+
+        onSnapshot(configRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            const newNames = data.nombres;
+            console.log('🔔 Cambios detectados en nombres de columnas desde Firestore:', newNames);
+
+            // Validar antes de aplicar
+            const validKeys = ['precio1', 'precio2', 'precio3', 'precio4', 'precio5', 'precio6'];
+            let hasInvalidValues = false;
+
+            for (const key in newNames) {
+              if (!validKeys.includes(key) || INVALID_COLUMN_NAMES.includes(newNames[key])) {
+                hasInvalidValues = true;
+                break;
+              }
+            }
+
+            if (!hasInvalidValues) {
+              // Aplicar los nuevos nombres
+              for (const key in newNames) {
+                if (validKeys.includes(key)) {
+                  _internalPriceColumnNames[key] = newNames[key];
+                }
+              }
+
+              console.log('✅ Nombres de columnas actualizados en tiempo real');
+
+              // Re-renderizar la tabla si estamos en el tab de PRECIOS
+              const preciosContent = document.getElementById('precios-content');
+              if (preciosContent && preciosContent.style.display !== 'none') {
+                console.log('🔄 Re-renderizando tabla de precios por cambio en tiempo real');
+                displayProducts();
+              }
+            }
+          }
+        });
+
+        console.log('✅ Listener de nombres de columnas configurado');
+      } catch (error) {
+        console.error('❌ Error configurando listener de nombres de columnas:', error);
+      }
+    }
+
     // Load initial configuration
-    loadPriceColumnNames();
-    validatePriceColumnNames();
+    loadPriceColumnNames().then(() => {
+      validatePriceColumnNames();
+      // Configurar listener en tiempo real después de cargar
+      setupColumnNamesListener();
+    });
 
     // Interceptar setItem de localStorage para detectar modificaciones
     const originalSetItem = localStorage.setItem;

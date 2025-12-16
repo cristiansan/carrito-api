@@ -69,6 +69,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // REGLAS PARA CONFIGURACION GLOBAL - Nombres de columnas, etc.
+    match /configuracion/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
     // REGLAS PARA EMAILS BLOQUEADOS - Solo admins pueden leer y escribir
     match /blockedEmails/{email} {
       allow read: if isAdmin();

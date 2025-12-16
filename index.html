@@ -781,7 +781,7 @@
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="header-logo">
-    <span id="versionBtn" class="version-btn">v0.79</span>
+    <span id="versionBtn" class="version-btn">v0.80</span>
   </header>
 
   <!-- Mobile Menu Button -->
@@ -804,7 +804,7 @@
       <!-- Content will be cloned from toolbar -->
     </div>
     <div class="mobile-menu-version">
-      <button id="mobileVersionBtn">v0.79</button>
+      <button id="mobileVersionBtn">v0.80</button>
     </div>
   </div>
 
@@ -1009,7 +1009,16 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.79 - Actual</h3>
+          <h3>v0.80 - Actual</h3>
+          <ul>
+            <li>🔄 <strong>Nombres de Columnas Sincronizados:</strong> Los nombres personalizados de columnas en PRECIOS ahora se guardan en Firestore y se sincronizan entre todos los admins en tiempo real</li>
+            <li>👥 <strong>Cambios Instantáneos:</strong> Cuando un admin cambia el nombre de una columna, todos los demás admins lo ven inmediatamente</li>
+            <li>🗑️ <strong>Tab PRECIOS Simplificado:</strong> Eliminado el tab "Lista de Precios" de Administration.html ya que está en Marketplace</li>
+            <li>⚙️ <strong>Menú CONFIG Consolidado:</strong> Submenú CONFIG ahora tiene solo PROFILE y "Adm/Cli/Ven" que va a Administration con los 3 tabs</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.79</h3>
           <ul>
             <li>📊 <strong>Cálculo PRECIOS Mejorado:</strong> Columnas 5 y 6 ahora calculan sobre columna 4 (Costo) en vez de columna 1</li>
             <li>💵 <strong>Columna 6 - Suma Fija:</strong> Columna 6 ahora suma un valor fijo en u$s en vez de porcentaje (ej: Costo $1600 + $30 = $1630)</li>

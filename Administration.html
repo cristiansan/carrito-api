@@ -1890,15 +1890,6 @@
               </span>
               <span class="mdc-tab__ripple"></span>
             </button>
-            <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="listas-precios">
-              <span class="mdc-tab__content">
-                <span class="mdc-tab__text-label">Listas de Precios</span>
-              </span>
-              <span class="mdc-tab-indicator">
-                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-              </span>
-              <span class="mdc-tab__ripple"></span>
-            </button>
             <!-- Tab button MASTER MOVIDO A marketplace.html -->
             <!-- TAB REMOVIDO - Logs de Errores movido a ayuda.html
             <button class="mdc-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="errorlogs">
@@ -2052,141 +2043,6 @@
           <div class="stat-item">
             <span class="stat-number" id="activeSellers">0</span>
             <span class="stat-label">Activos</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="listas-precios-content" class="tab-content" style="display: none;">
-      <h2>💰 Gestión de Listas de Precios</h2>
-
-      <div class="admin-section">
-        <p style="color: #888; margin-bottom: 20px;">Personaliza los nombres de las listas de precios. Los cambios se aplicarán automáticamente para todos los administradores.</p>
-
-        <div id="priceListsContainer" style="display: grid; gap: 16px;">
-          <div class="price-list-item" data-list-id="precios1" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-              <div style="flex: 1;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
-                <input type="text" class="price-list-name-input" data-list-id="precios1"
-                       placeholder="Nombre de la lista..."
-                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-              </div>
-              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios1"
-                      style="min-width: 100px;">
-                <span class="mdc-button__label">Guardar</span>
-              </button>
-            </div>
-            <div style="margin-top: 12px;">
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
-              <input type="text" class="price-list-desc-input" data-list-id="precios1"
-                     placeholder="Descripción de la lista..."
-                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-            </div>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
-              <i class="material-icons" style="font-size: 16px;">info</i>
-              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios1</code></span>
-            </div>
-          </div>
-
-          <div class="price-list-item" data-list-id="precios2" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-              <div style="flex: 1;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
-                <input type="text" class="price-list-name-input" data-list-id="precios2"
-                       placeholder="Nombre de la lista..."
-                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-              </div>
-              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios2"
-                      style="min-width: 100px;">
-                <span class="mdc-button__label">Guardar</span>
-              </button>
-            </div>
-            <div style="margin-top: 12px;">
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
-              <input type="text" class="price-list-desc-input" data-list-id="precios2"
-                     placeholder="Descripción de la lista..."
-                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-            </div>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
-              <i class="material-icons" style="font-size: 16px;">info</i>
-              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios2</code></span>
-            </div>
-          </div>
-
-          <div class="price-list-item" data-list-id="precios3" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-              <div style="flex: 1;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
-                <input type="text" class="price-list-name-input" data-list-id="precios3"
-                       placeholder="Nombre de la lista..."
-                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-              </div>
-              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios3"
-                      style="min-width: 100px;">
-                <span class="mdc-button__label">Guardar</span>
-              </button>
-            </div>
-            <div style="margin-top: 12px;">
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
-              <input type="text" class="price-list-desc-input" data-list-id="precios3"
-                     placeholder="Descripción de la lista..."
-                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-            </div>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
-              <i class="material-icons" style="font-size: 16px;">info</i>
-              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios3</code></span>
-            </div>
-          </div>
-
-          <div class="price-list-item" data-list-id="precios4" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-              <div style="flex: 1;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
-                <input type="text" class="price-list-name-input" data-list-id="precios4"
-                       placeholder="Nombre de la lista..."
-                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-              </div>
-              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios4"
-                      style="min-width: 100px;">
-                <span class="mdc-button__label">Guardar</span>
-              </button>
-            </div>
-            <div style="margin-top: 12px;">
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
-              <input type="text" class="price-list-desc-input" data-list-id="precios4"
-                     placeholder="Descripción de la lista..."
-                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-            </div>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
-              <i class="material-icons" style="font-size: 16px;">info</i>
-              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios4</code></span>
-            </div>
-          </div>
-
-          <div class="price-list-item" data-list-id="precios5" style="background: #1b1b1f; border: 1px solid #3a3a44; border-radius: 8px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
-              <div style="flex: 1;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Nombre de la Lista</label>
-                <input type="text" class="price-list-name-input" data-list-id="precios5"
-                       placeholder="Nombre de la lista..."
-                       style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-              </div>
-              <button class="mdc-button mdc-button--raised save-price-list-btn" data-list-id="precios5"
-                      style="min-width: 100px;">
-                <span class="mdc-button__label">Guardar</span>
-              </button>
-            </div>
-            <div style="margin-top: 12px;">
-              <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #f0f0f0;">Descripción (opcional)</label>
-              <input type="text" class="price-list-desc-input" data-list-id="precios5"
-                     placeholder="Descripción de la lista..."
-                     style="width: 100%; padding: 10px; border: 1px solid #3a3a44; border-radius: 4px; background: #23232a; color: #f0f0f0; font-size: 14px;">
-            </div>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px; color: #888; font-size: 12px;">
-              <i class="material-icons" style="font-size: 16px;">info</i>
-              <span>ID: <code style="background: #23232a; padding: 2px 6px; border-radius: 3px;">precios5</code></span>
-            </div>
           </div>
         </div>
       </div>
@@ -2818,78 +2674,6 @@
         console.error('❌ Error configurando listener de listas de precios:', error);
       }
     }
-
-    // Cargar datos de listas de precios para la interfaz de edición
-    async function loadPriceListsForEditing() {
-      try {
-        const { collection, getDocs } = firebase.firestoreHelpers;
-        const db = firebase.firestore();
-
-        const priceListsCollection = collection(db, 'listasPrecios');
-        const snapshot = await getDocs(priceListsCollection);
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const listId = doc.id;
-
-          // Actualizar inputs con datos de Firebase
-          const nameInput = document.querySelector(`.price-list-name-input[data-list-id="${listId}"]`);
-          const descInput = document.querySelector(`.price-list-desc-input[data-list-id="${listId}"]`);
-
-          if (nameInput) {
-            nameInput.value = data.nombre || '';
-          }
-          if (descInput) {
-            descInput.value = data.descripcion || '';
-          }
-        });
-
-        console.log('✅ Datos de listas de precios cargados en UI');
-      } catch (error) {
-        console.error('❌ Error cargando datos de listas para edición:', error);
-      }
-    }
-
-    // Hacer función global
-    window.loadPriceListsForEditing = loadPriceListsForEditing;
-
-    // Event listeners para botones de guardar
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.save-price-list-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          const listId = e.target.closest('.save-price-list-btn').getAttribute('data-list-id');
-          const nameInput = document.querySelector(`.price-list-name-input[data-list-id="${listId}"]`);
-          const descInput = document.querySelector(`.price-list-desc-input[data-list-id="${listId}"]`);
-
-          const newName = nameInput.value.trim();
-          const newDesc = descInput.value.trim();
-
-          if (!newName) {
-            alert('Por favor ingresa un nombre para la lista.');
-            return;
-          }
-
-          // Deshabilitar botón y cambiar texto
-          btn.disabled = true;
-          const originalText = btn.querySelector('.mdc-button__label').textContent;
-          btn.querySelector('.mdc-button__label').textContent = 'Guardando...';
-
-          const success = await updatePriceListName(listId, newName, newDesc);
-
-          if (success) {
-            btn.querySelector('.mdc-button__label').textContent = '✓ Guardado';
-            setTimeout(() => {
-              btn.querySelector('.mdc-button__label').textContent = originalText;
-              btn.disabled = false;
-            }, 2000);
-          } else {
-            alert('Error al guardar. Por favor intenta de nuevo.');
-            btn.querySelector('.mdc-button__label').textContent = originalText;
-            btn.disabled = false;
-          }
-        });
-      });
-    });
 
     // Inicializar sistema de listas de precios al cargar la página
     setTimeout(async () => {
@@ -8185,12 +7969,6 @@
                 window.loadPendingUsers();
               }
             }, 300); // Aumentado de 100ms a 300ms para dar tiempo cuando se carga desde URL
-          } else if (tabId === 'listas-precios') {
-            setTimeout(() => {
-              if (window.loadPriceListsForEditing) {
-                window.loadPriceListsForEditing();
-              }
-            }, 300);
           }
         });
 
