@@ -2533,7 +2533,7 @@
       }
     }
 
-    // Cargar nombres de listas de precios desde Firebase
+    // Cargar nombres de listas de precios desde Firebase (configuracion/columnasPrecios)
     async function loadPriceListNames() {
       try {
         if (!window.firebase || !firebase.firestoreHelpers) {
@@ -2542,19 +2542,37 @@
           return;
         }
 
-        const { collection, getDocs } = firebase.firestoreHelpers;
+        const { doc, getDoc } = firebase.firestoreHelpers;
         const db = firebase.firestore();
 
-        const priceListsCollection = collection(db, 'listasPrecios');
-        const snapshot = await getDocs(priceListsCollection);
+        // Cargar desde la misma configuración que usa marketplace.html
+        const configRef = doc(db, 'configuracion', 'columnasPrecios');
+        const docSnap = await getDoc(configRef);
 
         window.priceListNames.clear();
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          window.priceListNames.set(doc.id, data.nombre);
-        });
 
-        console.log('✅ Nombres de listas de precios cargados:', Array.from(window.priceListNames.entries()));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const nombres = data.nombres;
+
+          // Mapear precio1-6 a precios1-6 para compatibilidad con el código existente
+          window.priceListNames.set('precios1', nombres.precio1 || 'Precio 1');
+          window.priceListNames.set('precios2', nombres.precio2 || 'Precio 2');
+          window.priceListNames.set('precios3', nombres.precio3 || 'Precio 3');
+          window.priceListNames.set('precios4', nombres.precio4 || 'Precio 4');
+          window.priceListNames.set('precios5', nombres.precio5 || '% Col5');
+          window.priceListNames.set('precios6', nombres.precio6 || '% Col6');
+        } else {
+          // Valores por defecto si no existe la configuración
+          window.priceListNames.set('precios1', 'Precio 1');
+          window.priceListNames.set('precios2', 'Precio 2');
+          window.priceListNames.set('precios3', 'Precio 3');
+          window.priceListNames.set('precios4', 'Precio 4');
+          window.priceListNames.set('precios5', '% Col5');
+          window.priceListNames.set('precios6', '% Col6');
+        }
+
+        console.log('✅ Nombres de listas de precios cargados (6 listas):', Array.from(window.priceListNames.entries()));
 
         // Renderizar todos los dropdowns con los nuevos nombres
         renderAllPriceListDropdowns();
@@ -2591,16 +2609,17 @@
       }
     }
 
-    // Generar opciones de listas de precios dinámicamente
+    // Generar opciones de listas de precios dinámicamente (6 listas)
     function getPriceListOptions(selectedListId = 'precios1') {
       if (window.priceListNames.size === 0) {
-        // Fallback en caso de que no se hayan cargado aún
+        // Fallback en caso de que no se hayan cargado aún (6 listas)
         return `
-          <option value="precios1" ${selectedListId === 'precios1' ? 'selected' : ''}>Precios 1 (Por defecto)</option>
-          <option value="precios2" ${selectedListId === 'precios2' ? 'selected' : ''}>Precios 2</option>
-          <option value="precios3" ${selectedListId === 'precios3' ? 'selected' : ''}>Precios 3</option>
-          <option value="precios4" ${selectedListId === 'precios4' ? 'selected' : ''}>Precios 4</option>
-          <option value="precios5" ${selectedListId === 'precios5' ? 'selected' : ''}>Precios 5</option>
+          <option value="precios1" ${selectedListId === 'precios1' ? 'selected' : ''}>Precio 1</option>
+          <option value="precios2" ${selectedListId === 'precios2' ? 'selected' : ''}>Precio 2</option>
+          <option value="precios3" ${selectedListId === 'precios3' ? 'selected' : ''}>Precio 3</option>
+          <option value="precios4" ${selectedListId === 'precios4' ? 'selected' : ''}>Precio 4</option>
+          <option value="precios5" ${selectedListId === 'precios5' ? 'selected' : ''}>% Col5</option>
+          <option value="precios6" ${selectedListId === 'precios6' ? 'selected' : ''}>% Col6</option>
         `;
       }
 
@@ -2650,25 +2669,47 @@
           sellerListaPrecioSelect.value = currentValue;
         }
       }
+
+      // Actualizar todos los dropdowns en las tarjetas de admisiones
+      document.querySelectorAll('.admisiones-price-list-select').forEach(select => {
+        if (window.priceListNames.size > 0) {
+          const currentValue = select.value;
+          select.innerHTML = Array.from(window.priceListNames.entries())
+            .map(([id, nombre]) => `<option value="${id}" style="color: #000 !important; background: #f0f0f0 !important;">💰 ${nombre}</option>`)
+            .join('');
+          if (currentValue) {
+            select.value = currentValue;
+          }
+        }
+      });
     }
 
-    // Listener en tiempo real para cambios en listas de precios
+    // Listener en tiempo real para cambios en listas de precios (configuracion/columnasPrecios)
     function setupPriceListsListener() {
       try {
-        const { collection, onSnapshot } = firebase.firestoreHelpers;
+        const { doc, onSnapshot } = firebase.firestoreHelpers;
         const db = firebase.firestore();
 
-        const priceListsCollection = collection(db, 'listasPrecios');
+        const configRef = doc(db, 'configuracion', 'columnasPrecios');
 
-        onSnapshot(priceListsCollection, (snapshot) => {
-          window.priceListNames.clear();
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            window.priceListNames.set(doc.id, data.nombre);
-          });
+        onSnapshot(configRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            const nombres = data.nombres;
 
-          console.log('🔄 Listas de precios actualizadas en tiempo real');
-          renderAllPriceListDropdowns();
+            window.priceListNames.clear();
+
+            // Mapear precio1-6 a precios1-6 para compatibilidad
+            window.priceListNames.set('precios1', nombres.precio1 || 'Precio 1');
+            window.priceListNames.set('precios2', nombres.precio2 || 'Precio 2');
+            window.priceListNames.set('precios3', nombres.precio3 || 'Precio 3');
+            window.priceListNames.set('precios4', nombres.precio4 || 'Precio 4');
+            window.priceListNames.set('precios5', nombres.precio5 || '% Col5');
+            window.priceListNames.set('precios6', nombres.precio6 || '% Col6');
+
+            console.log('🔄 Listas de precios actualizadas en tiempo real (6 listas)');
+            renderAllPriceListDropdowns();
+          }
         });
       } catch (error) {
         console.error('❌ Error configurando listener de listas de precios:', error);
@@ -7361,10 +7402,20 @@
                     </div>
                     <div>
                       <label style="display: block; margin-bottom: 5px; font-weight: 500; color: #333; font-size: 14px;">Lista de Precios *</label>
-                      <select id="priceList-${userId}" style="padding: 14px 12px; border: 2px solid #999 !important; border-radius: 4px; font-size: 16px !important; width: 100%; color: #000 !important; background: #f0f0f0 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600 !important; z-index: 1; -webkit-appearance: none; appearance: none;">
-                        <option value="precios1" selected style="color: #000 !important; background: #f0f0f0 !important;">💰 Lista de Precios 1</option>
-                        <option value="precios2" style="color: #000 !important; background: #f0f0f0 !important;">💰 Lista de Precios 2</option>
-                        <option value="precios3" style="color: #000 !important; background: #f0f0f0 !important;">💰 Lista de Precios 3</option>
+                      <select id="priceList-${userId}" class="admisiones-price-list-select" style="padding: 14px 12px; border: 2px solid #999 !important; border-radius: 4px; font-size: 16px !important; width: 100%; color: #000 !important; background: #f0f0f0 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; font-weight: 600 !important; z-index: 1; -webkit-appearance: none; appearance: none;">
+                        ${window.priceListNames && window.priceListNames.size > 0
+                          ? Array.from(window.priceListNames.entries()).map(([id, nombre]) =>
+                              `<option value="${id}" ${id === 'precios1' ? 'selected' : ''} style="color: #000 !important; background: #f0f0f0 !important;">💰 ${nombre}</option>`
+                            ).join('')
+                          : `
+                            <option value="precios1" selected style="color: #000 !important; background: #f0f0f0 !important;">💰 Precio 1</option>
+                            <option value="precios2" style="color: #000 !important; background: #f0f0f0 !important;">💰 Precio 2</option>
+                            <option value="precios3" style="color: #000 !important; background: #f0f0f0 !important;">💰 Precio 3</option>
+                            <option value="precios4" style="color: #000 !important; background: #f0f0f0 !important;">💰 Precio 4</option>
+                            <option value="precios5" style="color: #000 !important; background: #f0f0f0 !important;">💰 % Col5</option>
+                            <option value="precios6" style="color: #000 !important; background: #f0f0f0 !important;">💰 % Col6</option>
+                          `
+                        }
                       </select>
                     </div>
                     <div>
