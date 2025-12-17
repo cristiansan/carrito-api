@@ -166,6 +166,15 @@
       background: #333;
     }
 
+    .ranking-item.clickable {
+      cursor: pointer;
+    }
+
+    .ranking-item.clickable:hover {
+      background: #3a3a3a;
+      border-left: 3px solid #4CAF50;
+    }
+
     .ranking-item:last-child {
       border-bottom: none;
     }
@@ -257,6 +266,218 @@
       .header h1 {
         font-size: 20px;
       }
+
+      /* Modal responsive styles */
+      .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        padding: 20px;
+        margin: 10px;
+      }
+
+      .modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .modal-header h2 {
+        font-size: 18px;
+        width: 100%;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+      }
+
+      .modal-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .modal-stat {
+        padding: 12px;
+      }
+
+      .modal-stat-label {
+        font-size: 11px;
+      }
+
+      .modal-stat-value {
+        font-size: 20px;
+      }
+
+      .orders-list h3 {
+        font-size: 16px;
+      }
+
+      .order-item {
+        padding: 12px;
+      }
+
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .order-total {
+        font-size: 16px;
+      }
+
+      .order-details {
+        font-size: 11px;
+      }
+
+      .order-items-count {
+        font-size: 12px;
+      }
+    }
+
+    /* Modal styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #2a2a2a;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid #4CAF50;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #4CAF50;
+    }
+
+    .modal-header h2 {
+      color: #4CAF50;
+      margin: 0;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      background: #f44336;
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .modal-close:hover {
+      background: #d32f2f;
+    }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .modal-stat {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+
+    .modal-stat-label {
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .modal-stat-value {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .orders-list {
+      margin-top: 20px;
+    }
+
+    .orders-list h3 {
+      color: #4CAF50;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .order-item {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #333;
+      transition: border-color 0.2s;
+    }
+
+    .order-item:hover {
+      border-color: #4CAF50;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .order-id {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+
+    .order-total {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .order-details {
+      color: #888;
+      font-size: 12px;
+    }
+
+    .order-items-count {
+      color: #999;
+      font-size: 14px;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -354,7 +575,7 @@
     <!-- Contenedor para Top 10 Vendedores y Usuarios lado a lado -->
     <div class="top-rankings-grid">
       <div class="ranking-card">
-        <h2><span class="material-icons">emoji_events</span> Top 10 Vendedores (por órdenes creadas)</h2>
+        <h2><span class="material-icons">emoji_events</span> Top 10 Clientes (por órdenes creadas)</h2>
         <ul class="ranking-list" id="vendedoresRanking">
           <li class="no-data">Cargando...</li>
         </ul>
@@ -386,6 +607,49 @@
     </div>
   </div>
 
+  <!-- Modal para detalles del cliente -->
+  <div id="vendedorModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          <span class="material-icons">store</span>
+          <span id="modalVendedorName">Cliente</span>
+        </h2>
+        <button class="modal-close" onclick="closeVendedorModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <div class="modal-stat-label">Total Órdenes</div>
+          <div class="modal-stat-value" id="modalTotalOrdenes">0</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Total Ventas</div>
+          <div class="modal-stat-value" id="modalTotalVentas">$0</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Costo Total</div>
+          <div class="modal-stat-value" id="modalTotalCosto">$0</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Ganancia Total</div>
+          <div class="modal-stat-value" id="modalTotalGanancia">$0</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Promedio por Orden</div>
+          <div class="modal-stat-value" id="modalPromedioOrden">$0</div>
+        </div>
+      </div>
+
+      <div class="orders-list">
+        <h3>Detalle de Órdenes</h3>
+        <div id="modalOrdersList"></div>
+      </div>
+    </div>
+  </div>
+
   <style>
     @keyframes spin {
       from { transform: rotate(0deg); }
@@ -412,107 +676,10 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // API Configuration
-    const API_BASE = '/api';
-    const AUTH_URL = `${API_BASE}/authenticate`;
-    const STOCK_URL = `${API_BASE}/stock`;
+    // Store orders and cost map globally for modal access
+    let allOrders = [];
+    let globalCostMap = new Map();
 
-    const CREDENTIALS = {
-      username: 'Api',
-      md5password: 'e10adc3949ba59abbe56e057f20f883e'
-    };
-
-    let authToken = null;
-    let tokenExpiresAt = 0;
-
-    // Helper functions
-    function normalizeKey(key) {
-      return String(key)
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]/g, '');
-    }
-
-    function getFirstExisting(row, candidateKeys) {
-      const normalizedMap = new Map();
-      for (const k of Object.keys(row || {})) {
-        normalizedMap.set(normalizeKey(k), k);
-      }
-      for (const c of candidateKeys) {
-        const nk = normalizeKey(c);
-        if (normalizedMap.has(nk)) {
-          const originalKey = normalizedMap.get(nk);
-          return row[originalKey];
-        }
-      }
-      return undefined;
-    }
-
-    function parseLocaleNumber(str) {
-      if (typeof str !== 'string') return NaN;
-      const cleaned = str.replace(/\./g, '').replace(',', '.');
-      return parseFloat(cleaned);
-    }
-
-    // API Authentication
-    async function authenticate() {
-      if (authToken && Date.now() < tokenExpiresAt) {
-        return authToken;
-      }
-
-      try {
-        const response = await fetch(AUTH_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(CREDENTIALS)
-        });
-
-        if (!response.ok) {
-          throw new Error(`Authentication failed: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        authToken = data.token;
-        tokenExpiresAt = Date.now() + (data.expires ? data.expires * 1000 : 55 * 60 * 1000);
-        console.log('✅ Authenticated with API');
-        return authToken;
-      } catch (error) {
-        console.error('❌ Authentication error:', error);
-        throw error;
-      }
-    }
-
-    // Fetch products from API
-    async function fetchProductsFromAPI() {
-      try {
-        const token = await authenticate();
-        const url = `${STOCK_URL}?format=JSON&ViewOption=0`;
-
-        const response = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!response.ok) {
-          throw new Error(`API request failed: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log(`✅ Loaded ${data.length} products from API`);
-        return data;
-      } catch (error) {
-        console.error('❌ Error fetching products:', error);
-        throw error;
-      }
-    }
-
-    // Extract cost from product data
-    function extractCostFromProduct(raw) {
-      let costoContable = getFirstExisting(raw, ['Costo Contable', 'CostoContable']);
-      costoContable = Number.isFinite(Number(costoContable)) ? Number(costoContable) : parseLocaleNumber(String(costoContable ?? ''));
-      if (!Number.isFinite(costoContable)) costoContable = 0;
-      return costoContable;
-    }
 
     // Check if user is authenticated and is admin
     onAuthStateChanged(auth, async (user) => {
@@ -551,20 +718,23 @@
       try {
         console.log('📊 Cargando estadísticas...');
 
-        // Load products from API to get costs
-        console.log('📦 Cargando productos desde la API...');
-        const productsData = await fetchProductsFromAPI();
+        // Load prices from Firebase to get costs (precio4 = Costo)
+        console.log('💰 Cargando precios desde Firebase...');
+        const pricesSnapshot = await getDocs(collection(db, 'precios'));
 
-        // Create map of articulo -> cost
+        // Create map of articulo -> cost (precio4)
         const costMap = new Map();
-        productsData.forEach(product => {
-          const articulo = getFirstExisting(product, ['Artículo', 'Articulo', 'item', 'Item', 'Codigo', 'Código']);
-          if (articulo) {
-            const cost = extractCostFromProduct(product);
-            costMap.set(String(articulo).trim(), cost);
+        pricesSnapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.articulo) {
+            const cost = data.precio4 || 0; // precio4 es la columna Costo
+            costMap.set(String(data.articulo).trim(), cost);
           }
         });
-        console.log(`✅ Mapa de costos creado con ${costMap.size} productos`);
+        console.log(`✅ Mapa de costos (precio4) creado con ${costMap.size} productos desde Firebase`);
+
+        // Store costMap globally for modal access
+        globalCostMap = costMap;
 
         // Get all orders
         const ordersSnapshot = await getDocs(collection(db, 'pedidos'));
@@ -646,6 +816,9 @@
         orders.length = 0;
         orders.push(...filteredOrders);
 
+        // Store orders globally for modal access
+        allOrders = [...orders];
+
         // Get total clients count (already loaded above)
         const clients = allClients.length;
 
@@ -658,11 +831,8 @@
               const quantity = item.quantity || 0;
               const articulo = String(item.articulo || '').trim();
 
-              // Get cost from map, fallback to item's costoContable if available
-              let costPrice = costMap.get(articulo);
-              if (costPrice === undefined || costPrice === 0) {
-                costPrice = item.costoContable || 0;
-              }
+              // Get cost from Firebase prices (precio4)
+              const costPrice = costMap.get(articulo) || 0;
 
               return itemSum + (quantity * costPrice);
             }, 0);
@@ -696,7 +866,7 @@
         }
 
         // Log cost calculation details
-        console.log(`💰 Cálculo de costos:`);
+        console.log(`💰 Cálculo de costos (usando precio4 de Firebase):`);
         let itemsWithCost = 0;
         let itemsWithoutCost = 0;
         orders.forEach(order => {
@@ -709,24 +879,24 @@
               } else {
                 itemsWithoutCost++;
                 if (itemsWithoutCost <= 5) { // Log first 5 items without cost
-                  console.log(`   ⚠️ Producto sin costo: ${articulo} (${item.description || 'sin descripción'})`);
+                  console.log(`   ⚠️ Producto sin costo (precio4): ${articulo} (${item.description || 'sin descripción'})`);
                 }
               }
             });
           }
         });
-        console.log(`   - Items con costo: ${itemsWithCost}`);
-        console.log(`   - Items sin costo: ${itemsWithoutCost}`);
+        console.log(`   - Items con costo (precio4 > 0): ${itemsWithCost}`);
+        console.log(`   - Items sin costo (precio4 = 0): ${itemsWithoutCost}`);
 
         console.log(`\n💰 KPIs calculados:`);
         console.log(`   - Venta Total: $${totalRevenue.toFixed(2)}`);
-        console.log(`   - Costo de Venta: $${totalCost.toFixed(2)}`);
+        console.log(`   - Costo de Venta (precio4): $${totalCost.toFixed(2)}`);
         console.log(`   - Ganancia Total: $${totalProfit.toFixed(2)}`);
         console.log(`   - Porcentaje de ganancia: ${(totalProfit / totalRevenue * 100).toFixed(2)}%`);
 
         // Show first 5 costs from map
         const first5Costs = Array.from(costMap.entries()).slice(0, 5);
-        console.log(`\n📋 Primeros 5 costos del mapa:`);
+        console.log(`\n📋 Primeros 5 costos (precio4) del mapa de Firebase:`);
         first5Costs.forEach(([articulo, cost]) => {
           console.log(`   - ${articulo}: $${cost}`);
         });
@@ -1061,19 +1231,24 @@
       const vendedoresStats = {};
 
       orders.forEach(order => {
-        const vendedorEmail = order.usuarioEmail || 'Sin vendedor';
-        // Map email to client name if applicable
-        const vendedorKey = getClientDisplayName(vendedorEmail, order.clienteCodigo, order.clienteNombre);
+        // Use client data instead of user/vendor data
+        const clienteEmail = order.clienteEmail || order.usuarioEmail || 'Sin cliente';
+        const clienteCodigo = order.clienteCodigo || '';
+        const clienteNombre = order.clienteNombre || '';
 
-        if (!vendedoresStats[vendedorKey]) {
-          vendedoresStats[vendedorKey] = {
+        // Get client display name
+        const clienteKey = getClientDisplayName(clienteEmail, clienteCodigo, clienteNombre);
+
+        if (!vendedoresStats[clienteKey]) {
+          vendedoresStats[clienteKey] = {
             ordenes: 0,
             revenue: 0,
-            originalEmail: vendedorEmail
+            originalEmail: clienteEmail,
+            clienteCodigo: clienteCodigo
           };
         }
-        vendedoresStats[vendedorKey].ordenes += 1;
-        vendedoresStats[vendedorKey].revenue += (order.total || 0);
+        vendedoresStats[clienteKey].ordenes += 1;
+        vendedoresStats[clienteKey].revenue += (order.total || 0);
       });
 
       const ranking = Object.entries(vendedoresStats)
@@ -1083,8 +1258,16 @@
 
       const html = ranking.map((vendedor, index) => {
         const positionClass = index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : '';
+        const vendedorDataJson = JSON.stringify({
+          displayName: vendedor.displayName,
+          originalEmail: vendedor.originalEmail,
+          clienteCodigo: vendedor.clienteCodigo,
+          ordenes: vendedor.ordenes,
+          revenue: vendedor.revenue
+        }).replace(/"/g, '&quot;');
+
         return `
-          <li class="ranking-item">
+          <li class="ranking-item clickable" onclick='openVendedorModal(${vendedorDataJson})'>
             <div class="ranking-position ${positionClass}">${index + 1}</div>
             <div class="ranking-info">
               <div class="ranking-name">${vendedor.displayName}</div>
@@ -1726,9 +1909,125 @@
       }
     }
 
+    // Functions for vendedor modal
+    function openVendedorModal(vendedorData) {
+      console.log('🔍 Abriendo modal para cliente:', vendedorData);
+
+      // Set vendedor name
+      document.getElementById('modalVendedorName').textContent = vendedorData.displayName;
+
+      // Get all orders from this client (filter by clienteEmail or clienteCodigo)
+      const vendorOrders = allOrders.filter(order => {
+        const orderClientEmail = (order.clienteEmail || order.usuarioEmail || '').toLowerCase();
+        const orderClientCodigo = order.clienteCodigo || '';
+        const dataEmail = (vendedorData.originalEmail || '').toLowerCase();
+        const dataCodigo = vendedorData.clienteCodigo || '';
+
+        // Match by email OR by client code (if available)
+        const emailMatch = orderClientEmail === dataEmail;
+        const codigoMatch = dataCodigo && orderClientCodigo && orderClientCodigo === dataCodigo;
+
+        return emailMatch || codigoMatch;
+      });
+
+      console.log(`📦 Órdenes encontradas para cliente ${vendedorData.displayName}:`, vendorOrders.length);
+
+      // Calculate stats
+      const totalOrdenes = vendorOrders.length;
+      const totalVentas = vendorOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+
+      // Calculate total cost using globalCostMap
+      const totalCosto = vendorOrders.reduce((sum, order) => {
+        if (order.items && Array.isArray(order.items)) {
+          return sum + order.items.reduce((itemSum, item) => {
+            const quantity = item.quantity || 0;
+            const articulo = String(item.articulo || '').trim();
+            const costPrice = globalCostMap.get(articulo) || 0;
+            return itemSum + (quantity * costPrice);
+          }, 0);
+        }
+        return sum;
+      }, 0);
+
+      const totalGanancia = totalVentas - totalCosto;
+      const promedioOrden = totalOrdenes > 0 ? totalVentas / totalOrdenes : 0;
+
+      // Update modal stats
+      document.getElementById('modalTotalOrdenes').textContent = totalOrdenes;
+      document.getElementById('modalTotalVentas').textContent = '$' + totalVentas.toFixed(2);
+      document.getElementById('modalTotalCosto').textContent = '$' + totalCosto.toFixed(2);
+      document.getElementById('modalTotalGanancia').textContent = '$' + totalGanancia.toFixed(2);
+      document.getElementById('modalPromedioOrden').textContent = '$' + promedioOrden.toFixed(2);
+
+      // Color the ganancia value based on positive/negative
+      const gananciaElement = document.getElementById('modalTotalGanancia');
+      if (totalGanancia >= 0) {
+        gananciaElement.style.color = '#4CAF50'; // Green for profit
+      } else {
+        gananciaElement.style.color = '#f44336'; // Red for loss
+      }
+
+      // Generate orders list HTML
+      const ordersListHtml = vendorOrders
+        .sort((a, b) => {
+          // Sort by timestamp descending (newest first)
+          const dateA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp || 0);
+          const dateB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp || 0);
+          return dateB - dateA;
+        })
+        .map(order => {
+          const orderDate = order.timestamp?.toDate ? order.timestamp.toDate() : new Date(order.timestamp);
+          const formattedDate = orderDate.toLocaleDateString('es-AR', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          const itemsCount = order.items ? order.items.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
+          const orderState = order.logisticsState || 'Sin estado';
+          const orderNumber = order.numeroOrden || order.id;
+
+          return `
+            <div class="order-item">
+              <div class="order-header">
+                <div class="order-id">Orden #${orderNumber}</div>
+                <div class="order-total">$${(order.total || 0).toFixed(2)}</div>
+              </div>
+              <div class="order-details">
+                📅 ${formattedDate} • 📦 ${orderState}
+              </div>
+              <div class="order-items-count">
+                ${itemsCount} producto${itemsCount !== 1 ? 's' : ''}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      document.getElementById('modalOrdersList').innerHTML = ordersListHtml || '<div class="no-data">No hay órdenes disponibles</div>';
+
+      // Show modal
+      document.getElementById('vendedorModal').classList.add('active');
+    }
+
+    function closeVendedorModal() {
+      document.getElementById('vendedorModal').classList.remove('active');
+    }
+
+    // Close modal when clicking backdrop
+    document.getElementById('vendedorModal').addEventListener('click', (e) => {
+      if (e.target.id === 'vendedorModal') {
+        closeVendedorModal();
+      }
+    });
+
     // Make functions globally accessible
     window.updateAllLoginCounts = updateAllLoginCounts;
     window.migrateDeviceHistory = migrateDeviceHistory;
+    window.openVendedorModal = openVendedorModal;
+    window.closeVendedorModal = closeVendedorModal;
   </script>
 </body>
 </html>
