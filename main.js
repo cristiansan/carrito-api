@@ -587,7 +587,7 @@ function renderRows() {
   // Define all columns
   let columns = [
     { id: 'articulo', label: 'Artículo', sortable: true, class: '', width: '15%' },
-    { id: 'description', label: 'Descripción', sortable: true, class: '', width: '15%' },
+    { id: 'description', label: 'Descripción', sortable: true, class: '', width: '35%' },
     { id: 'grupo', label: 'Grupo', sortable: true, class: '', width: '12%' },
     { id: 'stock', label: 'Stock', sortable: true, class: '', width: '10%' },
     { id: 'disponible', label: 'Disponible', sortable: true, class: 'right', width: '10%' },
@@ -618,7 +618,7 @@ function renderRows() {
   // En marketplace agregamos columnas específicas que no están en la lista principal
   if (isMarketplace) {
     // Add quantity and price columns for marketplace
-    const quantityCol = { id: 'quantity', label: 'Cantidad', sortable: false, class: '', width: '15%' };
+    const quantityCol = { id: 'quantity', label: 'Cantidad', sortable: false, class: '', width: '90px' };
     const priceCol = { id: 'price', label: 'Precio', sortable: true, class: 'right', width: '12%' };
 
     // Insert quantity after description and price after quantity

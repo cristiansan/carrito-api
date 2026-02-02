@@ -444,7 +444,30 @@
     table { min-width: 100%; border-collapse: collapse; color: #f0f0f0; table-layout: auto; }
     th, td { padding: 8px; border-bottom: 1px solid #2a2a2a; text-align: left; white-space: nowrap; }
     th { background: #1e1e24; position: sticky; top: 0; color: #ffffff; z-index: 10; }
-    th[data-column="description"], td[data-column="description"] { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+    th[data-column="description"], td[data-column="description"] { min-width: 300px; overflow: hidden; position: relative; }
+    td[data-column="description"] .product-description {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    td[data-column="description"] .product-description:hover {
+      overflow: visible;
+      position: absolute;
+      background: #2d2d2d;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      z-index: 100;
+      max-width: 600px;
+      white-space: normal;
+      word-wrap: break-word;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    th[data-column="quantity"], td[data-column="quantity"] { width: 90px !important; min-width: 90px; max-width: 100px; }
     .right { text-align: center; }
     .error { color: #ff6b6b; font-size: 13px; }
     .hidden { display: none; }
@@ -2850,7 +2873,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
     }
 
@@ -2868,8 +2891,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
+      cursor: help;
     }
 
     .product-info {
@@ -10272,7 +10296,7 @@
               <div class="product-title" title="${description}">${description}</div>
               <div class="product-code">Código: ${articulo}</div>
               ${specsChips}
-              <div class="product-description">${description}</div>
+              <div class="product-description" title="${description}">${description}</div>
               <div class="product-info">
                 <div class="product-info-item">
                   <span class="product-info-label">Stock</span>
@@ -11792,7 +11816,7 @@
                   <span class="product-code">${product.articulo}</span>
                 </td>
                 <td>
-                  <span class="product-description">${product.description}</span>
+                  <span class="product-description" title="${product.description}">${product.description}</span>
                 </td>
                 <td>
                   <input type="number"
