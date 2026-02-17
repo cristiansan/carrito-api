@@ -4398,7 +4398,7 @@
           LOGOUT
         </button>
         <div class="menu-version" id="menuVersionBtn">
-          v0.81
+          v0.83
         </div>
       </div>
       
@@ -6759,6 +6759,12 @@
 
                 await checkUserPermissions(user);
                 console.log('👤 Usuario autenticado, cargando configuración...');
+
+                // Inicializar listener de pausa DESPUÉS de autenticar (con permisos válidos)
+                if (window.initPricePauseState) {
+                  window.initPricePauseState();
+                }
+
                 loadConfig();
 
                 // Load prices from Firebase for marketplace
@@ -8975,7 +8981,21 @@
       <h2>Changelog - Historial de Versiones</h2>
       <div id="changelogContent">
         <div class="version-section">
-          <h3>v0.81 - Actual</h3>
+          <h3>v0.83 - Actual</h3>
+          <ul>
+            <li>⏸️ <strong>Fix Pausar Precios Global:</strong> Ahora cuando un admin pausa los precios, todos los usuarios ven la X en tiempo real</li>
+            <li>🔒 <strong>Reglas Firestore:</strong> Agregada regla de acceso para la colección settings (estado de pausa)</li>
+            <li>🔄 <strong>Listener Post-Auth:</strong> El listener de pausa ahora se inicializa después de la autenticación para garantizar permisos válidos</li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.82</h3>
+          <ul>
+            <li>📝 <strong>Mejoras en Columna Descripción del Marketplace</strong></li>
+          </ul>
+        </div>
+        <div class="version-section">
+          <h3>v0.81</h3>
           <ul>
             <li>📊 <strong>Estadísticas Mejoradas:</strong> Top 10 ahora muestra Clientes en lugar de vendedores, agrupando por nombre de cliente</li>
             <li>🖱️ <strong>Clientes Clickeables:</strong> Al hacer clic en un cliente del Top 10, se abre un modal con detalles completos</li>
@@ -9949,6 +9969,11 @@
 
       // Initialize global price pause state from Firebase with real-time listener
       function initPricePauseState() {
+        // Cancelar listener anterior si existe (evitar duplicados al reinicializar post-auth)
+        if (window.pricePauseListener && typeof window.pricePauseListener === 'function') {
+          window.pricePauseListener();
+          window.pricePauseListener = null;
+        }
         try {
           const { doc, onSnapshot } = firebase.firestoreHelpers;
           const db = firebase.firestore();
@@ -9991,8 +10016,8 @@
         }
       }
 
-      // Load price pause state immediately with real-time sync
-      initPricePauseState();
+      // Exponer función para que pueda ser llamada desde el callback de autenticación
+      window.initPricePauseState = initPricePauseState;
 
       // Load product image mapping
       async function loadProductImageMapping() {
